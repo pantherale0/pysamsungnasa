@@ -1,26 +1,1357 @@
 """Protocol enums."""
 
-from enum import StrEnum
+from enum import IntEnum
 
 
-class PacketTypes(StrEnum):
-    """NASA Packet Types"""
+class AddressClass(IntEnum):
+    """NASA Device Address Class from protocol byte 3 & 6."""
 
-    GATHERING = "gathering"
-    NORMAL = "normal"
-    STANDBY = "standby"
-    INSTALL = "install"
-    DOWNLOAD = "download"
+    UNKNOWN = 0x00
+    OUTDOOR = 0x10
+    HTU = 0x11
+    INDOOR = 0x20
+    ERV = 0x30
+    DIFFUSER = 0x35
+    MCU = 0x38
+    RMC = 0x40
+    WIRED_REMOTE = 0x50
+    PIM = 0x58
+    SIM = 0x59
+    PEAK = 0x5A
+    POWER_DIVIDER = 0x5B
+    WIFI_KIT = 0x62  # From "Notes" section in NOTES.md
 
 
-class PayloadTypes(StrEnum):
-    """NASA Payload Types."""
+class PacketType(IntEnum):
+    """NASA Packet Types from protocol byte 10."""
 
-    UNDEF = "undef"
-    READ = "read"
-    WRITE = "write"
-    REQUEST = "request"
-    NOTIFICATION = "notification"
-    RESPONSE = "response"
-    ACK = "ack"
-    NACK = "nack"
+    UNKNOWN = -1
+    STANDBY = 0
+    NORMAL = 1
+    GATHERING = 2
+    INSTALL = 3
+    DOWNLOAD = 4
+
+
+class DataType(IntEnum):
+    """NASA Data Types from protocol byte 10.
+    (Previously PayloadTypes as StrEnum)
+    """
+
+    UNKNOWN = -1
+    UNDEFINED = 0
+    READ = 1
+    WRITE = 2
+    REQUEST = 3
+    NOTIFICATION = 4
+    RESPONSE = 5
+    ACK = 6
+    NACK = 7
+
+
+class MessageSetType(IntEnum):
+    """NASA Message Set Type derived from Message Number (protocol bytes 13-14)."""
+
+    ENUM = 0  # 1 byte payload
+    VARIABLE = 1  # 2 bytes payload
+    LONG_VARIABLE = 2  # 4 bytes payload
+    STRUCTURE = 3  # structure payload
+
+
+class GenericFsv(IntEnum):
+    """Generic FSV Enums for True/False or Yes/No settings."""
+
+    NO = 0
+    YES = 1
+
+
+# Specific Message Enums from NOTES.md
+
+
+class OutOpCheckRefStep(IntEnum):
+    """
+    Refrigerant amount level (Message 0x808E).
+    Label (NASA.prc): ENUM*OUT_OP_CHECK_REF_STEP
+    As per NOTES.md, Min = 0, Max = 8.
+    The specific semantic meaning of each level (0-8) is not detailed in the notes.
+    The notes also mention: "This is Enum in definition. But we need operation,
+    so just consider this as variable."
+    """
+
+    LEVEL_0 = 0
+    LEVEL_1 = 1
+    LEVEL_2 = 2
+    LEVEL_3 = 3
+    LEVEL_4 = 4
+    LEVEL_5 = 5
+    LEVEL_6 = 6
+    LEVEL_7 = 7
+    LEVEL_8 = 8
+
+
+class InOperationPower(IntEnum):
+    """
+    Indoor unit power on/off (Message 0x4000).
+    Label (NASA.prc): ENUM*IN_OPERATION_POWER
+    Remarks from NOTES.md: "0 Off, 1 On, 2 On".
+    The distinction between ON_STATE_1 and ON_STATE_2 (if any) is not specified.
+    """
+
+    OFF = 0
+    ON_STATE_1 = 1
+    ON_STATE_2 = 2
+
+
+class InOperationMode(IntEnum):
+    """
+    Indoor unit control mode (Message 0x4001).
+    Label (NASA.prc): ENUM_IN_OPERATION_MODE
+    Remarks from NOTES.md: "0 Auto, 1 Cool, 2 Dry, 3 Fan, 4 Heat, 21 Cool Storage, 24 Hot water".
+    """
+
+    AUTO = 0
+    COOL = 1
+    DRY = 2
+    FAN = 3
+    HEAT = 4
+    COOL_STORAGE = 21
+    HOT_WATER = 24
+
+
+class OutdoorOperationStatus(IntEnum):
+    """
+    Outdoor Driving Mode / Outdoor Operation Status (Message 0x8001).
+    Derived from Label (NasaConst.java): NASA_OUTDOOR_OPERATION_STATUS
+    and remarks for ENUM_OUT_OPERATION_ODU_MODE.
+    """
+
+    OP_STOP = 0
+    OP_SAFETY = 1
+    OP_NORMAL = 2
+    OP_BALANCE = 3
+    OP_RECOVERY = 4
+    OP_DEICE = 5
+    OP_COMPDOWN = 6
+    OP_PROHIBIT = 7
+    OP_LINEJIG = 8
+    OP_PCBJIG = 9
+    OP_TEST = 10
+    OP_CHARGE = 11
+    OP_PUMPDOWN = 12
+    OP_PUMPOUT = 13
+    OP_VACCUM = 14  # Note: "VACCUM" as per NOTES.md, likely "VACUUM"
+    OP_CALORYJIG = 15
+    OP_PUMPDOWNSTOP = 16
+    OP_SUBSTOP = 17
+    OP_CHECKPIPE = 18
+    OP_CHECKREF = 19
+    OP_FPTJIG = 20
+    OP_NONSTOP_HEAT_COOL_CHANGE = 21
+    OP_AUTO_INSPECT = 22
+    OP_ELECTRIC_DISCHARGE = 23
+    OP_SPLIT_DEICE = 24
+    OP_INVETER_CHECK = 25  # Note: "INVETER" as per NOTES.md, likely "INVERTER"
+    OP_NONSTOP_DEICE = 26
+    OP_REM_TEST = 27
+    OP_RATING = 28
+    OP_PC_TEST = 29
+    OP_PUMPDOWN_THERMOOFF = 30
+    OP_3PHASE_TEST = 31
+    OP_SMARTINSTALL_TEST = 32
+    OP_DEICE_PERFORMANCE_TEST = 33
+    OP_INVERTER_FAN_PBA_CHECK = 34
+    OP_AUTO_PIPE_PAIRING = 35
+    OP_AUTO_CHARGE = 36
+
+
+class AdMultiTenantNo(IntEnum):
+    """
+    WiFi Kit Multi Tenant No. (Message 0x0025).
+    Label (NASA.prc): ENUM_AD_MULTI_TENANT_NO
+    Specific members not detailed in NOTES.md.
+    """
+
+    # Example: VALUE_0 = 0, VALUE_1 = 1 ... (actual values unknown)
+    pass
+
+
+class PnpPhase(IntEnum):
+    """
+    PNP (Plug and Play) Phase (Message 0x2004).
+    Derived from usage in pysamsungnasa.pnp and NASA_PNP label.
+    """
+
+    PHASE_0_END = 0  # nasa_is_pnp_end
+    PHASE_1_REQUEST = 1
+    # PHASE_2 is not explicitly mentioned with 0x2004 in pnp logic
+    PHASE_3_ADDRESSING = 3
+    PHASE_4_ACK = 4
+
+
+class PnpStep(IntEnum):
+    """
+    PNP (Plug and Play) Step (Message 0x2012).
+    Derived from usage in pysamsungnasa.pnp.
+    Label (NASA.prc): ENUM_NM*?
+    """
+
+    STEP_1 = 1  # Used in nasa_is_pnp_phase3_addressing
+    STEP_4 = 4  # Used in nasa_pnp_phase4_ack
+
+
+class InOperationModeReal(IntEnum):
+    """
+    Indoor unit current operation mode (Message 0x4002).
+    Label (NASA.prc): ENUM_IN_OPERATION_MODE_REAL.
+    XML ProtocolID: ENUM_in_operation_mode_real.
+    Remarks: "0 Auto, 1 Cool, 2 Dry, 3 Fan, 4 Heat, 11 Auto Cool, 12 Auto Dry, 13 Auto Fan, 14 Auto Heat, 21 Cool Storage, 24 Hot water, 255 NULL mode"
+    XML Item Value="0" is "Unknown", NOTES.md is "Auto". Preferring "Auto" from NOTES.md for semantic meaning.
+    """
+
+    AUTO = 0
+    COOL = 1
+    DRY = 2
+    FAN = 3
+    HEAT = 4
+    AUTO_COOL = 11
+    AUTO_DRY = 12
+    AUTO_FAN = 13
+    AUTO_HEAT = 14
+    COOL_STORAGE = 21
+    HOT_WATER = 24
+    NULL_MODE = 255
+
+
+class InOperationVentMode(IntEnum):
+    """
+    Ventilation operation mode (Message 0x4004).
+    Label (NASA.prc): ENUM_IN_OPERATION_VENT_MODE
+    Label (NasaConst.java): NASA_ERV_OPMODE
+    XML ProtocolID: ENUM_IN_OPERATION_VENT_MODE
+    """
+
+    NORMAL = 0
+    HEAT_EXCHANGE = 1  # XML: HeatEx
+    BYPASS = 2
+    NORMAL_PURIFY = 3  # XML: Normal+Purify
+    HEAT_EXCHANGE_PURIFY = 4  # XML: HeatEx+Purify
+    PURIFY = 5
+    SLEEP = 6
+    BYPASS_PURIFY = 7  # XML: Bypass+Purify
+    # XML Default: Unknown
+
+
+class InFanModeReal(IntEnum):
+    """
+    Indoor unit current air volume (Message 0x4007).
+    Label (NASA.prc): ENUM_IN_FAN_MODE_REAL
+    XML ProtocolID: ENUM_in_fan_mode_real
+    """
+
+    LOW = 1
+    MID = 2
+    HIGH = 3
+    TURBO = 4
+    AUTO_LOW = 10
+    AUTO_MID = 11
+    AUTO_HIGH = 12
+    UL = 13  # Ultra Low?
+    LL = 14  # Low Low?
+    HH = 15  # High High?
+    SPEED = 16  # Generic speed?
+    NATURAL_LOW = 17
+    NATURAL_MID = 18
+    NATURAL_HIGH = 19
+    OFF = 254
+    # XML Default: Unknown
+
+
+class InLouverHlPartSwing(IntEnum):
+    """
+    Up and down wind direction setting/status (partial swing) (Message 0x4012).
+    Label (NASA.prc): ENUM_IN_LOUVER_HL_PART_SWING
+    XML ProtocolID: ENUM_in_louver_hl_part_swing
+    """
+
+    SWING_OFF = 0  # XML: Sing Off
+    LOUVER_1 = 1
+    LOUVER_2 = 2
+    LOUVER_1_2 = 3
+    LOUVER_3 = 4
+    LOUVER_1_3 = 5
+    LOUVER_2_3 = 6
+    LOUVER_1_2_3 = 7
+    LOUVER_4 = 8
+    LOUVER_1_4 = 9
+    LOUVER_2_4 = 10
+    LOUVER_1_2_4 = 11
+    LOUVER_3_4 = 12
+    LOUVER_1_3_4 = 13
+    LOUVER_2_3_4 = 14
+    SWING_ON = 15
+    H_H_H = 64
+    M_H_H = 65
+    V_H_H = 66
+    H_M_H = 68
+    M_M_H = 69
+    V_M_H = 70
+    H_V_H = 72
+    M_V_H = 73
+    V_V_H = 74
+    H_H_M = 80
+    M_H_M = 81
+    V_H_M = 82
+    H_M_M = 84
+    M_M_M = 85
+    V_M_M = 86
+    H_V_M = 88
+    M_V_M = 89
+    V_V_M = 90
+    H_H_V = 96
+    M_H_V = 97
+    V_H_V = 98
+    H_M_V = 100
+    M_M_V = 101
+    V_M_V = 102
+    H_V_V = 104
+    M_V_V = 105
+    V_V_V = 106
+    # XML Default: Unknown
+
+
+class ErvFanSpeed(IntEnum):  # Or InFanVentMode
+    """
+    Indoor unit current air volume for ERV (Message 0x4008).
+    Label (NASA.prc): ENUM_IN_FAN_VENT_MODE
+    Label (NasaConst.java): NASA_ERV_FANSPEED
+    XML ProtocolID: ENUM_IN_FAN_VENT_MODE
+    """
+
+    AUTO = 0
+    LOW = 1
+    MID = 2
+    HIGH = 3
+    TURBO = 4
+    # XML Default: Unknown
+
+
+class DhwOpMode(IntEnum):  # Or InWaterHeaterMode
+    """
+    Water heater mode (DHW) (Message 0x4066).
+    Label (NASA.prc): ENUM_IN_WATER_HEATER_MODE
+    Label (NasaConst.java): NASA_DHW_OPMODE
+    Remarks: "0 Eco, 1 Standard, 2 Power, 3 Force"
+    """
+
+    ECO = 0
+    STANDARD = 1
+    POWER = 2
+    FORCE = 3
+
+
+class InThermostat1(IntEnum):
+    """
+    Hydro External Thermostat 1 status (Message 0x4069).
+    Label (NASA.prc): ENUM_IN_THERMOSTAT1
+    Remarks: "0 Off, 1 Cool, 2 Heat"
+    """
+
+    OFF = 0
+    COOL = 1
+    HEAT = 2
+
+
+class InThermostat2(IntEnum):
+    """
+    Hydro External Thermostat 2 status (Message 0x406A).
+    Label (NASA.prc): ENUM_IN_THERMOSTAT2
+    Remarks: "0 Off, 1 Cool, 2 Heat"
+    """
+
+    OFF = 0
+    COOL = 1
+    HEAT = 2
+
+
+class InBackupHeater(IntEnum):
+    """
+    Backup heater mode (Message 0x406C).
+    Label (NASA.prc): ENUM_IN_BACKUP_HEATER
+    Remarks: "0 Off, 1 Step 1, 2 Step 2"
+    """
+
+    OFF = 0
+    STEP_1 = 1
+    STEP_2 = 2
+
+
+class DhwReferenceTemp(IntEnum):  # Or InReferenceEhsTemp
+    """
+    Hydro Control Choice / DHW Reference Temperature source (Message 0x406F).
+    Label (NASA.prc): ENUM_IN_REFERENCE_EHS_TEMP
+    Label (NasaConst.java): NASA_DHW_REFERENCE_TEMP
+    Remarks: "0 Room, 1 Water out"
+    """
+
+    ROOM = 0
+    WATER_OUT = 1
+
+
+class AirflowLeftRight(IntEnum):  # Or InLouverLrSwing
+    """
+    Left and right wind direction settings/status (Message 0x407E).
+    Label (NASA.prc): ENUM*IN_LOUVER_LR_SWING
+    Label (NasaConst.java): NASA_AIRFLOW_LEFTRIGHT
+    Remarks: "0 Off, 1 On" (likely means 0=Fixed/Default, 1=Swing)
+    """
+
+    OFF_OR_FIXED = 0
+    ON_OR_SWING = 1
+
+
+class In2WayValve(IntEnum):
+    """
+    2-Way Valve state (Message 0x408A).
+    Label (NASA.prc): ENUM_IN_2WAY_VALVE
+    Remarks: "0 Off, 2 CV, 3 Boiler"
+    """
+
+    OFF = 0
+    CV = 2  # Constant Value?
+    BOILER = 3
+
+
+class InFsv2041WaterLawTypeHeating(IntEnum):
+    """
+    FSV Water Law Type for Heating (Message 0x4093).
+    Label (NASA.prc): ENUM_IN_FSV_2041
+    Remarks: "1 Floor, 2 FCU"
+    """
+
+    FLOOR = 1
+    FCU = 2
+
+
+class InFsv2081WaterLawTypeCooling(IntEnum):
+    """
+    FSV Water Law Type for Cooling (Message 0x4094).
+    Label (NASA.prc): ENUM_IN_FSV_2081
+    Remarks: "1 Floor, 2 FCU"
+    """
+
+    FLOOR = 1
+    FCU = 2
+
+
+class InFsv2091UseThermostat1(IntEnum):
+    """
+    FSV Use Thermostat 1 setting (Message 0x4095).
+    Label (NASA.prc): ENUM_IN_FSV_2091
+    Label (NasaConst.java): NASA_USE_THERMOSTAT1
+    Remarks: "values 0="No" up to 4="4""
+    """
+
+    NO = 0
+    VALUE_1 = 1
+    VALUE_2 = 2
+    VALUE_3 = 3
+    VALUE_4 = 4
+
+
+class InFsv2092UseThermostat2(IntEnum):
+    """
+    FSV Use Thermostat 2 setting (Message 0x4096).
+    Label (NASA.prc): ENUM_IN_FSV_2092
+    Label (NasaConst.java): NASA_USE_THERMOSTAT2
+    Remarks: "values 0="No" up to 4="4""
+    """
+
+    NO = 0
+    VALUE_1 = 1
+    VALUE_2 = 2
+    VALUE_3 = 3
+    VALUE_4 = 4
+
+
+class InFsv3011EnableDhw(IntEnum):
+    """
+    FSV Enable DHW setting (Message 0x4097).
+    Label (NASA.prc): ENUM_IN_FSV_3011
+    Label (NasaConst.java): NASA_ENABLE_DHW
+    Remarks: "values 0="No" up to 2="2""
+    """
+
+    NO = 0
+    VALUE_1 = 1  # Possibly YES or some level
+    VALUE_2 = 2  # Possibly another level
+
+
+class InFsv3031UseBoosterHeater(IntEnum):
+    """
+    FSV Use Booster Heater setting (Message 0x4098).
+    Label (NASA.prc): ENUM_IN_FSV_3031
+    Label (NasaConst.java): NASA_USE_BOOSTER_HEATER
+    Remarks: "0 Off, 1 On" (from NOTES.md)
+    XML: "0 No, 1 Yes"
+    """
+
+    NO_OR_OFF = 0
+    YES_OR_ON = 1
+
+
+InFsv3041 = GenericFsv
+
+
+class InFsv3042DayOfWeek(IntEnum):
+    """
+    FSV Day of Week setting (Message 0x409A).
+    Label (NASA.prc): ENUM_IN_FSV_3042
+    Remarks: "Sunday=0, Monday=1 .. up to 7=Everyday"
+    """
+
+    SUNDAY = 0
+    MONDAY = 1
+    TUESDAY = 2
+    WEDNESDAY = 3
+    THURSDAY = 4
+    FRIDAY = 5
+    SATURDAY = 6
+    EVERYDAY = 7
+
+
+InFsv3051 = GenericFsv
+
+
+class InFsv3061UseDhwThermostat(IntEnum):
+    """
+    FSV Use DHW Thermostat setting (Message 0x409C).
+    Label (NASA.prc): ENUM_IN_FSV_3061
+    Label (NasaConst.java): NASA_USE_DHW_THERMOSTAT
+    XML ProtocolID: ENUM_IN_FSV_3061
+    """
+
+    NO = 0
+    VALUE_1 = 1
+    VALUE_2 = 2
+    VALUE_3 = 3
+
+
+class InFsv3071(IntEnum):
+    """FSV setting (Message 0x409D). Label (NASA.prc): ENUM_IN_FSV_3071"""
+
+    ROOM = 0
+    TANK = 1
+
+
+class VacancyStatus(IntEnum):  # Or InStateKeyTag
+    """
+    Vacancy Control / Key Tag Status (Message 0x40BC).
+    Label (NASA.prc): ENUM_IN_STATE_KEY_TAG
+    Label (NasaConst.java): NASA_VACANCY_STATUS
+    """
+
+    UNOCCUPIED = 0  # Assumed
+    OCCUPIED = 1  # Assumed
+
+
+class InErrorHistoryClearForHass(IntEnum):
+    """
+    Error History Clear command/status (Message 0x40D6).
+    Label (NASA.prc): ENUM_IN_ERROR_HISTORY_CLEAR_FOR_HASS
+    """
+
+    NO_ACTION = 0  # Assumed
+    CLEAR = 1  # Assumed
+
+
+class InStateAutoStaticPressureRunning(IntEnum):
+    """
+    Auto Static Pressure Running state (Message 0x40BB).
+    Label (NASA.prc): ENUM*IN_STATE_AUTO_STATIC_PRESSURE_RUNNING
+    XML ProtocolID: ENUM_IN_STATE_AUTO_STATIC_PRESSURE_RUNNING
+    """
+
+    OFF = 0
+    COMPLETE = 1
+    RUNNING = 2
+
+
+class InStateFlowCheck(IntEnum):
+    """
+    State Flow Check status (Message 0x4102).
+    Label (NASA.prc): ENUM_IN_STATE_FLOW_CHECK
+    """
+
+    OFF_OR_OK = 0  # XML: Off, Assumed OK
+    ON_OR_FAIL = 1  # XML: On, Assumed Fail
+    # XML Default: Unknown
+
+
+class InFsvLoadSave(IntEnum):
+    """
+    FSV Load Save setting (Message 0x4125).
+    Label (NASA.prc): ENUM_IN_FSV_LOAD_SAVE
+    Remarks: "Min = 0 Max = 1"
+    """
+
+    VALUE_0 = 0
+    VALUE_1 = 1
+
+
+class InFsv2093(IntEnum):
+    """
+    FSV setting (Message 0x4127).
+    Label (NASA.prc): ENUM_IN_FSV_2093
+    Remarks: "Min = 1 Max = 4"
+    """
+
+    VALUE_1 = 1
+    VALUE_2 = 2
+    VALUE_3 = 3
+    VALUE_4 = 4
+
+
+class InFsv5022(IntEnum):
+    """
+    FSV setting (Message 0x4128).
+    Label (NASA.prc): ENUM_IN_FSV_5022
+    Remarks: "Min = 0 Max = 1"
+    """
+
+    VALUE_0 = 0
+    VALUE_1 = 1
+
+
+class InFsv2094(IntEnum):
+    """
+    FSV setting (Message 0x412A).
+    Label (NASA.prc): ENUM_IN_FSV_2094
+    Remarks: "values 0="No" up to 4="4""
+    """
+
+    NO = 0
+    VALUE_1 = 1
+    VALUE_2 = 2
+    VALUE_3 = 3
+    VALUE_4 = 4
+
+
+class InFsvLoadSaveAlt(IntEnum):
+    """
+    FSV Load Save setting (alternative, Message 0x412D).
+    Label (NASA.prc): ENUM_IN_FSV_LOAD_SAVE
+    Remarks: "Min = 0 Max = 1, similar name as 0x4125"
+    """
+
+    VALUE_0 = 0
+    VALUE_1 = 1
+
+
+class OutOperationServiceOp(IntEnum):
+    """
+    Outdoor unit service operation steps (Message 0x8000).
+    Label (NASA.prc): ENUM_OUT_OPERATION_SERVICE_OP
+    Remarks: "2 Heating test run, 3 Pump out, 13 Cooling test run, 14 Pump down"
+    """
+
+    HEATING_TEST_RUN = 2
+    PUMP_OUT = 3
+    COOLING_TEST_RUN = 13
+    PUMP_DOWN = 14
+
+
+class OutdoorOperationMode(IntEnum):  # Or OutOperationHeatCool
+    """
+    Outdoor unit cooling/heating mode (Message 0x8003).
+    Label (NASA.prc): ENUM*OUT_OPERATION_HEATCOOL
+    Label (NasaConst.java): NASA_OUTDOOR_OPERATION_MODE
+    Remarks: "1 Cool, 2 Heat, 3 CoolMain, 4 HeatMain"
+    """
+
+    UNDEFINED = 0
+    COOL = 1
+    HEAT = 2
+    COOL_MAIN = 3
+    HEAT_MAIN = 4
+
+
+class OutOpTestOpComplete(IntEnum):
+    """
+    Outdoor unit test operation complete status (Message 0x8046).
+    Label (NASA.prc): ENUM*OUT_OP_TEST_OP_COMPLETE
+    Label (NasaConst.java): NASA_OUTDOOR_TEST_OP_COMPLETE
+    """
+
+    NOT_COMPLETE = 0  # Assumed
+    COMPLETE = 1  # Assumed
+
+
+class OutdoorIndoorDefrostStep(IntEnum):  # Or OutDeiceStepIndoor
+    """
+    Indoor unit defrost operation steps (from outdoor unit's perspective) (Message 0x8061).
+    Label (NASA.prc): ENUM*OUT_DEICE_STEP_INDOOR
+    Label (NasaConst.java): NASA_OUTDOOR_INDOOR_DEFROST_STEP
+    Remarks: "1 Defrost stage 1, 2 Defrost stage 2, 3 Defrost stage 3, 7 Defrost operation end stage, 255 No defrost operation"
+    """
+
+    DEFROST_STAGE_1 = 1
+    DEFROST_STAGE_2 = 2
+    DEFROST_STAGE_3 = 3
+    DEFROST_END_STAGE = 7
+    NO_DEFROST_OPERATION = 255
+
+
+class OutOutdoorSystemReset(IntEnum):
+    """
+    Outdoor unit system reset command/status (Message 0x8065).
+    Label (NasaConst.java): NASA_OUTDOOR_SYSTEM_RESET
+    """
+
+    NO_ACTION = 0  # Assumed
+    RESET = 1  # Assumed
+
+
+class OutCheckRefResult(IntEnum):
+    """
+    Refrigerant amount determination result (Message 0x809C).
+    Label (NASA.prc): ENUM_OUT_CHECK_REF_RESULT
+    """
+
+    NOT_INSPECTED = 0  # XML: RefResult_NotInspect
+    NORMAL_COMPLETION = 1  # XML: 정상완료 (Normal completion)
+    NOT_JUDGED = 2  # XML: RefResult_NotJudgment
+    SUBCOOLING_FAIL = 3  # XML: 과냉도 확보불가 (Subcooling cannot be secured)
+    NORMAL = 4  # XML: RefResult_Normal
+    INSUFFICIENT = 5  # XML: RefResult_Insufficient
+    CANNOT_JUDGE = 6  # XML: 판단불가 (Cannot judge)
+    TEMP_RANGE_EXCEEDED = 7  # XML: 온도범위 초과 (Temperature range exceeded)
+
+
+class OutOutdoorCoolonlyModel(IntEnum):
+    """
+    Outdoor unit cool-only model status (Message 0x809D).
+    Label (NasaConst.java): NASA_OUTDOOR_COOLONLY_MODEL
+    """
+
+    NO_HEAT_PUMP = 0  # Assumed (i.e., is cool only)
+    YES_HEAT_PUMP = 1  # Assumed (i.e., not cool only)
+
+
+class OutEhsWateroutType(IntEnum):
+    """
+    EHS Water Outlet Type (Message 0x80D8).
+    Label (NASA.prc): ENUM_OUT_EHS_WATEROUT_TYPE
+    Remarks: "0 Default, 1 70°C"
+    """
+
+    DEFAULT = 0
+    TEMP_70C = 1
+
+
+# Generic Enums for unknown ?? messages based on prefix
+class InUnknown400F(IntEnum):
+    """Indoor unit enum for message 0x400F. Specifics unknown."""
+
+    pass
+
+
+class InUnknown4010(IntEnum):
+    """Indoor unit enum for message 0x4010. Specifics unknown."""
+
+    pass
+
+
+class InUnknown4015(IntEnum):
+    """Indoor unit enum for message 0x4015. Specifics unknown."""
+
+    pass
+
+
+class InUnknown4029(IntEnum):
+    """Indoor unit enum for message 0x4029. Specifics unknown."""
+
+    pass
+
+
+class InUnknown402A(IntEnum):
+    """Indoor unit enum for message 0x402A. Specifics unknown."""
+
+    pass
+
+
+class InUnknown402B(IntEnum):
+    """Indoor unit enum for message 0x402B. Specifics unknown."""
+
+    pass
+
+
+class InUnknown402D(IntEnum):
+    """Indoor unit enum for message 0x402D. Specifics unknown."""
+
+    pass
+
+
+class InUnknown4031(IntEnum):
+    """Indoor unit enum for message 0x4031. Specifics unknown."""
+
+    pass
+
+
+class InUnknown4035(IntEnum):
+    """Indoor unit enum for message 0x4035. Specifics unknown."""
+
+    pass
+
+
+class InUnknown4047(IntEnum):
+    """Indoor unit enum for message 0x4047. Specifics unknown."""
+
+    pass
+
+
+class InUnknown4048(IntEnum):
+    """Indoor unit enum for message 0x4048. Specifics unknown."""
+
+    pass
+
+
+class InUnknown404F(IntEnum):
+    """Indoor unit enum for message 0x404F. Specifics unknown."""
+
+    pass
+
+
+class InUnknown4051(IntEnum):
+    """Indoor unit enum for message 0x4051. Specifics unknown."""
+
+    pass
+
+
+class InUnknown4059(IntEnum):
+    """Indoor unit enum for message 0x4059. Specifics unknown."""
+
+    pass
+
+
+class InUnknown405F(IntEnum):
+    """Indoor unit enum for message 0x405F. Specifics unknown."""
+
+    pass
+
+
+class InUnknown4073(IntEnum):
+    """Indoor unit enum for message 0x4073. Specifics unknown."""
+
+    pass
+
+
+class InUnknown4074(IntEnum):
+    """Indoor unit enum for message 0x4074. Specifics unknown."""
+
+    pass
+
+
+class InRoomTempSensor(IntEnum):
+    """Indoor unit room temperature sensor selection/status (Message 0x4076). Label (NASA.prc): ENUM*IN_ROOM_TEMP_SENSOR"""
+
+    INDOOR_UNIT = 0  # XML: Idiom_IndoorUnit
+    WIRED_REMOCON = 1  # XML: Idiom_WiredRemocon
+
+
+class InUnknown4077(IntEnum):
+    """Indoor unit enum for message 0x4077. Specifics unknown."""
+
+    pass
+
+
+class InUnknown407B(IntEnum):
+    """Indoor unit enum for message 0x407B. Specifics unknown."""
+
+    pass
+
+
+class InUnknown407D(IntEnum):
+    """Indoor unit enum for message 0x407D. Specifics unknown."""
+
+    pass
+
+
+class InUnknown4085(IntEnum):
+    """Indoor unit enum for message 0x4085. Specifics unknown."""
+
+    pass
+
+
+class InFsv4011(IntEnum):
+    """FSV setting (Message 0x409E). Label (NASA.prc): ENUM_IN_FSV_4011"""
+
+    DHW = 0
+    HEATING = 1
+
+
+class InFsv4021(IntEnum):
+    """FSV setting (Message 0x409F). Label (NASA.prc): ENUM_IN_FSV_4021"""
+
+    VALUE_0 = 0
+    VALUE_1 = 1
+    VALUE_2 = 2
+
+
+class InFsv4022(IntEnum):
+    """FSV setting (Message 0x40A0). Label (NASA.prc): ENUM_IN_FSV_4022"""
+
+    BUH_BSH_BOTH = 0  # XML: BUH/BSH Both
+    BUH = 1
+    BSH = 2
+
+
+InFsv4023 = GenericFsv  # 0x40A1
+InFsv4031 = GenericFsv  # 0x40A2
+InFsv4032 = GenericFsv  # 0x40A3
+
+
+class InFsv4041(IntEnum):
+    """FSV setting (Message 0x40C0). Label (NASA.prc): ENUM_IN_FSV_4041"""
+
+    NO = 0
+    VALUE_1 = 1
+    VALUE_2 = 2
+
+
+class InFsv4061(IntEnum):
+    """FSV setting (Message 0x411A). Label (NASA.prc): ENUM_IN_FSV_4061"""
+
+    VALUE_0 = 0
+    VALUE_1 = 1
+
+
+class InFsv5033(IntEnum):
+    """FSV setting (Message 0x4107). Label (NASA.prc): ENUM_IN_FSV_5033"""
+
+    A2A = 0
+    DHW = 1
+
+
+InFsv5041 = GenericFsv  # 0x40A4
+
+
+class InFsv5042(IntEnum):
+    """FSV setting (Message 0x40A5). Label (NASA.prc): ENUM_IN_FSV_5042"""
+
+    ALL = 0
+    VALUE_1 = 1
+    VALUE_2 = 2
+    VALUE_3 = 3
+
+
+class InFsv5043(IntEnum):
+    """FSV setting (Message 0x40A6). Label (NASA.prc): ENUM_IN_FSV_5043"""
+
+    LOW = 0
+    HIGH = 1
+
+
+class InFsv5051(IntEnum):
+    """FSV setting (Message 0x40A7). Label (NASA.prc): ENUM_IN_FSV_5051"""
+
+    NO = 0
+    YES = 1
+
+
+class InFsv5061(IntEnum):  # 0x40B4
+    """Indoor unit enum for FSV message 0x40B4. Specifics unknown."""
+
+    pass
+
+
+class InUnknown40B5(IntEnum):
+    """Indoor unit enum for message 0x40B5. Specifics unknown."""
+
+    pass
+
+
+class InFsv4044(IntEnum):  # 0x40C1
+    """Indoor unit enum for FSV message 0x40C1. Specifics unknown."""
+
+    pass
+
+
+class InFsv4051(IntEnum):  # 0x40C2
+    """Indoor unit enum for FSV message 0x40C2. Specifics unknown."""
+
+    pass
+
+
+class InFsv4053(IntEnum):  # 0x40C3
+    """Indoor unit enum for FSV message 0x40C3. Specifics unknown."""
+
+    pass
+
+
+class InUnknown40C6(IntEnum):
+    """Indoor unit enum for message 0x40C6. Specifics unknown."""
+
+    pass
+
+
+class InUnknown40E3(IntEnum):
+    """Indoor unit enum for message 0x40E3. Specifics unknown."""
+
+    pass
+
+
+class InChillerWaterlawSensor(IntEnum):
+    """
+    DMV Chiller Option / Chiller Water Law Sensor (Message 0x40E7).
+    Label (NASA.prc): ENUM*IN_CHILLER_WATERLAW_SENSOR
+    XML ProtocolID: ENUM_IN_CHILLER_WATERLAW_SENSOR
+    """
+
+    OUTDOOR = 0
+    ROOM = 1
+
+
+class InChillerSettingSilentLevel(IntEnum):
+    """
+    Chiller Setting Silent Level (Message 0x40FB).
+    Label (NASA.prc): ENUM_IN_CHILLLER_SETTING_SILENT_LEVEL (Typo in source)
+    XML ProtocolID: ENUM_IN_CHILLLER_SETTING_SILENT_LEVEL
+    """
+
+    NONE = 0
+    LEVEL1 = 1
+    LEVEL2 = 2
+    LEVEL3 = 3
+
+
+class InChillerSettingDemandLevel(IntEnum):
+    """
+    Chiller Setting Demand Level (Message 0x40FC).
+    Label (NASA.prc): ENUM_IN_CHILLER_SETTING_DEMAND_LEVEL
+    XML ProtocolID: ENUM_IN_CHILLER_SETTING_DEMAND_LEVEL
+    """
+
+    PERCENT_100 = 0
+    PERCENT_95 = 1
+    PERCENT_90 = 2
+    PERCENT_85 = 3
+    PERCENT_80 = 4
+    PERCENT_75 = 5
+    PERCENT_70 = 6
+    PERCENT_65 = 7
+    PERCENT_60 = 8
+    PERCENT_55 = 9
+    PERCENT_50 = 10
+    NOT_APPLY = 11
+    # XML Default: Unknown
+
+
+InChillerExtWaterOutInput = GenericFsv  # 0x4101
+
+
+class InTdmIndoorType(IntEnum):
+    """
+    TDM Indoor Type (Message 0x4108).
+    Label (NASA.prc): ENUM_IN_TDM_INDOOR_TYPE
+    XML ProtocolID: ENUM_IN_TDM_INDOOR_TYPE
+    """
+
+    A2A = 0
+    A2W = 1
+
+
+class In3WayValve2(IntEnum):
+    """
+    3-Way Valve 2 state (Message 0x4113).
+    Label (NASA.prc): ENUM_IN_3WAY_VALVE_2
+    XML ProtocolID: ENUM_IN_3WAY_VALVE_2
+    """
+
+    ROOM = 0
+    TANK = 1
+
+
+class InUnknown4117(IntEnum):
+    """Indoor unit enum for message 0x4117. Specifics unknown."""
+
+    pass
+
+
+class InRoomTempSensorZone2(IntEnum):  # 0x4118
+    """Indoor unit enum for message 0x4118 (Room Temp Sensor Zone 2). Specifics unknown."""
+
+    pass
+
+
+class InFsv5081(IntEnum):  # 0x411B
+    """Indoor unit enum for FSV message 0x411B. Specifics unknown."""
+
+    pass
+
+
+class InFsv5091(IntEnum):  # 0x411C
+    """Indoor unit enum for FSV message 0x411C. Specifics unknown."""
+
+    pass
+
+
+class InFsv5094(IntEnum):  # 0x411D
+    """Indoor unit enum for FSV message 0x411D. Specifics unknown."""
+
+    pass
+
+
+InPvContactState = GenericFsv  # 0x4123
+
+
+class InSilenceLevel(IntEnum):  # 0x4129
+    """Indoor unit enum for message 0x4129 (Silence Level). Specifics unknown."""
+
+    pass
+
+
+class IndoorModelInformation(IntEnum):  # Derived from VAR_in_model_information (0x4229) Enum block in XML
+    """Indoor Unit Model Information (derived from Message 0x4229 in XML)."""
+
+    MASTER_N = 12
+    SLIM_1WAY = 31
+    BIG_SLIM_1WAY = 32
+    GLOBAL_4WAY = 51
+    GLOBAL_MINI_4WAY = 52
+    MINI_4WAY = 53
+    BIG_DUCT = 62
+    GLOBAL_BIG_DUCT = 63
+    FRESH_DUCT = 68
+    BIG_CEILING = 71
+    MINI_AHU = 98
+    ERV_PLUS = 108
+    EHS_SPLIT = 115
+    EHS_MONO = 116
+    EHS_TDM = 117
+    EHS_HT = 125  # Also covers 125-129 range
+    DIFFUSER = 170
+    # Ranges like FSC_PAC (1-9), RAC (10-19) etc. are harder to represent directly in IntEnum members.
+    # Only discrete values are added.
+    # XML Default: Unknown
+
+
+class OutUnknown8002(IntEnum):
+    """Outdoor unit enum for message 0x8002. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown8005(IntEnum):
+    """Outdoor unit enum for message 0x8005. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown800D(IntEnum):
+    """Outdoor unit enum for message 0x800D. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown8031(IntEnum):
+    """Outdoor unit enum for message 0x8031. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown8032(IntEnum):
+    """Outdoor unit enum for message 0x8032. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown8033(IntEnum):
+    """Outdoor unit enum for message 0x8033. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown803F(IntEnum):
+    """Outdoor unit enum for message 0x803F. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown8043(IntEnum):
+    """Outdoor unit enum for message 0x8043. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown8045(IntEnum):
+    """Outdoor unit enum for message 0x8045. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown8048(IntEnum):
+    """Outdoor unit enum for message 0x8048. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown805E(IntEnum):
+    """Outdoor unit enum for message 0x805E. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown8063(IntEnum):
+    """Outdoor unit enum for message 0x8063. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown8077(IntEnum):
+    """Outdoor unit enum for message 0x8077. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown8078(IntEnum):
+    """Outdoor unit enum for message 0x8078. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown8079(IntEnum):
+    """Outdoor unit enum for message 0x8079. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown807A(IntEnum):
+    """Outdoor unit enum for message 0x807A. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown807B(IntEnum):
+    """Outdoor unit enum for message 0x807B. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown807C(IntEnum):
+    """Outdoor unit enum for message 0x807C. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown807D(IntEnum):
+    """Outdoor unit enum for message 0x807D. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown807E(IntEnum):
+    """Outdoor unit enum for message 0x807E. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown807F(IntEnum):
+    """Outdoor unit enum for message 0x807F. Specifics unknown."""
+
+    pass
+
+
+class OutdoorExtCmdOperation(IntEnum):  # 0x8081
+    """Outdoor unit enum for message 0x8081 (NASA_OUTDOOR_EXT_CMD_OPERATION). Specifics unknown."""
+
+    pass
+
+
+class OutUnknown8083(IntEnum):
+    """Outdoor unit enum for message 0x8083. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown808C(IntEnum):
+    """Outdoor unit enum for message 0x808C. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown808D(IntEnum):
+    """Outdoor unit enum for message 0x808D. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown808F(IntEnum):
+    """Outdoor unit enum for message 0x808F. Specifics unknown."""
+
+    pass
+
+
+class OutdoorDredLevel(IntEnum):  # 0x80A7
+    """Outdoor unit enum for message 0x80A7 (NASA_OUTDOOR_DRED_LEVEL). Specifics unknown."""
+
+    pass
+
+
+class OutUnknown80A8(IntEnum):
+    """Outdoor unit enum for message 0x80A8. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown80A9(IntEnum):
+    """Outdoor unit enum for message 0x80A9. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown80AA(IntEnum):
+    """Outdoor unit enum for message 0x80AA. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown80AB(IntEnum):
+    """Outdoor unit enum for message 0x80AB. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown80AE(IntEnum):
+    """Outdoor unit enum for message 0x80AE. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown80B1(IntEnum):
+    """Outdoor unit enum for message 0x80B1. Specifics unknown."""
+
+    pass
+
+
+class OutdoorChSwitchValue(IntEnum):  # 0x80B2
+    """Outdoor unit enum for message 0x80B2 (NASA_OUTDOOR_CH_SWITCH_VALUE). Specifics unknown."""
+
+    pass
+
+
+class OutUnknown80B6(IntEnum):
+    """Outdoor unit enum for message 0x80B6. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown80BC(IntEnum):
+    """Outdoor unit enum for message 0x80BC. Specifics unknown."""
+
+    pass
+
+
+class OutUnknown80CE(IntEnum):
+    """Outdoor unit enum for message 0x80CE. Specifics unknown."""
+
+    pass

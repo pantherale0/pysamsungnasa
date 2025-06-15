@@ -1,5 +1,7 @@
 """NASA PNP."""
 
+import os
+
 from pysamsungnasa.helpers import bin2hex, hex2bin, getnonce, resetnonce
 
 

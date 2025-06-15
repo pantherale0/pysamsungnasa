@@ -23,7 +23,6 @@ class NasaClient:
     _writer_task: asyncio.Task | None = None
     _tx_queue: asyncio.Queue[bytes] | None = None
     _rx_queue: asyncio.Queue[bytes] | None = None
-    _rx_data: bytes = b""
 
     def __init__(
         self,
@@ -80,8 +79,6 @@ class NasaClient:
         # or will be closed when its task is cancelled.
         self._socket_reader = None  # Ensure it's None
 
-        self._rx_data = b""  # Clear any partial received data
-
         if self._disconnect_event_handler:
             try:
                 res = self._disconnect_event_handler()
@@ -126,36 +123,31 @@ class NasaClient:
 
     async def _partial_packet_handler(self, bin_data: bytes):
         """A partial packet handler for the reader."""
-        async with self._reader_lock:
-            if bin_data is None or len(bin_data) == 0:
-                return
-            if self._rx_queue is None:
-                _LOGGER.warning("_partial_packet_handler called with no rx_queue.")
-                return
-            self._rx_data += bin_data
+        if bin_data is None or len(bin_data) == 0:
+            return
         while True:
             if not self._connection_status or self._rx_queue is None:
                 _LOGGER.debug("Disconnected or rx_queue is None, stopping packet processing.")
                 break
-            if len(self._rx_data) < 1 + 2:
+            if len(bin_data) < 1 + 2:
                 # not enough data yet.
                 break
-            _LOGGER.debug("Buffer length: %s", len(self._rx_data))
-            _LOGGER.debug("Buffer data: %s", bin2hex(self._rx_data))
-            fields = struct.unpack_from(">BH", self._rx_data)
+            _LOGGER.debug("Buffer length: %s", len(bin_data))
+            _LOGGER.debug("Buffer data: %s", bin2hex(bin_data))
+            fields = struct.unpack_from(">BH", bin_data)
             expect_packet_len = 1 + fields[1] + 1
             if fields[0] != 0x32:
                 _LOGGER.debug("Invalid prefix, consuming.")
-                if len(self._rx_data) > 1:
+                if len(bin_data) > 1:
                     async with self._reader_lock:
-                        self._rx_data = self._rx_data[1:]
+                        bin_data = bin_data[1:]
                 continue
-            if len(self._rx_data) < expect_packet_len:
+            if len(bin_data) < expect_packet_len:
                 # not enough data yet.
                 break
 
             # extract packet
-            packet = self._rx_data[:expect_packet_len]
+            packet = bin_data[:expect_packet_len]
             if len(packet) != expect_packet_len:
                 _LOGGER.error("Invalid encoded length: %s", bin2hex(packet))
                 break
@@ -170,21 +162,16 @@ class NasaClient:
                 if packet_crc != packet_end[0]:
                     _LOGGER.error("Invalid CRC expected %s got %s", hex(packet_crc), hex(packet_end[0]))
                     break
-                await self._rx_queue.put(packet_data)
-                break
+                return packet_data
             except struct.error as e:
                 _LOGGER.error(
                     "Struct unpack error during packet processing: %s. Packet: %s. Consuming STX.", e, bin2hex(packet)
                 )
-                async with self._reader_lock:
-                    self._rx_data = self._rx_data[1:]
                 continue
             except Exception as ex:  # Catch-all for other processing errors
                 _LOGGER.exception(
                     "Exception while processing a packet: %s. Packet: %s. Consuming STX.", ex, bin2hex(packet)
                 )
-                async with self._reader_lock:
-                    self._rx_data = self._rx_data[1:]
                 continue
 
     async def _reader(self):
@@ -204,8 +191,12 @@ class NasaClient:
                     _LOGGER.info("Reader: Connection closed by peer (EOF).")
                     await self._handle_disconnection(EOFError("Connection closed by peer"))
                     break
-                _LOGGER.debug("Received data: %s", bin2hex(data))
-                await self._partial_packet_handler(data)
+                await self._rx_queue.put(data)
+                _LOGGER.debug(
+                    "Received data and queued for packet processing (pending=%s): %s",
+                    self._rx_queue.qsize(),
+                    bin2hex(data),
+                )
             except (asyncio.IncompleteReadError, ConnectionResetError, OSError) as ex:
                 _LOGGER.warning("Reader: Read error, assuming disconnection: %s", ex)
                 await self._handle_disconnection(ex)
@@ -222,7 +213,7 @@ class NasaClient:
     async def _start_read_session(self) -> bool:
         """Start reader task."""
         if self._reader_task and not self._reader_task.done():
-            _LOGGER.debug("Reader task already running.")
+            _LOGGER.error("Reader task already running.")
             return True
         if not self._connection_status or not self._socket_reader:
             _LOGGER.error("Cannot start reader session: not connected or no socket reader.")
@@ -244,14 +235,14 @@ class NasaClient:
                 except asyncio.CancelledError:
                     _LOGGER.debug("Reader task successfully cancelled.")
                 except Exception as e:
-                    _LOGGER.debug("Exception during reader task cancellation/cleanup: %s", e)
+                    _LOGGER.exception("Exception during reader task cancellation/cleanup: %s", e)
             _LOGGER.debug("Reader session ended.")
         return task_was_present
 
     async def _start_writer_session(self) -> bool:
         """Start writer task from queue."""
         if self._writer_task and not self._writer_task.done():
-            _LOGGER.debug("Writer task already running.")
+            _LOGGER.error("Writer task already running.")
             return True
         if not self._connection_status or not self._socket_writer:
             _LOGGER.error("Cannot start writer session: not connected or no socket writer.")
@@ -274,7 +265,7 @@ class NasaClient:
                 except asyncio.CancelledError:
                     _LOGGER.debug("Writer task successfully cancelled.")
                 except Exception as e:
-                    _LOGGER.debug("Exception during writer task cancellation/cleanup: %s", e)
+                    _LOGGER.exception("Exception during writer task cancellation/cleanup: %s", e)
             _LOGGER.debug("Writer session ended.")
 
         if self._tx_queue:  # Drain and clear queue
@@ -290,11 +281,11 @@ class NasaClient:
     async def _start_read_queue_session(self) -> bool:
         """Start reader task from queue."""
         if self._queue_processor_task and not self._queue_processor_task.done():
-            _LOGGER.debug("Queue processor task already running.")
+            _LOGGER.error("Queue processor task already running.")
             return True
         # This task doesn't directly depend on socket, but on _rx_queue
         self._rx_queue = asyncio.Queue()
-        self._queue_processor_task = asyncio.create_task(self._queue_processor())
+        self._queue_processor_task = asyncio.create_task(self._read_queue_processor())
         _LOGGER.debug("Read queue session started.")
         return True
 
@@ -324,10 +315,10 @@ class NasaClient:
             self._rx_queue = None
         return task_was_present
 
-    async def _queue_processor(self):
+    async def _read_queue_processor(self):
         """Async read queue processor task."""
         if self._rx_queue is None:
-            _LOGGER.debug("QueueProcessor: RX queue is None at start, exiting.")
+            _LOGGER.error("QueueProcessor: RX queue is None at start, exiting.")
 
         _LOGGER.debug("Queue processor task started.")
         while self._connection_status or (self._rx_queue and not self._rx_queue.empty()):
@@ -335,10 +326,12 @@ class NasaClient:
             try:
                 # Use a timeout to allow the loop to check _connection_status
                 # and gracefully exit if queue becomes None externally.
-                cmd = await asyncio.wait_for(self._rx_queue.get(), timeout=1.0)
-                if cmd is not None and self._rx_event_handler:
+                data = await asyncio.wait_for(self._rx_queue.get(), timeout=1.0)
+                if data is not None and self._rx_event_handler:
+                    _LOGGER.debug("QueueProcessor: Processing data: %s", bin2hex(data))
+                    data = await self._partial_packet_handler(data)
                     try:
-                        self._rx_event_handler(cmd)
+                        self._rx_event_handler(data)
                     except Exception as eh_ex:
                         _LOGGER.error("Error in rx_event_handler: %s", eh_ex)
                 self._rx_queue.task_done()
@@ -359,7 +352,7 @@ class NasaClient:
     async def _writer(self):
         """Async write task."""
         if self._tx_queue is None or self._socket_writer is None:
-            _LOGGER.debug("Writer: TX queue or socket writer is None at start, exiting.")
+            _LOGGER.error("Writer: TX queue or socket writer is None at start, exiting.")
             return
         _LOGGER.debug("Writer task started.")
         while self._connection_status:

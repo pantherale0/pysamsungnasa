@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from .nasa import SamsungNasa
+
 __version__ = "0.0.0"
 
-
-class SamsungNasa:
-    """Represent the Samsung NASA protocol with all"""
+__all__ = ["SamsungNasa"]

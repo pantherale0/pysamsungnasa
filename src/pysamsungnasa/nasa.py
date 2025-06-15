@@ -1,9 +1,14 @@
 """Represent the NASA protocol."""
 
+import logging
+from typing import Any
+
 from .config import NasaConfig
 from .device import NasaDevice
 from .protocol.parser import NasaPacketParser
 from .nasa_client import NasaClient
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class SamsungNasa:
@@ -12,10 +17,10 @@ class SamsungNasa:
     config: NasaConfig
     devices: dict[str, NasaDevice] = {}
 
-    def __init__(self, host: str, port: int, config: dict, disconnect_event_handler=None) -> None:
+    def __init__(self, host: str, port: int, config: dict[str, Any], disconnect_event_handler=None) -> None:
         """Initialize the NASA protocol."""
         self.config = NasaConfig(**config)
-        self.parser = NasaPacketParser()
+        self.parser = NasaPacketParser(_new_device_handler=self._new_device_handler)
         if self.config.device_addresses is not None:
             for address, device_type in self.config.device_addresses:
                 self.devices[address] = NasaDevice(
@@ -31,10 +36,14 @@ class SamsungNasa:
 
     def _new_device_handler(self, **kwargs):
         """Handle messages from a new device."""
-        if kwargs["dest"] not in self.devices:
-            self.devices[kwargs["dest"]] = NasaDevice(
-                address=kwargs["dest"], device_type="unknown", packet_parser=self.parser, config=self.config
+        if kwargs["source"] not in self.devices:
+            self.devices[kwargs["source"]] = NasaDevice(
+                address=kwargs["source"],
+                device_type=kwargs["source_class"],
+                packet_parser=self.parser,
+                config=self.config,
             )
+            _LOGGER.info("New %s device discovered: %s", kwargs["source_class"], kwargs["source"])
 
     async def start(self):
         """Start the NASA protocol."""
