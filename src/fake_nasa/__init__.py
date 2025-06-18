@@ -7,7 +7,7 @@ import threading
 import time
 
 from ..pysamsungnasa.protocol.enum import OutdoorOperationStatus, DhwOpMode, InOperationMode
-from ..pysamsungnasa.helpers import hex2bin
+from ..pysamsungnasa.helpers import hex2bin, bin2hex
 from .messages import MESSAGES
 
 _LOGGER = logging.getLogger(__name__)
@@ -142,7 +142,7 @@ class FakeNasa:
                             data = self._client_socket.recv(1024)
                             if not data:
                                 break
-                            _LOGGER.debug("Received data: %s", data)
+                            _LOGGER.info("Received data: %s", bin2hex(data))
                         except ConnectionResetError:
                             break
                         except Exception as e:

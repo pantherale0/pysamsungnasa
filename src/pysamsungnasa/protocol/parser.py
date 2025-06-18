@@ -2,11 +2,14 @@
 
 from typing import Callable
 
+import logging
 import struct
 
 from ..helpers import bin2hex
 from .enum import PacketType, DataType, AddressClass
-from .messages import nasa_message_name
+from .factory import parse_message, get_nasa_message_name
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class NasaPacketParser:
@@ -33,6 +36,79 @@ class NasaPacketParser:
         self._device_handlers.setdefault(address, [])
         if callback in self._device_handlers[address]:
             self._device_handlers[address].remove(callback)
+
+    def _process_packet(self, *nargs, **kwargs: str | bytes | PacketType | DataType | int | list[list]):
+        """Process a packet."""
+        if kwargs["packetType"] != PacketType.NORMAL:
+            _LOGGER.error("Ignoring packet type %s", kwargs["packetType"])
+            return
+        if kwargs["payloadType"] not in [DataType.NOTIFICATION, DataType.WRITE, DataType.RESPONSE]:
+            _LOGGER.error("Ignoring payload type %s", kwargs["payloadType"])
+            return
+        for ds in kwargs["dataSets"]:
+            if not isinstance(ds, list):
+                _LOGGER.warning("Invalid data set: %s", ds)
+                continue
+            msg_number = ds[0]
+            formatted_msg_number = f"0x{msg_number:04x}"
+            payload_bytes = None
+            description = "UNKNOWN"
+            if msg_number == -1 and len(ds) >= 3 and ds[1] == "STRUCTURE":
+                # Structure message: index 2 contains the raw bytes of the structure
+                payload_bytes = ds[2]
+                description = ds[1]
+            elif len(ds) >= 4:
+                # Normal message: index 3 contains the value_bytes
+                payload_bytes = ds[3]
+                description = ds[1]
+            else:
+                _LOGGER.warning("Invalid data set: %s", ds)
+                continue
+
+            try:
+                parsed_message = parse_message(ds[0], payload_bytes, description)
+                _LOGGER.debug(
+                    "Parsed message %s (%s): %s",
+                    formatted_msg_number,
+                    description,
+                    parsed_message,
+                )
+            except Exception as e:
+                _LOGGER.error("Failed to parse message %s (%s): %s", formatted_msg_number, description, e)
+                continue
+            if kwargs["source"] in self._device_handlers:
+                for handler in self._device_handlers[kwargs["source"]]:
+                    handler(
+                        source=kwargs["source"],
+                        source_class=kwargs.get("source_class", AddressClass.UNKNOWN),
+                        dest=kwargs["dest"],
+                        dest_class=kwargs.get("dest_class", AddressClass.UNKNOWN),
+                        isInfo=kwargs["isInfo"],
+                        protocolVersion=kwargs["protocolVersion"],
+                        retryCounter=kwargs["retryCounter"],
+                        packetType=kwargs["packetType"],
+                        payloadType=kwargs["payloadType"],
+                        packetNumber=kwargs["packetNumber"],
+                        formattedMessageNumber=f"0x{msg_number:04x}",
+                        messageNumber=msg_number,
+                        packet=parsed_message,
+                    )
+            elif self._new_device_handler is not None:
+                self._new_device_handler(
+                    source=kwargs["source"],
+                    source_class=kwargs.get("source_class", AddressClass.UNKNOWN),
+                    dest=kwargs["dest"],
+                    dest_class=kwargs.get("dest_class", AddressClass.UNKNOWN),
+                    isInfo=kwargs["isInfo"],
+                    protocolVersion=kwargs["protocolVersion"],
+                    retryCounter=kwargs["retryCounter"],
+                    packetType=kwargs["packetType"],
+                    payloadType=kwargs["payloadType"],
+                    packetNumber=kwargs["packetNumber"],
+                    formattedMessageNumber=f"0x{msg_number:04x}",
+                    messageNumber=msg_number,
+                    packet=parsed_message,
+                )
 
     def parse_packet(self, p: bytes):
         if len(p) < 3 + 3 + 1 + 1 + 1 + 1:
@@ -84,7 +160,7 @@ class NasaPacketParser:
             value = p[off + 2 : off + 2 + s]
             valuehex = bin2hex(value)
             try:
-                desc = nasa_message_name(messageNumber)
+                desc = get_nasa_message_name(messageNumber)
             except Exception:
                 desc = "UNSPECIFIED"
             ds.append([messageNumber, desc, valuehex, value])
@@ -93,31 +169,16 @@ class NasaPacketParser:
         if seenMsgCnt != dsCnt:
             raise BaseException("Not every message processed")
 
-        if src in self._device_handlers:
-            for handler in self._device_handlers[src]:
-                handler(
-                    source=src,
-                    dest=dst,
-                    isInfo=isInfo,
-                    protocolVersion=protVersion,
-                    retryCounter=retryCnt,
-                    packetType=packetType,
-                    payloadType=payloadType,
-                    packetNumber=packetNumber,
-                    messageNumber=messageNumber,
-                    dataSets=ds,
-                )
-        elif self._new_device_handler is not None:
-            self._new_device_handler(
-                source=src,
-                source_class=src_class,
-                dest=dst,
-                dest_class=dst_class,
-                isInfo=isInfo,
-                protocolVersion=protVersion,
-                retryCounter=retryCnt,
-                packetType=packetType,
-                payloadType=payloadType,
-                packetNumber=packetNumber,
-                dataSets=ds,
-            )
+        self._process_packet(
+            source=src,
+            source_class=src_class,
+            dest=dst,
+            dest_class=dst_class,
+            isInfo=isInfo,
+            protocolVersion=protVersion,
+            retryCounter=retryCnt,
+            packetType=packetType,
+            payloadType=payloadType,
+            packetNumber=packetNumber,
+            dataSets=ds,
+        )

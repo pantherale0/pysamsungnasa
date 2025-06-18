@@ -21,11 +21,6 @@ class SamsungNasa:
         """Initialize the NASA protocol."""
         self.config = NasaConfig(**config)
         self.parser = NasaPacketParser(_new_device_handler=self._new_device_handler)
-        if self.config.device_addresses is not None:
-            for address, device_type in self.config.device_addresses:
-                self.devices[address] = NasaDevice(
-                    address=address, device_type=device_type, packet_parser=self.parser, config=self.config
-                )
         self.client = NasaClient(
             host=host,
             port=port,
@@ -33,6 +28,15 @@ class SamsungNasa:
             recv_event_handler=self.parser.parse_packet,
             disconnect_event_handler=disconnect_event_handler,
         )
+        if self.config.device_addresses is not None:
+            for address, device_type in self.config.device_addresses:
+                self.devices[address] = NasaDevice(
+                    address=address,
+                    device_type=device_type,
+                    packet_parser=self.parser,
+                    config=self.config,
+                    client=self.client,
+                )
 
     def _new_device_handler(self, **kwargs):
         """Handle messages from a new device."""
@@ -42,6 +46,7 @@ class SamsungNasa:
                 device_type=kwargs["source_class"],
                 packet_parser=self.parser,
                 config=self.config,
+                client=self.client,
             )
             _LOGGER.info("New %s device discovered: %s", kwargs["source_class"], kwargs["source"])
 

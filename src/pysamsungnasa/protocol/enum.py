@@ -58,13 +58,6 @@ class MessageSetType(IntEnum):
     STRUCTURE = 3  # structure payload
 
 
-class GenericFsv(IntEnum):
-    """Generic FSV Enums for True/False or Yes/No settings."""
-
-    NO = 0
-    YES = 1
-
-
 # Specific Message Enums from NOTES.md
 
 
@@ -349,22 +342,10 @@ class DhwOpMode(IntEnum):  # Or InWaterHeaterMode
     FORCE = 3
 
 
-class InThermostat1(IntEnum):
+class InThermostatStatus(IntEnum):  # 0x4069 and 0x406A
     """
-    Hydro External Thermostat 1 status (Message 0x4069).
-    Label (NASA.prc): ENUM_IN_THERMOSTAT1
-    Remarks: "0 Off, 1 Cool, 2 Heat"
-    """
-
-    OFF = 0
-    COOL = 1
-    HEAT = 2
-
-
-class InThermostat2(IntEnum):
-    """
-    Hydro External Thermostat 2 status (Message 0x406A).
-    Label (NASA.prc): ENUM_IN_THERMOSTAT2
+    Hydro External Thermostat status (Message 0x4069).
+    Label (NASA.prc): ENUM_IN_THERMOSTAT_STATUS
     Remarks: "0 Off, 1 Cool, 2 Heat"
     """
 
@@ -395,18 +376,6 @@ class DhwReferenceTemp(IntEnum):  # Or InReferenceEhsTemp
 
     ROOM = 0
     WATER_OUT = 1
-
-
-class AirflowLeftRight(IntEnum):  # Or InLouverLrSwing
-    """
-    Left and right wind direction settings/status (Message 0x407E).
-    Label (NASA.prc): ENUM*IN_LOUVER_LR_SWING
-    Label (NasaConst.java): NASA_AIRFLOW_LEFTRIGHT
-    Remarks: "0 Off, 1 On" (likely means 0=Fixed/Default, 1=Swing)
-    """
-
-    OFF_OR_FIXED = 0
-    ON_OR_SWING = 1
 
 
 class In2WayValve(IntEnum):
@@ -443,28 +412,8 @@ class InFsv2081WaterLawTypeCooling(IntEnum):
     FCU = 2
 
 
-class InFsv2091UseThermostat1(IntEnum):
-    """
-    FSV Use Thermostat 1 setting (Message 0x4095).
-    Label (NASA.prc): ENUM_IN_FSV_2091
-    Label (NasaConst.java): NASA_USE_THERMOSTAT1
-    Remarks: "values 0="No" up to 4="4""
-    """
-
-    NO = 0
-    VALUE_1 = 1
-    VALUE_2 = 2
-    VALUE_3 = 3
-    VALUE_4 = 4
-
-
-class InFsv2092UseThermostat2(IntEnum):
-    """
-    FSV Use Thermostat 2 setting (Message 0x4096).
-    Label (NASA.prc): ENUM_IN_FSV_2092
-    Label (NasaConst.java): NASA_USE_THERMOSTAT2
-    Remarks: "values 0="No" up to 4="4""
-    """
+class InUseThermostat(IntEnum):
+    """FSV Use Thermostat setting (FSV 209*)."""
 
     NO = 0
     VALUE_1 = 1
@@ -486,22 +435,6 @@ class InFsv3011EnableDhw(IntEnum):
     VALUE_2 = 2  # Possibly another level
 
 
-class InFsv3031UseBoosterHeater(IntEnum):
-    """
-    FSV Use Booster Heater setting (Message 0x4098).
-    Label (NASA.prc): ENUM_IN_FSV_3031
-    Label (NasaConst.java): NASA_USE_BOOSTER_HEATER
-    Remarks: "0 Off, 1 On" (from NOTES.md)
-    XML: "0 No, 1 Yes"
-    """
-
-    NO_OR_OFF = 0
-    YES_OR_ON = 1
-
-
-InFsv3041 = GenericFsv
-
-
 class InFsv3042DayOfWeek(IntEnum):
     """
     FSV Day of Week setting (Message 0x409A).
@@ -517,9 +450,6 @@ class InFsv3042DayOfWeek(IntEnum):
     FRIDAY = 5
     SATURDAY = 6
     EVERYDAY = 7
-
-
-InFsv3051 = GenericFsv
 
 
 class InFsv3061UseDhwThermostat(IntEnum):
@@ -543,27 +473,6 @@ class InFsv3071(IntEnum):
     TANK = 1
 
 
-class VacancyStatus(IntEnum):  # Or InStateKeyTag
-    """
-    Vacancy Control / Key Tag Status (Message 0x40BC).
-    Label (NASA.prc): ENUM_IN_STATE_KEY_TAG
-    Label (NasaConst.java): NASA_VACANCY_STATUS
-    """
-
-    UNOCCUPIED = 0  # Assumed
-    OCCUPIED = 1  # Assumed
-
-
-class InErrorHistoryClearForHass(IntEnum):
-    """
-    Error History Clear command/status (Message 0x40D6).
-    Label (NASA.prc): ENUM_IN_ERROR_HISTORY_CLEAR_FOR_HASS
-    """
-
-    NO_ACTION = 0  # Assumed
-    CLEAR = 1  # Assumed
-
-
 class InStateAutoStaticPressureRunning(IntEnum):
     """
     Auto Static Pressure Running state (Message 0x40BB).
@@ -574,28 +483,6 @@ class InStateAutoStaticPressureRunning(IntEnum):
     OFF = 0
     COMPLETE = 1
     RUNNING = 2
-
-
-class InStateFlowCheck(IntEnum):
-    """
-    State Flow Check status (Message 0x4102).
-    Label (NASA.prc): ENUM_IN_STATE_FLOW_CHECK
-    """
-
-    OFF_OR_OK = 0  # XML: Off, Assumed OK
-    ON_OR_FAIL = 1  # XML: On, Assumed Fail
-    # XML Default: Unknown
-
-
-class InFsvLoadSave(IntEnum):
-    """
-    FSV Load Save setting (Message 0x4125).
-    Label (NASA.prc): ENUM_IN_FSV_LOAD_SAVE
-    Remarks: "Min = 0 Max = 1"
-    """
-
-    VALUE_0 = 0
-    VALUE_1 = 1
 
 
 class InFsv2093(IntEnum):
@@ -634,17 +521,6 @@ class InFsv2094(IntEnum):
     VALUE_2 = 2
     VALUE_3 = 3
     VALUE_4 = 4
-
-
-class InFsvLoadSaveAlt(IntEnum):
-    """
-    FSV Load Save setting (alternative, Message 0x412D).
-    Label (NASA.prc): ENUM_IN_FSV_LOAD_SAVE
-    Remarks: "Min = 0 Max = 1, similar name as 0x4125"
-    """
-
-    VALUE_0 = 0
-    VALUE_1 = 1
 
 
 class OutOperationServiceOp(IntEnum):
@@ -851,13 +727,6 @@ class InUnknown4074(IntEnum):
     pass
 
 
-class InRoomTempSensor(IntEnum):
-    """Indoor unit room temperature sensor selection/status (Message 0x4076). Label (NASA.prc): ENUM*IN_ROOM_TEMP_SENSOR"""
-
-    INDOOR_UNIT = 0  # XML: Idiom_IndoorUnit
-    WIRED_REMOCON = 1  # XML: Idiom_WiredRemocon
-
-
 class InUnknown4077(IntEnum):
     """Indoor unit enum for message 0x4077. Specifics unknown."""
 
@@ -905,11 +774,6 @@ class InFsv4022(IntEnum):
     BSH = 2
 
 
-InFsv4023 = GenericFsv  # 0x40A1
-InFsv4031 = GenericFsv  # 0x40A2
-InFsv4032 = GenericFsv  # 0x40A3
-
-
 class InFsv4041(IntEnum):
     """FSV setting (Message 0x40C0). Label (NASA.prc): ENUM_IN_FSV_4041"""
 
@@ -930,9 +794,6 @@ class InFsv5033(IntEnum):
 
     A2A = 0
     DHW = 1
-
-
-InFsv5041 = GenericFsv  # 0x40A4
 
 
 class InFsv5042(IntEnum):
@@ -1046,9 +907,6 @@ class InChillerSettingDemandLevel(IntEnum):
     # XML Default: Unknown
 
 
-InChillerExtWaterOutInput = GenericFsv  # 0x4101
-
-
 class InTdmIndoorType(IntEnum):
     """
     TDM Indoor Type (Message 0x4108).
@@ -1099,9 +957,6 @@ class InFsv5094(IntEnum):  # 0x411D
     """Indoor unit enum for FSV message 0x411D. Specifics unknown."""
 
     pass
-
-
-InPvContactState = GenericFsv  # 0x4123
 
 
 class InSilenceLevel(IntEnum):  # 0x4129

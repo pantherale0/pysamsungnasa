@@ -6,7 +6,7 @@ import asyncio
 import struct
 
 from .config import NasaConfig
-from .helpers import bin2hex
+from .helpers import bin2hex, hex2bin
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -23,6 +23,7 @@ class NasaClient:
     _writer_task: asyncio.Task | None = None
     _tx_queue: asyncio.Queue[bytes] | None = None
     _rx_queue: asyncio.Queue[bytes] | None = None
+    _packet_number_counter: int = 0
 
     def __init__(
         self,
@@ -390,10 +391,32 @@ class NasaClient:
                 await self._handle_disconnection(ex)  # Treat as critical failure
                 break
 
-    async def send_command(self, data: bytes) -> bool:
+    async def send_command(self, message: list[str]) -> bool:
         """Send a command to the NASA device."""
         if not self._connection_status or self._tx_queue is None:
             return False
-        await self._tx_queue.put(data)
-        _LOGGER.debug("Command enqueued: %s", bin2hex(data))
+        for msg in message:
+            try:
+                self._packet_number_counter = (self._packet_number_counter + 1) % 256
+                current_packet_num_hex = f"{self._packet_number_counter:02x}"
+                data_for_crc = msg.format(CUR_PACK_NUM=current_packet_num_hex)
+                data_bytes = hex2bin(data_for_crc)
+                packet_size = len(data_bytes) + 4
+                packet_size_hex = f"{packet_size:04x}"
+                crc_val = binascii.crc_hqx(data_bytes, 0)
+                crc_hex = f"{crc_val:04x}"
+                full_packet_hex = f"32{packet_size_hex}{data_for_crc}{crc_hex}34"  # STX, Size, Data, CRC, ETX
+                data = hex2bin(full_packet_hex)
+                await self._tx_queue.put(data)
+                _LOGGER.debug("Command enqueued: %s", bin2hex(data))
+            except (binascii.Error, ValueError) as e:
+                _LOGGER.error("Error encoding command %s: %s", msg, e)
+                return False
+            except asyncio.QueueFull:
+                _LOGGER.error("TX queue is full, cannot send command: %s", msg)
+                return False
+            except Exception as e:
+                _LOGGER.error("Unexpected error sending command %s: %s", msg, e)
+                return False
+        _LOGGER.debug("All commands sent to TX queue.")
         return True

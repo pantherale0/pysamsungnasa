@@ -29,6 +29,7 @@ async def main():
                 logging.info("  Address: %s", v.address)
                 logging.info("  Attributes: %s", v.attributes)
                 logging.info("  Last packet time: %s", v.last_packet_time)
+                await v.send_message(0x4095, b"\x01\x00\x00\x00")
     except (KeyboardInterrupt, asyncio.exceptions.CancelledError):
         await nasa.stop()
 
