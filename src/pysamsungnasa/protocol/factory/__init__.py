@@ -1,5 +1,7 @@
 """Protocol factory."""
 
+import logging
+
 from .messages import load_message_classes
 from .messaging import BaseMessage, RawMessage
 from ...helpers import bin2hex
@@ -15,9 +17,10 @@ SEND_MESSAGE_BASE_CONTENT = [
     "{MESSAGE_NUMBER}",  # Message Number (OUT_OPERATION_STATUS)
     "{PAYLOAD_HEX}",  # Message Payload
 ]
+_LOGGER = logging.getLogger(__name__)
 
 
-def get_nasa_message_name(message_number: int) -> str:
+def get_nasa_message_name(message_number: int) -> str | None:
     """Get the name of a NASA message by its number."""
     if message_number in MESSAGE_PARSERS:
         if (
@@ -40,7 +43,11 @@ def parse_message(message_number: int, payload: bytes, description: str) -> dict
     parser_class = MESSAGE_PARSERS.get(message_number)
     if not parser_class:
         parser_class = RawMessage
-    parser = parser_class.parse_payload(payload)
+    try:
+        parser = parser_class.parse_payload(payload)
+    except Exception as e:
+        _LOGGER.exception("Error parsing packet for %s (%s): %s", message_number, bin2hex(payload), e)
+        parser = RawMessage.parse_payload(payload)
     return parser
 
 

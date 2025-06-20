@@ -1,9 +1,16 @@
 """Protocol enums."""
 
-from enum import IntEnum
+from enum import Enum, IntEnum
 
 
-class AddressClass(IntEnum):
+class SamsungEnum(Enum):
+    """Define the base samsung enum."""
+
+    def __str__(self):
+        return self.name
+
+
+class AddressClass(SamsungEnum, IntEnum):
     """NASA Device Address Class from protocol byte 3 & 6."""
 
     UNKNOWN = 0x00
@@ -22,7 +29,7 @@ class AddressClass(IntEnum):
     WIFI_KIT = 0x62  # From "Notes" section in NOTES.md
 
 
-class PacketType(IntEnum):
+class PacketType(SamsungEnum, IntEnum):
     """NASA Packet Types from protocol byte 10."""
 
     UNKNOWN = -1
@@ -33,7 +40,7 @@ class PacketType(IntEnum):
     DOWNLOAD = 4
 
 
-class DataType(IntEnum):
+class DataType(SamsungEnum, IntEnum):
     """NASA Data Types from protocol byte 10.
     (Previously PayloadTypes as StrEnum)
     """
@@ -49,7 +56,7 @@ class DataType(IntEnum):
     NACK = 7
 
 
-class MessageSetType(IntEnum):
+class MessageSetType(SamsungEnum, IntEnum):
     """NASA Message Set Type derived from Message Number (protocol bytes 13-14)."""
 
     ENUM = 0  # 1 byte payload
@@ -61,7 +68,7 @@ class MessageSetType(IntEnum):
 # Specific Message Enums from NOTES.md
 
 
-class OutOpCheckRefStep(IntEnum):
+class OutOpCheckRefStep(SamsungEnum, IntEnum):
     """
     Refrigerant amount level (Message 0x808E).
     Label (NASA.prc): ENUM*OUT_OP_CHECK_REF_STEP
@@ -82,7 +89,7 @@ class OutOpCheckRefStep(IntEnum):
     LEVEL_8 = 8
 
 
-class InOperationPower(IntEnum):
+class InOperationPower(SamsungEnum, IntEnum):
     """
     Indoor unit power on/off (Message 0x4000).
     Label (NASA.prc): ENUM*IN_OPERATION_POWER
@@ -95,7 +102,7 @@ class InOperationPower(IntEnum):
     ON_STATE_2 = 2
 
 
-class InOperationMode(IntEnum):
+class InOperationMode(SamsungEnum, IntEnum):
     """
     Indoor unit control mode (Message 0x4001).
     Label (NASA.prc): ENUM_IN_OPERATION_MODE
@@ -111,7 +118,7 @@ class InOperationMode(IntEnum):
     HOT_WATER = 24
 
 
-class OutdoorOperationStatus(IntEnum):
+class OutdoorOperationStatus(SamsungEnum, IntEnum):
     """
     Outdoor Driving Mode / Outdoor Operation Status (Message 0x8001).
     Derived from Label (NasaConst.java): NASA_OUTDOOR_OPERATION_STATUS
@@ -157,7 +164,7 @@ class OutdoorOperationStatus(IntEnum):
     OP_AUTO_CHARGE = 36
 
 
-class AdMultiTenantNo(IntEnum):
+class AdMultiTenantNo(SamsungEnum, IntEnum):
     """
     WiFi Kit Multi Tenant No. (Message 0x0025).
     Label (NASA.prc): ENUM_AD_MULTI_TENANT_NO
@@ -168,7 +175,7 @@ class AdMultiTenantNo(IntEnum):
     pass
 
 
-class PnpPhase(IntEnum):
+class PnpPhase(SamsungEnum, IntEnum):
     """
     PNP (Plug and Play) Phase (Message 0x2004).
     Derived from usage in pysamsungnasa.pnp and NASA_PNP label.
@@ -181,7 +188,7 @@ class PnpPhase(IntEnum):
     PHASE_4_ACK = 4
 
 
-class PnpStep(IntEnum):
+class PnpStep(SamsungEnum, IntEnum):
     """
     PNP (Plug and Play) Step (Message 0x2012).
     Derived from usage in pysamsungnasa.pnp.
@@ -192,7 +199,7 @@ class PnpStep(IntEnum):
     STEP_4 = 4  # Used in nasa_pnp_phase4_ack
 
 
-class InOperationModeReal(IntEnum):
+class InOperationModeReal(SamsungEnum, IntEnum):
     """
     Indoor unit current operation mode (Message 0x4002).
     Label (NASA.prc): ENUM_IN_OPERATION_MODE_REAL.
@@ -215,7 +222,7 @@ class InOperationModeReal(IntEnum):
     NULL_MODE = 255
 
 
-class InOperationVentMode(IntEnum):
+class InOperationVentMode(SamsungEnum, IntEnum):
     """
     Ventilation operation mode (Message 0x4004).
     Label (NASA.prc): ENUM_IN_OPERATION_VENT_MODE
@@ -234,7 +241,7 @@ class InOperationVentMode(IntEnum):
     # XML Default: Unknown
 
 
-class InFanModeReal(IntEnum):
+class InFanModeReal(SamsungEnum, IntEnum):
     """
     Indoor unit current air volume (Message 0x4007).
     Label (NASA.prc): ENUM_IN_FAN_MODE_REAL
@@ -259,7 +266,7 @@ class InFanModeReal(IntEnum):
     # XML Default: Unknown
 
 
-class InLouverHlPartSwing(IntEnum):
+class InLouverHlPartSwing(SamsungEnum, IntEnum):
     """
     Up and down wind direction setting/status (partial swing) (Message 0x4012).
     Label (NASA.prc): ENUM_IN_LOUVER_HL_PART_SWING
@@ -312,7 +319,7 @@ class InLouverHlPartSwing(IntEnum):
     # XML Default: Unknown
 
 
-class ErvFanSpeed(IntEnum):  # Or InFanVentMode
+class ErvFanSpeed(SamsungEnum, IntEnum):  # Or InFanVentMode
     """
     Indoor unit current air volume for ERV (Message 0x4008).
     Label (NASA.prc): ENUM_IN_FAN_VENT_MODE
@@ -328,7 +335,7 @@ class ErvFanSpeed(IntEnum):  # Or InFanVentMode
     # XML Default: Unknown
 
 
-class DhwOpMode(IntEnum):  # Or InWaterHeaterMode
+class DhwOpMode(SamsungEnum, IntEnum):  # Or InWaterHeaterMode
     """
     Water heater mode (DHW) (Message 0x4066).
     Label (NASA.prc): ENUM_IN_WATER_HEATER_MODE
@@ -342,7 +349,7 @@ class DhwOpMode(IntEnum):  # Or InWaterHeaterMode
     FORCE = 3
 
 
-class InThermostatStatus(IntEnum):  # 0x4069 and 0x406A
+class InThermostatStatus(SamsungEnum, IntEnum):  # 0x4069 and 0x406A
     """
     Hydro External Thermostat status (Message 0x4069).
     Label (NASA.prc): ENUM_IN_THERMOSTAT_STATUS
@@ -354,7 +361,7 @@ class InThermostatStatus(IntEnum):  # 0x4069 and 0x406A
     HEAT = 2
 
 
-class InBackupHeater(IntEnum):
+class InBackupHeater(SamsungEnum, IntEnum):
     """
     Backup heater mode (Message 0x406C).
     Label (NASA.prc): ENUM_IN_BACKUP_HEATER
@@ -366,7 +373,7 @@ class InBackupHeater(IntEnum):
     STEP_2 = 2
 
 
-class DhwReferenceTemp(IntEnum):  # Or InReferenceEhsTemp
+class DhwReferenceTemp(SamsungEnum, IntEnum):  # Or InReferenceEhsTemp
     """
     Hydro Control Choice / DHW Reference Temperature source (Message 0x406F).
     Label (NASA.prc): ENUM_IN_REFERENCE_EHS_TEMP
@@ -378,7 +385,7 @@ class DhwReferenceTemp(IntEnum):  # Or InReferenceEhsTemp
     WATER_OUT = 1
 
 
-class In2WayValve(IntEnum):
+class In2WayValve(SamsungEnum, IntEnum):
     """
     2-Way Valve state (Message 0x408A).
     Label (NASA.prc): ENUM_IN_2WAY_VALVE
@@ -390,7 +397,7 @@ class In2WayValve(IntEnum):
     BOILER = 3
 
 
-class InFsv2041WaterLawTypeHeating(IntEnum):
+class InFsv2041WaterLawTypeHeating(SamsungEnum, IntEnum):
     """
     FSV Water Law Type for Heating (Message 0x4093).
     Label (NASA.prc): ENUM_IN_FSV_2041
@@ -401,7 +408,7 @@ class InFsv2041WaterLawTypeHeating(IntEnum):
     FCU = 2
 
 
-class InFsv2081WaterLawTypeCooling(IntEnum):
+class InFsv2081WaterLawTypeCooling(SamsungEnum, IntEnum):
     """
     FSV Water Law Type for Cooling (Message 0x4094).
     Label (NASA.prc): ENUM_IN_FSV_2081
@@ -412,7 +419,7 @@ class InFsv2081WaterLawTypeCooling(IntEnum):
     FCU = 2
 
 
-class InUseThermostat(IntEnum):
+class InUseThermostat(SamsungEnum, IntEnum):
     """FSV Use Thermostat setting (FSV 209*)."""
 
     NO = 0
@@ -422,7 +429,7 @@ class InUseThermostat(IntEnum):
     VALUE_4 = 4
 
 
-class InFsv3011EnableDhw(IntEnum):
+class InFsv3011EnableDhw(SamsungEnum, IntEnum):
     """
     FSV Enable DHW setting (Message 0x4097).
     Label (NASA.prc): ENUM_IN_FSV_3011
@@ -435,7 +442,7 @@ class InFsv3011EnableDhw(IntEnum):
     VALUE_2 = 2  # Possibly another level
 
 
-class InFsv3042DayOfWeek(IntEnum):
+class InFsv3042DayOfWeek(SamsungEnum, IntEnum):
     """
     FSV Day of Week setting (Message 0x409A).
     Label (NASA.prc): ENUM_IN_FSV_3042
@@ -452,7 +459,7 @@ class InFsv3042DayOfWeek(IntEnum):
     EVERYDAY = 7
 
 
-class InFsv3061UseDhwThermostat(IntEnum):
+class InFsv3061UseDhwThermostat(SamsungEnum, IntEnum):
     """
     FSV Use DHW Thermostat setting (Message 0x409C).
     Label (NASA.prc): ENUM_IN_FSV_3061
@@ -466,14 +473,14 @@ class InFsv3061UseDhwThermostat(IntEnum):
     VALUE_3 = 3
 
 
-class InFsv3071(IntEnum):
+class InFsv3071(SamsungEnum, IntEnum):
     """FSV setting (Message 0x409D). Label (NASA.prc): ENUM_IN_FSV_3071"""
 
     ROOM = 0
     TANK = 1
 
 
-class InStateAutoStaticPressureRunning(IntEnum):
+class InStateAutoStaticPressureRunning(SamsungEnum, IntEnum):
     """
     Auto Static Pressure Running state (Message 0x40BB).
     Label (NASA.prc): ENUM*IN_STATE_AUTO_STATIC_PRESSURE_RUNNING
@@ -485,7 +492,7 @@ class InStateAutoStaticPressureRunning(IntEnum):
     RUNNING = 2
 
 
-class InFsv2093(IntEnum):
+class InFsv2093(SamsungEnum, IntEnum):
     """
     FSV setting (Message 0x4127).
     Label (NASA.prc): ENUM_IN_FSV_2093
@@ -498,7 +505,7 @@ class InFsv2093(IntEnum):
     VALUE_4 = 4
 
 
-class InFsv5022(IntEnum):
+class InFsv5022(SamsungEnum, IntEnum):
     """
     FSV setting (Message 0x4128).
     Label (NASA.prc): ENUM_IN_FSV_5022
@@ -509,7 +516,7 @@ class InFsv5022(IntEnum):
     VALUE_1 = 1
 
 
-class InFsv2094(IntEnum):
+class InFsv2094(SamsungEnum, IntEnum):
     """
     FSV setting (Message 0x412A).
     Label (NASA.prc): ENUM_IN_FSV_2094
@@ -523,7 +530,7 @@ class InFsv2094(IntEnum):
     VALUE_4 = 4
 
 
-class OutOperationServiceOp(IntEnum):
+class OutOperationServiceOp(SamsungEnum, IntEnum):
     """
     Outdoor unit service operation steps (Message 0x8000).
     Label (NASA.prc): ENUM_OUT_OPERATION_SERVICE_OP
@@ -536,7 +543,7 @@ class OutOperationServiceOp(IntEnum):
     PUMP_DOWN = 14
 
 
-class OutdoorOperationMode(IntEnum):  # Or OutOperationHeatCool
+class OutdoorOperationMode(SamsungEnum, IntEnum):  # Or OutOperationHeatCool
     """
     Outdoor unit cooling/heating mode (Message 0x8003).
     Label (NASA.prc): ENUM*OUT_OPERATION_HEATCOOL
@@ -551,7 +558,7 @@ class OutdoorOperationMode(IntEnum):  # Or OutOperationHeatCool
     HEAT_MAIN = 4
 
 
-class OutOpTestOpComplete(IntEnum):
+class OutOpTestOpComplete(SamsungEnum, IntEnum):
     """
     Outdoor unit test operation complete status (Message 0x8046).
     Label (NASA.prc): ENUM*OUT_OP_TEST_OP_COMPLETE
@@ -562,7 +569,7 @@ class OutOpTestOpComplete(IntEnum):
     COMPLETE = 1  # Assumed
 
 
-class OutdoorIndoorDefrostStep(IntEnum):  # Or OutDeiceStepIndoor
+class OutdoorIndoorDefrostStep(SamsungEnum, IntEnum):  # Or OutDeiceStepIndoor
     """
     Indoor unit defrost operation steps (from outdoor unit's perspective) (Message 0x8061).
     Label (NASA.prc): ENUM*OUT_DEICE_STEP_INDOOR
@@ -577,7 +584,7 @@ class OutdoorIndoorDefrostStep(IntEnum):  # Or OutDeiceStepIndoor
     NO_DEFROST_OPERATION = 255
 
 
-class OutOutdoorSystemReset(IntEnum):
+class OutOutdoorSystemReset(SamsungEnum, IntEnum):
     """
     Outdoor unit system reset command/status (Message 0x8065).
     Label (NasaConst.java): NASA_OUTDOOR_SYSTEM_RESET
@@ -587,7 +594,7 @@ class OutOutdoorSystemReset(IntEnum):
     RESET = 1  # Assumed
 
 
-class OutCheckRefResult(IntEnum):
+class OutCheckRefResult(SamsungEnum, IntEnum):
     """
     Refrigerant amount determination result (Message 0x809C).
     Label (NASA.prc): ENUM_OUT_CHECK_REF_RESULT
@@ -603,7 +610,7 @@ class OutCheckRefResult(IntEnum):
     TEMP_RANGE_EXCEEDED = 7  # XML: 온도범위 초과 (Temperature range exceeded)
 
 
-class OutOutdoorCoolonlyModel(IntEnum):
+class OutOutdoorCoolonlyModel(SamsungEnum, IntEnum):
     """
     Outdoor unit cool-only model status (Message 0x809D).
     Label (NasaConst.java): NASA_OUTDOOR_COOLONLY_MODEL
@@ -613,7 +620,7 @@ class OutOutdoorCoolonlyModel(IntEnum):
     YES_HEAT_PUMP = 1  # Assumed (i.e., not cool only)
 
 
-class OutEhsWateroutType(IntEnum):
+class OutEhsWateroutType(SamsungEnum, IntEnum):
     """
     EHS Water Outlet Type (Message 0x80D8).
     Label (NASA.prc): ENUM_OUT_EHS_WATEROUT_TYPE
@@ -625,140 +632,140 @@ class OutEhsWateroutType(IntEnum):
 
 
 # Generic Enums for unknown ?? messages based on prefix
-class InUnknown400F(IntEnum):
+class InUnknown400F(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x400F. Specifics unknown."""
 
     pass
 
 
-class InUnknown4010(IntEnum):
+class InUnknown4010(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4010. Specifics unknown."""
 
     pass
 
 
-class InUnknown4015(IntEnum):
+class InUnknown4015(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4015. Specifics unknown."""
 
     pass
 
 
-class InUnknown4029(IntEnum):
+class InUnknown4029(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4029. Specifics unknown."""
 
     pass
 
 
-class InUnknown402A(IntEnum):
+class InUnknown402A(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x402A. Specifics unknown."""
 
     pass
 
 
-class InUnknown402B(IntEnum):
+class InUnknown402B(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x402B. Specifics unknown."""
 
     pass
 
 
-class InUnknown402D(IntEnum):
+class InUnknown402D(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x402D. Specifics unknown."""
 
     pass
 
 
-class InUnknown4031(IntEnum):
+class InUnknown4031(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4031. Specifics unknown."""
 
     pass
 
 
-class InUnknown4035(IntEnum):
+class InUnknown4035(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4035. Specifics unknown."""
 
     pass
 
 
-class InUnknown4047(IntEnum):
+class InUnknown4047(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4047. Specifics unknown."""
 
     pass
 
 
-class InUnknown4048(IntEnum):
+class InUnknown4048(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4048. Specifics unknown."""
 
     pass
 
 
-class InUnknown404F(IntEnum):
+class InUnknown404F(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x404F. Specifics unknown."""
 
     pass
 
 
-class InUnknown4051(IntEnum):
+class InUnknown4051(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4051. Specifics unknown."""
 
     pass
 
 
-class InUnknown4059(IntEnum):
+class InUnknown4059(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4059. Specifics unknown."""
 
     pass
 
 
-class InUnknown405F(IntEnum):
+class InUnknown405F(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x405F. Specifics unknown."""
 
     pass
 
 
-class InUnknown4073(IntEnum):
+class InUnknown4073(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4073. Specifics unknown."""
 
     pass
 
 
-class InUnknown4074(IntEnum):
+class InUnknown4074(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4074. Specifics unknown."""
 
     pass
 
 
-class InUnknown4077(IntEnum):
+class InUnknown4077(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4077. Specifics unknown."""
 
     pass
 
 
-class InUnknown407B(IntEnum):
+class InUnknown407B(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x407B. Specifics unknown."""
 
     pass
 
 
-class InUnknown407D(IntEnum):
+class InUnknown407D(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x407D. Specifics unknown."""
 
     pass
 
 
-class InUnknown4085(IntEnum):
+class InUnknown4085(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4085. Specifics unknown."""
 
     pass
 
 
-class InFsv4011(IntEnum):
+class InFsv4011(SamsungEnum, IntEnum):
     """FSV setting (Message 0x409E). Label (NASA.prc): ENUM_IN_FSV_4011"""
 
     DHW = 0
     HEATING = 1
 
 
-class InFsv4021(IntEnum):
+class InFsv4021(SamsungEnum, IntEnum):
     """FSV setting (Message 0x409F). Label (NASA.prc): ENUM_IN_FSV_4021"""
 
     VALUE_0 = 0
@@ -766,7 +773,7 @@ class InFsv4021(IntEnum):
     VALUE_2 = 2
 
 
-class InFsv4022(IntEnum):
+class InFsv4022(SamsungEnum, IntEnum):
     """FSV setting (Message 0x40A0). Label (NASA.prc): ENUM_IN_FSV_4022"""
 
     BUH_BSH_BOTH = 0  # XML: BUH/BSH Both
@@ -774,7 +781,7 @@ class InFsv4022(IntEnum):
     BSH = 2
 
 
-class InFsv4041(IntEnum):
+class InFsv4041(SamsungEnum, IntEnum):
     """FSV setting (Message 0x40C0). Label (NASA.prc): ENUM_IN_FSV_4041"""
 
     NO = 0
@@ -782,21 +789,21 @@ class InFsv4041(IntEnum):
     VALUE_2 = 2
 
 
-class InFsv4061(IntEnum):
+class InFsv4061(SamsungEnum, IntEnum):
     """FSV setting (Message 0x411A). Label (NASA.prc): ENUM_IN_FSV_4061"""
 
     VALUE_0 = 0
     VALUE_1 = 1
 
 
-class InFsv5033(IntEnum):
+class InFsv5033(SamsungEnum, IntEnum):
     """FSV setting (Message 0x4107). Label (NASA.prc): ENUM_IN_FSV_5033"""
 
     A2A = 0
     DHW = 1
 
 
-class InFsv5042(IntEnum):
+class InFsv5042(SamsungEnum, IntEnum):
     """FSV setting (Message 0x40A5). Label (NASA.prc): ENUM_IN_FSV_5042"""
 
     ALL = 0
@@ -805,63 +812,63 @@ class InFsv5042(IntEnum):
     VALUE_3 = 3
 
 
-class InFsv5043(IntEnum):
+class InFsv5043(SamsungEnum, IntEnum):
     """FSV setting (Message 0x40A6). Label (NASA.prc): ENUM_IN_FSV_5043"""
 
     LOW = 0
     HIGH = 1
 
 
-class InFsv5051(IntEnum):
+class InFsv5051(SamsungEnum, IntEnum):
     """FSV setting (Message 0x40A7). Label (NASA.prc): ENUM_IN_FSV_5051"""
 
     NO = 0
     YES = 1
 
 
-class InFsv5061(IntEnum):  # 0x40B4
+class InFsv5061(SamsungEnum, IntEnum):  # 0x40B4
     """Indoor unit enum for FSV message 0x40B4. Specifics unknown."""
 
     pass
 
 
-class InUnknown40B5(IntEnum):
+class InUnknown40B5(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x40B5. Specifics unknown."""
 
     pass
 
 
-class InFsv4044(IntEnum):  # 0x40C1
+class InFsv4044(SamsungEnum, IntEnum):  # 0x40C1
     """Indoor unit enum for FSV message 0x40C1. Specifics unknown."""
 
     pass
 
 
-class InFsv4051(IntEnum):  # 0x40C2
+class InFsv4051(SamsungEnum, IntEnum):  # 0x40C2
     """Indoor unit enum for FSV message 0x40C2. Specifics unknown."""
 
     pass
 
 
-class InFsv4053(IntEnum):  # 0x40C3
+class InFsv4053(SamsungEnum, IntEnum):  # 0x40C3
     """Indoor unit enum for FSV message 0x40C3. Specifics unknown."""
 
     pass
 
 
-class InUnknown40C6(IntEnum):
+class InUnknown40C6(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x40C6. Specifics unknown."""
 
     pass
 
 
-class InUnknown40E3(IntEnum):
+class InUnknown40E3(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x40E3. Specifics unknown."""
 
     pass
 
 
-class InChillerWaterlawSensor(IntEnum):
+class InChillerWaterlawSensor(SamsungEnum, IntEnum):
     """
     DMV Chiller Option / Chiller Water Law Sensor (Message 0x40E7).
     Label (NASA.prc): ENUM*IN_CHILLER_WATERLAW_SENSOR
@@ -872,7 +879,7 @@ class InChillerWaterlawSensor(IntEnum):
     ROOM = 1
 
 
-class InChillerSettingSilentLevel(IntEnum):
+class InChillerSettingSilentLevel(SamsungEnum, IntEnum):
     """
     Chiller Setting Silent Level (Message 0x40FB).
     Label (NASA.prc): ENUM_IN_CHILLLER_SETTING_SILENT_LEVEL (Typo in source)
@@ -885,7 +892,7 @@ class InChillerSettingSilentLevel(IntEnum):
     LEVEL3 = 3
 
 
-class InChillerSettingDemandLevel(IntEnum):
+class InChillerSettingDemandLevel(SamsungEnum, IntEnum):
     """
     Chiller Setting Demand Level (Message 0x40FC).
     Label (NASA.prc): ENUM_IN_CHILLER_SETTING_DEMAND_LEVEL
@@ -907,7 +914,7 @@ class InChillerSettingDemandLevel(IntEnum):
     # XML Default: Unknown
 
 
-class InTdmIndoorType(IntEnum):
+class InTdmIndoorType(SamsungEnum, IntEnum):
     """
     TDM Indoor Type (Message 0x4108).
     Label (NASA.prc): ENUM_IN_TDM_INDOOR_TYPE
@@ -918,7 +925,7 @@ class InTdmIndoorType(IntEnum):
     A2W = 1
 
 
-class In3WayValve2(IntEnum):
+class In3WayValve2(SamsungEnum, IntEnum):
     """
     3-Way Valve 2 state (Message 0x4113).
     Label (NASA.prc): ENUM_IN_3WAY_VALVE_2
@@ -929,43 +936,43 @@ class In3WayValve2(IntEnum):
     TANK = 1
 
 
-class InUnknown4117(IntEnum):
+class InUnknown4117(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4117. Specifics unknown."""
 
     pass
 
 
-class InRoomTempSensorZone2(IntEnum):  # 0x4118
+class InRoomTempSensorZone2(SamsungEnum, IntEnum):  # 0x4118
     """Indoor unit enum for message 0x4118 (Room Temp Sensor Zone 2). Specifics unknown."""
 
     pass
 
 
-class InFsv5081(IntEnum):  # 0x411B
+class InFsv5081(SamsungEnum, IntEnum):  # 0x411B
     """Indoor unit enum for FSV message 0x411B. Specifics unknown."""
 
     pass
 
 
-class InFsv5091(IntEnum):  # 0x411C
+class InFsv5091(SamsungEnum, IntEnum):  # 0x411C
     """Indoor unit enum for FSV message 0x411C. Specifics unknown."""
 
     pass
 
 
-class InFsv5094(IntEnum):  # 0x411D
+class InFsv5094(SamsungEnum, IntEnum):  # 0x411D
     """Indoor unit enum for FSV message 0x411D. Specifics unknown."""
 
     pass
 
 
-class InSilenceLevel(IntEnum):  # 0x4129
+class InSilenceLevel(SamsungEnum, IntEnum):  # 0x4129
     """Indoor unit enum for message 0x4129 (Silence Level). Specifics unknown."""
 
     pass
 
 
-class IndoorModelInformation(IntEnum):  # Derived from VAR_in_model_information (0x4229) Enum block in XML
+class IndoorModelInformation(SamsungEnum, IntEnum):  # Derived from VAR_in_model_information (0x4229) Enum block in XML
     """Indoor Unit Model Information (derived from Message 0x4229 in XML)."""
 
     MASTER_N = 12
@@ -990,223 +997,223 @@ class IndoorModelInformation(IntEnum):  # Derived from VAR_in_model_information 
     # XML Default: Unknown
 
 
-class OutUnknown8002(IntEnum):
+class OutUnknown8002(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8002. Specifics unknown."""
 
     pass
 
 
-class OutUnknown8005(IntEnum):
+class OutUnknown8005(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8005. Specifics unknown."""
 
     pass
 
 
-class OutUnknown800D(IntEnum):
+class OutUnknown800D(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x800D. Specifics unknown."""
 
     pass
 
 
-class OutUnknown8031(IntEnum):
+class OutUnknown8031(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8031. Specifics unknown."""
 
     pass
 
 
-class OutUnknown8032(IntEnum):
+class OutUnknown8032(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8032. Specifics unknown."""
 
     pass
 
 
-class OutUnknown8033(IntEnum):
+class OutUnknown8033(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8033. Specifics unknown."""
 
     pass
 
 
-class OutUnknown803F(IntEnum):
+class OutUnknown803F(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x803F. Specifics unknown."""
 
     pass
 
 
-class OutUnknown8043(IntEnum):
+class OutUnknown8043(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8043. Specifics unknown."""
 
     pass
 
 
-class OutUnknown8045(IntEnum):
+class OutUnknown8045(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8045. Specifics unknown."""
 
     pass
 
 
-class OutUnknown8048(IntEnum):
+class OutUnknown8048(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8048. Specifics unknown."""
 
     pass
 
 
-class OutUnknown805E(IntEnum):
+class OutUnknown805E(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x805E. Specifics unknown."""
 
     pass
 
 
-class OutUnknown8063(IntEnum):
+class OutUnknown8063(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8063. Specifics unknown."""
 
     pass
 
 
-class OutUnknown8077(IntEnum):
+class OutUnknown8077(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8077. Specifics unknown."""
 
     pass
 
 
-class OutUnknown8078(IntEnum):
+class OutUnknown8078(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8078. Specifics unknown."""
 
     pass
 
 
-class OutUnknown8079(IntEnum):
+class OutUnknown8079(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8079. Specifics unknown."""
 
     pass
 
 
-class OutUnknown807A(IntEnum):
+class OutUnknown807A(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x807A. Specifics unknown."""
 
     pass
 
 
-class OutUnknown807B(IntEnum):
+class OutUnknown807B(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x807B. Specifics unknown."""
 
     pass
 
 
-class OutUnknown807C(IntEnum):
+class OutUnknown807C(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x807C. Specifics unknown."""
 
     pass
 
 
-class OutUnknown807D(IntEnum):
+class OutUnknown807D(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x807D. Specifics unknown."""
 
     pass
 
 
-class OutUnknown807E(IntEnum):
+class OutUnknown807E(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x807E. Specifics unknown."""
 
     pass
 
 
-class OutUnknown807F(IntEnum):
+class OutUnknown807F(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x807F. Specifics unknown."""
 
     pass
 
 
-class OutdoorExtCmdOperation(IntEnum):  # 0x8081
+class OutdoorExtCmdOperation(SamsungEnum, IntEnum):  # 0x8081
     """Outdoor unit enum for message 0x8081 (NASA_OUTDOOR_EXT_CMD_OPERATION). Specifics unknown."""
 
     pass
 
 
-class OutUnknown8083(IntEnum):
+class OutUnknown8083(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8083. Specifics unknown."""
 
     pass
 
 
-class OutUnknown808C(IntEnum):
+class OutUnknown808C(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x808C. Specifics unknown."""
 
     pass
 
 
-class OutUnknown808D(IntEnum):
+class OutUnknown808D(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x808D. Specifics unknown."""
 
     pass
 
 
-class OutUnknown808F(IntEnum):
+class OutUnknown808F(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x808F. Specifics unknown."""
 
     pass
 
 
-class OutdoorDredLevel(IntEnum):  # 0x80A7
+class OutdoorDredLevel(SamsungEnum, IntEnum):  # 0x80A7
     """Outdoor unit enum for message 0x80A7 (NASA_OUTDOOR_DRED_LEVEL). Specifics unknown."""
 
     pass
 
 
-class OutUnknown80A8(IntEnum):
+class OutUnknown80A8(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80A8. Specifics unknown."""
 
     pass
 
 
-class OutUnknown80A9(IntEnum):
+class OutUnknown80A9(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80A9. Specifics unknown."""
 
     pass
 
 
-class OutUnknown80AA(IntEnum):
+class OutUnknown80AA(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80AA. Specifics unknown."""
 
     pass
 
 
-class OutUnknown80AB(IntEnum):
+class OutUnknown80AB(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80AB. Specifics unknown."""
 
     pass
 
 
-class OutUnknown80AE(IntEnum):
+class OutUnknown80AE(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80AE. Specifics unknown."""
 
     pass
 
 
-class OutUnknown80B1(IntEnum):
+class OutUnknown80B1(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80B1. Specifics unknown."""
 
     pass
 
 
-class OutdoorChSwitchValue(IntEnum):  # 0x80B2
+class OutdoorChSwitchValue(SamsungEnum, IntEnum):  # 0x80B2
     """Outdoor unit enum for message 0x80B2 (NASA_OUTDOOR_CH_SWITCH_VALUE). Specifics unknown."""
 
     pass
 
 
-class OutUnknown80B6(IntEnum):
+class OutUnknown80B6(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80B6. Specifics unknown."""
 
     pass
 
 
-class OutUnknown80BC(IntEnum):
+class OutUnknown80BC(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80BC. Specifics unknown."""
 
     pass
 
 
-class OutUnknown80CE(IntEnum):
+class OutUnknown80CE(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80CE. Specifics unknown."""
 
     pass

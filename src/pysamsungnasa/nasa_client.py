@@ -187,6 +187,9 @@ class NasaClient:
                     _LOGGER.warning("Reader: socket_reader became None mid-loop.")
                     await self._handle_disconnection(RuntimeError("socket_reader became None"))
                     break
+                if self._rx_queue is None:
+                    _LOGGER.warning("Reader: rx_queue became None mid-loop.")
+                    continue
                 data = await self._socket_reader.read(1024)
                 if not data:  # EOF, connection closed by peer
                     _LOGGER.info("Reader: Connection closed by peer (EOF).")
@@ -327,14 +330,17 @@ class NasaClient:
             try:
                 # Use a timeout to allow the loop to check _connection_status
                 # and gracefully exit if queue becomes None externally.
+                if self._rx_queue is None:
+                    continue
                 data = await asyncio.wait_for(self._rx_queue.get(), timeout=1.0)
                 if data is not None and self._rx_event_handler:
                     _LOGGER.debug("QueueProcessor: Processing data: %s", bin2hex(data))
                     data = await self._partial_packet_handler(data)
-                    try:
-                        self._rx_event_handler(data)
-                    except Exception as eh_ex:
-                        _LOGGER.error("Error in rx_event_handler: %s", eh_ex)
+                    if data is not None:
+                        try:
+                            self._rx_event_handler(data)
+                        except Exception as eh_ex:
+                            _LOGGER.exception("Error in rx_event_handler: %s", eh_ex)
                 self._rx_queue.task_done()
             except asyncio.TimeoutError:
                 if not self._connection_status and self._rx_queue and self._rx_queue.empty():

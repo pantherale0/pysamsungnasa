@@ -29,7 +29,6 @@ async def main():
                 logging.info("  Address: %s", v.address)
                 logging.info("  Attributes: %s", v.attributes)
                 logging.info("  Last packet time: %s", v.last_packet_time)
-                await v.send_message(0x4095, b"\x01\x00\x00\x00")
     except (KeyboardInterrupt, asyncio.exceptions.CancelledError):
         await nasa.stop()
 
@@ -38,6 +37,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
     )
-    server = FakeNasa()
-    server.start()
+    if os.getenv("SAMSUNG_HP_HOST") == "127.0.0.1":
+        server = FakeNasa()
+        server.start()
     asyncio.run(main())

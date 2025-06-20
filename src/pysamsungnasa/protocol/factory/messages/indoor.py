@@ -13,22 +13,22 @@ from ...enum import (
     InLouverHlPartSwing,
     DhwOpMode,
     InThermostatStatus,
-    InBackupHeater,
+    InBackupHeater as InBackupHeaterEnum,
     DhwReferenceTemp,
     In2WayValve,
-    InFsv2041WaterLawTypeHeating,
-    InFsv2081WaterLawTypeCooling,
+    InFsv2041WaterLawTypeHeating as InFsv2041WaterLawTypeHeatingEnum,
+    InFsv2081WaterLawTypeCooling as InFsv2081WaterLawTypeCoolingEnum,
     InUseThermostat,
-    InFsv2093,
-    InFsv2094,
-    InFsv3011EnableDhw,
-    InFsv3061UseDhwThermostat,
-    InFsv3071,
+    InFsv2093 as InFsv2093Enum,
+    InFsv2094 as InFsv2094Enum,
+    InFsv3011EnableDhw as InFsv3011EnableDhwEnum,
+    InFsv3061UseDhwThermostat as InFsv3061UseDhwThermostatEnum,
+    InFsv3071 as InFsv3071Enum,
     InFsv4011,
     InFsv4021,
     InFsv4022,
     InFsv4041,
-    InFsv5022,
+    InFsv5022 as InFsv5022Enum,
 )
 
 
@@ -131,7 +131,7 @@ class InBackupHeater(EnumMessage):
 
     MESSAGE_ID = 0x406C
     MESSAGE_NAME = "Indoor Backup Heater"
-    MESSAGE_ENUM = InBackupHeater
+    MESSAGE_ENUM = InBackupHeaterEnum
 
 
 class DhwReferenceTemperatureMessage(EnumMessage):
@@ -169,7 +169,7 @@ class InFsv2041WaterLawTypeHeating(EnumMessage):
 
     MESSAGE_ID = 0x4093
     MESSAGE_NAME = "FSV 2041 Water Law Type Heating"
-    MESSAGE_ENUM = InFsv2041WaterLawTypeHeating
+    MESSAGE_ENUM = InFsv2041WaterLawTypeHeatingEnum
 
 
 class InFsv2081WaterLawTypeCooling(EnumMessage):
@@ -177,7 +177,7 @@ class InFsv2081WaterLawTypeCooling(EnumMessage):
 
     MESSAGE_ID = 0x4094
     MESSAGE_NAME = "FSV 2081 Water Law Type Cooling"
-    MESSAGE_ENUM = InFsv2081WaterLawTypeCooling
+    MESSAGE_ENUM = InFsv2081WaterLawTypeCoolingEnum
 
 
 class InFsv2091UseThermostat1(EnumMessage):
@@ -201,7 +201,7 @@ class InFsv3011EnableDhw(EnumMessage):
 
     MESSAGE_ID = 0x4097
     MESSAGE_NAME = "FSV 3011 Enable DHW"
-    MESSAGE_ENUM = InFsv3011EnableDhw
+    MESSAGE_ENUM = InFsv3011EnableDhwEnum
 
 
 class InFsv3031(BoolMessage):
@@ -238,7 +238,7 @@ class InFsv3061UseDhwThermostat(EnumMessage):
 
     MESSAGE_ID = 0x409C
     MESSAGE_NAME = "FSV 3061 Use DHW Thermostat"
-    MESSAGE_ENUM = InFsv3061UseDhwThermostat
+    MESSAGE_ENUM = InFsv3061UseDhwThermostatEnum
 
 
 class InFsv3071(EnumMessage):
@@ -246,7 +246,7 @@ class InFsv3071(EnumMessage):
 
     MESSAGE_ID = 0x409D
     MESSAGE_NAME = "FSV 3071"
-    MESSAGE_ENUM = InFsv3071
+    MESSAGE_ENUM = InFsv3071Enum
 
 
 class InFsv4023(BoolMessage):
@@ -325,7 +325,7 @@ class InFsv2093(EnumMessage):
 
     MESSAGE_ID = 0x4127
     MESSAGE_NAME = "FSV 2093"
-    MESSAGE_ENUM = InFsv2093
+    MESSAGE_ENUM = InFsv2093Enum
 
 
 class InFsv5022(EnumMessage):
@@ -333,7 +333,7 @@ class InFsv5022(EnumMessage):
 
     MESSAGE_ID = 0x4128
     MESSAGE_NAME = "FSV 5022"
-    MESSAGE_ENUM = InFsv5022
+    MESSAGE_ENUM = InFsv5022Enum
 
 
 class InFsv2094(EnumMessage):
@@ -341,7 +341,7 @@ class InFsv2094(EnumMessage):
 
     MESSAGE_ID = 0x4129
     MESSAGE_NAME = "FSV 2094"
-    MESSAGE_ENUM = InFsv2094
+    MESSAGE_ENUM = InFsv2094Enum
 
 
 class InFsvLoadSaveAlt(BoolMessage):
