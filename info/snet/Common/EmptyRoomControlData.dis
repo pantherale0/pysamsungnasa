@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GadgetFrame ID="ID_Empty_Room_Control_Data">
+  <Name>
+    <String>EmptyAndEnterRoomControl</String>
+  </Name>
+  <TableGadget AddressClass="Indoor" LocationX="0" LocationY="0" Width="600" Height="800" Layout="Main">
+    <TableAppearance>
+      <ColumnAutoFit>true</ColumnAutoFit>
+      <RowHeight>25</RowHeight>
+    </TableAppearance>
+    <Name>
+      <String>EmptyRoomControl</String>
+    </Name>
+    <Column ProtocolID="ENUM_IN_EMPTY_ROOM_CONTROL_USED">
+      <Name>
+        <String>EmptyRoomControl_EmptyRoomControlLabel</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_STATE_KEY_TAG">
+      <Name>
+        <String>EmptyRoomControl_KeyTagStatus</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="Enum_in_Empty_Room_Operation_Mode">
+      <Name>
+        <String>Idiom_OpMode</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="Enum_in_Empty_Room_Fan_Mode">
+      <Name>
+        <String>Indoor_FanSpeed</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_Empty_Room_Set_Temp">
+      <Name>
+        <String>Indoor_SetTemp</String>
+      </Name>
+    </Column>
+  </TableGadget>
+  <TableGadget AddressClass="Indoor" LocationX="600" LocationY="0" Width="600" Height="800" Layout="Main">
+    <TableAppearance>
+      <ColumnAutoFit>true</ColumnAutoFit>
+      <RowHeight>25</RowHeight>
+    </TableAppearance>
+    <Name>
+      <String>OccupiedRoomControl</String>
+    </Name>
+    <Column ProtocolID="ENUM_IN_ENTER_ROOM_CONTROL_USED">
+      <Name>
+        <String>OccupiedRoomControl_OccupiedRoomControlLabel</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_STATE_KEY_TAG">
+      <Name>
+        <String>EmptyRoomControl_KeyTagStatus</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="Enum_in_Enter_Room_Operation_Mode">
+      <Name>
+        <String>Idiom_OpMode</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="Enum_in_Enter_Room_Fan_Mode">
+      <Name>
+        <String>Indoor_FanSpeed</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_Enter_Room_Set_Temp">
+      <Name>
+        <String>Indoor_SetTemp</String>
+      </Name>
+    </Column>
+  </TableGadget>
+</GadgetFrame>

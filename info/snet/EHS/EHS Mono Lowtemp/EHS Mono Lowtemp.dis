@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE DisplayRule [
+  <!ENTITY EHSMonoLowtempIndoorDisplayRule SYSTEM "./EHS Mono Lowtemp Indoor.dis">
+  <!ENTITY EHSMonoLowtempFSVDisplayRule SYSTEM "./EHS Mono Lowtemp FSV.dis">
+]>
+<DisplayRule xmlns="urn:AirKitRuleSchema" Revision="1.1.0" DeviceName="DVM Inverter" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:AirKitRuleSchema file:///D:/01_Development%20Project/DeepView/03.Develope/Source/DeepView2010/RuleSet/AirKitRuleSchema.xsd">
+  <GadgetFrame ID="ID_EHS_MONO_LOWTEMP_OUTDOOR_DATA">
+    <Name>
+      <String>DisplayGadget_OutdoorData</String>
+    </Name>
+    <PairTableGadget AddressClass="Outdoor" LocationX="0" LocationY="0" Width="270" Height="240" Layout="Main" ReportExport="false">
+      <Name>
+        <String>TotalUnitsInfo</String>
+      </Name>
+      <Column NameWidth="170" ValueWidth="97">
+        <PairRow ProtocolID="#Total_No_Outdoor_Unit">
+          <Name>
+            <String>TotalOutdoorUnitsInfo</String>
+          </Name>
+        </PairRow>
+        <PairRow ProtocolID="#Total_No_Indoor_Unit">
+          <Name>
+            <String>TotalIndoorUnitsInfo</String>
+          </Name>
+        </PairRow>
+      </Column>
+    </PairTableGadget>
+    <TableGadget  AddressClass="Outdoor" LocationX="0" LocationY="240" Width="270" Height="660" Layout="Main" ReportExport="false">
+      <TableAppearance>
+        <ColumnAutoFit>true</ColumnAutoFit>
+        <RowHeight>25</RowHeight>
+      </TableAppearance>
+      <Name>
+        <String>InstalledUnitsInfo</String>
+      </Name>
+      <Column ProtocolID="VAR_No_Outdoor_Unit" >
+        <Name>
+          <String>InstalledOutdoorUnit</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_No_Indoor_Unit">
+        <Name>
+          <String>InstalledIndoorUnit</String>
+        </Name>
+      </Column>
+    </TableGadget>
+
+    <TableGadget AddressClass="Outdoor" LocationX="270" LocationY="0" Width="310" Height="900" ExcelExportSelectable="true" Layout="Main">
+      <TableAppearance>
+        <ColumnAutoFit>true</ColumnAutoFit>
+        <RowHeight>25</RowHeight>
+      </TableAppearance>
+      <CardViewAppearance>
+        <ApplyCardView>true</ApplyCardView>
+        <LabelWidth>150</LabelWidth>
+        <CellWidth>150</CellWidth>
+      </CardViewAppearance>
+      <Name>
+        <String>OutdoorTableUnitInfo1</String>
+      </Name>
+      <Column ProtocolID="STR_AD_PRODUCT_MODEL_NAME">
+        <Name>
+          <String>Idiom_Model</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_comp1">
+        <Name>
+          <String>OutdoorUnitCompressor</String>
+        </Name>
+
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+
+      <Column ProtocolID="ENUM_out_load_4way">
+        <Name>
+          <String>OutdoorUnit4WayValve</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_hotgas">
+        <Name>
+          <String>OutdoorUnitHotGasValve</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_OUT_LOAD_LIQUID">
+        <Name>
+          <String>Liquid Valve</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_evi_bypass">
+        <Name>
+          <String>Valve_EVIBypass</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_operation_odu_mode">
+        <Name>
+          <String>Idiom_OpMode</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_out_operation_heatcool">
+        <Name>
+          <String>OutdoorTableOpStatus</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_ad_error_code1">
+        <Name>
+          <String>Idiom_ErrorCode</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_OUT_PRODUCT_OPTION_CAPA">
+        <Name>
+          <String>Idiom_Capa</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_control_target_cfreq_comp1">
+        <Name>
+          <String>OutdoorTableTargetFreq1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_control_order_cfreq_comp1">
+        <Name>
+          <String>OutdoorTableOrderFreq1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_control_cfreq_comp1">
+        <Name>
+          <String>OutdoorTableCurrentFreq1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_highpress">
+        <Name>
+          <String>OutdoorTableHighPressure</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="Saturated T_Pd"  >
+        <Name>
+          <String>OutdoorTableSaturatedTPd</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_lowpress"  >
+        <Name>
+          <String>OutdoorTableLowPressure</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="Saturated T_Ps"  >
+        <Name>
+          <String>OutdoorTableSaturatedTPs</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_discharge1"  >
+        <Name>
+          <String>OutdoorTableDischarge1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_top1">
+        <Name>
+          <String>OutdoorTableCompTop1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_airout"  >
+        <Name>
+          <String>OutdoorTableOutdoorTemp</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_ct1"  >
+        <Name>
+          <String>OutdoorTableCompressorCurrent1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_OUT_SENSOR_OCT1"  >
+        <Name>
+          <String>OCT1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_dclink_voltage">
+        <Name>
+          <String>OutdoorTableDCLink1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_IPM1"  >
+        <Name>
+          <String>OutdoorTableIPM1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_condout"  >
+        <Name>
+          <String>OutdoorTableCondOutTemp</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_suction"  >
+        <Name>
+          <String>OutdoorTableSuctionTemp1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_OUT_SENSOR_EVAIN">
+        <Name>
+          <String>Idiom_EvaIn</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_OUT_SENSOR_TW1">
+        <Name>
+          <String>Water In(Tw1)</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_OUT_SENSOR_TW2">
+        <Name>
+          <String>Water Out(Tw2)</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_load_outeev1">
+        <Name>
+          <String>OutdoorTableMainEEV</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_load_evieev">
+        <Name>
+          <String>OutdoorTableEVIEEV</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_OUT_LOAD_EVI_SOL_EEV">
+        <Name>
+          <String>EVI SOL EEV</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_outcd__sensor_eviin">
+        <Name>
+          <String>OutdoorTableEVIIN</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_eviout">
+        <Name>
+          <String>OutdoorTableEVIOUT</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_load_fanrpm1">
+        <Name>
+          <String>OutdoorTableOutdoorFanRPM1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_OUT_LOAD_BASEHEATER">
+        <Name>
+          <String>Hydro_BaseHeater</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_OUT_LOAD_PHEHEATER">
+        <Name>
+          <String>PHE Heater</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_OUT_EHS_WATEROUT_TYPE">
+        <Name>
+          <String>Waterout type</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_info_equip_position">
+        <Name>
+          <String>OutdoorUnitInstallationLocation</String>
+        </Name>
+        <ControlUI TargetID="605"  DefaultValue="1"/>
+      </Column>
+      <Column ProtocolID="STR_ad_id_serial_number">
+        <Name>
+          <String>OutdoorTableSerialNumber</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_dbcode_micom_main">
+        <Name>
+          <String>OutdoorUnitMainDBCodeVersion</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="InverterMicom1Info">
+        <Name>
+          <String>Inverter1DBCodeVersion</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_dbcode_eeprom">
+        <Name>
+          <String>OutdoorTableEEPROMDBCodeVersion</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_CurLimit">
+        <Name>
+          <String>OutdoorUnitOptionCurrentLimit</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_Defrost">
+        <Name>
+          <String>OutdoorUnitOptionDefrost</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_FanRev">
+        <Name>
+          <String>OutdoorUnitOptionFanCalibration</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_Silence">
+        <Name>
+          <String>OutdoorUnitOptionNightSilence</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_NasaChannel">
+        <Name>
+          <String>OutdoorUnitOptionChannelAddress</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_SnowProtectionControl">
+        <Name>
+          <String>OutdoorUnitOptionSnowProtectionControl</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_BaseHeater">
+        <Name>
+          <String>Base Heater(option)</String>
+        </Name>
+      </Column>
+    </TableGadget>
+  </GadgetFrame>
+  &EHSMonoLowtempIndoorDisplayRule;
+  &EHSMonoLowtempFSVDisplayRule;
+  
+</DisplayRule>

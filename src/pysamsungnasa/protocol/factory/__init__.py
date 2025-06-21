@@ -5,19 +5,31 @@ import logging
 from .messages import load_message_classes
 from .messaging import BaseMessage, RawMessage
 from ...helpers import bin2hex
+from ..enum import DataType, PacketType
+
 
 MESSAGE_PARSERS: dict[int, BaseMessage] = load_message_classes()
-SEND_MESSAGE_BASE_CONTENT = [
-    "{SOURCE}",  # Source Address (Class 10, Chan 00, Addr 00)
-    "{DESTINATION}",  # Destination Address (Class B0, Chan FF, Addr FF)
-    "00",  # Packet Info/ProtoVer/Retry
-    "14",  # PacketType (1=Normal), DataType (4=Notification)
-    "{CUR_PACK_NUM}",  # Packet Number
-    "01",  # Capacity (Number of Messages)
-    "{MESSAGE_NUMBER}",  # Message Number (OUT_OPERATION_STATUS)
-    "{PAYLOAD_HEX}",  # Message Payload
-]
 _LOGGER = logging.getLogger(__name__)
+
+
+def build_message(source: str, destination: str, data_type: DataType, message_number: int, payload: bytes) -> str:
+    """Build a message to send to a device."""
+    msg = []
+    msg.append(source)
+    msg.append(destination)
+    command_byte1_val = (
+        0x80  # packetInformation (assuming it's true for normal packets)
+        | (1 << 4)  # protocolVersion = 1
+        | (0 << 2)  # retryCount = 0
+        | PacketType.NORMAL.value
+    )  # PacketType (e.g., 0 for Normal)
+    msg.append(f"{command_byte1_val:02x}")  # Packet Info/ProtoVer/Retry (1 byte)
+    msg.append(f"{PacketType.NORMAL.value:02x}")  # Packet Type (1 byte)
+    msg.append(f"{data_type.value:02x}")
+    msg.append("{CUR_PACK_NUM}")  # Packet Number (1 byte, to be filled later)
+    msg.append(f"{message_number:04x}")  # Message Number (4 bytes)
+    msg.append(bin2hex(payload))  # Message Payload in hex
+    return "".join(msg).upper()
 
 
 def get_nasa_message_name(message_number: int) -> str | None:
@@ -49,13 +61,3 @@ def parse_message(message_number: int, payload: bytes, description: str) -> dict
         _LOGGER.exception("Error parsing packet for %s (%s): %s", message_number, bin2hex(payload), e)
         parser = RawMessage.parse_payload(payload)
     return parser
-
-
-def build_message(source: str, destination: str, message_number: int, payload: bytes) -> str:
-    """Build a message to send to a device."""
-    msg = list(SEND_MESSAGE_BASE_CONTENT)
-    msg[0] = source
-    msg[1] = destination
-    msg[6] = f"{message_number:04x}"  # Message Number (4 bytes)
-    msg[7] = bin2hex(payload)  # Message Payload in hex
-    return "".join(msg).upper()

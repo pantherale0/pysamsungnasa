@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE fragmentLink [
+  <!ENTITY indoorUnitInstallationDisplayRule SYSTEM "../Common/IndoorUnitInstallationData.dis">
+  <!ENTITY emptyControlRoomDisplayRule SYSTEM "../Common/EmptyRoomControlData.dis">
+  <!ENTITY indoorUnitDisplayRule SYSTEM "../Common/IndoorUnitData.dis">
+  <!ENTITY emergencyTemperatureOutputDisplayRule SYSTEM "../Common/EmergencyTemperatureOutputData.dis">
+]>
+<DisplayRule xmlns="urn:AirKitRuleSchema" Revision="1.1.0" DeviceName="DVM Inverter" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:AirKitRuleSchema file:///D:/01_Development%20Project/DeepView/03.Develope/Source/DeepView2010/RuleSet/AirKitRuleSchema.xsd">
+  <GadgetFrame ID="ID_7D82808A-DEFF-483C-90BB-A1E1CEEEA9C9">
+    <Name>
+      <String>DisplayGadget_OutdoorData</String>
+    </Name>
+  
+    <PairTableGadget AddressClass="Outdoor" LocationX="0" LocationY="0" Width="270" Height="240" Layout="Main" ReportExport="false">
+     
+      <Name>
+	<String>TotalUnitsInfo</String>
+	</Name>
+      <Column NameWidth="170" ValueWidth="97">
+        <PairRow ProtocolID="#Total_No_Outdoor_Unit">
+		<Name>
+            <String>TotalOutdoorUnitsInfo</String>
+		</Name>
+        </PairRow>
+		<PairRow ProtocolID="#Total_No_Indoor_Unit">
+		<Name>
+			<String>TotalIndoorUnitsInfo</String>
+		</Name>
+        </PairRow>
+	  </Column>
+    </PairTableGadget>
+	 <TableGadget  AddressClass="Outdoor" LocationX="0" LocationY="240" Width="270" Height="370" Layout="Main" ReportExport="false">
+     <TableAppearance>
+       <ColumnAutoFit>true</ColumnAutoFit>
+       <RowHeight>25</RowHeight>
+     </TableAppearance>  
+     <Name>
+	<String>InstalledUnitsInfo</String>
+	</Name>
+	<Column ProtocolID="VAR_No_Outdoor_Unit" >
+		<Name>
+			<String>InstalledOutdoorUnit</String>
+		</Name>
+	  </Column>
+	  <Column ProtocolID="VAR_No_Indoor_Unit">
+		<Name>
+			<String>InstalledIndoorUnit</String>
+		</Name>
+	  </Column>
+    </TableGadget>
+    <TableGadget AddressClass="Outdoor" LocationX="270" LocationY="0" Width="310" Height="610" ExcelExportSelectable="true" Layout="Main">
+      <TableAppearance>
+        <ColumnAutoFit>true</ColumnAutoFit>
+        <RowHeight>25</RowHeight>
+      </TableAppearance>
+      <CardViewAppearance>
+        <ApplyCardView>true</ApplyCardView>
+        <LabelWidth>150</LabelWidth>
+        <CellWidth>150</CellWidth>
+      </CardViewAppearance>
+      <Name>
+        <String>OutdoorTableUnitInfo1</String>
+      </Name>
+      <Column ProtocolID="#IndoorUnit">
+        <Name>
+          <String>OutdoorTableTotalIndoor</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="#SUM_VAR_in_capacity_request">
+        <Name>
+          <String>OutdoorTableTotalIndoorCapa</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_4way">
+        <Name>
+          <String>OutdoorUnit4WayValve</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_operation_odu_mode">
+        <Name>
+          <String>Idiom_OpMode</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_ad_error_code1">
+        <Name>
+          <String>Idiom_ErrorCode</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_dclink_voltage">
+        <Name>
+          <String>OutdoorTableDCLink1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_control_target_cfreq_comp1">
+        <Name>
+          <String>OutdoorTableTargetFreq1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_control_order_cfreq_comp1">
+        <Name>
+          <String>OutdoorTableOrderFreq1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_control_cfreq_comp1">
+        <Name>
+          <String>OutdoorTableCurrentFreq1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_airout">
+        <Name>
+          <String>OutdoorTableOutdoorTemp</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_discharge1">
+        <Name>
+          <String>OutdoorTableDischarge1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_top1">
+        <Name>
+          <String>OutdoorTableCompTop1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_IPM1"  >
+        <Name>
+          <String>OutdoorTableIPM1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_control_target_discharge">
+        <Name>
+          <String>OutdoorTableTargetDischarge</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_OUT_HIGH_OUTDOOR_TEMP_STATUS">
+        <Name>
+          <String>OUTDOOR_HIGH_TEMP_STATUS</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_OUT_HIGH_OUTDOOR_TEMP_COUNT">
+        <Name>
+          <String>OUTDOOR_HIGH_TEMP_COUNT</String>
+        </Name>
+        <ControlUI TargetID="82F5" Min="0" Max="0" DefaultValue="0"/>
+      </Column>
+  </TableGadget>
+    <TableGadget AddressClass="Outdoor" LocationX="580" LocationY="0" Width="310" Height="610" ExcelExportSelectable="true" Layout="Main">
+      <TableAppearance>
+        <ColumnAutoFit>true</ColumnAutoFit>
+        <RowHeight>25</RowHeight>
+      </TableAppearance>
+      <CardViewAppearance>
+        <ApplyCardView>true</ApplyCardView>
+        <LabelWidth>150</LabelWidth>
+        <CellWidth>150</CellWidth>
+      </CardViewAppearance>
+      <Name>
+        <String>OutdoorTableUnitInfo2</String>
+      </Name>
+      <Column ProtocolID="VAR_out_load_fanrpm1">
+        <Name>
+          <String>OutdoorTableFanRPM</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_condout">
+        <Name>
+          <String>OutdoorTableCondOutTemp</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_load_outeev1">
+        <Name>
+          <String>OutdoorTableMainEEV</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_load_outeev2">
+        <Name>
+          <String>OutdoorTableMainEEV2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_ct1"  >
+        <Name>
+          <String>OutdoorTableCompressorCurrent1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_OUT_PHASE_CURRENT">
+        <Name>
+          <String>OutdoorTablePhaseCurrent</String>
+        </Name>
+      </Column>
+      <!--장석현 책임 삭제요청 2015.04.16 -->
+      <!--장석현님 추가요청 20.06.24 -->
+      <!--ESC EEV, ESC IN, ESC OUT Main EEV 2 추가-->
+      <Column ProtocolID="VAR_out_load_evieev">
+        <Name>
+          <String>OutdoorTableMainESCEEV</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_outcd__sensor_eviin">
+        <Name>
+          <String>OutdoorTableMainESCIN</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_eviout">
+        <Name>
+          <String>OutdoorTableMainESCOUT</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_info_equip_position">
+        <Name>
+          <String>OutdoorUnitInstallationLocation</String>
+        </Name>
+        <ControlUI TargetID="605"  DefaultValue="1"/>
+      </Column>
+      <Column ProtocolID="STR_ad_id_serial_number">
+        <Name>
+          <String>OutdoorTableSerialNumber</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_dbcode_micom_main">
+        <Name>
+          <String>OutdoorUnitMainDBCodeVersion</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="InverterMicom1Info">
+        <Name>
+          <String>Inverter1DBCodeVersion</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_dbcode_eeprom">
+        <Name>
+          <String>OutdoorTableEEPROMDBCodeVersion</String>
+        </Name>
+      </Column>
+    </TableGadget>
+  </GadgetFrame>
+
+  <GadgetFrame ID="ID_OUTDOOR_CYCLE_DIAGRAM">
+    <Name>
+      <String>Outdoor Unit Cycle Diagram</String>
+    </Name>
+    <ImageGadget AddressClass="Outdoor" LocationX="0" LocationY="0" Width="727" Height="622" Layout="None" ImgPath=".\CycleImage\CAC\CAC_TypeC.jpg">
+      <CreateCondition>
+        <DataEntity ProtocolID="ENUM_OUT_EXIST_4WAY_VALVE">1</DataEntity>
+      </CreateCondition>
+      <Factor ProtocolID="VAR_out_sensor_condout" LocationX="271" LocationY="285">
+        <Name>
+          <String>T_CO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_4way" LocationX="175" LocationY="279">
+        <Name>
+          <String>V_4W</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_outeev1" LocationX="335" LocationY="299">
+        <Name>
+          <String>E_M</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_discharge1" LocationX="165" LocationY="397">
+        <Name>
+          <String>T_D</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_top1" LocationX="112" LocationY="451">
+        <Name>
+          <String>T_CT</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_control_cfreq_comp1" LocationX="150" LocationY="517">
+        <Name>
+          <String>현재주파수</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_airout" LocationX="352" LocationY="227">
+        <Name>
+          <String>T_A</String>
+        </Name>
+      </Factor>
+    </ImageGadget>
+    <ImageGadget AddressClass="Outdoor" LocationX="0" LocationY="0" Width="727" Height="622" Layout="None" ImgPath=".\CycleImage\CAC\CAC_TypeD.jpg">
+      <CreateCondition>
+        <DataEntity ProtocolID="ENUM_OUT_EXIST_4WAY_VALVE">0</DataEntity>
+      </CreateCondition>
+      <Factor ProtocolID="VAR_out_sensor_condout" LocationX="254" LocationY="294">
+        <Name>
+          <String>T_CO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_outeev1" LocationX="320" LocationY="302">
+        <Name>
+          <String>E_M</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_discharge1" LocationX="145" LocationY="405">
+        <Name>
+          <String>T_D</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_top1" LocationX="90" LocationY="463">
+        <Name>
+          <String>T_CT</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_control_cfreq_comp1" LocationX="131" LocationY="524">
+        <Name>
+          <String>현재주파수</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_airout" LocationX="340" LocationY="227">
+        <Name>
+          <String>T_A</String>
+        </Name>
+      </Factor>
+    </ImageGadget>
+  </GadgetFrame>
+  &indoorUnitDisplayRule;
+  &emptyControlRoomDisplayRule;  
+  &indoorUnitInstallationDisplayRule;
+  &emergencyTemperatureOutputDisplayRule;  
+ </DisplayRule>

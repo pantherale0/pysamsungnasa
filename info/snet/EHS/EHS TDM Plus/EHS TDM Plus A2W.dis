@@ -1,0 +1,292 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GadgetFrame ID="ID_EHS_TDM_PLUS_A2W">
+  <Name>
+    <String>A2W</String>
+  </Name>
+  <TableGadget AddressClass="Indoor" LocationX="0" LocationY="0" Width="680" Height="425" ExcelExportSelectable="true" Layout="Fill">
+    <DeviceToJoin>
+      <IncludeModel From="117" To="117"></IncludeModel>
+    </DeviceToJoin>
+    <CardViewAppearance>
+      <ApplyCardView>true</ApplyCardView>
+      <LabelWidth>150</LabelWidth>
+      <CellWidth>140</CellWidth>
+    </CardViewAppearance>
+    <Name>
+      <String>Idiom_IndoorUnit</String>
+    </Name>
+    <Column ProtocolID="ENUM_IN_COMBINATION_OPERATION">
+      <Name>
+        <String>Hydro_CombinationOperation</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_in_operation_power">
+      <Name>
+        <String>Hydro_NormalPower</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+      <ControlUI TargetID="4000"  DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="ENUM_in_operation_mode_real">
+      <Name>
+        <String>Hydro_OpMode</String>
+      </Name>
+      <ControlUI TargetID="4001"  DefaultValue="1"/>
+    </Column>
+    <Column ProtocolID="VAR_ad_error_code1">
+      <Name>
+        <String>Idiom_ErrorCode</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_SILENCE">
+      <Name>
+        <String>Hydro_Silence</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_OUTING_MODE">
+      <Name>
+        <String>Hydro_OutingOperation</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_WATER_HEATER_POWER">
+      <Name>
+        <String>Hydro_WaterHeaterPower_Single</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+      <ControlUI TargetID="4065"  DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_WATER_HEATER_MODE">
+      <Name>
+        <String>Hydro_WaterHeaterMode_Single</String>
+      </Name>
+      <ControlUI TargetID="4066"  DefaultValue="1"/>
+    </Column>
+    <Column ProtocolID="VAR_in_temp_room_f">
+      <Name>
+        <String>Idiom_RoomTemp</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_ZONE2_F">
+      <Name>
+        <String>Idiom_RoomTemp_Zone2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_OUTLET_ZONE1_F">
+      <Name>
+        <String>Zone1 WaterOut Temp</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_OUTLET_ZONE2_F">
+      <Name>
+        <String>Zone2 WaterOut Temp</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_temp_target_f">
+      <Name>
+        <String>Zone1 Room Set Temp.</String>
+      </Name>
+      <ControlUI TargetID="4201"  DefaultValue="20"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_TARGET_ZONE2_F">
+      <Name>
+        <String>Zone2 Room Set Temp.</String>
+      </Name>
+      <ControlUI TargetID="42D6" Min="16" Max ="30" DefaultValue="16"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_HEATER_TARGET_F">
+      <Name>
+        <String>Hydro_ControlChoice_WaterTemp_Single</String>
+      </Name>
+      <ControlUI TargetID="4235"  DefaultValue="30"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_LAW_TARGET_F">
+      <Name>
+        <String>Hydro_WaterLawTargetF</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_OUTLET_TARGET_F">
+      <Name>
+        <String>Hydro_WaterOutletTargetF</String>
+      </Name>
+      <ControlUI TargetID="4247"  DefaultValue="30"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_OUTLET_TARGET_ZONE2_F">
+      <Name>
+        <String>Water Outlet2 Set Temp.</String>
+      </Name>
+      <ControlUI TargetID="42D7" Min="5" Max ="65" DefaultValue="5"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_REFERENCE_EHS_TEMP">
+      <Name>
+        <String>Hydro_ControlChoice_RoomTemp</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_STATE_THERMO">
+      <Name>
+        <String>Hydro_THERMOOnOff</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_2WAY_VALVE1">
+      <Name>
+        <String>2Way Valve1</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_2WAY_VALVE2">
+      <Name>
+        <String>2Way Valve2</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_3WAY_VALVE">
+      <Name>
+        <String>Hydro_3Way</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_STATE_WATER_PUMP">
+      <Name>
+        <String>Hydro_WaterPump</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_BACKUP_HEATER">
+      <Name>
+        <String>Hydro_BackupHeater</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_BOOSTER_HEATER">
+      <Name>
+        <String>Hydro_BoosterHeater</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_SOLAR_PUMP">
+      <Name>
+        <String>Hydro_SolarPump</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_PV_CONTACT_STATE">
+      <Name>
+        <String>PV Control</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_SG_READY_MODE_STATE">
+      <Name>
+        <String>Smart Grid</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="LVAR_In_Device_staus_Heatpump_Boiler">
+      <Name>
+        <String>Switch_HyrdoFlow</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="VAR_IN_FLOW_SENSOR_CALC">
+      <Name>
+        <String>Flow Sensor</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_eev_value_real_1">
+      <Name>
+        <String>Idiom_EEV</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_temp_eva_in_f">
+      <Name>
+        <String>Idiom_EvaIn</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_temp_eva_out_f">
+      <Name>
+        <String>Idiom_EvaOut</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_IN_F">
+      <Name>
+        <String>Hydro_WaterIn</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_OUT_F">
+      <Name>
+        <String>Hydro_WaterOut</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_OUT2_F">
+      <Name>
+        <String>Hydro_HeaterOut</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_MIXING_VALVE_F">
+      <Name>
+        <String>Hydro_MixingValve</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_TANK_F">
+      <Name>
+        <String>Hydro_WaterTankTemp_Single</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_WATERPUMP_PWM_VALUE">
+      <Name>
+        <String>EHSMonoSplit_InverterPump</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_THERMOSTAT1">
+      <Name>
+        <String>Hydro_ExternalThermostat</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_THERMOSTAT2">
+      <Name>
+        <String>Hydro_ExternalThermostat2</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_THERMOSTAT_WATER_HEATER">
+      <Name>
+        <String>Hydro_WaterHeaterThermostat</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="STR_ad_id_serial_number">
+      <Name>
+        <String>OutdoorTableSerialNumber</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="STR_ad_dbcode_micom_main">
+      <Name>
+        <String>OutdoorUnitMainDBCodeVersion</String>
+      </Name>
+    </Column>
+  </TableGadget>
+</GadgetFrame>

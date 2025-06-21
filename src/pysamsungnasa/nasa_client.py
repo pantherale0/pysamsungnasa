@@ -5,8 +5,9 @@ import logging
 import asyncio
 import struct
 
+from .protocol.enum import AddressClass
 from .config import NasaConfig
-from .helpers import bin2hex, hex2bin
+from .helpers import Address, bin2hex, hex2bin
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -14,6 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 class NasaClient:
     """Represent a NASA Client."""
 
+    pnp_auto_discovery_packet_handler = None
     _serial_lock = asyncio.Lock()
     _reader_lock = asyncio.Lock()
     _socket_reader: asyncio.streams.StreamReader | None = None
@@ -23,6 +25,7 @@ class NasaClient:
     _writer_task: asyncio.Task | None = None
     _tx_queue: asyncio.Queue[bytes] | None = None
     _rx_queue: asyncio.Queue[bytes] | None = None
+    _rx_buffer = b""
     _packet_number_counter: int = 0
 
     def __init__(
@@ -42,6 +45,7 @@ class NasaClient:
         self._tx_event_handler = send_event_handler
         self._disconnect_event_handler = disconnect_event_handler
         self._config = config
+        self.my_address = Address(class_id=AddressClass.JIG_TESTER, channel=0xFF, address=0)
 
     @property
     def is_connected(self) -> bool:
@@ -122,58 +126,55 @@ class NasaClient:
         """Disconnect from the server."""
         await self._handle_disconnection()
 
-    async def _partial_packet_handler(self, bin_data: bytes):
-        """A partial packet handler for the reader."""
-        if bin_data is None or len(bin_data) == 0:
-            return
-        while True:
-            if not self._connection_status or self._rx_queue is None:
-                _LOGGER.debug("Disconnected or rx_queue is None, stopping packet processing.")
-                break
-            if len(bin_data) < 1 + 2:
-                # not enough data yet.
-                break
-            _LOGGER.debug("Buffer length: %s", len(bin_data))
-            _LOGGER.debug("Buffer data: %s", bin2hex(bin_data))
-            fields = struct.unpack_from(">BH", bin_data)
-            expect_packet_len = 1 + fields[1] + 1
-            if fields[0] != 0x32:
-                _LOGGER.debug("Invalid prefix, consuming.")
-                if len(bin_data) > 1:
-                    async with self._reader_lock:
-                        bin_data = bin_data[1:]
-                continue
-            if len(bin_data) < expect_packet_len:
-                # not enough data yet.
-                break
+    # async def _partial_packet_handler(self, bin_data: bytes):
+    #     """A partial packet handler for the reader."""
+    #     if bin_data is None or len(bin_data) == 0:
+    #         return
+    #     while True:
+    #         if not self._connection_status or self._rx_queue is None:
+    #             _LOGGER.debug("Disconnected or rx_queue is None, stopping packet processing.")
+    #             break
+    #         if len(bin_data) < 1 + 2:
+    #             # not enough data yet.
+    #             break
+    #         fields = struct.unpack_from(">BH", bin_data)
+    #         expect_packet_len = 1 + fields[1] + 1
+    #         if fields[0] != 0x32:
+    #             _LOGGER.debug("Invalid prefix, consuming.")
+    #             if len(bin_data) > 1:
+    #                 bin_data = bin_data[1:]
+    #             continue
+    #         if len(bin_data) < expect_packet_len:
+    #             # not enough data yet.
+    #             break
 
-            # extract packet
-            packet = bin_data[:expect_packet_len]
-            if len(packet) != expect_packet_len:
-                _LOGGER.error("Invalid encoded length: %s", bin2hex(packet))
-                break
-            try:
-                packet_end = struct.unpack_from(">H", packet[-3:])
-                if packet[-1] != 0x34:
-                    _LOGGER.error("Invalid end of packet (expected 0x34): %s", bin2hex(packet))
-                    break
-                packet_data = packet[3:-3]
-                _LOGGER.debug("CRC computed against packet %s", bin2hex(packet_data))
-                packet_crc = binascii.crc_hqx(packet_data, 0)
-                if packet_crc != packet_end[0]:
-                    _LOGGER.error("Invalid CRC expected %s got %s", hex(packet_crc), hex(packet_end[0]))
-                    break
-                return packet_data
-            except struct.error as e:
-                _LOGGER.error(
-                    "Struct unpack error during packet processing: %s. Packet: %s. Consuming STX.", e, bin2hex(packet)
-                )
-                continue
-            except Exception as ex:  # Catch-all for other processing errors
-                _LOGGER.exception(
-                    "Exception while processing a packet: %s. Packet: %s. Consuming STX.", ex, bin2hex(packet)
-                )
-                continue
+    #         # extract packet
+    #         packet = bin_data[:expect_packet_len]
+    #         if len(packet) != expect_packet_len:
+    #             _LOGGER.error("Invalid encoded length: %s", bin2hex(packet))
+    #             break
+    #         try:
+    #             packet_end = struct.unpack_from(">H", packet[-3:])
+    #             if packet[-1] != 0x34:
+    #                 _LOGGER.error("Invalid end of packet (expected 0x34): %s", bin2hex(packet))
+    #                 break
+    #             packet_data = packet[3:-3]
+    #             _LOGGER.debug("CRC computed against packet %s", bin2hex(packet_data))
+    #             packet_crc = binascii.crc_hqx(packet_data, 0)
+    #             if packet_crc != packet_end[0]:
+    #                 _LOGGER.error("Invalid CRC expected %s got %s", hex(packet_crc), hex(packet_end[0]))
+    #                 break
+    #             return packet_data
+    #         except struct.error as e:
+    #             _LOGGER.error(
+    #                 "Struct unpack error during packet processing: %s. Packet: %s. Consuming STX.", e, bin2hex(packet)
+    #             )
+    #             continue
+    #         except Exception as ex:  # Catch-all for other processing errors
+    #             _LOGGER.exception(
+    #                 "Exception while processing a packet: %s. Packet: %s. Consuming STX.", ex, bin2hex(packet)
+    #             )
+    #             continue
 
     async def _reader(self):
         """Async read task. Reads from socket and passes to partial packet handler."""
@@ -181,6 +182,7 @@ class NasaClient:
             _LOGGER.debug("Reader: Socket reader is None, exiting.")
             return
         _LOGGER.debug("Reader task started.")
+        self._rx_buffer = b""
         while self._connection_status:
             try:
                 if self._socket_reader is None:  # Should be caught by _connection_status but defensive
@@ -325,23 +327,55 @@ class NasaClient:
             _LOGGER.error("QueueProcessor: RX queue is None at start, exiting.")
 
         _LOGGER.debug("Queue processor task started.")
+        self._rx_buffer = b""
         while self._connection_status or (self._rx_queue and not self._rx_queue.empty()):
             # Process remaining items if disconnected but queue has items
             try:
-                # Use a timeout to allow the loop to check _connection_status
-                # and gracefully exit if queue becomes None externally.
-                if self._rx_queue is None:
-                    continue
-                data = await asyncio.wait_for(self._rx_queue.get(), timeout=1.0)
-                if data is not None and self._rx_event_handler:
-                    _LOGGER.debug("QueueProcessor: Processing data: %s", bin2hex(data))
-                    data = await self._partial_packet_handler(data)
-                    if data is not None:
-                        try:
-                            self._rx_event_handler(data)
-                        except Exception as eh_ex:
-                            _LOGGER.exception("Error in rx_event_handler: %s", eh_ex)
-                self._rx_queue.task_done()
+                if self._rx_queue:
+                    try:
+                        # Use a timeout to allow the loop to check _connection_status
+                        data = await asyncio.wait_for(self._rx_queue.get(), timeout=1.0)
+                        self._rx_buffer += data
+                        self._rx_queue.task_done()
+                    except asyncio.TimeoutError:
+                        if not self._connection_status and self._rx_queue.empty():
+                            break  # Exit if disconnected and queue is now empty
+                        # Continue to process buffer even on timeout
+                while len(self._rx_buffer) >= 3:
+                    if self._rx_buffer[0] != 0x32:
+                        _LOGGER.debug("Invalid prefix, consuming.")
+                        self._rx_buffer = self._rx_buffer[1:]
+                        continue
+                    fields = struct.unpack_from(">BH", self._rx_buffer)
+                    expected_packet_len = 1 + fields[1] + 1
+                    if len(self._rx_buffer) < expected_packet_len:
+                        # Not enough data yet for a full packet.
+                        break
+                    packet = self._rx_buffer[:expected_packet_len]
+                    self._rx_buffer = self._rx_buffer[expected_packet_len:]
+                    if packet[-1] != 0x34:
+                        _LOGGER.error("Invalid end of packet (expected 0x34): %s", bin2hex(packet))
+                        continue
+                    try:
+                        packet_end = struct.unpack_from(">H", packet[-3:])
+                        packet_data = packet[3:-3]
+                        packet_crc = binascii.crc_hqx(packet_data, 0)
+
+                        if packet_crc != packet_end[0]:
+                            _LOGGER.error("Invalid CRC expected %s got %s", hex(packet_crc), hex(packet_end[0]))
+                            continue
+
+                        if self._rx_event_handler:
+                            self._rx_event_handler(packet_data)
+
+                    except struct.error as e:
+                        _LOGGER.error(
+                            "Struct unpack error during packet processing: %s. Packet: %s.", e, bin2hex(packet)
+                        )
+                    except Exception as ex:
+                        _LOGGER.exception(
+                            "Exception while processing a packet: %s. Packet: %s.", ex, bin2hex(packet)
+                        )
             except asyncio.TimeoutError:
                 if not self._connection_status and self._rx_queue and self._rx_queue.empty():
                     break  # Exit if disconnected and queue is now empty
@@ -402,26 +436,29 @@ class NasaClient:
         if not self._connection_status or self._tx_queue is None:
             return False
         for msg in message:
+            self._packet_number_counter = (self._packet_number_counter + 1) % 256
+            current_packet_num_hex = f"{self._packet_number_counter:02x}"
+            msg = msg.format(CUR_PACK_NUM=current_packet_num_hex)
             try:
-                self._packet_number_counter = (self._packet_number_counter + 1) % 256
-                current_packet_num_hex = f"{self._packet_number_counter:02x}"
-                data_for_crc = msg.format(CUR_PACK_NUM=current_packet_num_hex)
-                data_bytes = hex2bin(data_for_crc)
+                data_bytes = hex2bin(msg)
                 packet_size = len(data_bytes) + 4
                 packet_size_hex = f"{packet_size:04x}"
                 crc_val = binascii.crc_hqx(data_bytes, 0)
                 crc_hex = f"{crc_val:04x}"
-                full_packet_hex = f"32{packet_size_hex}{data_for_crc}{crc_hex}34"  # STX, Size, Data, CRC, ETX
+                full_packet_hex = f"32{packet_size_hex}{msg}{crc_hex}34"  # STX, Size, Data, CRC, ETX
                 data = hex2bin(full_packet_hex)
                 await self._tx_queue.put(data)
                 _LOGGER.debug("Command enqueued: %s", bin2hex(data))
             except (binascii.Error, ValueError) as e:
+                self._packet_number_counter = (self._packet_number_counter - 1) % 256
                 _LOGGER.error("Error encoding command %s: %s", msg, e)
                 return False
             except asyncio.QueueFull:
+                self._packet_number_counter = (self._packet_number_counter - 1) % 256
                 _LOGGER.error("TX queue is full, cannot send command: %s", msg)
                 return False
             except Exception as e:
+                self._packet_number_counter = (self._packet_number_counter - 1) % 256
                 _LOGGER.error("Unexpected error sending command %s: %s", msg, e)
                 return False
         _LOGGER.debug("All commands sent to TX queue.")

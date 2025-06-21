@@ -1,0 +1,273 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Hydro HT Frames-->
+<GadgetFrame ID="ID_EHS_HT_35kW_HYDRO_UNIT">
+  <Name>
+    <String>ModuleChiller_HydroInfo</String>
+  </Name>
+  <TableGadget AddressClass="Indoor" LocationX="0" LocationY="0" Width="310" Height="610" ExcelExportSelectable="true" Layout="Main">
+    <CardViewAppearance>
+      <ApplyCardView>true</ApplyCardView>
+      <LabelWidth>150</LabelWidth>
+      <CellWidth>150</CellWidth>
+    </CardViewAppearance>
+    <Name>
+      <String>HTU</String>
+    </Name>
+    <Column ProtocolID="VAR_out_error_code">
+      <Name>
+        <String>Idiom_ErrorCode</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_out_load_comp1">
+      <Name>
+        <String>OutdoorTableComp1</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_out_load_4way">
+      <Name>
+        <String>Valve_4Way</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="VAR_out_control_target_cfreq_comp1">
+      <Name>
+        <String>OutdoorTableTargetFreq1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_out_control_order_cfreq_comp1">
+      <Name>
+        <String>OutdoorTableOrderFreq1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_out_control_cfreq_comp1">
+      <Name>
+        <String>OutdoorTableCurrentFreq1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_out_sensor_highpress">
+      <Name>
+        <String>OutdoorTableHighPressure</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_out_sensor_sat_temp_high_pressure"  >
+      <Name>
+        <String>OutdoorTableSaturatedTPd</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_out_sensor_lowpress"  >
+      <Name>
+        <String>OutdoorTableLowPressure</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_out_sensor_sat_temp_low_pressure"  >
+      <Name>
+        <String>OutdoorTableSaturatedTPs</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_out_sensor_discharge1"  >
+      <Name>
+        <String>OutdoorTableDischarge1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_out_sensor_top1">
+      <Name>
+        <String>OutdoorTableCompTop1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_out_sensor_ct1"  >
+      <Name>
+        <String>OutdoorTableCompressorCurrent1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_out_sensor_IPM1"  >
+      <Name>
+        <String>OutdoorTableIPM1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_out_sensor_condout"  >
+      <Name>
+        <String>OutdoorTableCondOutTemp</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_out_sensor_suction"  >
+      <Name>
+        <String>OutdoorTableSuctionTemp1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_out_load_outeev1">
+      <Name>
+        <String>OutdoorTableMainEEV</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_out_control_dsh1">
+      <Name>
+        <String>DSH</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_out_sensor_airout">
+      <Name>
+        <String>OutdoorTableOutdoorTemp</String>
+      </Name>
+    </Column>
+  </TableGadget>
+  <TableGadget AddressClass="Indoor" LocationX="310" LocationY="0" Width="310" Height="610" ExcelExportSelectable="true" Layout="Main">    
+    <CardViewAppearance>
+      <ApplyCardView>true</ApplyCardView>
+      <LabelWidth>150</LabelWidth>
+      <CellWidth>150</CellWidth>
+    </CardViewAppearance>
+    <Name>
+      <String>Control Kit</String>
+    </Name>
+    <Column ProtocolID="VAR_ad_error_code1">
+      <Name>
+        <String>Idiom_ErrorCode</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_in_operation_power">
+      <Name>
+        <String>Idiom_Power</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+      <ControlUI TargetID="4000"  DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="ENUM_in_operation_mode_real">
+      <Name>
+        <String>Hydro_OpMode</String>
+      </Name>
+      <ControlUI TargetID="4001"  DefaultValue="1"/>
+    </Column>
+    <Column ProtocolID="VAR_in_temp_room_f">
+      <Name>
+        <String>Hydro_TempSensorChoice</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_temp_target_f">
+      <Name>
+        <String>Indoor_SetTemp</String>
+      </Name>
+      <ControlUI TargetID="4201"  DefaultValue="20"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_WATER_HEATER_POWER">
+      <Name>
+        <String>Hydro_WaterHeaterPower</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+      <ControlUI TargetID="4065"  DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_WATER_HEATER_MODE">
+      <Name>
+        <String>Hydro_WaterHeaterMode</String>
+      </Name>
+      <ControlUI TargetID="4066"  DefaultValue="1"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_REFERENCE_EHS_TEMP">
+      <Name>
+        <String>Hydro_ControlChoice_RoomTemp</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_HEATER_TARGET_F">
+      <Name>
+        <String>Hydro_ControlChoice_WaterTemp</String>
+      </Name>
+      <ControlUI TargetID="4235"  DefaultValue="30"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_IN_F">
+      <Name>
+        <String>Hydro_WaterIn</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_OUT_F">
+      <Name>
+        <String>Hydro_WaterOut</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_TANK_F">
+      <Name>
+        <String>Hydro_WaterTankTemp</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_STATE_WATER_PUMP">
+      <Name>
+        <String>Hydro_WaterPump</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_BOOSTER_HEATER">
+      <Name>
+        <String>Hydro_BoosterHeater</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_3WAY_VALVE">
+      <Name>
+        <String>Hydro_3Way</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_3WAY_VALVE_2">
+      <Name>
+        <String>Hydro_3Way2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_2WAY_VALVE">
+      <Name>
+        <String>Hydro_2Way</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_in_state_defrost_mode">
+      <Name>
+        <String>Valve_Defrost</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="LVAR_In_Device_staus_Heatpump_Boiler">
+      <Name>
+        <String>Switch_HyrdoFlow</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_SOLAR_PUMP">
+      <Name>
+        <String>Hydro_SolarPump</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_THERMOSTAT1">
+      <Name>
+        <String>Hydro_ExternalThermostat</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_THERMOSTAT2">
+      <Name>
+        <String>Hydro_ExternalThermostat2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="STR_ad_id_serial_number">
+      <Name>
+        <String>OutdoorTableSerialNumber</String>
+      </Name>
+    </Column>
+  </TableGadget>
+</GadgetFrame>

@@ -49,13 +49,13 @@ Source = "https://github.com/pantherale0/pysamsungnasa"
 Tracker = "https://github.com/pantherale0/pysamsungnasa/issues"
 
 [tool.flit.module]
-name = "python_package"
+name = "pysamsungnasa"
 
 [tool.bandit]
 exclude_dirs = ["build","dist","tests","scripts"]
 number = 4
 recursive = true
-targets = "src"
+targets = "src/pysamsungnasa"
 
 [tool.black]
 line-length = 120
@@ -90,7 +90,7 @@ ignore = [
 ]
 
 [tool.pyright]
-include = ["src"]
+include = ["src/pysamsungnasa"]
 exclude = [
     "**/node_modules",
     "**/__pycache__",
@@ -104,13 +104,13 @@ pythonVersion = "3.13"
 pythonPlatform = "Linux"
 
 executionEnvironments = [
-  { root = "src" }
+  { root = "src/pysamsungnasa" }
 ]
 
 [tool.pytest.ini_options]
-addopts = "--cov-report xml:coverage.xml --cov src --cov-fail-under 0 --cov-append -m 'not integration'"
+addopts = "--cov-report xml:coverage.xml --cov src/pysamsungnasa --cov-fail-under 0 --cov-append -m 'not integration'"
 pythonpath = [
-  "src"
+  "src/pysamsungnasa"
 ]
 testpaths = "tests"
 junit_family = "xunit2"

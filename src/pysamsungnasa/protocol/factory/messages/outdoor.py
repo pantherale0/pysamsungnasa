@@ -1,6 +1,6 @@
 """Outdoor unit messages."""
 
-from ..messaging import EnumMessage, FloatMessage, BasicTemperatureMessage, BasicPowerMessage, RawMessage, StrMessage
+from ..messaging import EnumMessage, FloatMessage, BasicTemperatureMessage, BasicCurrentMessage, BasicPowerMessage, RawMessage, StrMessage
 from ...enum import OutdoorOperationStatus, OutdoorOperationMode
 
 
@@ -82,6 +82,14 @@ class OutdoorLoadOutEev(BasicPowerMessage):
 
     MESSAGE_ID = 0x8020
     MESSAGE_NAME = "Outdoor Load Out EEV"
+
+class OutdoorCurrent(BasicCurrentMessage):
+    """Parser for message 0x8217 (Outdoor Current)."""
+
+    MESSAGE_ID = 0x8217
+    MESSAGE_NAME = "Outdoor Current"
+
+
 
 
 class OutdoorSuctionSensorTemperature(BasicTemperatureMessage):

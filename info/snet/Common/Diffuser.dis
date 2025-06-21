@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+  <GadgetFrame ID="ID_DIFFSER_UNIT">
+    <Name>
+      <String>DIffuser</String>
+    </Name>
+    <Menu>
+      <Button Name="Idiom_Update" ID="UpdateInstallOption"></Button>
+      <Button Name="Clear Error History" ID="ClearErrorHistoryForDiffuser"></Button>
+    </Menu>
+    <TableGadget AddressClass="Diffuser" LocationX="0" LocationY="35" Width="1850" Height="814" ExcelExportSelectable="true" Layout="Main">
+      <DeviceToJoin>
+        <IncludeModel From="170" To="170"></IncludeModel>
+      </DeviceToJoin>
+      <TableAppearance>
+        <RowHeight>25</RowHeight>
+      </TableAppearance>
+      <Column ProtocolID="VAR_in_model_information"  Width="100">
+        <Name>
+          <String>Idiom_Model</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_IN_CAPACITY_VENTILATION_REQUEST">
+        <Name>
+          <String>환기 요구용량</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_IN_DIFFUSER_OPERATION_POWER">
+        <Name>
+          <String>IndoorTablePower</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_IN_DIFFUSER_OPERATION_MODE" Width="100">
+        <Name>
+          <String>IndoorTableMode</String>
+        </Name>
+        <Value>
+          <MultiValue>1</MultiValue>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_in_fan_mode_real">
+        <Name>
+          <String>Indoor_FanSpeed</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_IN_ALTERNATIVE_MODE_WINDFREE">
+        <Name>
+          <String>무풍</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_IN_ALTERNATIVE_MODE_SLEEP">
+        <Name>
+          <String>취침</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="VAR_IN_SENSOR_CO2_PPM">
+        <Name>
+          <String>CO2 농도</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_IN_GAS_LEVEL">
+        <Name>
+          <String>GAS Level</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_AHU_PANEL_SA_HUMIDITY">
+        <Name>
+          <String>습도센서(%)</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_AHU_PANEL_SA_TEMP">
+        <Name>
+          <String>외기온도</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_IN_DUST_SENSOR_PM10_0_VALUE">
+        <Name>
+          <String>PM 10.0</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_IN_DUST_SENSOR_PM2_5_VALUE">
+        <Name>
+          <String>PM 2.5</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_IN_DUST_SENSOR_PM1_0_VALUE">
+        <Name>
+          <String>PM 1.0</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_ad_error_code1">
+        <Name>
+          <String>Idiom_ErrorCode</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_IN_ADDRESS_SETUP_DUPLICATED">
+        <Name>
+          <String>Idiom_Duplicated_Address</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_IN_LATEST_ERROR1" Width="100">
+        <Name>
+          <String>Error History1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_IN_LATEST_ERROR2" Width="100">
+        <Name>
+          <String>Error History2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_IN_LATEST_ERROR3" Width="100">
+        <Name>
+          <String>Error History3</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_IN_LATEST_ERROR4" Width="100">
+        <Name>
+          <String>Error History4</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_IN_LATEST_ERROR5" Width="100">
+        <Name>
+          <String>Error History5</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_id_serial_number" Width="120">
+        <Name>
+          <String>OutdoorTableSerialNumber</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_info_equip_position" Width="60">
+        <Name>
+          <String>OutdoorUnitInstallationLocation</String>
+        </Name>
+        <ControlUI TargetID="605"  DefaultValue="1"/>
+      </Column>
+      <Column ProtocolID="STR_ad_option_basic" Width="230">
+        <Name>
+          <String>IndoorTableProductOption</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_option_install" Width="230">
+        <Name>
+          <String>IndoorTableInstallOption</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_option_install_2" Width="230">
+        <Name>
+          <String>IndoorTableInstallOption2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_dbcode_micom_main" Width="170">
+        <Name>
+          <String>OutdoorUnitMainDBCodeVersion</String>
+        </Name>
+      </Column>
+    </TableGadget>
+  </GadgetFrame>

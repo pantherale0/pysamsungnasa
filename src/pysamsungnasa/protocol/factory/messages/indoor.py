@@ -1,6 +1,6 @@
 """Messages from the indoor unit."""
 
-from ..messaging import EnumMessage, BoolMessage
+from ..messaging import EnumMessage, BoolMessage, BasicTemperatureMessage
 
 from ...enum import (
     InOperationMode,
@@ -349,3 +349,22 @@ class InFsvLoadSaveAlt(BoolMessage):
 
     MESSAGE_ID = 0x412D
     MESSAGE_NAME = "Indoor FSV Load Save Alternative"
+
+class DhwTargetTemperature(BasicTemperatureMessage):
+    """Parser for 0x4235 (Indoor DHW Target Temperature)."""
+
+    MESSAGE_ID = 0x4235
+    MESSAGE_NAME = "Indoor DHW Target Temperature"
+
+class DhwCurrentTemperature(BasicTemperatureMessage):
+    """Parser for 0x4237 (Indoor DHW Current Temperature)."""
+
+    MESSAGE_ID = 0x4237
+    MESSAGE_NAME = "Indoor DHW Current Temperature"
+
+
+class IndoorFlowTemperature(BasicTemperatureMessage):
+    """Parser for 0x4238 (Indoor Flow Temperature)."""
+
+    MESSAGE_ID = 0x4238
+    MESSAGE_NAME = "Indoor Flow Temperature"

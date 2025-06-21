@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GadgetFrame ID="ID_Emergency_Temperature_Output_Data">
+  <Name>
+    <String>ETO</String>
+  </Name>
+  <TableGadget AddressClass="Indoor" LocationX="0" LocationY="0" Width="700" Height="800" Layout="Main">
+    <TableAppearance>
+      <ColumnAutoFit>true</ColumnAutoFit>
+      <RowHeight>25</RowHeight>
+    </TableAppearance>
+    <Name>
+      <String>ETO COOL</String>
+    </Name>
+    <Column ProtocolID="ENUM_IN_EMERGENCY_TEMPERATURE_OUTPUT_COOL_USED">
+      <Name>
+        <String>ETO_UseSettingState</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_EMERGENCY_TEMPERATURE_OUTPUT_COOL_SET_TIME">
+      <Name>
+        <String>ETO_SettingTime</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_EMERGENCY_TEMPERATURE_OUTPUT_COOL_SET_TEMP">
+      <Name>
+        <String>ETO_SettingTemperature</String>
+      </Name>
+    </Column>    
+  </TableGadget>
+  <TableGadget AddressClass="Indoor" LocationX="700" LocationY="0" Width="700" Height="800" Layout="Main">
+    <TableAppearance>
+      <ColumnAutoFit>true</ColumnAutoFit>
+      <RowHeight>25</RowHeight>
+    </TableAppearance>
+    <Name>
+      <String>ETO HEAT</String>
+    </Name>
+    <Column ProtocolID="ENUM_IN_EMERGENCY_TEMPERATURE_OUTPUT_HEAT_USED">
+      <Name>
+        <String>ETO_UseSettingState</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_EMERGENCY_TEMPERATURE_OUTPUT_HEAT_SET_TIME">
+      <Name>
+        <String>ETO_SettingTime</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_EMERGENCY_TEMPERATURE_OUTPUT_HEAT_SET_TEMP">
+      <Name>
+        <String>ETO_SettingTemperature</String>
+      </Name>
+    </Column>
+  </TableGadget>
+</GadgetFrame>

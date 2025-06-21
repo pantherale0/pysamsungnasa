@@ -19,7 +19,6 @@ async def main():
         config={"device_pnp": True, "device_dump_only": False},
     )
     try:
-
         await nasa.start()
         while True:
             await asyncio.sleep(5)

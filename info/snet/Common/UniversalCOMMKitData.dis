@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GadgetFrame ID="ID_UNIVERSAL_COMM_UNIT">
+  <Condition ProtocolID="STR_ad_dbcode_micom_main">
+    <Value>DB91-01823A</Value>
+    <Operation>Create</Operation>
+  </Condition>
+  <Name>
+    <String>Universal Comm. Kit</String>
+  </Name>
+  <TableGadget AddressClass="Indoor" LocationX="0" LocationY="0" Width="900" Height="425" ExcelExportSelectable="true" Layout="Fill">
+    <DeviceToJoin>
+      <IncludeModel MicomCode="DB91-01823A" />
+    </DeviceToJoin>
+    <CardViewAppearance>
+      <ApplyCardView>true</ApplyCardView>
+      <LabelWidth>210</LabelWidth>
+      <CellWidth>180</CellWidth>
+    </CardViewAppearance>
+    <Column ProtocolID="ENUM_IN_UCK_INDOOR_TYPE">
+      <Name>
+        <String>Indoor unit type</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_UCK_FAN_SPEED_CONTROL">
+      <Name>
+        <String>Fan speed contorl</String>
+      </Name>
+    </Column>    
+    <Column ProtocolID="ENUM_IN_UCK_DAMPER_MINIMUM_OUTPUT">
+      <Name>
+        <String>Damper minimun output</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_UCK_DAMPER_OPENING_MINIMUM_TEMP">
+      <Name>
+        <String>Damper opening minimum temp.</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_EXT_VARIABLE_DAMPER_OUTPUT">
+      <Name>
+        <String>Damper output</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_UCK_ENTHALPY_SENSOR_USE">
+      <Name>
+        <String>Enthalpy sensor use</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_ENTHALPY_CONTROL_STATE">
+      <Name>
+        <String>Enthalpy contorl entry</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_UCK_CRITERION_ENTHALPY">
+      <Name>
+        <String>Criterion enthalpy</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_ENTHALPY_SENSOR_OUTPUT">
+      <Name>
+        <String>Enthalpy value</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_DISCHARGE_AIR_CONTROL_USE">
+      <Name>
+        <String>Discharge air control use</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_DISCHARGE_COOL_TARGET_F">
+      <Name>
+        <String>Indoor_DischargeAhuCool</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_DISCHARGE_HEAT_TARGET_F">
+      <Name>
+        <String>Indoor_DischargeAhuHeat</String>
+      </Name>
+    </Column>
+    
+    <Column ProtocolID="ENUM_IN_UCK_ROOM_TEMP_SENSOR_TYPE">
+      <Name>
+        <String>Room temp. sensor type</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_UCK_DISCHARGE_TEMP_SENSOR_TYPE">
+      <Name>
+        <String>Discharge air temp. sensor type</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FREE_COOLING_STATE">
+      <Name>
+        <String>Free cooling operation</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>    
+  </TableGadget>
+</GadgetFrame>

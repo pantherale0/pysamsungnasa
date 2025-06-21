@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE fragmentLink [
+  <!ENTITY indoorUnitInstallationDisplayRule SYSTEM "../Common/IndoorUnitInstallationData.dis">
+]>
+<DisplayRule xmlns="urn:AirKitRuleSchema" Revision="1.1.0" DeviceName="DVM Inverter" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:AirKitRuleSchema file:///D:/01_Development%20Project/DeepView/03.Develope/Source/DeepView2010/RuleSet/AirKitRuleSchema.xsd">
+  <GadgetFrame ID="ID_FCU_KIT_Data">
+    <Name>
+      <String>IndoorTableHeader</String>
+    </Name>
+    <TableGadget AddressClass="Indoor" LocationX="0" LocationY="0" Width="600" Height="320" ExcelExportSelectable="true" Layout="Fill">
+      <TableAppearance>
+        <RowHeight>25</RowHeight>
+      </TableAppearance>
+      <Column ProtocolID="ENUM_in_operation_power">
+        <Name>
+          <String>IndoorTablePower</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_IN_STATE_THERMO">
+        <Name>
+          <String>Hydro_THERMOOnOff</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_in_operation_mode_real">
+        <Name>
+          <String>IndoorTableMode</String>
+        </Name>
+        <Value>
+          <MultiValue>1</MultiValue>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_in_fan_mode_real">
+        <Name>
+          <String>Indoor_FanSpeed</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_in_temp_target_f"  >
+        <Name>
+          <String>Indoor_SetTemp</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_in_temp_room_f"  >
+        <Name>
+          <String>Idiom_RoomTemp</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_in_temp_eva_in_f">
+        <Name>
+          <String>Water In</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_in_temp_eva_out_f">
+        <Name>
+          <String>Water Out</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_IN_TEMP_WATER_IN_F">
+        <Name>
+          <String>Water In1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_IN_TEMP_WATER_IN2_F">
+        <Name>
+          <String>Water In2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_IN_WATER_VALVE_1_ON_OFF">
+        <Name>
+          <String>Water Valve1</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_IN_WATER_VALVE_2_ON_OFF">
+        <Name>
+          <String>Water Valve2</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="VAR_IN_MODULATING_VALVE_1">
+        <Name>
+          <String>M Water1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_IN_MODULATING_VALVE_2">
+        <Name>
+          <String>M Water2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_IN_MODULATING_FAN">
+        <Name>
+          <String>M Fan</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_ad_error_code1">
+        <Name>
+          <String>Idiom_ErrorCode</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_id_serial_number">
+        <Name>
+          <String>OutdoorTableSerialNumber</String>
+        </Name>
+      </Column>      
+    </TableGadget>
+  </GadgetFrame>
+  &indoorUnitInstallationDisplayRule;
+</DisplayRule>

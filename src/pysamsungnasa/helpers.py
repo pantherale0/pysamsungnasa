@@ -23,3 +23,18 @@ def getnonce():
 def resetnonce():
     global _NONCE
     _NONCE = 0
+
+
+class Address:
+    """Class to represent a device address."""
+
+    def __init__(self, class_id: int, channel: int, address: int):
+        self.class_id = class_id
+        self.channel = channel
+        self.address = address
+
+    def __str__(self):
+        return f"{self.class_id:02X}{self.channel:02X}{self.address:02X}"
+
+    def __repr__(self):
+        return f"Address(class_id={self.class_id}, channel={self.channel}, address={self.address})"

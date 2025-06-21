@@ -117,6 +117,7 @@ class EnumMessage(BaseMessage):
             "message": cls.MESSAGE_NAME,
             "uom": cls.UNIT_OF_MEASUREMENT,
             "value": cls.MESSAGE_ENUM(payload[0]) if payload else None,
+            "options": {option.name: option.value for option in cls.MESSAGE_ENUM}
         }
 
 
@@ -132,3 +133,9 @@ class BasicPowerMessage(FloatMessage):
 
     ARITHMETIC = 0.1
     UNIT_OF_MEASUREMENT = "kW"
+
+class BasicCurrentMessage(FloatMessage):
+    """Parser for basic current messages (A)."""
+
+    ARITHMETIC = 0.1
+    UNIT_OF_MEASUREMENT = "A"

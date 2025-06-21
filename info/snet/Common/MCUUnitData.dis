@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GadgetFrame ID="ID_MCU_Unit_Data">
+  <Name>
+    <String>MCUUnitData</String>
+  </Name>
+  <TableGadget AddressClass="MCU" LocationX="0" LocationY="0" ExcelExportSelectable="true" Width="600" Height="100"   Layout="Fill"  >
+    <TableAppearance>
+      <VerticalHeader>true</VerticalHeader>
+      <RowHeight>25</RowHeight>
+    </TableAppearance>
+<Column ProtocolID="ENUM_out_mcu_load_cool_a">
+  <Name>
+    <String>MCUUnitDataACool</String>
+  </Name>
+  <Value>
+    <Type>Lamp</Type>
+  </Value>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_load_heat_a">
+  <Name>
+    <String>MCUUnitDataAHeat</String>
+  </Name>
+  <Value>
+    <Type>Lamp</Type>
+  </Value>
+</Column>
+<Column ProtocolID="VAR_out_mcu_change_over_eev1">
+  <Name>
+    <String>MCUUnitDataAEEV</String>
+  </Name>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_port0_indoor_addr">
+  <Name>
+    <String>MCUUnitDataAAddress</String>
+  </Name>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_load_cool_b">
+  <Name>
+    <String>MCUUnitDataBCool</String>
+  </Name>
+  <Value>
+    <Type>Lamp</Type>
+  </Value>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_load_heat_b">
+  <Name>
+    <String>MCUUnitDataBHeat</String>
+  </Name>
+  <Value>
+    <Type>Lamp</Type>
+  </Value>
+</Column>
+<Column ProtocolID="VAR_out_mcu_change_over_eev2">
+  <Name>
+    <String>MCUUnitDataBEEV</String>
+  </Name>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_port1_indoor_addr">
+  <Name>
+    <String>MCUUnitDataBAddress</String>
+  </Name>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_load_cool_c">
+  <Name>
+    <String>MCUUnitDataCCool</String>
+  </Name>
+  <Value>
+    <Type>Lamp</Type>
+  </Value>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_load_heat_c">
+  <Name>
+    <String>MCUUnitDataCHeat</String>
+  </Name>
+  <Value>
+    <Type>Lamp</Type>
+  </Value>
+</Column>
+<Column ProtocolID="VAR_out_mcu_change_over_eev3">
+  <Name>
+    <String>MCUUnitDataCEEV</String>
+  </Name>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_port2_indoor_addr">
+  <Name>
+    <String>MCUUnitDataCAddress</String>
+  </Name>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_load_cool_d">
+  <Name>
+    <String>MCUUnitDataDCool</String>
+  </Name>
+  <Value>
+    <Type>Lamp</Type>
+  </Value>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_load_heat_d">
+  <Name>
+    <String>MCUUnitDataDHeat</String>
+  </Name>
+  <Value>
+    <Type>Lamp</Type>
+  </Value>
+</Column>
+<Column ProtocolID="VAR_out_mcu_change_over_eev4">
+  <Name>
+    <String>MCUUnitDataDEEV</String>
+  </Name>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_port3_indoor_addr">
+  <Name>
+    <String>MCUUnitDataDAddress</String>
+  </Name>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_load_cool_e">
+  <Name>
+    <String>MCUUnitDataECool</String>
+  </Name>
+  <Value>
+    <Type>Lamp</Type>
+  </Value>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_load_heat_e">
+  <Name>
+    <String>MCUUnitDataEHeat</String>
+  </Name>
+  <Value>
+    <Type>Lamp</Type>
+  </Value>
+</Column>
+<Column ProtocolID="VAR_out_mcu_change_over_eev5">
+  <Name>
+    <String>MCUUnitDataEEEV</String>
+  </Name>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_port4_indoor_addr">
+  <Name>
+    <String>MCUUnitDataEAddress</String>
+  </Name>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_load_cool_f">
+  <Name>
+    <String>MCUUnitDataFCool</String>
+  </Name>
+  <Value>
+    <Type>Lamp</Type>
+  </Value>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_load_heat_f">
+  <Name>
+    <String>MCUUnitDataFHeat</String>
+  </Name>
+  <Value>
+    <Type>Lamp</Type>
+  </Value>
+</Column>
+<Column ProtocolID="VAR_out_mcu_change_over_eev6">
+  <Name>
+    <String>MCUUnitDataFEEV</String>
+  </Name>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_port5_indoor_addr">
+  <Name>
+    <String>MCUUnitDataFAddress</String>
+  </Name>
+</Column>
+<Column ProtocolID="ENUM_out_mcu_load_liquid">
+  <Name>
+    <String>MCUUnitDataLBV</String>
+  </Name>
+  <Value>
+    <Type>Lamp</Type>
+  </Value>
+</Column>
+<Column ProtocolID="VAR_OUT_LOAD_MCU_HR_BYPASS_EEV">
+  <Name>
+    <String>MCU Bypass EEV</String>
+  </Name>
+</Column>
+<Column ProtocolID="VAR_out_mcu_subcooler_eev">
+  <Name>
+    <String>MCUUnitDataSubCoolEEV</String>
+  </Name>
+</Column>
+<Column ProtocolID="VAR_out_mcu_sensor_subcooler_in">
+  <Name>
+    <String>MCUUnitDataSubCoolerInTemp</String>
+  </Name>
+</Column>
+<Column ProtocolID="VAR_out_mcu_sensor_subcooler_out">
+  <Name>
+    <String>MCUUnitDataSubCoolerOutTemp</String>
+  </Name>
+</Column>
+<Column ProtocolID="STR_ad_dbcode_micom_main">
+  <Name>
+    <String>OutdoorUnitMainDBCodeVersion</String>
+  </Name>
+</Column>
+  </TableGadget>
+</GadgetFrame>

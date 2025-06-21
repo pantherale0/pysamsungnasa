@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GadgetFrame ID="ID_Indoor_Unit_Installation_Data">
+  <Name>
+    <String>IndoorTableInstallInfo</String>
+  </Name>
+  <Menu>
+    <Button Name="Idiom_Update" ID="UpdateInstallOption"></Button>
+    <Button Name="Clear Error History" ID="ClearErrorHistory"></Button>
+  </Menu>
+  <TableGadget AddressClass="Indoor" LocationX="0" LocationY="35" Width="1550" Height="814" Layout="Main">
+    <TableAppearance>
+      <RowHeight>25</RowHeight>
+    </TableAppearance>
+    <Name>
+      <String>IndoorTableInstallInfo</String>
+    </Name>
+    <Column ProtocolID="VAR_in_model_information"  Width="100">
+      <Name>
+        <String>Idiom_Model</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="STR_ad_option_basic" Width="230">
+      <Name>
+        <String>IndoorTableProductOption</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="STR_ad_option_install" Width="230">
+      <Name>
+        <String>IndoorTableInstallOption</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="STR_ad_option_install_2" Width="230">
+      <Name>
+        <String>IndoorTableInstallOption2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="STR_ad_dbcode_micom_main" Width="170">
+      <Name>
+        <String>OutdoorUnitMainDBCodeVersion</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_LATEST_ERROR1" Width="100">
+      <Name>
+        <String>Error History1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_LATEST_ERROR2" Width="100">
+      <Name>
+        <String>Error History2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_LATEST_ERROR3" Width="100">
+      <Name>
+        <String>Error History3</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_LATEST_ERROR4" Width="100">
+      <Name>
+        <String>Error History4</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_LATEST_ERROR5" Width="100">
+      <Name>
+        <String>Error History5</String>
+      </Name>
+    </Column>
+  </TableGadget>
+</GadgetFrame>

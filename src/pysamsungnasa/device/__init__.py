@@ -19,7 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 class NasaDevice:
     """NASA Device."""
 
-    attributes: dict[str, Any]
+    attributes: dict[int, Any]
 
     def __init__(
         self,
@@ -35,6 +35,7 @@ class NasaDevice:
         self.config = config
         self.last_packet_time = None
         self._device_callbacks = []
+        self._packet_callbacks = {}
         self._client = client
         packet_parser.add_device_handler(address, self.handle_packet)
 
@@ -42,6 +43,19 @@ class NasaDevice:
         """Add a device callback."""
         if callback not in self._device_callbacks:
             self._device_callbacks.append(callback)
+
+    def add_packet_callback(self, message_number: int, callback):
+        """Add a packet callback."""
+        if message_number not in self._packet_callbacks:
+            self._packet_callbacks[message_number] = []
+        if callback not in self._packet_callbacks[message_number]:
+            self._packet_callbacks[message_number].append(callback)
+
+    def remove_packet_callback(self, message_number: int, callback):
+        """Remove a packet callback."""
+        if message_number in self._packet_callbacks:
+            if callback in self._packet_callbacks[message_number]:
+                self._packet_callbacks[message_number].remove(callback)
 
     def remove_device_callback(self, callback):
         """Remove a device callback."""
@@ -52,44 +66,25 @@ class NasaDevice:
         """Handle a packet sent to this device from the parser."""
         self.last_packet_time = datetime.now().isoformat()
         _LOGGER.debug("Handing packet for device %s: %s", self.address, kwargs)
-        self.attributes[kwargs["formattedMessageNumber"]] = kwargs["packet"]
+        self.attributes[kwargs["messageNumber"]] = {
+            **kwargs["packet"],
+            "formatted_message": kwargs["formattedMessageNumber"],
+        }
         _LOGGER.debug(
-            "Device %s: Stored parsed attribute for msg %s: %s",
+            "Device %s: Stored parsed attribute for msg %s (%s): %s",
             self.address,
             kwargs["formattedMessageNumber"],
-            self.attributes[kwargs["formattedMessageNumber"]],
+            kwargs["messageNumber"],
+            self.attributes[kwargs["messageNumber"]],
         )
         for callback in self._device_callbacks:
             try:
                 callback(self)
             except Exception as e:
                 _LOGGER.error("Error in device %s callback: %s", self.address, e)
-
-    async def send_message(self, message_id: int, payload: bytes, destination: "NasaDevice | str | None" = None):
-        """Send a message to the device using the client."""
-        if not self._client.is_connected:
-            _LOGGER.error("Cannot send message, client is not connected.")
-            return
-        try:
-            if destination is None:
-                destination = self.address
-            elif isinstance(destination, NasaDevice):
-                destination = destination.address
-            elif isinstance(destination, str):
-                destination = destination
-            else:
-                _LOGGER.error("Invalid destination type: %s", type(destination))
-                return
-            await self._client.send_command(
-                [
-                    build_message(
-                        source=self.address,
-                        destination=destination,
-                        message_number=message_id,
-                        payload=payload,
-                    )
-                ]
-            )
-            _LOGGER.info("Sent message %s to device %s", bin2hex(payload), self.address)
-        except Exception as e:
-            _LOGGER.exception("Error sending message to device %s: %s", self.address, e)
+        if kwargs["messageNumber"] in self._packet_callbacks:
+            for callback in self._packet_callbacks[kwargs["messageNumber"]]:
+                try:
+                    callback(self, **kwargs)
+                except Exception as e:
+                    _LOGGER.error("Error in device %s packet callback: %s", self.address, e)

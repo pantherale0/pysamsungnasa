@@ -1,0 +1,99 @@
+<!-- Hydro LT Table-->
+<GadgetFrame ID="ID_DVM_CHILLER_OPTION">
+  <Name>
+    <String>DVM Chiller Option</String>
+  </Name>
+  <TableGadget AddressClass="Indoor" LocationX="0" LocationY="0" Width="900" Height="425" ExcelExportSelectable="true" Layout="Fill">
+    <CardViewAppearance>
+      <ApplyCardView>true</ApplyCardView>
+      <LabelWidth>150</LabelWidth>
+      <CellWidth>87</CellWidth>
+    </CardViewAppearance>    
+    <Column ProtocolID="ENUM_IN_CHILLER_SETTING_DEMAND_LEVEL">
+      <Name>
+        <String>Demand 설정 레벨</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_CHILLLER_SETTING_SILENT_LEVEL">
+      <Name>
+        <String>정음 운전 레벨</String>
+      </Name>      
+    </Column>
+    <Column ProtocolID="ENUM_IN_CHILLER_EXT_WATER_OUT_INPUT">
+      <Name>
+        <String>외장 출수 온도 센서 사용 여부</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_CHILLER_WATERLAW_ON_OFF">
+      <Name>
+        <String>StartSetPoint 기준</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_AIR_COOL1_F">
+      <Name>
+        <String>AirCool1</String>
+      </Name>      
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_AIR_COOL2_F">
+      <Name>
+        <String>AirCool2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_ROOM_COOL1_F">
+      <Name>
+        <String>RoomCool1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_ROOM_COOL2_F">
+      <Name>
+        <String>RoomCool2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_TARGET_COOL1_F">
+      <Name>
+        <String>TCool1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_TARGET_COOL2_F">
+      <Name>
+        <String>TCool2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_AIR_HEAT1_F">
+      <Name>
+        <String>AirHeat1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_AIR_HEAT2_F">
+      <Name>
+        <String>AirHeat2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_ROOM_HEAT1_F">
+      <Name>
+        <String>RoomHeat1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_ROOM_HEAT2_F">
+      <Name>
+        <String>RoomHeat2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_TARGET_HEAT1_F">
+      <Name>
+        <String>THeat1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_TARGET_HEAT2_F">
+      <Name>
+        <String>THeat2</String>
+      </Name>
+    </Column>
+  </TableGadget>
+</GadgetFrame>

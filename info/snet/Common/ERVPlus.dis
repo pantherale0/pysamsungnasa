@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GadgetFrame ID="ID_ERV_PLUS_UNIT">
+  <Condition ProtocolID="VAR_in_model_information">
+    <Range from="108" to="108"/>
+    <Operation>Create</Operation>
+  </Condition>
+  <Name>
+    <String>ERV Plus</String>
+  </Name>
+  <TableGadget AddressClass="Indoor" LocationX="0" LocationY="0" Width="600" Height="320" ExcelExportSelectable="true" Layout="Fill">
+    <DeviceToJoin>
+      <IncludeModel From="108" To="108"></IncludeModel>
+    </DeviceToJoin>
+    <TableAppearance>
+      <RowHeight>25</RowHeight>
+    </TableAppearance>
+    <Column ProtocolID="VAR_in_model_information"  Width="100">
+      <Name>
+        <String>Idiom_Model</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_in_operation_power" Width="100">
+      <Name>
+        <String>IndoorTablePower</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_OPERATION_VENT_POWER" Width="100">
+      <Name>
+        <String>VENTILATOR_POWER</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_in_operation_mode_real" Width="100">
+      <Name>
+        <String>IndoorTableMode</String>
+      </Name>
+      <Value>
+        <MultiValue>1</MultiValue>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_OPERATION_VENT_MODE" Width="100">
+      <Name>
+        <String>VENTILATOR_MODE</String>
+      </Name>
+      <Value>
+        <MultiValue>1</MultiValue>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FAN_VENT_MODE" Width="100">
+      <Name>
+        <String>Indoor_FanSpeed</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_temp_target_f" Width="100">
+      <Name>
+        <String>Indoor_SetTemp</String>
+      </Name>
+      <ControlUI TargetID="4201" Min="18" Max="30" DefaultValue="20"/>
+    </Column>
+    <Column ProtocolID="VAR_in_temp_room_f" Width="100">
+      <Name>
+        <String>Idiom_RoomTemp</String>
+      </Name>
+    </Column>
+  </TableGadget>
+</GadgetFrame>

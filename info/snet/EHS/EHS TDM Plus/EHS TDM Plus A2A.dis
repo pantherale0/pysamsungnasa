@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GadgetFrame ID="ID_EHS_TDM_PLUS_A2A">
+  <Name>
+    <String>A2A/A2W</String>
+  </Name>
+  <TableGadget AddressClass="Indoor" LocationX="0" LocationY="0" Width="600" Height="320" ExcelExportSelectable="true" Layout="Fill">
+    <TableAppearance>      
+      <RowHeight>25</RowHeight>
+    </TableAppearance>
+    <Column ProtocolID="ENUM_IN_TDM_INDOOR_TYPE">
+      <Name>
+        <String>Type</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_model_information"  Width="100">
+      <Name>
+        <String>Idiom_Model</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_capacity_request"  Width="80">
+      <Name>
+        <String>IndoorTableCapacity</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_in_operation_power">
+      <Name>
+        <String>IndoorTablePower</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_in_operation_mode_real">
+      <Name>
+        <String>IndoorTableMode</String>
+      </Name>
+      <Value>
+        <MultiValue>1</MultiValue>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_in_fan_mode_real">
+      <Name>
+        <String>Indoor_FanSpeed</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_LOUVER_HL_SWING">
+      <Name>
+        <String>Indoor_FanVertical</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column> 
+    <Column ProtocolID="ENUM_IN_LOUVER_LR_SWING">
+      <Name>
+        <String>Indoor_FanHorizontal</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column> 
+    <Column ProtocolID="VAR_in_temp_target_f"  >
+      <Name>
+        <String>Indoor_SetTemp</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_temp_room_f"  >
+      <Name>
+        <String>Idiom_RoomTemp</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_temp_eva_in_f">
+      <Name>
+        <String>Idiom_EvaIn</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_temp_eva_out_f">
+      <Name>
+        <String>Idiom_EvaOut</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_eev_value_real_1">
+      <Name>
+        <String>Idiom_EEV</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_ad_error_code1">
+      <Name>
+        <String>Idiom_ErrorCode</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="STR_ad_id_serial_number" Width="120">
+      <Name>
+        <String>OutdoorTableSerialNumber</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_MTFC">
+      <Name>
+        <String>MTFC Status</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="VAR_in_temp_discharge">
+      <Name>
+        <String>Indoor_DischargeDuct</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_DISCHAGE_TEMP_CONTROL">
+      <Name>
+        <String>Indoor_DischargeAHU</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_DISCHARGE_COOL_TARGET_F">
+      <Name>
+        <String>Indoor_DischargeAhuCool</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_DISCHARGE_HEAT_TARGET_F">
+      <Name>
+        <String>Indoor_DischargeAhuHeat</String>
+      </Name>
+    </Column>
+  </TableGadget>
+</GadgetFrame>

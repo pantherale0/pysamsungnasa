@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<TestRunResultDataSet xmlns="http://tempuri.org/TestRunResultDataSet.xsd">  
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_CheckLevel</InspectFactor>
+    <Result />
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>ENUM_out_operation_auto_inspect_step</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_OperMode</InspectFactor>
+    <Result />
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>ENUM_out_operation_heatcool</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_RunComp1</InspectFactor>
+    <Result />
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_RunComp1</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_RunComp2</InspectFactor>
+    <Result />
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_RunComp2</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_RunComp3</InspectFactor>
+    <Result />
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_RunComp3</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_CurrentComp1</InspectFactor>
+    <Result />
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_CurrentComp1</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_CurrentComp2</InspectFactor>
+    <Result />
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_CurrentComp2</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_CurrentComp3</InspectFactor>
+    <Result />
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_CurrentComp3</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_Dsh</InspectFactor>
+    <Result />
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_Dsh</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_MonoUnitPressure</InspectFactor>
+    <Result />
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_PressureSensor</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_HighPressure</InspectFactor>
+    <Result />
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_HighPressure</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_LowPressure</InspectFactor>
+    <Result />
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_LowPressure</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_OutdoorSensor</InspectFactor>
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_OutSensor</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_IndoorSensor</InspectFactor>   
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_IndoorSensor</ProtocolID>
+  </TestRunResultTable>  
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_SvcValve</InspectFactor>
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_SvcValve</ProtocolID>
+  </TestRunResultTable>  
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_PwmValve</InspectFactor>
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_PwmValve</ProtocolID>
+  </TestRunResultTable>  
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_OilGasValve</InspectFactor>
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_OilGasValve</ProtocolID>
+  </TestRunResultTable>  
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_HotGasValve</InspectFactor>
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_HotGasValve</ProtocolID>
+  </TestRunResultTable>  
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_4wayValve</InspectFactor>
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_4wayValve</ProtocolID>
+  </TestRunResultTable>  
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_LiquidValve</InspectFactor>
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_LiquidValve</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_EviEev</InspectFactor>
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_EviEev</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_MainEev</InspectFactor>
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_MainEev</ProtocolID>
+  </TestRunResultTable>
+  <TestRunResultTable>
+    <InspectFactor>TestRun_Factor_TwSensor</InspectFactor>
+    <Visible>true</Visible>
+    <CanEdit>false</CanEdit>
+    <ProtocolID>AutoCheck_TwSensor</ProtocolID>
+  </TestRunResultTable>
+</TestRunResultDataSet>

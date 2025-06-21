@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE fragmentLink [
+  <!ENTITY DiffuserDisplayRule SYSTEM "../Common/Diffuser.dis">
+]>
+<DisplayRule xmlns="urn:AirKitRuleSchema" Revision="1.1.0" DeviceName="DVM Inverter" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:AirKitRuleSchema file:///D:/01_Development%20Project/DeepView/03.Develope/Source/DeepView2010/RuleSet/AirKitRuleSchema.xsd">
+  <GadgetFrame ID="ID_ADDRESSING_CONVERTER">
+    <Name>
+      <String>ERV</String>
+    </Name>
+    <TableGadget AddressClass="ERV" LocationX="0" LocationY="0" Width="600" Height="320" ExcelExportSelectable="true" Layout="Fill">
+      <DeviceToJoin>
+        <IncludeModel From="100" To="109"></IncludeModel>
+      </DeviceToJoin>
+      <TableAppearance>
+        <RowHeight>25</RowHeight>
+      </TableAppearance>
+      <Column ProtocolID="VAR_in_model_information"  Width="100">
+        <Name>
+          <String>Idiom_Model</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_IN_OPERATION_VENT_POWER">
+        <Name>
+          <String>IndoorTablePower</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_IN_OPERATION_VENT_MODE">
+        <Name>
+          <String>IndoorTableMode</String>
+        </Name>
+        <Value>
+          <MultiValue>1</MultiValue>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_IN_FAN_VENT_MODE">
+        <Name>
+          <String>Indoor_FanSpeed</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_id_serial_number" Width="120">
+        <Name>
+          <String>OutdoorTableSerialNumber</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_info_equip_position" Width="60">
+        <Name>
+          <String>OutdoorUnitInstallationLocation</String>
+        </Name>
+        <ControlUI TargetID="605"  DefaultValue="1"/>
+      </Column>
+      <Column ProtocolID="STR_ad_option_basic" Width="230">
+        <Name>
+          <String>IndoorTableProductOption</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_option_install" Width="230">
+        <Name>
+          <String>IndoorTableInstallOption</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_option_install_2" Width="230">
+        <Name>
+          <String>IndoorTableInstallOption2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_dbcode_micom_main" Width="170">
+        <Name>
+          <String>OutdoorUnitMainDBCodeVersion</String>
+        </Name>
+      </Column>
+    </TableGadget>
+  </GadgetFrame>  
+  &DiffuserDisplayRule;
+</DisplayRule>

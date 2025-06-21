@@ -1,0 +1,635 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Hydro Field Setting Value-->
+<GadgetFrame ID="ID_EHS_Mono_Split_FSV">  
+  <Name>
+    <String>EHS FSV</String>
+  </Name>
+  <Menu>
+    <Button Name="Idiom_Update" ID="UpdateAllMonoFsv"></Button>
+    <Button Name="MenuGrid_Export_Title" ID="ExportAllMonoFsv"></Button>
+    <Button Name="Idiom_Import" ID="ImportAllMonoFsv"></Button>
+    <Button Name="SD Card" ID="UpdateSDcardFsv"></Button>
+  </Menu>
+  <TableGadget AddressClass="Indoor" LocationX="0" LocationY="35" Width="350" Height="950" Layout="Main">
+    <CardViewAppearance>
+      <ApplyCardView>true</ApplyCardView>
+      <LabelWidth>200</LabelWidth>
+      <CellWidth>87</CellWidth>
+    </CardViewAppearance>
+    <Name>
+      <String>FSV 1</String>
+    </Name>
+    <Column ProtocolID="VAR_IN_FSV_1011">
+      <Name>
+        <String>1011</String>
+      </Name>
+      <ControlUI TargetID="424A"  Min="18" Max="25" DefaultValue="25"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_1012">
+      <Name>
+        <String>1012</String>
+      </Name>
+      <ControlUI TargetID="424B"  Min="5" Max="18" DefaultValue="16"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_1021">
+      <Name>
+        <String>1021</String>
+      </Name>
+      <ControlUI TargetID="424C"  Min="28" Max="30" DefaultValue="30"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_1022">
+      <Name>
+        <String>1022</String>
+      </Name>
+      <ControlUI TargetID="424D"  Min="18" Max="28" DefaultValue="18"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_1031">
+      <Name>
+        <String>1031</String>
+      </Name>
+      <ControlUI TargetID="424E"  Min="37" Max="65" DefaultValue="65"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_1032">
+      <Name>
+        <String>1032</String>
+      </Name>
+      <ControlUI TargetID="424F"  Min="15" Max="37" DefaultValue="25"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_1041">
+      <Name>
+        <String>1041</String>
+      </Name>
+      <ControlUI TargetID="4250"  Min="18" Max="30" DefaultValue="30"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_1042">
+      <Name>
+        <String>1042</String>
+      </Name>
+      <ControlUI TargetID="4251"  Min="16" Max="18" DefaultValue="16"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_1051">
+      <Name>
+        <String>1051</String>
+      </Name>
+      <ControlUI TargetID="4252"  Min="50" Max="70" DefaultValue="55"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_1052">
+      <Name>
+        <String>1052</String>
+      </Name>
+      <ControlUI TargetID="4253"  Min="30" Max="40" DefaultValue="40"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_2011">
+      <Name>
+        <String>2011</String>
+      </Name>
+      <ControlUI TargetID="4254"  Min="-20" Max="5" DefaultValue="-10"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_2012">
+      <Name>
+        <String>2012</String>
+      </Name>
+      <ControlUI TargetID="4255"  Min="10" Max="20" DefaultValue="15"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_2021">
+      <Name>
+        <String>2021</String>
+      </Name>
+      <ControlUI TargetID="4256"  Min="17" Max="65" DefaultValue="40"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_2022">
+      <Name>
+        <String>2022</String>
+      </Name>
+      <ControlUI TargetID="4257"  Min="17" Max="65" DefaultValue="25"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_2031">
+      <Name>
+        <String>2031</String>
+      </Name>
+      <ControlUI TargetID="4258"  Min="17" Max="65" DefaultValue="50"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_2032">
+      <Name>
+        <String>2032</String>
+      </Name>
+      <ControlUI TargetID="4259"  Min="17" Max="65" DefaultValue="35"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_2041">
+      <Name>
+        <String>2041</String>
+      </Name>
+      <ControlUI TargetID="4093" DefaultValue="1"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_2051">
+      <Name>
+        <String>2051</String>
+      </Name>
+      <ControlUI TargetID="425A"  Min="25" Max="35" DefaultValue="30"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_2052">
+      <Name>
+        <String>2052</String>
+      </Name>
+      <ControlUI TargetID="425B"  Min="35" Max="45" DefaultValue="40"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_2061">
+      <Name>
+        <String>2061</String>
+      </Name>
+      <ControlUI TargetID="425C"  Min="5" Max="25" DefaultValue="25"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_2062">
+      <Name>
+        <String>2062</String>
+      </Name>
+      <ControlUI TargetID="425D"  Min="5" Max="25" DefaultValue="18"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_2071">
+      <Name>
+        <String>2071</String>
+      </Name>
+      <ControlUI TargetID="425E"  Min="5" Max="25" DefaultValue="18"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_2072">
+      <Name>
+        <String>2072</String>
+      </Name>
+      <ControlUI TargetID="425F"  Min="5" Max="25" DefaultValue="5"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_2081">
+      <Name>
+        <String>2081</String>
+      </Name>
+      <ControlUI TargetID="4094" DefaultValue="1"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_2091">
+      <Name>
+        <String>2091</String>
+      </Name>
+      <ControlUI TargetID="4095" Min="0" Max ="4" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_2092">
+      <Name>
+        <String>2092</String>
+      </Name>
+      <ControlUI TargetID="4096" Min="0" Max ="4" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_2093">
+      <Name>
+        <String>2093</String>
+      </Name>
+      <ControlUI TargetID="4127" Min="1" Max ="4" DefaultValue="1"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_2094">
+      <Name>
+        <String>2094</String>
+      </Name>
+      <ControlUI TargetID="412A" Min="0" Max ="4" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_3011">
+      <Name>
+        <String>3011</String>
+      </Name>
+      <ControlUI TargetID="4097" Min="0" Max ="2" DefaultValue="1"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3021">
+      <Name>
+        <String>3021</String>
+      </Name>
+      <ControlUI TargetID="4260" Min="45" Max="55" DefaultValue="55"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3022">
+      <Name>
+        <String>3022</String>
+      </Name>
+      <ControlUI TargetID="4261"  Min="0" Max="10" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3023">
+      <Name>
+        <String>3023</String>
+      </Name>
+      <ControlUI TargetID="4262"  Min="5" Max="30" DefaultValue="5"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3024">
+      <Name>
+        <String>3024</String>
+      </Name>
+      <ControlUI TargetID="4263"  Min="1" Max="20" DefaultValue="5"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3025">
+      <Name>
+        <String>3025</String>
+      </Name>
+      <ControlUI TargetID="4264"  Min="5" Max="95" DefaultValue="30" Step="5"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3026">
+      <Name>
+        <String>3026</String>
+      </Name>
+      <ControlUI TargetID="4265"  Min="30" Max="600" DefaultValue="180" Step="30"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_3031">
+      <Name>
+        <String>3031</String>
+      </Name>
+      <ControlUI TargetID="4098" DefaultValue="1"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3032">
+      <Name>
+        <String>3032</String>
+      </Name>
+      <ControlUI TargetID="4266" Min="20" Max="95" DefaultValue="20" Step="5"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3033">
+      <Name>
+        <String>3033</String>
+      </Name>
+      <ControlUI TargetID="4267"  Min="0" Max="4" DefaultValue="0"/>
+    </Column>
+    <!--<Column ProtocolID="VAR_IN_FSV_3034">
+      <Name>
+        <String>3034</String>
+      </Name>
+      <ControlUI TargetID="4268"  Min="0" Max="20" DefaultValue="10"/>
+    </Column>-->
+    <Column ProtocolID="ENUM_IN_FSV_3041">
+      <Name>
+        <String>3041</String>
+      </Name>
+      <ControlUI TargetID="4099" DefaultValue="1"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_3042">
+      <Name>
+        <String>3042</String>
+      </Name>
+      <ControlUI TargetID="409A" DefaultValue="5"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3043">
+      <Name>
+        <String>3043</String>
+      </Name>
+      <ControlUI TargetID="4269"  Min="0" Max="23" DefaultValue="23"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3044">
+      <Name>
+        <String>3044</String>
+      </Name>
+      <ControlUI TargetID="426A"  Min="40" Max="70" DefaultValue="70" Step="5"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3045">
+      <Name>
+        <String>3045</String>
+      </Name>
+      <ControlUI TargetID="426B"  Min="5" Max="60" DefaultValue="10" Step="5"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3046">
+      <Name>
+        <String>3046</String>
+      </Name>
+      <ControlUI TargetID="42CE" Min="60" Max="1440" DefaultValue="480" Step="60"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_3051">
+      <Name>
+        <String>3051</String>
+      </Name>
+      <ControlUI TargetID="409B" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3052">
+      <Name>
+        <String>3052</String>
+      </Name>
+      <ControlUI TargetID="426C"  Min="30" Max="300" DefaultValue="60" Step="10"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_3061">
+      <Name>
+        <String>3061</String>
+      </Name>
+      <ControlUI TargetID="409C" Min="0" Max="2" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_3071">
+      <Name>
+        <String>3071</String>
+      </Name>
+      <ControlUI TargetID="409D" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3081">
+      <Name>
+        <String>3081</String>
+      </Name>
+      <ControlUI TargetID="42ED"  Min="1" Max="6" DefaultValue="2"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3082">
+      <Name>
+        <String>3082</String>
+      </Name>
+      <ControlUI TargetID="42EE"  Min="0" Max="6" DefaultValue="2"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_3083">
+      <Name>
+        <String>3083</String>
+      </Name>
+      <ControlUI TargetID="42EF"  Min="1" Max="6" DefaultValue="3"/>
+    </Column>
+  </TableGadget>
+  <TableGadget AddressClass="Indoor" LocationX="350" LocationY="35" Width="350" Height="950" Layout="Main">
+    <CardViewAppearance>
+      <ApplyCardView>true</ApplyCardView>
+      <LabelWidth>200</LabelWidth>
+      <CellWidth>87</CellWidth>
+    </CardViewAppearance>
+    <Name>
+      <String>FSV 2</String>
+    </Name>
+    <Column ProtocolID="ENUM_IN_FSV_4011">
+      <Name>
+        <String>4011</String>
+      </Name>
+      <ControlUI TargetID="409E" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_4012">
+      <Name>
+        <String>4012</String>
+      </Name>
+      <ControlUI TargetID="426D"  Min="-15" Max="20" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_4013">
+      <Name>
+        <String>4013</String>
+      </Name>
+      <ControlUI TargetID="426E"  Min="14" Max="35" DefaultValue="35"/>
+    </Column>
+    <!--<Column ProtocolID="VAR_IN_FSV_4014">
+      <Name>
+        <String>4014</String>
+      </Name>
+      <ControlUI TargetID="426F"  Min="1" Max="4" DefaultValue="2"/>
+    </Column>-->
+    <Column ProtocolID="ENUM_IN_FSV_4021">
+      <Name>
+        <String>4021</String>
+      </Name>
+      <ControlUI TargetID="409F" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_4022">
+      <Name>
+        <String>4022</String>
+      </Name>
+      <ControlUI TargetID="40A0" DefaultValue="2"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_4023">
+      <Name>
+        <String>4023</String>
+      </Name>
+      <ControlUI TargetID="40A1" DefaultValue="1"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_4024">
+      <Name>
+        <String>4024</String>
+      </Name>
+      <ControlUI TargetID="4270"  Min="-25" Max="35" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_4025">
+      <Name>
+        <String>4025</String>
+      </Name>
+      <ControlUI TargetID="4271"  Min="10" Max="55" DefaultValue="15" Step="5"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_4031">
+      <Name>
+        <String>4031</String>
+      </Name>
+      <ControlUI TargetID="40A2" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_4032">
+      <Name>
+        <String>4032</String>
+      </Name>
+      <ControlUI TargetID="40A3" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_4033">
+      <Name>
+        <String>4033</String>
+      </Name>
+      <ControlUI TargetID="4272"  Min="-20" Max="5" DefaultValue="-15"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_4041">
+      <Name>
+        <String>4041</String>
+      </Name>
+      <ControlUI TargetID="40C0" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_4042">
+      <Name>
+        <String>4042</String>
+      </Name>
+      <ControlUI TargetID="4286"  Min="5" Max="15" DefaultValue="10"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_4043">
+      <Name>
+        <String>4043</String>
+      </Name>
+      <ControlUI TargetID="4287"  Min="5" Max="15" DefaultValue="10"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_4044">
+      <Name>
+        <String>4044</String>
+      </Name>
+      <ControlUI TargetID="40C1" Min="1" Max ="5" DefaultValue="2"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_4045">
+      <Name>
+        <String>4045</String>
+      </Name>
+      <ControlUI TargetID="4288"  Min="1" Max="30" DefaultValue="2"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_4046">
+      <Name>
+        <String>4046</String>
+      </Name>
+      <ControlUI TargetID="4289"  Min="60" Max="240" DefaultValue="90" Step="30"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_4051">
+      <Name>
+        <String>4051</String>
+      </Name>
+      <ControlUI TargetID="40C2" Min="0" Max="2" DefaultValue="1"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_4052">
+      <Name>
+        <String>4052</String>
+      </Name>
+      <ControlUI TargetID="428A"  Min="2" Max="8" DefaultValue="5"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_4053">
+      <Name>
+        <String>4053</String>
+      </Name>
+      <ControlUI TargetID="40C3" Min="1" Max ="3" DefaultValue="2"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_4061">
+      <Name>
+        <String>4061</String>
+      </Name>
+      <ControlUI TargetID="411A" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5011">
+      <Name>
+        <String>5011</String>
+      </Name>
+      <ControlUI TargetID="4273"  Min="5" Max="25" DefaultValue="25"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5012">
+      <Name>
+        <String>5012</String>
+      </Name>
+      <ControlUI TargetID="4274"  Min="18" Max="30" DefaultValue="30"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5013">
+      <Name>
+        <String>5013</String>
+      </Name>
+      <ControlUI TargetID="4275"  Min="15" Max="55" DefaultValue="15"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5014">
+      <Name>
+        <String>5014</String>
+      </Name>
+      <ControlUI TargetID="4276"  Min="16" Max="30" DefaultValue="16"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5015">
+      <Name>
+        <String>5015</String>
+      </Name>
+      <ControlUI TargetID="4277"  Min="5" Max="25" DefaultValue="25"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5016">
+      <Name>
+        <String>5016</String>
+      </Name>
+      <ControlUI TargetID="4278"  Min="5" Max="25" DefaultValue="25"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5017">
+      <Name>
+        <String>5017</String>
+      </Name>
+      <ControlUI TargetID="4279"  Min="15" Max="55" DefaultValue="15"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5018">
+      <Name>
+        <String>5018</String>
+      </Name>
+      <ControlUI TargetID="427A"  Min="15" Max="55" DefaultValue="15"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5019">
+      <Name>
+        <String>5019</String>
+      </Name>
+      <ControlUI TargetID="427B"  Min="30" Max="70" DefaultValue="30"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5021">
+      <Name>
+        <String>5021</String>
+      </Name>
+      <ControlUI TargetID="427C" Min="0" Max="40" DefaultValue="5"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_5022">
+      <Name>
+        <String>5022</String>
+      </Name>
+      <ControlUI TargetID="4128" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5023">
+      <Name>
+        <String>5023</String>
+      </Name>
+      <ControlUI TargetID="42F0" Min="0" Max="40" DefaultValue="25"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5031">
+      <Name>
+        <String>5031</String>
+      </Name>     
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5032">
+      <Name>
+        <String>5032</String>
+      </Name>     
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_5033">
+      <Name>
+        <String>5033</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_5041">
+      <Name>
+        <String>5041</String>
+      </Name>
+      <ControlUI TargetID="40A4" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_5042">
+      <Name>
+        <String>5042</String>
+      </Name>
+      <ControlUI TargetID="40A5" Min="0" Max ="3" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_5043">
+      <Name>
+        <String>5043</String>
+      </Name>
+      <ControlUI TargetID="40A6" DefaultValue="1"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_5051">
+      <Name>
+        <String>5051</String>
+      </Name>
+      <ControlUI TargetID="40A7" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_5061">
+      <Name>
+        <String>5061</String>
+      </Name>      
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_5081">
+      <Name>
+        <String>5081</String>
+      </Name>
+      <ControlUI TargetID="411B" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5082">
+      <Name>
+        <String>5082</String>
+      </Name>
+      <ControlUI TargetID="42DB" Min="1" Max="20" DefaultValue="2" Step="0.5"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5083">
+      <Name>
+        <String>5083</String>
+      </Name>
+      <ControlUI TargetID="42DC" Min="1" Max="50" DefaultValue="2" Step="0.5"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_5091">
+      <Name>
+        <String>5091</String>
+      </Name>
+      <ControlUI TargetID="411C" DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5092">
+      <Name>
+        <String>5092</String>
+      </Name>
+      <ControlUI TargetID="42DD" Min="1" Max="50" DefaultValue="2" Step="0.5"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_FSV_5093">
+      <Name>
+        <String>5093</String>
+      </Name>
+      <ControlUI TargetID="42DE" Min="1" Max="40" DefaultValue="5" Step="0.5"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_FSV_5094">
+      <Name>
+        <String>5094</String>
+      </Name>
+      <ControlUI TargetID="411D" DefaultValue="0"/>
+    </Column>
+  </TableGadget>
+</GadgetFrame>

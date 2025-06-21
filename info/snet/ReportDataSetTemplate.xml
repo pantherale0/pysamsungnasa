@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<ReportDataSet xmlns="http://tempuri.org/ReportDataSet.xsd">
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_BasicInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_SiteName</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID />
+    <Required>true</Required>
+  </SiteInfoTable>
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_BasicInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_OutdoorUnitLocation</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID />
+    <Required>true</Required>
+  </SiteInfoTable>
+
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_BasicInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_IndoorUnitLocation</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID />
+    <Required>true</Required>
+  </SiteInfoTable>
+
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_BasicInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_CustomerInfo</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID />
+    <Required>true</Required>
+  </SiteInfoTable>
+
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_BasicInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_Date</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID />
+    <Required>true</Required>
+  </SiteInfoTable>
+
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_BasicInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_ReportCreateDate</ItemStringKey>
+    <Value />
+    <CanEdit>false</CanEdit>
+    <ProtocolID >#CurrentDate</ProtocolID>
+    <Required>false</Required>
+  </SiteInfoTable>
+
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_BasicInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_Company</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID />
+    <Required>true</Required>
+  </SiteInfoTable>
+
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_BasicInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_Person_In_Charge</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID />
+    <Required>true</Required>
+  </SiteInfoTable>
+
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_BasicInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_Person_In_Charge_Tel</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID />
+    <Required>false</Required>
+  </SiteInfoTable>
+
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_InstallationInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_OutdoorNumber</ItemStringKey>
+    <Value />
+    <CanEdit>false</CanEdit>
+    <ProtocolID >#OutdoorUnit</ProtocolID>
+    <Required>false</Required>
+  </SiteInfoTable>
+
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_InstallationInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_IndoorNumber</ItemStringKey>
+    <Value />
+    <CanEdit>false</CanEdit>
+    <ProtocolID >#IndoorUnit</ProtocolID>
+    <Required>false</Required>
+  </SiteInfoTable>
+  
+
+
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_InstallationInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_IndoorCapacityTotal</ItemStringKey>
+    <Value />
+    <CanEdit>false</CanEdit>
+    <ProtocolID >#SUM_VAR_in_capacity_request</ProtocolID>
+    <Required>false</Required>
+  </SiteInfoTable>
+  
+
+
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_InstallationInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_PipeLength</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID ></ProtocolID>
+    <Required>true</Required>
+  </SiteInfoTable>
+
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_InstallationInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_PipeHeight</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID ></ProtocolID>
+    <Required>true</Required>
+  </SiteInfoTable>
+  
+  
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_InstallationInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_SupplementaryRefrigerant</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID ></ProtocolID>
+    <Required>true</Required>
+  </SiteInfoTable>
+
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_InstallationInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_MCCB</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID ></ProtocolID>
+    <Required>true</Required>
+  </SiteInfoTable>
+  
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_InstallationInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_WireSpec</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID ></ProtocolID>
+    <Required>true</Required>
+  </SiteInfoTable>
+
+
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_InstallationInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_TotalLengthofpipe</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID ></ProtocolID>
+    <Required>true</Required>
+  </SiteInfoTable>
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_InstallationInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_MaxHeight</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID ></ProtocolID>
+    <Required>true</Required>
+  </SiteInfoTable>
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_InstallationInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_TotalRefrigerants</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID ></ProtocolID>
+    <Required>true</Required>
+  </SiteInfoTable>
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_InstallationInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_ReverseDirect</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID ></ProtocolID>
+    <Required>true</Required>
+  </SiteInfoTable>
+  
+  
+  <SiteInfoTable>
+    <CategoryStringKey>Report_SiteInfo_InstallationInfo</CategoryStringKey>
+    <ItemStringKey>Report_SiteInfo_Remarks</ItemStringKey>
+    <Value />
+    <CanEdit>true</CanEdit>
+    <ProtocolID ></ProtocolID>
+    <Required>false</Required>
+  </SiteInfoTable>
+  <SiteInfoTable>
+    <CategoryStringKey>Report_Refrigerant_Detect</CategoryStringKey>
+    <ItemStringKey>Report_Refrigerant_Value</ItemStringKey>
+    <Value />
+    <CanEdit>false</CanEdit>
+    <ProtocolID >#Refrigerant</ProtocolID>
+    <Required>true</Required>
+  </SiteInfoTable>
+</ReportDataSet>

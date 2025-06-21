@@ -27,6 +27,17 @@ class AddressClass(SamsungEnum, IntEnum):
     PEAK = 0x5A
     POWER_DIVIDER = 0x5B
     WIFI_KIT = 0x62  # From "Notes" section in NOTES.md
+    CENTRAL_CONTROLLER = 0x65
+    JIG_TESTER = 0x80  # Tester
+    BML = 0xB0  # Broadcast Self Layer
+    BCL = 0xB1  # Broadcast Control Layer
+    BSL = 0xB2  # Broadcast Set Layer
+    BCSL = 0xB3  # Broadcast Control and Set Layer
+    BMDL = 0xB4  # Broadcast Module Layer
+    BCSM = 0xB7  # Broadcast CSM
+    BLL = 0xB8  # Broadcast Local Layer
+    BCSML = 0xB9  # Broadcast CSML
+    UNDEFINED = 0xFF
 
 
 class PacketType(SamsungEnum, IntEnum):
@@ -393,6 +404,7 @@ class In2WayValve(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    VALUE_1 = 1
     CV = 2  # Constant Value?
     BOILER = 3
 

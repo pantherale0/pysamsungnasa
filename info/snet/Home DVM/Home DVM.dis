@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE fragmentLink [
+  <!ENTITY indoorUnitDisplayRule SYSTEM "../Common/IndoorUnitData.dis">
+  <!ENTITY indoorUnitInstallationDisplayRule SYSTEM "../Common/IndoorUnitInstallationData.dis">
+  <!ENTITY emptyControlRoomDisplayRule SYSTEM "../Common/EmptyRoomControlData.dis">  
+  <!ENTITY hydroUnitHTDisplayRule SYSTEM "../Common/HydroHTUnit.dis">
+  <!ENTITY hydroUnitLTDisplayRule SYSTEM "../Common/HydroLTUnit.dis">
+]>
+<DisplayRule xmlns="urn:AirKitRuleSchema" Revision="1.1.0" DeviceName="DVM Inverter" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:AirKitRuleSchema file:///D:/01_Development%20Project/DeepView/03.Develope/Source/DeepView2010/RuleSet/AirKitRuleSchema.xsd">
+  <GadgetFrame ID="ID_7D82808A-DEFF-483C-90BB-A1E1CEEEA9C9">
+    <Name>
+      <String>OutdoorTableHeader</String>
+    </Name>
+   <PairTableGadget AddressClass="Outdoor" LocationX="0" LocationY="0" Width="270" Height="240" Layout="Main" ReportExport="false">
+     <Name>
+	<String>TotalUnitsInfo</String>
+	</Name>
+     <Column NameWidth="170" ValueWidth="97">
+        <PairRow ProtocolID="#Total_No_Outdoor_Unit">
+		<Name>
+            <String>TotalOutdoorUnitsInfo</String>
+		</Name>
+        </PairRow>
+		<PairRow ProtocolID="#Total_No_Indoor_Unit">
+		<Name>
+			<String>TotalIndoorUnitsInfo</String>
+		</Name>
+        </PairRow>
+	  </Column>
+    </PairTableGadget>
+	 <TableGadget  AddressClass="Outdoor" LocationX="0" LocationY="240" Width="270" Height="370" Layout="Main" ReportExport="false">
+     <TableAppearance>
+       <ColumnAutoFit>true</ColumnAutoFit>
+       <RowHeight>25</RowHeight>
+     </TableAppearance>
+     <Name>
+	<String>InstalledUnitsInfo</String>
+	</Name>
+	<Column ProtocolID="VAR_No_Outdoor_Unit" >
+		<Name>
+			<String>InstalledOutdoorUnit</String>
+		</Name>
+	  </Column>
+	  <Column ProtocolID="VAR_No_Indoor_Unit">
+		<Name>
+			<String>InstalledIndoorUnit</String>
+		</Name>
+	  </Column>
+    </TableGadget>
+    <TableGadget AddressClass="Outdoor" LocationX="270" LocationY="0" Width="310" Height="610" ExcelExportSelectable="true" Layout="Main">
+      <TableAppearance>
+        <!--<ColumnAutoFit>true</ColumnAutoFit>-->
+        <RowHeight>25</RowHeight>
+      </TableAppearance>
+      <CardViewAppearance>
+        <ApplyCardView>true</ApplyCardView>
+        <LabelWidth>150</LabelWidth>
+        <CellWidth>150</CellWidth>
+      </CardViewAppearance>
+      <Name>
+        <String>OutdoorTableUnitInfo1</String>
+      </Name>
+      <Column ProtocolID="#IndoorUnit">
+        <Name>
+          <String>OutdoorTableTotalIndoor</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="#SUM_VAR_in_capacity_request">
+        <Name>
+          <String>OutdoorTableTotalIndoorCapa</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_comp1">
+        <Name>
+          <String>OutdoorTableComp1</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_4way">
+        <Name>
+          <String>Valve_4Way</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_hotgas">
+        <Name>
+          <String>Valve_HotGas1</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_operation_odu_mode">
+        <Name>
+          <String>Idiom_OpMode</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_out_operation_heatcool">
+        <Name>
+          <String>OutdoorTableOpStatus</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_ad_error_code1">
+        <Name>
+          <String>Idiom_ErrorCode</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_install_capa">
+        <Name>
+          <String>Idiom_Capa</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_control_target_cfreq_comp1">
+        <Name>
+          <String>OutdoorTableTargetFreq1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_control_order_cfreq_comp1">
+        <Name>
+          <String>OutdoorTableOrderFreq1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_control_cfreq_comp1">
+        <Name>
+          <String>OutdoorTableCurrentFreq1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_discharge1"  >
+        <Name>
+          <String>OutdoorTableDischarge1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_out_op_test_op_complete">
+        <Name>
+          <String>OutdoorTableTestOperation</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_top1">
+        <Name>
+          <String>OutdoorTableCompTop1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_airout"  >
+        <Name>
+          <String>OutdoorTableOutdoorTemp</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_ct1"  >
+        <Name>
+          <String>OutdoorTableCompressorCurrent1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_IPM1"  >
+        <Name>
+          <String>OutdoorTableIPM1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_condout"  >
+        <Name>
+          <String>OutdoorTableCondOutTemp</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_load_fanrpm1">
+        <Name>
+          <String>OutdoorTableFanRPM</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_OUT_CHECK_REF_RESULT">
+        <Name>
+          <String>Report_Refrigerant_Value</String>
+        </Name>
+        <ControlUI TargetID="809C"  DefaultValue="0"/>
+      </Column>
+      <Column ProtocolID="STR_ad_info_equip_position">
+        <Name>
+          <String>OutdoorUnitInstallationLocation</String>
+        </Name>
+        <ControlUI TargetID="605"  DefaultValue="1"/>
+      </Column>
+      <Column ProtocolID="STR_ad_id_serial_number">
+        <Name>
+          <String>OutdoorTableSerialNumber</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_dbcode_micom_main">
+        <Name>
+          <String>OutdoorUnitMainDBCodeVersion</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="InverterMicom1Info">
+        <Name>
+          <String>Inverter1DBCodeVersion</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_dbcode_eeprom">
+        <Name>
+          <String>OutdoorTableEEPROMDBCodeVersion</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_CurLimit">
+        <Name>
+          <String>OutdoorUnitOptionCurrentLimit</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_Silence">
+        <Name>
+          <String>OutdoorUnitOptionNightSilence</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_NasaChannel">
+        <Name>
+          <String>OutdoorUnitOptionChannelAddress</String>
+        </Name>
+      </Column>
+    </TableGadget>
+  </GadgetFrame>
+  &indoorUnitDisplayRule;
+  &indoorUnitInstallationDisplayRule;
+  &emptyControlRoomDisplayRule;
+  &hydroUnitHTDisplayRule;
+  &hydroUnitLTDisplayRule;
+</DisplayRule>

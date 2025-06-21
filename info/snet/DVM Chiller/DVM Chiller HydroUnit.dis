@@ -1,0 +1,297 @@
+﻿<!-- Hydro LT Table-->
+<GadgetFrame ID="ID_HYDRO_LT_UNIT">
+  <Name>
+    <String>ModuleChiller_HydroInfo</String>
+  </Name>
+  <TableGadget AddressClass="Indoor" LocationX="0" LocationY="0" Width="400" Height="700" ExcelExportSelectable="true" Layout="Main">
+    <CardViewAppearance>
+      <ApplyCardView>true</ApplyCardView>
+      <LabelWidth>150</LabelWidth>
+      <CellWidth>250</CellWidth>
+    </CardViewAppearance>
+    <Name>
+      <String>ModuleChiller_HydroInfo</String>
+    </Name>
+    <Column ProtocolID="ModuleChiller_ChannelAddress"  Width="100">
+      <Name>
+        <String>OutdoorUnitOptionChannelAddress</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_model_information"  Width="100">
+      <Name>
+        <String>Idiom_Model</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_MCC_GROUP_MODULE_ADDRESS">
+      <Name>
+        <String>ModuleChiller_GroupModuleNo</String>
+      </Name>
+      <ControlUI TargetID="42B1"  DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_MCC_GROUP_MAIN">
+      <Name>
+        <String>ModuleChiller_GroupMain</String>
+      </Name>
+      <ControlUI TargetID="42B2"  DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="VAR_IN_MCC_MODULE_MAIN">
+      <Name>
+        <String>ModuleChiller_ModuleMain</String>
+      </Name>
+      <ControlUI TargetID="42B3"  DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="LVAR_ad_address_rmc" Width="40">
+      <Name>
+        <String>IndoorTableRMC</String>
+      </Name>
+      <Value>
+        <Type>Hex</Type>
+      </Value>
+    </Column>    
+    <Column ProtocolID="VAR_ad_error_code1">
+      <Name>
+        <String>Idiom_ErrorCode</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_in_operation_power">
+      <Name>
+        <String>Idiom_Power</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+      <ControlUI TargetID="4000"  DefaultValue="0"/>
+    </Column>
+    <Column ProtocolID="ENUM_IN_STATE_THERMO">
+      <Name>
+        <String>Idiom_Thermo</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_in_operation_mode_real">
+      <Name>
+        <String>Hydro_OpMode</String>
+      </Name>
+      <ControlUI TargetID="4001"  DefaultValue="1"/>
+    </Column>    
+    <Column ProtocolID="VAR_IN_TEMP_WATER_OUTLET_TARGET_F">
+      <Name>
+        <String>Hydro_WaterOutletTargetF</String>
+      </Name>
+      <ControlUI TargetID="4247"  DefaultValue="20"/>
+    </Column>    
+    <Column ProtocolID="VAR_IN_TEMP_WATER_IN_F">
+      <Name>
+        <String>Hydro_WaterIn</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_OUT_F">
+      <Name>
+        <String>Hydro_WaterOut</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_temp_eva_in_f">
+      <Name>
+        <String>Idiom_EvaIn</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_temp_eva_out_f">
+      <Name>
+        <String>Idiom_EvaOut</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_EVA2_IN_F">
+      <Name>
+        <String>Idiom_EvaIn2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_EVA2_OUT_F">
+      <Name>
+        <String>Idiom_EvaOut2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_eev_value_real_1">
+      <Name>
+        <String>Idiom_EEV</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_in_eev_value_real_2">
+      <Name>
+        <String>Idiom_EEV2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_STATE_WATER_PUMP">
+      <Name>
+        <String>Hydro_WaterPump</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="VAR_IN_CHILLER_PHE_IN_P">
+      <Name>
+        <String>Idiom_PheIn</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_CHILLER_PHE_OUT_P">
+      <Name>
+        <String>Idiom_PheOut</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_STATE_FLOW_CHECK">
+      <Name>
+        <String>Flow Switch</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_WATER_OUT_EXTERNAL_F">
+      <Name>
+        <String>ModuleChiller_ExtWaterOutTemp</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_CHILLER_EXTERNAL_TEMPERATURE">
+      <Name>
+        <String>ModuleChiller_ExtRoomTemp</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_CHILLER_WATERLAW_ON_OFF">
+      <Name>
+        <String>ModuleChiller_WaterLaw</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>    
+  </TableGadget>
+  <TableGadget AddressClass="Indoor" LocationX="400" LocationY="0" Width="400" Height="700" ExcelExportSelectable="true" Layout="Main">
+    <CardViewAppearance>
+      <ApplyCardView>true</ApplyCardView>
+      <LabelWidth>170</LabelWidth>
+      <CellWidth>230</CellWidth>
+    </CardViewAppearance>
+    <Name>
+      <String>ModuleChiller_HydroInstallationInfo</String>
+    </Name>
+    <Column ProtocolID="ModuleChiller_ChannelAddress"  Width="100">
+      <Name>
+        <String>OutdoorUnitOptionChannelAddress</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_CHILLER_SETTING_DEMAND_LEVEL">
+      <Name>
+        <String>ModuleChiller_DemandLevel</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_CHILLLER_SETTING_SILENT_LEVEL">
+      <Name>
+        <String>ModuleChiller_QuietFunctionLevel</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="ENUM_IN_CHILLER_EXT_WATER_OUT_INPUT">
+      <Name>
+        <String>ModuleChiller_ExtWaterOutControl</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="ENUM_IN_CHILLER_WATERLAW_ON_OFF">
+      <Name>
+        <String>ModuleChiller_WaterLawStandard</String>
+      </Name>
+      <Value>
+        <Type>Lamp</Type>
+      </Value>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_AIR_COOL1_F">
+      <Name>
+        <String>ModuleChiller_AirCool1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_AIR_COOL2_F">
+      <Name>
+        <String>ModuleChiller_AirCool2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_ROOM_COOL1_F">
+      <Name>
+        <String>ModuleChiller_RoomCool1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_ROOM_COOL2_F">
+      <Name>
+        <String>ModuleChiller_RoomCool2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_TARGET_COOL1_F">
+      <Name>
+        <String>ModuleChiller_Tcool1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_TARGET_COOL2_F">
+      <Name>
+        <String>ModuleChiller_Tcool2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_AIR_HEAT1_F">
+      <Name>
+        <String>ModuleChiller_AirHeat1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_AIR_HEAT2_F">
+      <Name>
+        <String>ModuleChiller_AirHeat2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_ROOM_HEAT1_F">
+      <Name>
+        <String>ModuleChiller_RoomHeat1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_ROOM_HEAT2_F">
+      <Name>
+        <String>ModuleChiller_RoomHeat2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_TARGET_HEAT1_F">
+      <Name>
+        <String>ModuleChiller_Theat1</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="VAR_IN_TEMP_PANEL_TARGET_HEAT2_F">
+      <Name>
+        <String>ModuleChiller_Theat2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="STR_ad_info_equip_position" Width="60">
+      <Name>
+        <String>OutdoorUnitInstallationLocation</String>
+      </Name>
+      <ControlUI TargetID="605"  DefaultValue="1"/>
+    </Column>
+    <Column ProtocolID="STR_ad_option_basic" Width="230">
+      <Name>
+        <String>IndoorTableProductOption</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="STR_ad_option_install" Width="230">
+      <Name>
+        <String>IndoorTableInstallOption</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="STR_ad_option_install_2" Width="230">
+      <Name>
+        <String>IndoorTableInstallOption2</String>
+      </Name>
+    </Column>
+    <Column ProtocolID="STR_ad_dbcode_micom_main" Width="170">
+      <Name>
+        <String>OutdoorUnitMainDBCodeVersion</String>
+      </Name>
+    </Column>
+  </TableGadget>
+</GadgetFrame>

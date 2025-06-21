@@ -1,0 +1,1577 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE fragmentLink [
+  <!ENTITY indoorUnitInstallationDisplayRule SYSTEM "../Common/IndoorUnitInstallationData.dis">
+  <!ENTITY mcuUnitDisplayRule SYSTEM "../Common/MCUUnitData.dis">
+  <!ENTITY emptyControlRoomDisplayRule SYSTEM "../Common/EmptyRoomControlData.dis">
+  <!ENTITY indoorUnitDisplayRule SYSTEM "../Common/IndoorUnitData.dis">
+  <!ENTITY hydroUnitHTDisplayRule SYSTEM "../Common/HydroHTUnit.dis">
+  <!ENTITY hydroUnitLTDisplayRule SYSTEM "../Common/HydroLTUnit.dis">
+  <!ENTITY eotSettingDisplayRule SYSTEM "../Common/EmergencyTemperatureOutputData.dis">
+  <!ENTITY universalCommKitDisplayRule SYSTEM "../Common/UniversalCOMMKitData.dis">
+  <!ENTITY ervPlusDisplayRule SYSTEM "../Common/ERVPlus.dis">
+]>
+<DisplayRule xmlns="urn:AirKitRuleSchema" Revision="1.1.0" DeviceName="DVM Inverter" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:AirKitRuleSchema file:///D:/01_Development%20Project/DeepView/03.Develope/Source/DeepView2010/RuleSet/AirKitRuleSchema.xsd">
+  <GadgetFrame ID="ID_7D82808A-DEFF-483C-90BB-A1E1CEEEA9C9">
+    <Name>
+      <String>OutdoorTableHeader</String>
+    </Name>
+   <PairTableGadget AddressClass="Outdoor" LocationX="0" LocationY="0" Width="270" Height="240" Layout="Main" ReportExport="false">
+     <Name>
+	<String>TotalUnitsInfo</String>
+	</Name>
+     <Column NameWidth="170" ValueWidth="97">
+        <PairRow ProtocolID="#Total_No_Outdoor_Unit">
+		<Name>
+            <String>TotalOutdoorUnitsInfo</String>
+		</Name>
+        </PairRow>
+		<PairRow ProtocolID="#Total_No_Indoor_Unit">
+		<Name>
+			<String>TotalIndoorUnitsInfo</String>
+		</Name>
+        </PairRow>
+	  </Column>
+    </PairTableGadget>
+	 <TableGadget  AddressClass="Outdoor" LocationX="0" LocationY="240" Width="270" Height="400" Layout="Main" ReportExport="false">
+     <TableAppearance>
+       <ColumnAutoFit>true</ColumnAutoFit>
+       <RowHeight>25</RowHeight>
+     </TableAppearance>
+     <Name>
+	<String>InstalledUnitsInfo</String>
+	</Name>
+	<Column ProtocolID="VAR_No_Outdoor_Unit" >
+		<Name>
+			<String>InstalledOutdoorUnit</String>
+		</Name>
+	  </Column>
+	  <Column ProtocolID="VAR_No_Indoor_Unit">
+		<Name>
+			<String>InstalledIndoorUnit</String>
+		</Name>
+	  </Column>
+    </TableGadget>
+	<PairTableGadget AddressClass="Outdoor" LocationX="270" LocationY="0" Width="270" Height="240" Layout="Main" ReportExport="false">
+    <Column NameWidth="170" ValueWidth="97">
+        <PairRow ProtocolID="#OutdoorUnit">
+          <Name>
+            <String>OutdoorTableTotalOutdoor</String>
+          </Name>
+        </PairRow>
+        <PairRow ProtocolID="#SUM_VAR_out_install_capa">
+          <Name>
+            <String>OutdoorTableTotalHP</String>
+          </Name>
+        </PairRow>
+        <PairRow ProtocolID="#IndoorUnit">
+          <Name>
+            <String>OutdoorTableTotalIndoor</String>
+          </Name>
+        </PairRow>
+        <PairRow ProtocolID="#SUM_VAR_in_capacity_request">
+          <Name>
+            <String>OutdoorTableTotalIndoorCapa</String>
+          </Name>
+        </PairRow>
+      <PairRow ProtocolID="LVAR_OUT_CONTROL_WATTMETER_1W_1MIN_SUM_Display">
+        <Name>
+          <String>OutdoorTableCurrentPower</String>
+        </Name>
+      </PairRow>
+      </Column>
+    </PairTableGadget>
+    <TableGadget AddressClass="Outdoor" LocationX="540" LocationY="0" Width="1100" Height="240" ExcelExportSelectable="true" Layout="Main">
+      <TableAppearance>
+        <ColumnAutoFit>true</ColumnAutoFit>
+        <RowHeight>25</RowHeight>
+      </TableAppearance>
+      <Name>
+        <String>OutdoorTableValveHeader</String>
+      </Name>
+      <Column ProtocolID="ENUM_out_load_comp1">
+        <Name>
+          <String>OutdoorTableComp1</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_comp2">
+        <Name>
+          <String>OutdoorTableComp2</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_4way">
+        <Name>
+          <String>Valve_4Way</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_hotgas">
+        <Name>
+          <String>Valve_HotGas1</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_hotgas2">
+        <Name>
+          <String>Valve_HotGas2</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_maincool">
+        <Name>
+          <String>Valve_MainCooling</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_outeev">
+        <Name>
+          <String>Valve_EEVValve</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_evi_sol1">
+        <Name>
+          <String>Valve_EVISol1</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_evi_sol2">
+        <Name>
+          <String>Valve_EVISol2</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_evi_bypass">
+        <Name>
+          <String>Valve_EVIBypass</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_cch1">
+        <Name>
+          <String>OutdoorCCH1</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_out_load_cch2">
+        <Name>
+          <String>OutdoorCCH2</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+      <Column ProtocolID="ENUM_OUT_LOAD_4WAY2">
+        <Name>
+          <String>Sum-4way</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+    </TableGadget>
+    <TableGadget AddressClass="Outdoor" LocationX="270" LocationY="240" Width="685" Height="400" ExcelExportSelectable="true" Layout="Main">
+      <!--
+      <TableAppearance>
+        <ColumnAutoFit>true</ColumnAutoFit>
+        <RowHeight>25</RowHeight>
+      </TableAppearance>
+      -->
+      <CardViewAppearance>
+        <ApplyCardView>true</ApplyCardView>
+        <LabelWidth>120</LabelWidth>
+        <CellWidth>110</CellWidth>
+      </CardViewAppearance>
+      <Name>
+        <String>OutdoorTableUnitInfo1</String>
+      </Name>
+      <Column ProtocolID="STR_ad_id_serial_number">
+        <Name>
+          <String>OutdoorTableSerialNumber</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_out_operation_odu_mode">
+        <Name>
+          <String>Idiom_OpMode</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_out_operation_heatcool">
+        <Name>
+          <String>OutdoorTableOpStatus</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_ad_error_code1">
+        <Name>
+          <String>Idiom_ErrorCode</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_install_capa">
+        <Name>
+          <String>Idiom_Capa</String>
+        </Name>
+      </Column>
+      <!-- 신행조 차장 요청 조일용 수석 확인 내용임 삭제<Column ProtocolID="861"  >
+				<Name>
+					<String>Capacity</String>
+					<String Language="ko">운전용량</String>
+				</Name>
+			</Column>-->
+      <Column ProtocolID="VAR_out_control_target_cfreq_comp1">
+        <Name>
+          <String>OutdoorTableTargetFreq1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_control_order_cfreq_comp1">
+        <Name>
+          <String>OutdoorTableOrderFreq1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_control_cfreq_comp1">
+        <Name>
+          <String>OutdoorTableCurrentFreq1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_control_target_cfreq_comp2">
+        <Name>
+          <String>OutdoorTableTargetFreq2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_control_order_cfreq_comp2">
+        <Name>
+          <String>OutdoorTableOrderFreq2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_control_cfreq_comp2">
+        <Name>
+          <String>OutdoorTableCurrentFreq2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_highpress">
+        <Name>
+          <String>OutdoorTableHighPressure</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="Saturated T_Pd"  >
+        <Name>
+          <String>OutdoorTableSaturatedTPd</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_lowpress"  >
+        <Name>
+          <String>OutdoorTableLowPressure</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="Saturated T_Ps"  >
+        <Name>
+          <String>OutdoorTableSaturatedTPs</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_midpress"  >
+        <Name>
+          <String>OutdoorTableMidPressure</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_discharge1"  >
+        <Name>
+          <String>OutdoorTableDischarge1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_discharge2"  >
+        <Name>
+          <String>OutdoorTableDischarge2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="ENUM_OUT_LOAD_BASEHEATER">
+        <Name>
+          <String>Hydro_BaseHeater</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Column>
+    </TableGadget>
+    <TableGadget AddressClass="Outdoor" LocationX="955" LocationY="240" Width="685" Height="400" ExcelExportSelectable="true" Layout="Main">
+      <!--
+      <TableAppearance>
+        <ColumnAutoFit>true</ColumnAutoFit>
+        <RowHeight>25</RowHeight>
+      </TableAppearance>
+      -->
+      <CardViewAppearance>
+        <ApplyCardView>true</ApplyCardView>
+        <LabelWidth>120</LabelWidth>
+        <CellWidth>140</CellWidth>
+      </CardViewAppearance>
+      <Name>
+        <String>OutdoorTableUnitInfo2</String>
+      </Name>
+      <Column ProtocolID="ENUM_out_op_test_op_complete">
+        <Name>
+          <String>OutdoorTableTestOperation</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_top1">
+        <Name>
+          <String>OutdoorTableCompTop1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_top2">
+        <Name>
+          <String>OutdoorTableCompTop2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_airout"  >
+        <Name>
+          <String>OutdoorTableOutdoorTemp</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_ct1"  >
+        <Name>
+          <String>OutdoorTableCompressorCurrent1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_ct2"  >
+        <Name>
+          <String>OutdoorTableCompressorCurrent2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_IPM1"  >
+        <Name>
+          <String>OutdoorTableIPM1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_IPM2"  >
+        <Name>
+          <String>OutdoorTableIPM2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_condout"  >
+        <Name>
+          <String>OutdoorTableCondOutTemp</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_condout2"  >
+        <Name>
+          <String>OutdoorTableCondOutTemp_2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_doubletube">
+        <Name>
+          <String>OutdoorTableLiquidTubeTemp</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_suction"  >
+        <Name>
+          <String>OutdoorTableSuctionTemp1</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_suction2_1sec"  >
+        <Name>
+          <String>OutdoorTableSuctionTemp2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_OUT_SENSOR_SUCTION3_1SEC"  >
+        <Name>
+          <String>OutdoorTableSuctionTemp3</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_load_outeev1">
+        <Name>
+          <String>OutdoorTableMainEEV</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_load_outeev2">
+        <Name>
+          <String>OutdoorTableMainEEV2</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_load_evieev">
+        <Name>
+          <String>OutdoorTableEVIEEV</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_outcd__sensor_eviin">
+        <Name>
+          <String>OutdoorTableEVIIN</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_sensor_eviout">
+        <Name>
+          <String>OutdoorTableEVIOUT</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_load_fanstep1">
+        <Name>
+          <String>OutdoorTableOutdoorFan</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_OUT_SENSOR_PFCM1">
+        <Name>
+          <String>OutdoorTable_PFCM_TEMP</String>
+        </Name>
+      </Column>
+    </TableGadget>
+  </GadgetFrame>
+  <GadgetFrame ID="ID_Outdoor_Unit_Installation_Data">
+    <Name>
+      <String>OutdoorUnitInstallationData</String>
+    </Name>
+    <TableGadget AddressClass="Outdoor" LocationX="0" LocationY="0" Width="600" Height="100" Layout="Fill">
+      <!--
+      <TableAppearance>
+        <ColumnAutoFit>true</ColumnAutoFit>
+        <RowHeight>25</RowHeight>
+      </TableAppearance>
+      -->
+      <CardViewAppearance>
+        <ApplyCardView>true</ApplyCardView>
+        <LabelWidth>130</LabelWidth>
+        <CellWidth>200</CellWidth>
+      </CardViewAppearance>
+      <Column ProtocolID="STR_ad_info_equip_position">
+        <Name>
+          <String>OutdoorUnitInstallationLocation</String>
+        </Name>
+        <ControlUI TargetID="605"  DefaultValue="1"/>
+      </Column>
+      <Column ProtocolID="STR_ad_id_serial_number">
+        <Name>
+          <String>OutdoorTableSerialNumber</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_dbcode_micom_main">
+        <Name>
+          <String>OutdoorUnitMainDBCodeVersion</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="SubMicomInfo">
+        <Name>
+          <String>OutdoorUnitSubDBCodeVersion</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="InverterMicom1Info">
+        <Name>
+          <String>Inverter1DBCodeVersion</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="InverterMicom2Info">
+        <Name>
+          <String>Inverter2DBCodeVersion</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="FanMicom1Info">
+        <Name>
+          <String>OutdoorUnitFan1DBCodeVersion</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="FanMicom2Info">
+        <Name>
+          <String>OutdoorUnitFan2DBCodeVersion</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="STR_ad_dbcode_eeprom">
+        <Name>
+          <String>OutdoorTableEEPROMDBCodeVersion</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="VAR_out_install_Comp_Num">
+        <Name>
+          <String>OutdoorUnitTotalComp</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_CompCut">
+        <Name>
+          <String>OutdoorUnitOptionCompCut</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_CapaRevC">
+        <Name>
+          <String>OutdoorUnitOptionCoolCalibration</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_CapaRevH">
+        <Name>
+          <String>OutdoorUnitOptionHeatCalibration</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_CurLimit">
+        <Name>
+          <String>OutdoorUnitOptionCurrentLimit</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_OilRec">
+        <Name>
+          <String>OutdoorUnitOptionOilReturn</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_Defrost">
+        <Name>
+          <String>OutdoorUnitOptionDefrost</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_FanRev">
+        <Name>
+          <String>OutdoorUnitOptionFanCalibration</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_Silence">
+        <Name>
+          <String>OutdoorUnitOptionNightSilence</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_Drop">
+        <Name>
+          <String>OutdoorUnitOptionHead</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_PipeLen">
+        <Name>
+          <String>OutdoorUnitOptionPipeLength</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_PowerSav">
+        <Name>
+          <String>OutdoorUnitOptionPowerSaving</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_RotatDefrost">
+        <Name>
+          <String>OutdoorUnitOptionRotateDefrost</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_CoolingLowTempArea">
+        <Name>
+          <String>OutdoorUnitOptionCoolLowTempLimit</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_NasaChannel">
+        <Name>
+          <String>OutdoorUnitOptionChannelAddress</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_SnowProtectionControl">
+        <Name>
+          <String>OutdoorUnitOptionSnowProtectionControl</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_FastStart">
+        <Name>
+          <String>OutdoorUnitOption_FastStart</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_LimitMaximumCoolCapa">
+        <Name>
+          <String>OutdoorUnitOption_LimitMaximumCoolCapa</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_GasLeakRefrigerantRecovery">
+        <Name>
+          <String>OutdoorUnitOption_GasLeakRefrigerantRecovery</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_LAKitSetting">
+        <Name>
+          <String>OutdoorUnitOption_LAKitSetting</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_EmergencyOperation">
+        <Name>
+          <String>OutdoorUnitOption_EmergencyOperation</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_BaseHeater">
+        <Name>
+          <String>Base Heater</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_CarrierFrequency">
+        <Name>
+          <String>Carrier Frequency</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_AuxHeater">
+        <Name>
+          <String>Aux Heater</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_AutoChangeOver">
+        <Name>
+          <String>Auto Change Over</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_EmergencyDefrost">
+        <Name>
+          <String>OutdoorUnitOption_EmergencyDefrost</String>
+        </Name>
+      </Column>
+      <Column ProtocolID="BoptID_ReductionDiameterPipe">
+        <Name>
+          <String>OutdoorUnitOption_ReductionDiameterPipe</String>
+        </Name>
+      </Column>
+    </TableGadget>
+  </GadgetFrame>
+  <GadgetFrame ID="ID_OUTDOOR_CYCLE_DIAGRAM">
+    <Name>
+      <String>Outdoor_CycleDiagram</String>
+    </Name>
+    <!--A타입 : HP/ Comp2 / Fna2 / EEV2-->
+    <ImageGadget AddressClass="Outdoor" LocationX="0" LocationY="0" Width="727" Height="622" Layout="None" ImgPath=".\CycleImage\DVM S\DVM S_A.jpg">
+      <CreateCondition>
+        <DataEntity ProtocolID="ENUM_OUT_HEAT_COOL_TYPE">0</DataEntity>
+        <DataEntity ProtocolID="VAR_out_install_Comp_Num">2</DataEntity>
+        <DataEntity ProtocolID="ENUM_OUT_CONTROL_FAN_NUM">2</DataEntity>
+        <DataEntity ProtocolID="ENUM_OUT_EXIST_MAIN_EEV2">1</DataEntity>
+      </CreateCondition>
+      <Factor ProtocolID="VAR_out_sensor_condout" LocationX="429" LocationY="127">
+        <Name>
+          <String>T_CO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_4way" LocationX="136" LocationY="236">
+        <Name>
+          <String>V_4W</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_highpress" LocationX="54" LocationY="276">
+        <Name>
+          <String>PS_H</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_lowpress" LocationX="220" LocationY="253">
+        <Name>
+          <String>PS_L</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_outeev1" LocationX="598" LocationY="235">
+        <Name>
+          <String>E_M1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_outeev2" LocationX="505" LocationY="235">
+        <Name>
+          <String>E_M2</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_discharge1" LocationX="92" LocationY="426">
+        <Name>
+          <String>T_D1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_top1" LocationX="30" LocationY="430">
+        <Name>
+          <String>T_CT1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_discharge2" LocationX="175" LocationY="427">
+        <Name>
+          <String>T_D2</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_top2" LocationX="133" LocationY="403">
+        <Name>
+          <String>T_CT2</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_control_cfreq_comp1" LocationX="74" LocationY="515">
+        <Name>
+          <String>현재주파수1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_control_cfreq_comp2" LocationX="155" LocationY="515">
+        <Name>
+          <String>현재주파수2</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_sol1" LocationX="132" LocationY="557">
+        <Name>
+          <String>V_EV1</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_sol2" LocationX="210" LocationY="557">
+        <Name>
+          <String>V_EV2</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_hotgas" LocationX="345" LocationY="341">
+        <Name>
+          <String>V_HG</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_suction" LocationX="411" LocationY="292">
+        <Name>
+          <String>T_S</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_bypass" LocationX="459" LocationY="404">
+        <Name>
+          <String>V_EB</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_eviout" LocationX="497" LocationY="398">
+        <Name>
+          <String>T_EO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_outcd__sensor_eviin" LocationX="587" LocationY="365">
+        <Name>
+          <String>T_EI</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_evieev" LocationX="585" LocationY="406">
+        <Name>
+          <String>E_EV</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_doubletube" LocationX="553" LocationY="499">
+        <Name>
+          <String>T_L</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_airout" LocationX="470" LocationY="78">
+        <Name>
+          <String>T_A</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_IPM1" LocationX="600" LocationY="270">
+        <Name>
+          <String>IPMC1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_IPM2" LocationX="600" LocationY="290">
+        <Name>
+          <String>IPMC2</String>
+        </Name>
+      </Factor>
+    </ImageGadget>
+    <!--B타입 : HP/ Comp2 / Fna2 / EEV1-->
+    <ImageGadget AddressClass="Outdoor" LocationX="0" LocationY="0" Width="727" Height="622" Layout="None" ImgPath=".\CycleImage\DVM S\DVM S_B.jpg">
+      <CreateCondition>
+        <DataEntity ProtocolID="ENUM_OUT_HEAT_COOL_TYPE">0</DataEntity>
+        <DataEntity ProtocolID="VAR_out_install_Comp_Num">2</DataEntity>
+        <DataEntity ProtocolID="ENUM_OUT_CONTROL_FAN_NUM">2</DataEntity>
+        <DataEntity ProtocolID="ENUM_OUT_EXIST_MAIN_EEV2">0</DataEntity>
+      </CreateCondition>
+      <Factor ProtocolID="VAR_out_sensor_condout" LocationX="429" LocationY="107">
+        <Name>
+          <String>T_CO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_4way" LocationX="136" LocationY="236">
+        <Name>
+          <String>V_4W</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_highpress" LocationX="54" LocationY="276">
+        <Name>
+          <String>PS_H</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_lowpress" LocationX="220" LocationY="253">
+        <Name>
+          <String>PS_L</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_outeev1" LocationX="573" LocationY="219">
+        <Name>
+          <String>E_M1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_discharge1" LocationX="92" LocationY="426">
+        <Name>
+          <String>T_D1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_top1" LocationX="39" LocationY="430">
+        <Name>
+          <String>T_CT1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_discharge2" LocationX="175" LocationY="427">
+        <Name>
+          <String>T_D2</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_top2" LocationX="133" LocationY="403">
+        <Name>
+          <String>T_CT2</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_control_cfreq_comp1" LocationX="74" LocationY="515">
+        <Name>
+          <String>현재주파수1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_control_cfreq_comp2" LocationX="155" LocationY="515">
+        <Name>
+          <String>현재주파수2</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_sol1" LocationX="132" LocationY="557">
+        <Name>
+          <String>V_EV1</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_sol2" LocationX="210" LocationY="557">
+        <Name>
+          <String>V_EV2</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_hotgas" LocationX="345" LocationY="341">
+        <Name>
+          <String>V_HG</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_suction" LocationX="414" LocationY="292">
+        <Name>
+          <String>T_S</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_bypass" LocationX="459" LocationY="404">
+        <Name>
+          <String>V_EB</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_eviout" LocationX="502" LocationY="398">
+        <Name>
+          <String>T_EO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_outcd__sensor_eviin" LocationX="587" LocationY="364">
+        <Name>
+          <String>T_EI</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_evieev" LocationX="585" LocationY="406">
+        <Name>
+          <String>E_EV</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_doubletube" LocationX="556" LocationY="499">
+        <Name>
+          <String>T_L</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_airout" LocationX="470" LocationY="78">
+        <Name>
+          <String>T_A</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_IPM1" LocationX="600" LocationY="270">
+        <Name>
+          <String>IPMC1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_IPM2" LocationX="600" LocationY="290">
+        <Name>
+          <String>IPMC2</String>
+        </Name>
+      </Factor>
+    </ImageGadget>
+    <!--C타입 : HP/ Comp1 / Fna2 / EEV1-->
+    <ImageGadget AddressClass="Outdoor" LocationX="0" LocationY="0" Width="727" Height="622" Layout="None" ImgPath=".\CycleImage\DVM S\DVM S_C.jpg">
+      <CreateCondition>
+        <DataEntity ProtocolID="ENUM_OUT_HEAT_COOL_TYPE">0</DataEntity>
+        <DataEntity ProtocolID="VAR_out_install_Comp_Num">1</DataEntity>
+        <DataEntity ProtocolID="ENUM_OUT_CONTROL_FAN_NUM">2</DataEntity>
+        <DataEntity ProtocolID="ENUM_OUT_EXIST_MAIN_EEV2">0</DataEntity>
+      </CreateCondition>
+      <Factor ProtocolID="VAR_out_sensor_condout" LocationX="420" LocationY="107">
+        <Name>
+          <String>T_CO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_4way" LocationX="125" LocationY="236">
+        <Name>
+          <String>4Way Valve</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_highpress" LocationX="45" LocationY="276">
+        <Name>
+          <String>PS_H</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_lowpress" LocationX="214" LocationY="253">
+        <Name>
+          <String>PS_L</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_outeev1" LocationX="564" LocationY="224">
+        <Name>
+          <String>E_M1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_discharge1" LocationX="129" LocationY="431">
+        <Name>
+          <String>T_D1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_top1" LocationX="62" LocationY="434">
+        <Name>
+          <String>T_CT1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_control_cfreq_comp1" LocationX="105" LocationY="515">
+        <Name>
+          <String>현재주파수1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_sol1" LocationX="165" LocationY="559">
+        <Name>
+          <String>V_EV1</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_hotgas" LocationX="334" LocationY="344">
+        <Name>
+          <String>V_HG</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_suction" LocationX="403" LocationY="296">
+        <Name>
+          <String>T_S</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_bypass" LocationX="447" LocationY="410">
+        <Name>
+          <String>V_EB</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_eviout" LocationX="484" LocationY="401">
+        <Name>
+          <String>T_EO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_outcd__sensor_eviin" LocationX="576" LocationY="367">
+        <Name>
+          <String>T_EI</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_evieev" LocationX="576" LocationY="408">
+        <Name>
+          <String>E_EV</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_doubletube" LocationX="545" LocationY="500">
+        <Name>
+          <String>T_L</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_airout" LocationX="469" LocationY="78">
+        <Name>
+          <String>T_A</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_IPM1" LocationX="590" LocationY="440">
+        <Name>
+          <String>IPMC1</String>
+        </Name>
+      </Factor>
+    </ImageGadget>
+    <!--D타입 : HP/ Comp1 / Fna1 / EEV1-->
+    <ImageGadget AddressClass="Outdoor" LocationX="0" LocationY="0" Width="727" Height="622" Layout="None" ImgPath=".\CycleImage\DVM S\DVM S_D.jpg">
+      <CreateCondition>
+        <DataEntity ProtocolID="ENUM_OUT_HEAT_COOL_TYPE">0</DataEntity>
+        <DataEntity ProtocolID="VAR_out_install_Comp_Num">1</DataEntity>
+        <DataEntity ProtocolID="ENUM_OUT_CONTROL_FAN_NUM">1</DataEntity>
+        <DataEntity ProtocolID="ENUM_OUT_EXIST_MAIN_EEV2">0</DataEntity>
+      </CreateCondition>
+      <Factor ProtocolID="VAR_out_sensor_condout" LocationX="425" LocationY="115">
+        <Name>
+          <String>T_CO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_4way" LocationX="133" LocationY="239">
+        <Name>
+          <String>V_4W</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_highpress" LocationX="47" LocationY="279">
+        <Name>
+          <String>PS_H</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_lowpress" LocationX="214" LocationY="256">
+        <Name>
+          <String>PS_L</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_outeev1" LocationX="572" LocationY="225">
+        <Name>
+          <String>E_M1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_discharge1" LocationX="133" LocationY="434">
+        <Name>
+          <String>T_D1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_top1" LocationX="63" LocationY="438">
+        <Name>
+          <String>T_CT1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_control_cfreq_comp1" LocationX="115" LocationY="520">
+        <Name>
+          <String>현재주파수1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_sol1" LocationX="170" LocationY="562">
+        <Name>
+          <String>V_EV1</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_hotgas" LocationX="342" LocationY="347">
+        <Name>
+          <String>V_HG</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_suction" LocationX="410" LocationY="299">
+        <Name>
+          <String>T_S</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_bypass" LocationX="457" LocationY="413">
+        <Name>
+          <String>V_EB</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_eviout" LocationX="493" LocationY="404">
+        <Name>
+          <String>T_EO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_outcd__sensor_eviin" LocationX="586" LocationY="372">
+        <Name>
+          <String>T_EI</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_evieev" LocationX="586" LocationY="411">
+        <Name>
+          <String>E_EV</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_doubletube" LocationX="550" LocationY="503">
+        <Name>
+          <String>T_L</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_airout" LocationX="460" LocationY="87">
+        <Name>
+          <String>T_A</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_IPM1" LocationX="600" LocationY="440">
+        <Name>
+          <String>IPMC1</String>
+        </Name>
+      </Factor>
+    </ImageGadget>
+    <!--E타입 : HR/ Comp2 / Fna2-->
+    <ImageGadget AddressClass="Outdoor" LocationX="0" LocationY="0" Width="727" Height="622" Layout="None" ImgPath=".\CycleImage\DVM S\DVM S_E.jpg">
+      <CreateCondition>
+        <DataEntity ProtocolID="ENUM_OUT_HEAT_COOL_TYPE">1</DataEntity>
+        <DataEntity ProtocolID="VAR_out_install_Comp_Num">2</DataEntity>
+        <DataEntity ProtocolID="ENUM_OUT_CONTROL_FAN_NUM">2</DataEntity>
+      </CreateCondition>
+      <Factor ProtocolID="VAR_out_sensor_condout" LocationX="412" LocationY="149">
+        <Name>
+          <String>T_CO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_maincool" LocationX="140" LocationY="116">
+        <Name>
+          <String>V_MC</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_4way" LocationX="118" LocationY="245">
+        <Name>
+          <String>V_4W</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_highpress" LocationX="65" LocationY="301">
+        <Name>
+          <String>PS_H</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_lowpress" LocationX="307" LocationY="476">
+        <Name>
+          <String>PS_L</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_outeev1" LocationX="560" LocationY="203">
+        <Name>
+          <String>E_M</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_discharge1" LocationX="71" LocationY="405">
+        <Name>
+          <String>T_D1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_top1" LocationX="20" LocationY="457">
+        <Name>
+          <String>T_CT1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_discharge2" LocationX="140" LocationY="405">
+        <Name>
+          <String>T_D2</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_top2" LocationX="87" LocationY="457">
+        <Name>
+          <String>T_CT2</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_control_cfreq_comp1" LocationX="59" LocationY="528">
+        <Name>
+          <String>현재주파수1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_control_cfreq_comp2" LocationX="128" LocationY="528">
+        <Name>
+          <String>현재주파수2</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_sol1" LocationX="108" LocationY="577">
+        <Name>
+          <String>V_EV1</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_sol2" LocationX="175" LocationY="577">
+        <Name>
+          <String>V_EV2</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_hotgas" LocationX="262" LocationY="467">
+        <Name>
+          <String>V_HG</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_hotgas2" LocationX="641" LocationY="215">
+        <Name>
+          <String>V_HG2</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_suction" LocationX="249" LocationY="265">
+        <Name>
+          <String>T_S</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_suction2_1sec" LocationX="369" LocationY="375">
+        <Name>
+          <String>T_S2</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_bypass" LocationX="435" LocationY="416">
+        <Name>
+          <String>V_EB</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_eviout" LocationX="486" LocationY="408">
+        <Name>
+          <String>T_EO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_outcd__sensor_eviin" LocationX="580" LocationY="380">
+        <Name>
+          <String>T_EI</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_evieev" LocationX="595" LocationY="407">
+        <Name>
+          <String>E_EV</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_doubletube" LocationX="542" LocationY="513">
+        <Name>
+          <String>T_L</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_airout" LocationX="470" LocationY="105">
+        <Name>
+          <String>T_A</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_IPM1" LocationX="460" LocationY="300">
+        <Name>
+          <String>IPMC1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_IPM2" LocationX="560" LocationY="300">
+        <Name>
+          <String>IPMC2</String>
+        </Name>
+      </Factor>
+    </ImageGadget>
+    <!--F타입 : HR/ Comp1 / Fna2-->
+    <ImageGadget AddressClass="Outdoor" LocationX="0" LocationY="0" Width="727" Height="622" Layout="None" ImgPath=".\CycleImage\DVM S\DVM S_F.jpg">
+      <CreateCondition>
+        <DataEntity ProtocolID="ENUM_OUT_HEAT_COOL_TYPE">1</DataEntity>
+        <DataEntity ProtocolID="VAR_out_install_Comp_Num">1</DataEntity>
+        <DataEntity ProtocolID="ENUM_OUT_CONTROL_FAN_NUM">2</DataEntity>
+      </CreateCondition>
+      <Factor ProtocolID="VAR_out_sensor_condout" LocationX="403" LocationY="160">
+        <Name>
+          <String>T_CO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_maincool" LocationX="164" LocationY="132">
+        <Name>
+          <String>V_MC</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_4way" LocationX="142" LocationY="253">
+        <Name>
+          <String>V_4W</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_highpress" LocationX="60" LocationY="293">
+        <Name>
+          <String>PS_H</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_lowpress" LocationX="284" LocationY="454">
+        <Name>
+          <String>PS_L</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_outeev1" LocationX="521" LocationY="220">
+        <Name>
+          <String>E_M</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_discharge1" LocationX="142" LocationY="416">
+        <Name>
+          <String>T_D1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_top1" LocationX="80" LocationY="433">
+        <Name>
+          <String>T_CT1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_control_cfreq_comp1" LocationX="122" LocationY="504">
+        <Name>
+          <String>현재주파수1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_sol1" LocationX="169" LocationY="543">
+        <Name>
+          <String>V_EV1</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_hotgas" LocationX="250" LocationY="446">
+        <Name>
+          <String>V_HG</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_hotgas2" LocationX="593" LocationY="178">
+        <Name>
+          <String>V_HG2</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_suction" LocationX="238"  LocationY="263">
+        <Name>
+          <String>T_S</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_suction2_1sec" LocationX="350" LocationY="366">
+        <Name>
+          <String>T_S2</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_bypass" LocationX="410" LocationY="341">
+        <Name>
+          <String>V_EB</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_eviout" LocationX="452" LocationY="332">
+        <Name>
+          <String>T_EO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_outcd__sensor_eviin" LocationX="540" LocationY="333">
+        <Name>
+          <String>T_EI</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_evieev" LocationX="554" LocationY="359">
+        <Name>
+          <String>E_EV</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_doubletube" LocationX="504" LocationY="481">
+        <Name>
+          <String>T_L</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_airout" LocationX="440" LocationY="122">
+        <Name>
+          <String>T_A</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_IPM1" LocationX="460" LocationY="447">
+        <Name>
+          <String>IPMC1</String>
+        </Name>
+      </Factor>
+    </ImageGadget>
+    <!--G타입 : HR/ Comp1 / Fna1-->
+    <ImageGadget AddressClass="Outdoor" LocationX="0" LocationY="0" Width="727" Height="622" Layout="None" ImgPath=".\CycleImage\DVM S\DVM S_G.jpg">
+      <CreateCondition>
+        <DataEntity ProtocolID="ENUM_OUT_HEAT_COOL_TYPE">1</DataEntity>
+        <DataEntity ProtocolID="VAR_out_install_Comp_Num">1</DataEntity>
+        <DataEntity ProtocolID="ENUM_OUT_CONTROL_FAN_NUM">1</DataEntity>
+      </CreateCondition>
+      <Factor ProtocolID="VAR_out_sensor_condout" LocationX="408" LocationY="170">
+        <Name>
+          <String>T_CO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_maincool" LocationX="171" LocationY="142">
+        <Name>
+          <String>V_MC</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_4way" LocationX="149" LocationY="263">
+        <Name>
+          <String>V_4W</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_highpress" LocationX="70" LocationY="304">
+        <Name>
+          <String>PS_H</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_lowpress" LocationX="284" LocationY="464">
+        <Name>
+          <String>PS_L</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_outeev1" LocationX="527" LocationY="230">
+        <Name>
+          <String>E_M</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_discharge1" LocationX="147" LocationY="426">
+        <Name>
+          <String>T_D1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_top1" LocationX="85" LocationY="443">
+        <Name>
+          <String>T_CT1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_control_cfreq_comp1" LocationX="127" LocationY="514">
+        <Name>
+          <String>현재주파수1</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_sol1" LocationX="174" LocationY="553">
+        <Name>
+          <String>V_EV1</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_hotgas" LocationX="255" LocationY="456">
+        <Name>
+          <String>V_HG</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_hotgas2" LocationX="595" LocationY="188">
+        <Name>
+          <String>V_HG2</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_suction" LocationX="242"  LocationY="273">
+        <Name>
+          <String>T_S</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_suction2_1sec" LocationX="350" LocationY="376">
+        <Name>
+          <String>T_S2</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="ENUM_out_load_evi_bypass" LocationX="419" LocationY="348">
+        <Name>
+          <String>V_EB</String>
+        </Name>
+        <Value>
+          <Type>Lamp</Type>
+        </Value>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_eviout" LocationX="455" LocationY="342">
+        <Name>
+          <String>T_EO</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_outcd__sensor_eviin" LocationX="540" LocationY="343">
+        <Name>
+          <String>T_EI</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_load_evieev" LocationX="559" LocationY="369">
+        <Name>
+          <String>E_EV</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_doubletube" LocationX="509" LocationY="491">
+        <Name>
+          <String>T_L</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_airout" LocationX="450" LocationY="133">
+        <Name>
+          <String>T_A</String>
+        </Name>
+      </Factor>
+      <Factor ProtocolID="VAR_out_sensor_IPM1" LocationX="470" LocationY="460">
+        <Name>
+          <String>IPMC1</String>
+        </Name>
+      </Factor>
+    </ImageGadget>
+  </GadgetFrame>
+  &indoorUnitDisplayRule;
+  &indoorUnitInstallationDisplayRule;
+  &emptyControlRoomDisplayRule;
+  &hydroUnitHTDisplayRule;
+  &hydroUnitLTDisplayRule;
+  &mcuUnitDisplayRule;
+  &eotSettingDisplayRule;
+  &universalCommKitDisplayRule;
+  &ervPlusDisplayRule;
+</DisplayRule>

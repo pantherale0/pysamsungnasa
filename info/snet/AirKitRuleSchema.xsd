@@ -1,0 +1,604 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2011 (http://www.altova.com) by sdf (Ru-Board) -->
+<xs:schema xmlns="urn:AirKitRuleSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:altova="http://www.altova.com/xml-schema-extensions" targetNamespace="urn:AirKitRuleSchema" elementFormDefault="qualified">
+	<xs:element name="DisplayRule">
+		<xs:annotation>
+			<xs:documentation>Root element of display rule</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence maxOccurs="unbounded">
+				<xs:element name="GadgetFrame">
+					<xs:annotation>
+						<xs:documentation>Frame window for a set of gadgets. AirKit can contain multiple GadgetFrames which are looked as dockable panel windows. Name element is name of GadgetFrame. This  is displayed in title bar of window frame.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence maxOccurs="unbounded">
+							<xs:element name="Condition" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:annotation>
+											<xs:documentation>If ‘CreateCondition’ element exist, this condition repeatedly check if the certain ProtocolID’s value has defined value. If satisfied, display this gadget.</xs:documentation>
+										</xs:annotation>
+										<xs:choice>
+											<xs:element name="Equal"/>
+											<xs:element name="Range">
+												<xs:complexType>
+													<xs:attribute name="to" type="xs:string"/>
+													<xs:attribute name="from" type="xs:string"/>
+                          <xs:attribute name="equal" type="xs:string"/>
+												</xs:complexType>
+											</xs:element>
+                      <xs:element name="Value"/>
+										</xs:choice>
+										<xs:element name="Operation"/>
+									</xs:sequence>
+									<xs:attribute name="ProtocolID"/>
+								</xs:complexType>
+							</xs:element>
+							<xs:element ref="Name"/>
+							<xs:element name="Menu" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Button" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:attribute name="Name" use="required"/>
+												<xs:attribute name="ID" use="required"/>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:choice maxOccurs="unbounded">
+								<xs:element name="TableGadget">
+									<xs:annotation>
+										<xs:documentation>Table style gadget. This just defines several columns. Usually the row is added by homogeneous devices (for example, indoor units). Device range that can be added is described in ‘DeviceRange’ attribute</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:sequence maxOccurs="unbounded">
+											<xs:element ref="DeviceToJoin" minOccurs="0"/>
+											<xs:element ref="TableAppearance" minOccurs="0"/>
+											<xs:element name="CardViewAppearance" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>CardView means a table that header is on left side and rows are on right vertically.</xs:documentation>
+												</xs:annotation>
+												<xs:complexType>
+													<xs:all>
+														<xs:element name="ApplyCardView" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>If true, cardview display is applied.</xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="LabelWidth" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>If specified, width of Label(left header) is explicitly determined. </xs:documentation>
+															</xs:annotation>
+														</xs:element>
+														<xs:element name="CellWidth" minOccurs="0">
+															<xs:annotation>
+																<xs:documentation>If specified, width of cells is explicitly determined. </xs:documentation>
+															</xs:annotation>
+														</xs:element>
+													</xs:all>
+												</xs:complexType>
+											</xs:element>
+											<xs:element ref="Name" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>If Name is omitted, Header of table is invisible.</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+											<xs:element name="Column">
+												<xs:annotation>
+													<xs:documentation>Every row in the same column has same type. It the type is string, Value element is omitted.</xs:documentation>
+												</xs:annotation>
+												<xs:complexType>
+													<xs:sequence>
+														<xs:group ref="GadgetEntity"/>
+													</xs:sequence>
+													<xs:attribute name="ProtocolID" type="xs:string" use="required"/>
+													<xs:attribute name="Width" type="xs:int"/>
+													<xs:attribute name="DisplayValueMetric" type="xs:boolean">
+														<xs:annotation>
+															<xs:documentation>Show metric if absent</xs:documentation>
+														</xs:annotation>
+													</xs:attribute>
+												</xs:complexType>
+											</xs:element>
+										</xs:sequence>
+										<xs:attributeGroup ref="BaseGadgetProperty"/>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="PairTableGadget">
+									<xs:annotation>
+										<xs:documentation>This Gadgets contains a set of {field name: value} pairs. If those pairs are aligned as a one column, this gadget has a column element. If aligned as two columns, it has two column elements, so on.</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:sequence maxOccurs="unbounded">
+											<xs:element ref="DeviceToJoin" minOccurs="0"/>
+											<xs:element ref="TableAppearance" minOccurs="0"/>
+											<xs:element ref="Name" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>생략되는 경우, Display에서는 이름을 표시 하지 않는다.</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+											<xs:element name="Column">
+												<xs:complexType>
+													<xs:sequence maxOccurs="unbounded">
+														<xs:element name="PairRow">
+															<xs:complexType>
+																<xs:sequence>
+																	<xs:group ref="GadgetEntity"/>
+																</xs:sequence>
+																<xs:attribute name="ProtocolID" type="xs:string"/>
+																<xs:attribute name="DisplayValueMetric" type="xs:boolean">
+																	<xs:annotation>
+																		<xs:documentation>Show metric if absent</xs:documentation>
+																	</xs:annotation>
+																</xs:attribute>
+															</xs:complexType>
+														</xs:element>
+													</xs:sequence>
+													<xs:attribute name="NameWidth" type="xs:int"/>
+													<xs:attribute name="ValueWidth" type="xs:int"/>
+												</xs:complexType>
+											</xs:element>
+										</xs:sequence>
+										<xs:attributeGroup ref="BaseGadgetProperty"/>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="ImageGadget">
+									<xs:annotation>
+										<xs:documentation>On a background image, a set of factors are location by LocationX, LocationY information.</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element ref="Name" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>생략되는 경우, Display에서는 이름을 표시 하지 않는다.</xs:documentation>
+												</xs:annotation>
+											</xs:element>
+											<xs:element name="CreateCondition" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>If ‘CreateCondition’ element exist, this condition repeatedly check if the certain ProtocolID’s value has defined value. If satisfied, display this gadget.</xs:documentation>
+												</xs:annotation>
+												<xs:complexType>
+													<xs:choice maxOccurs="unbounded">
+														<xs:element name="DataEntity">
+															<xs:complexType>
+																<xs:simpleContent>
+																	<xs:extension base="xs:anySimpleType">
+																		<xs:attribute name="ProtocolID" type="xs:string"/>
+																	</xs:extension>
+																</xs:simpleContent>
+															</xs:complexType>
+														</xs:element>
+													</xs:choice>
+												</xs:complexType>
+											</xs:element>
+											<xs:sequence maxOccurs="unbounded">
+												<xs:element name="Factor">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:group ref="GadgetEntity"/>
+														</xs:sequence>
+														<xs:attribute name="ProtocolID" type="xs:string" use="required"/>
+														<xs:attribute name="Device" type="xs:string"/>
+														<xs:attribute name="LocationX" type="xs:int" use="required"/>
+														<xs:attribute name="LocationY" type="xs:int" use="required"/>
+													</xs:complexType>
+												</xs:element>
+											</xs:sequence>
+										</xs:sequence>
+										<xs:attributeGroup ref="BaseGadgetProperty"/>
+										<xs:attribute name="ImgPath" type="xs:string" use="required"/>
+									</xs:complexType>
+								</xs:element>
+							</xs:choice>
+						</xs:sequence>
+						<xs:attribute name="ID" type="xs:ID" use="required">
+							<xs:annotation>
+								<xs:documentation>Every GadgetFrame should have unique ID. Recommanding format is "ID_{UUID}"</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="ChildLayout">
+							<xs:annotation>
+								<xs:documentation>This attribute determines layout of child gadget set. Until now, Just ‘Tab’ value has been defined. If this value is assigned, every child gadgets arranges as tab panel. (Gadget element’s Layout, Width, Height attributes are ignored.) If this attribute is omitted, child gadget follows its own layout, width, height which is described in attributes in each Gadget element.</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction>
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:enumeration value="Tab"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="Width">
+							<xs:annotation>
+								<xs:documentation>Minimum Width of GadgetFrame. If window width is smaller than this value, horizontal scrollbar is appeared. If this attribute is omited, no horizontal scrollbar appears.</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+						<xs:attribute name="Height">
+							<xs:annotation>
+								<xs:documentation>Minimum Height of GadgetFrame. If window height is smaller than this value, verticall scrollbar is appeared. If this attribute is omited, no vertical scrollbar appears.</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="Revision" type="xs:string" use="required" fixed="1.1.0">
+				<xs:annotation>
+					<xs:documentation>Revision information for this schema version. If xml revision value is different, validation will fail.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="DeviceName" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation> Device name for operation. Just for human recognition. No use in program.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:attribute name="ProtocolID" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>Matcing ID value of protocol rule factor. For special keyword,  "#SUM_{XX}" means sum of every device's {XX} protocol ID factor. "COMM_SND_{YY}" means count of send operation for {YY} address device. “COMM_RCV_{YY} means count of receiving operation for {YY} address device. “#SUM_#COMM_SND_{device type}’ means count of every send operation for all devices in certain {device type}. {device type} is defined protocol rule. “#SUM_#COMM_RCV_{device type}  is the same idea except that it is for counting receiving. In a same gadget, just one unique protocol id is allowed.</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:attribute name="ColumnAutoFit" type="xs:boolean">
+		<xs:annotation>
+			<xs:documentation>When 'True' column width is auto aligned.</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:attribute name="CardView" type="xs:boolean">
+		<xs:annotation>
+			<xs:documentation>When ‘True’, Column is aligned vertically. </xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:attribute name="LocationX" type="xs:int">
+		<xs:annotation>
+			<xs:documentation>Gadget relative position of X-coodiate</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:attribute name="LocationY" type="xs:int">
+		<xs:annotation>
+			<xs:documentation>Gadget relative position of Y-coodiate</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:group name="GadgetEntity">
+		<xs:annotation>
+			<xs:documentation>If this is name field of pairTable Gadget, Value element is omitted.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Name"/>
+			<xs:element name="Value" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Value definition of GadgetEntity</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:choice>
+						<xs:element name="Type" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Type of this value</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="Bool"/>
+									<xs:enumeration value="Hex"/>
+									<xs:enumeration value="Switch"/>
+									<xs:enumeration value="Lamp"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="MultiValue"/>
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ControlUI" minOccurs="0">
+				<xs:complexType>
+					<xs:attribute name="TargetID" use="required"/>
+					<xs:attribute name="Min"/>
+					<xs:attribute name="Max"/>
+					<xs:attribute name="DefaultValue" use="required"/>
+					<xs:attribute name="Step"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:group>
+	<xs:attribute name="Name" type="xs:string"/>
+	<xs:attribute name="DeviceRange" type="xs:string">
+		<xs:annotation>
+			<xs:documentation>{HH:s~HH:e}, H : hexadecimal. HH:s - staring address. HH:e -end address. For example, '1F ~ 21' </xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:attribute name="Width" type="xs:int">
+		<xs:annotation>
+			<xs:documentation>Width of the gadget</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:attribute name="Height" type="xs:int">
+		<xs:annotation>
+			<xs:documentation>Height of the gadget</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:attribute name="Layout">
+		<xs:annotation>
+			<xs:documentation>Top/Bottom/Left/Right/Fill/None</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="Top"/>
+				<xs:enumeration value="Bottom"/>
+				<xs:enumeration value="Left"/>
+				<xs:enumeration value="Right"/>
+				<xs:enumeration value="Floating"/>
+				<xs:enumeration value="Main"/>
+				<xs:enumeration value="Fill"/>
+				<xs:enumeration value="None"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:attribute>
+	<xs:attribute name="ExcelExportSelectable" type="xs:boolean">
+		<xs:annotation>
+			<xs:documentation>If ‘True’, the entities of this gadget are included on excel export.</xs:documentation>
+		</xs:annotation>
+	</xs:attribute>
+	<xs:attributeGroup name="BaseGadgetProperty">
+		<xs:attribute name="AddressClass" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>PairTableGadet의 경우에는 범위로 주어지지 않는다. 즉, DeviceRange = "C8" 같이 단일 주소로 정해 지거나 이 속성이 존재 하지 않아야 한다. 왜냐면, 통신하기 전 이미 고정된 장치에 대해 정의 한 것이기 때문에, 매핑을 위해서는 점위가 아니라 정확한 주소가 필요하다.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="LocationX" type="xs:int" use="required"/>
+		<xs:attribute name="LocationY" type="xs:int" use="required"/>
+		<xs:attribute name="Width" type="xs:int" use="required"/>
+		<xs:attribute name="Height" type="xs:int" use="required"/>
+		<xs:attribute name="Layout" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Top"/>
+					<xs:enumeration value="Bottom"/>
+					<xs:enumeration value="Left"/>
+					<xs:enumeration value="Right"/>
+					<xs:enumeration value="Floating"/>
+					<xs:enumeration value="Main"/>
+					<xs:enumeration value="Fill"/>
+					<xs:enumeration value="None"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="ExcelExportSelectable" type="xs:boolean" use="optional"/>
+		<xs:attribute name="ReportExport" type="xs:boolean"/>
+	</xs:attributeGroup>
+	<xs:element name="String">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="Language"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Name">
+		<xs:annotation>
+			<xs:documentation>Name can get multiple string for localization. Program get its contextual local string from them. Name should have at least one String element without 'Language' attribute. It is netural string.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="String">
+					<xs:annotation>
+						<xs:documentation>String value which supports localization. If 'Language' attribute is omitted, this is regarded as netural string.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="ResourceID"/>
+			<xs:attribute name="ShowMetric" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TableAppearance">
+		<xs:annotation>
+			<xs:documentation>Common appearance of tables in DisplayRule</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="VerticalHeader" type="xs:boolean" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>If true, Header of table is rotated to 90'. If omitted, normal rotatation.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ColumnAutoFit" type="xs:boolean" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>If true, columns are automatically resized by the width of window</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RowHeight" type="xs:int" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>If specified, height of all rows are explicitly determined.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NasaProtocol">
+		<xs:complexType>
+			<xs:sequence maxOccurs="unbounded">
+				<xs:element name="VariableList" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Variable" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="Identifier"/>
+											<xs:attribute name="Type"/>
+											<xs:attribute name="IsGlobal" type="xs:boolean"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Message">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:choice>
+								<xs:element name="Enum">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="Item" minOccurs="0" maxOccurs="unbounded">
+												<xs:complexType>
+													<xs:sequence>
+														<xs:element name="String" minOccurs="1">
+															<xs:complexType>
+																<xs:simpleContent>
+																	<xs:extension base="xs:anySimpleType">
+																		<xs:attribute name="StringID"/>
+																	</xs:extension>
+																</xs:simpleContent>
+															</xs:complexType>
+														</xs:element>
+													</xs:sequence>
+													<xs:attribute name="Value"/>
+													<xs:attribute name="ValueFrom"/>
+													<xs:attribute name="ValueTo"/>
+												</xs:complexType>
+											</xs:element>
+											<xs:element name="Default" minOccurs="0">
+												<xs:complexType>
+													<xs:sequence>
+														<xs:element name="String">
+															<xs:complexType>
+																<xs:simpleContent>
+																	<xs:extension base="xs:anySimpleType">
+																		<xs:attribute name="StringID"/>
+																	</xs:extension>
+																</xs:simpleContent>
+															</xs:complexType>
+														</xs:element>
+													</xs:sequence>
+												</xs:complexType>
+											</xs:element>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:sequence>
+									<xs:element name="Variable">
+										<xs:complexType>
+											<xs:attribute name="Signed" use="required"/>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="Unit" type="xs:anySimpleType" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>measure unit</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="Arithmatic" minOccurs="0" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:simpleContent>
+												<xs:extension base="xs:anySimpleType">
+													<xs:attribute name="Operation" use="required"/>
+												</xs:extension>
+											</xs:simpleContent>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:element name="Structure"/>
+							</xs:choice>
+							<xs:element name="Condition" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="LogicalOperation" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Operand" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="Type" use="required">
+																		<xs:annotation>
+																			<xs:appinfo>
+																				<altova:exampleValues>
+																					<altova:example value="variable"/>
+																					<altova:example value="constant"/>
+																				</altova:exampleValues>
+																			</xs:appinfo>
+																		</xs:annotation>
+																	</xs:attribute>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+												<xs:attribute name="Operator" use="required"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Action">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute name="KindOfAction" use="required">
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:enumeration value="enable"/>
+																	<xs:enumeration value="replaceValue"/>
+                                  <xs:enumeration value="replaceID"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="VariableAssign" minOccurs="0">
+								<xs:complexType>
+									<xs:attribute name="Identifier" use="required"/>
+								</xs:complexType>
+							</xs:element>
+              <xs:element name="Range" minOccurs="0">
+                <xs:complexType>
+                  <xs:attribute name="Min" use="required"/>
+                  <xs:attribute name="Max" use="required"/>
+                </xs:complexType>
+              </xs:element>
+						</xs:sequence>
+						<xs:attribute name="ProtocolID" use="required"/>
+						<xs:attribute name="Index" use="required"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="MappingTable" minOccurs="0" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="Name"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DeviceToJoin">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element name="IncludeModel" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:attribute name="From" type="xs:int"/>
+						<xs:attribute name="To" type="xs:int"/>
+            <xs:attribute name="Equal" type="xs:int"/>
+            <xs:attribute name="MicomCode" type="xs:string"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="ExcludeModel" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:attribute name="From" type="xs:int"/>
+						<xs:attribute name="To" type="xs:int"/>
+            <xs:attribute name="Equal" type="xs:int"/>
+            <xs:attribute name="MicomCode" type="xs:string"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
