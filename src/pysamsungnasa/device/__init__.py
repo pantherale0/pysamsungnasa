@@ -65,18 +65,20 @@ class NasaDevice:
     def handle_packet(self, *nargs, **kwargs):
         """Handle a packet sent to this device from the parser."""
         self.last_packet_time = datetime.now().isoformat()
-        _LOGGER.debug("Handing packet for device %s: %s", self.address, kwargs)
+        if str(self.config.address) == kwargs["dest"] or self.config.log_all_messages:
+            _LOGGER.debug("Handing packet for device %s: %s", self.address, kwargs)
         self.attributes[kwargs["messageNumber"]] = {
             **kwargs["packet"],
             "formatted_message": kwargs["formattedMessageNumber"],
         }
-        _LOGGER.debug(
-            "Device %s: Stored parsed attribute for msg %s (%s): %s",
-            self.address,
-            kwargs["formattedMessageNumber"],
-            kwargs["messageNumber"],
-            self.attributes[kwargs["messageNumber"]],
-        )
+        if str(self.config.address) == kwargs["dest"] or self.config.log_all_messages:
+            _LOGGER.debug(
+                "Device %s: Stored parsed attribute for msg %s (%s): %s",
+                self.address,
+                kwargs["formattedMessageNumber"],
+                kwargs["messageNumber"],
+                self.attributes[kwargs["messageNumber"]],
+            )
         for callback in self._device_callbacks:
             try:
                 callback(self)

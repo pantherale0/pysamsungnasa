@@ -2,11 +2,18 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 from typing import final, ClassVar, Optional, Any
 import struct
 from abc import ABC
 from enum import Enum
 
+@dataclass
+class SendMessage():
+    """Base class that represents all sent NASA messages."""
+    MESSAGE_ID: int
+    PAYLOAD: bytes
 
 class BaseMessage(ABC):
     """Base class for all NASA protocol messages."""

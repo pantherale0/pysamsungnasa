@@ -5,6 +5,7 @@ from typing import Callable
 import logging
 import struct
 
+from ..config import NasaConfig
 from ..helpers import bin2hex
 from .enum import PacketType, DataType, AddressClass
 from .factory import parse_message, get_nasa_message_name
@@ -18,11 +19,14 @@ class NasaPacketParser:
     _device_handlers: dict[str, list] = {}
     _new_device_handler: Callable | None = None
 
+
     def __init__(
         self,
+        config: NasaConfig,
         _new_device_handler: Callable | None = None,
     ) -> None:
         """Init a NASA Packet Parser."""
+        self._config = config
         self._new_device_handler = _new_device_handler
 
     def add_device_handler(self, address: str, callback):
@@ -67,12 +71,13 @@ class NasaPacketParser:
 
             try:
                 parsed_message = parse_message(ds[0], payload_bytes, description)
-                _LOGGER.debug(
-                    "Parsed message %s (%s): %s",
-                    formatted_msg_number,
-                    description,
-                    parsed_message,
-                )
+                if str(self._config.address) == kwargs["dest"] or self._config.log_all_messages:
+                    _LOGGER.debug(
+                        "Parsed message %s (%s): %s",
+                        formatted_msg_number,
+                        description,
+                        parsed_message,
+                    )
             except Exception as e:
                 _LOGGER.error("Failed to parse message %s (%s): %s", formatted_msg_number, description, e)
                 continue
