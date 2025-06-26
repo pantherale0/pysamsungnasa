@@ -159,11 +159,13 @@ class NasaClient:
                 break
             packet = self._rx_buffer[:expected_packet_len]
             if len(packet) != expected_packet_len:
-                _LOGGER.error("Invalid packet length: %s", bin2hex(packet))
+                if self._config.log_buffer_messages:
+                    _LOGGER.debug("Invalid packet length: %s", bin2hex(packet))
                 self._rx_buffer = b""
                 break
             if packet[-1] != 0x34:
-                _LOGGER.error("Invalid end of packet (expected 0x34): %s", bin2hex(packet))
+                if self._config.log_buffer_messages:
+                    _LOGGER.debug("Invalid end of packet (expected 0x34): %s", bin2hex(packet))
                 # Consume prefix and try again
                 self._rx_buffer = self._rx_buffer[1:]
                 continue
