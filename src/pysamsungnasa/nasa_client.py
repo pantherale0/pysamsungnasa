@@ -5,9 +5,8 @@ import logging
 import asyncio
 import struct
 
-from .protocol.enum import AddressClass
 from .config import NasaConfig
-from .helpers import Address, bin2hex, hex2bin
+from .helpers import bin2hex, hex2bin
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -399,7 +398,7 @@ class NasaClient:
 
     async def _writer(self):
         """Async write task."""
-        if self._tx_queue is None or self._socket_writer is None:
+        if self._tx_queue is None or self._rx_queue is None or self._socket_writer is None:
             _LOGGER.error("Writer: TX queue or socket writer is None at start, exiting.")
             return
         _LOGGER.debug("Writer task started.")
@@ -417,7 +416,7 @@ class NasaClient:
                     _LOGGER.debug("Writer: Writing data: %s", bin2hex(cmd))
                     self._socket_writer.write(cmd)
                     await self._socket_writer.drain()  # Crucial for flow control
-
+                    await self._rx_queue.put(cmd) # Loop back into the read queue
                     if self._tx_event_handler:
                         try:
                             self._tx_event_handler(cmd)
@@ -450,13 +449,12 @@ class NasaClient:
             msg = msg.format(CUR_PACK_NUM=current_packet_num_hex)
             try:
                 data_bytes = hex2bin(msg)
-                # Packet size is the length of the data section (Source Address Class to CRC, inclusive).
-                # data_bytes is the data section *before* CRC. CRC is 2 bytes.
-                packet_size_hex = f"{(len(data_bytes) + 2):04x}"
                 crc_val = binascii.crc_hqx(data_bytes, 0)
                 crc_hex = f"{crc_val:04x}"
+                # Packet size is Source Address Class to end byte).
+                packet_size_hex = f"{(len(data_bytes) + 4):04x}"
                 full_packet_hex = f"32{packet_size_hex}{msg}{crc_hex}34"  # STX, Size, Data, CRC, ETX
-                data = (b"\xFD" * 4) + hex2bin(full_packet_hex)
+                data = hex2bin(full_packet_hex)
                 if wait_for_reply:
                     self._pending_requests[last_packet_number] = asyncio.Future()
                 await self._tx_queue.put(data)
