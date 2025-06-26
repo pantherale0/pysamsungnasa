@@ -27,6 +27,7 @@ class NasaClient:
     _rx_queue: asyncio.Queue[bytes] | None = None
     _pending_requests: dict[int, asyncio.Future] = {}
     _rx_buffer = b""
+    _last_rx_time: float = 0.0
     _packet_number_counter: int = 0
 
     def __init__(
@@ -47,6 +48,7 @@ class NasaClient:
         self._disconnect_event_handler = disconnect_event_handler
         self._config = config
         self._address = config.address
+        self._last_rx_time = asyncio.get_event_loop().time()
 
     @property
     def is_connected(self) -> bool:
@@ -110,6 +112,7 @@ class NasaClient:
                 self._socket_reader, self._socket_writer = await asyncio.open_connection(self.host, self.port)
                 _LOGGER.debug("Successfully connected to %s:%s", self.host, self.port)
                 self._connection_status = True
+                self._last_rx_time = asyncio.get_event_loop().time()
                 await self._start_read_queue_session()
                 await self._start_writer_session()
                 await self._start_read_session()
@@ -193,6 +196,11 @@ class NasaClient:
         self._rx_buffer = b""
         while self._connection_status:
             try:
+                # Check for stale partial packets in the buffer
+                # If the buffer is not empty and no new data has arrived for 0.5 seconds, clear it.
+                if self._rx_buffer and (asyncio.get_event_loop().time() - self._last_rx_time > 0.5):
+                    _LOGGER.debug("Reader: Stale data in RX buffer. Clearing buffer.")
+                    self._rx_buffer = b""
                 if self._socket_reader is None:  # Should be caught by _connection_status but defensive
                     _LOGGER.warning("Reader: socket_reader became None mid-loop.")
                     await self._handle_disconnection(RuntimeError("socket_reader became None"))
@@ -209,6 +217,7 @@ class NasaClient:
                     self._rx_buffer = b""
                     break
                 await self._read_buffer_handler(data)
+                self._last_rx_time = asyncio.get_event_loop().time()
             except (asyncio.IncompleteReadError, ConnectionResetError, OSError) as ex:
                 _LOGGER.warning("Reader: Read error, assuming disconnection: %s", ex)
                 await self._handle_disconnection(ex)
@@ -445,7 +454,7 @@ class NasaClient:
                 crc_val = binascii.crc_hqx(data_bytes, 0)
                 crc_hex = f"{crc_val:04x}"
                 full_packet_hex = f"32{packet_size_hex}{msg}{crc_hex}34"  # STX, Size, Data, CRC, ETX
-                data = hex2bin(full_packet_hex)
+                data = (b"\xFD" * 4) + hex2bin(full_packet_hex)
                 if wait_for_reply:
                     self._pending_requests[last_packet_number] = asyncio.Future()
                 await self._tx_queue.put(data)

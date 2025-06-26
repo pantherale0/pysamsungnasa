@@ -5,7 +5,6 @@ import os
 import logging
 
 from dotenv import load_dotenv
-from src.fake_nasa import FakeNasa
 from src.pysamsungnasa import SamsungNasa
 
 load_dotenv()
@@ -16,7 +15,7 @@ async def main():
     nasa = SamsungNasa(
         host=os.getenv("SAMSUNG_HP_HOST", "unknown"),
         port=int(os.getenv("SAMSUNG_HP_PORT", 0)),
-        config={"device_pnp": True, "device_dump_only": False, "log_all_messages": True},
+        config={"device_pnp": True, "device_dump_only": False, "log_all_messages": True, "log_buffer_messages": False},
     )
     try:
         await nasa.start()
@@ -36,7 +35,4 @@ if __name__ == "__main__":
     logging.basicConfig(
         level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
     )
-    if os.getenv("SAMSUNG_HP_HOST") == "127.0.0.1":
-        server = FakeNasa()
-        server.start()
     asyncio.run(main())

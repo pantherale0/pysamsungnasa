@@ -8,7 +8,7 @@ from .helpers import Address
 class NasaConfig:
     """Represent a NASA configuration."""
 
-    client_address: int = 0  # Represents the client address (this device's address)
+    client_address: int = 1  # Represents the client address (this device's address)
     device_dump_only: bool = False
     device_pnp: bool = False
     device_addresses: list[tuple[str, str]] | None = None
@@ -20,7 +20,7 @@ class NasaConfig:
     def address(self) -> Address:
         """Return address."""
         return Address(
-            0x50,
+            0x80,
             0xFF,
             self.client_address
         )
