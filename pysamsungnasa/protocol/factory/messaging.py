@@ -9,11 +9,14 @@ import struct
 from abc import ABC
 from enum import Enum
 
+
 @dataclass
-class SendMessage():
+class SendMessage:
     """Base class that represents all sent NASA messages."""
+
     MESSAGE_ID: int
     PAYLOAD: bytes
+
 
 class BaseMessage(ABC):
     """Base class for all NASA protocol messages."""
@@ -124,7 +127,7 @@ class EnumMessage(BaseMessage):
             "message": cls.MESSAGE_NAME,
             "uom": cls.UNIT_OF_MEASUREMENT,
             "value": cls.MESSAGE_ENUM(payload[0]) if payload else None,
-            "options": {option.name: option.value for option in cls.MESSAGE_ENUM}
+            "options": {option.name: option.value for option in cls.MESSAGE_ENUM},
         }
 
 
@@ -140,6 +143,14 @@ class BasicPowerMessage(FloatMessage):
 
     ARITHMETIC = 0.1
     UNIT_OF_MEASUREMENT = "kW"
+
+
+class BasicEnergyMessage(FloatMessage):
+    """Parser for basic energy messages (kWh)."""
+
+    ARITHMETIC = 0.1
+    UNIT_OF_MEASUREMENT = "kWh"
+
 
 class BasicCurrentMessage(FloatMessage):
     """Parser for basic current messages (A)."""

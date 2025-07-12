@@ -5,6 +5,11 @@ import logging
 import asyncio
 import struct
 
+from .device import NasaDevice
+from .protocol.enum import DataType
+from .protocol.factory import build_message
+from .protocol.factory.messaging import SendMessage
+
 from .config import NasaConfig
 from .helpers import bin2hex, hex2bin
 
@@ -137,11 +142,14 @@ class NasaClient:
             self._rx_buffer = b""
             return
         while len(self._rx_buffer) >= 3:
+            if self._rx_queue is None:
+                _LOGGER.warning("RX queue became None mid-loop.")
+                return
             if self._config.log_buffer_messages:
                 _LOGGER.debug("Buffer (len=%s): %s", len(self._rx_buffer), bin2hex(self._rx_buffer))
             fields = struct.unpack_from(">BH", self._rx_buffer)
             if fields[0] != 0x32:
-                next_prefix = self._rx_buffer.find(b'\x32', 1)
+                next_prefix = self._rx_buffer.find(b"\x32", 1)
                 if next_prefix == -1:
                     if self._config.log_buffer_messages:
                         _LOGGER.debug("No prefix found, discarding buffer.")
@@ -178,7 +186,7 @@ class NasaClient:
             # Remove the processed packet from the buffer
             self._rx_buffer = self._rx_buffer[expected_packet_len:]
             if self._rx_buffer and self._rx_buffer[0] != 0x32:
-                next_prefix = self._rx_buffer.find(b'\x32', 1)
+                next_prefix = self._rx_buffer.find(b"\x32", 1)
                 if next_prefix == -1:
                     if self._config.log_buffer_messages:
                         _LOGGER.debug("No prefix found, discarding buffer.")
@@ -366,10 +374,14 @@ class NasaClient:
                         packet_crc = binascii.crc_hqx(packet_data, 0)
 
                         if packet_crc != packet_crc_from_msg:
-                            _LOGGER.error("QueueProcessor: Invalid CRC expected %s got %s", hex(packet_crc), hex(packet_crc_from_msg))
+                            _LOGGER.error(
+                                "QueueProcessor: Invalid CRC expected %s got %s",
+                                hex(packet_crc),
+                                hex(packet_crc_from_msg),
+                            )
                             continue
 
-                        if packet_data and len(packet_data)>8:
+                        if packet_data and len(packet_data) > 8:
                             packet_number = packet_data[8]
                             future = self._pending_requests.pop(packet_number, None)
                             if future:
@@ -380,7 +392,9 @@ class NasaClient:
 
                     except struct.error as e:
                         _LOGGER.error(
-                            "QueueProcessor: Struct unpack error during packet processing: %s. Packet: %s.", e, bin2hex(packet)
+                            "QueueProcessor: Struct unpack error during packet processing: %s. Packet: %s.",
+                            e,
+                            bin2hex(packet),
                         )
                     except Exception as ex:
                         _LOGGER.exception(
@@ -416,7 +430,7 @@ class NasaClient:
                     _LOGGER.debug("Writer: Writing data: %s", bin2hex(cmd))
                     self._socket_writer.write(cmd)
                     await self._socket_writer.drain()  # Crucial for flow control
-                    await self._rx_queue.put(cmd) # Loop back into the read queue
+                    await self._rx_queue.put(cmd)  # Loop back into the read queue
                     if self._tx_event_handler:
                         try:
                             self._tx_event_handler(cmd)
@@ -437,7 +451,9 @@ class NasaClient:
                 await self._handle_disconnection(ex)  # Treat as critical failure
                 break
 
-    async def send_command(self, message: list[str], wait_for_reply: bool = False, reply_timeout: float = 5.0) -> int | None:
+    async def send_command(
+        self, message: list[str], wait_for_reply: bool = False, reply_timeout: float = 5.0
+    ) -> int | None:
         """Send a command to the NASA device."""
         if not self._connection_status or self._tx_queue is None:
             return False
@@ -480,3 +496,46 @@ class NasaClient:
                 return False
         _LOGGER.debug("All commands sent to TX queue.")
         return last_packet_number
+
+    async def send_message(
+        self,
+        destination: NasaDevice | str,
+        request_type: DataType = DataType.REQUEST,
+        messages: list[SendMessage] | None = None,
+    ) -> None:
+        """Send a message to the device using the client."""
+        if not self.is_connected:
+            _LOGGER.error("Cannot send message, client is not connected.")
+            return
+        if isinstance(destination, str):
+            destination_address = destination
+        elif isinstance(destination, NasaDevice):
+            destination_address = destination.address
+        else:
+            _LOGGER.error("Invalid destination type: %s", type(destination))
+            return
+        if messages is None:
+            raise ValueError("At least one message is required.")
+        try:
+            await self.send_command(
+                [
+                    build_message(
+                        source=str(self._config.address),
+                        destination=destination_address,
+                        data_type=request_type,
+                        messages=messages,
+                    )
+                ],
+                wait_for_reply=request_type == DataType.READ or request_type == DataType.WRITE,
+            )
+        except Exception as e:
+            _LOGGER.exception("Error sending message to device %s: %s", destination_address, e)
+
+    async def nasa_read(self, msgs: list[int], destination: NasaDevice | str = "B0FF20") -> None:
+        """Send read requests to a device to read data."""
+        messages = [SendMessage(MESSAGE_ID=imn, PAYLOAD=0x05A5A5A5.to_bytes(4, "big")) for imn in msgs]
+        await self.send_message(
+            destination=destination,
+            request_type=DataType.READ,
+            messages=messages,
+        )

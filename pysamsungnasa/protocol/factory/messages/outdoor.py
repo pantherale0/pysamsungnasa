@@ -1,7 +1,16 @@
 """Outdoor unit messages."""
 
-from ..messaging import EnumMessage, FloatMessage, BasicTemperatureMessage, BasicCurrentMessage, BasicPowerMessage, RawMessage, StrMessage
-from ...enum import OutdoorOperationStatus, OutdoorOperationMode
+from ..messaging import (
+    EnumMessage,
+    FloatMessage,
+    BasicTemperatureMessage,
+    BasicCurrentMessage,
+    BasicPowerMessage,
+    BasicEnergyMessage,
+    RawMessage,
+    StrMessage,
+)
+from ...enum import OutdoorOperationStatus, OutdoorOperationMode, OutdoorIndoorDefrostStep
 
 
 class OutdoorErrorCode1(RawMessage):
@@ -83,13 +92,29 @@ class OutdoorLoadOutEev(BasicPowerMessage):
     MESSAGE_ID = 0x8020
     MESSAGE_NAME = "Outdoor Load Out EEV"
 
+
+class OutdoorDefrostStatus(EnumMessage):
+    """Parser for message 0x8061 (Outdoor Defrost Status)."""
+
+    MESSAGE_ID = 0x8061
+    MESSAGE_NAME = "Outdoor Defrost Status"
+    MESSAGE_ENUM = OutdoorIndoorDefrostStep
+
+
+class OutdoorAirTemperature(BasicTemperatureMessage):
+    """Parser for message 0x8204 (Outdoor Air Temperature)."""
+
+    MESSAGE_ID = 0x8204
+    MESSAGE_NAME = "Outdoor Air Temperature"
+
+
 class OutdoorCurrent(BasicCurrentMessage):
     """Parser for message 0x8217 (Outdoor Current)."""
 
     MESSAGE_ID = 0x8217
     MESSAGE_NAME = "Outdoor Current"
-
-
+    SIGNED = False
+    ARITHMETIC = 0.1
 
 
 class OutdoorSuctionSensorTemperature(BasicTemperatureMessage):
@@ -159,6 +184,18 @@ class OutdoorDcLinkVoltage(FloatMessage):
     MESSAGE_ID = 0x823B
     MESSAGE_NAME = "Outdoor DC Link Voltage"
     UNIT_OF_MEASUREMENT = "V"
+    ARITHMETIC = 1.0
+    SIGNED = False
+
+
+class HeatPumpVoltage(FloatMessage):
+    """Parser for message 0x24FC (Heat Pump Voltage)."""
+
+    MESSAGE_ID = 0x24FC
+    MESSAGE_NAME = "Heat Pump Voltage"
+    UNIT_OF_MEASUREMENT = "V"
+    SIGNED = False
+    ARITHMETIC = 1.0
 
 
 class OutdoorFanRpm1(FloatMessage):
@@ -287,22 +324,19 @@ class OutdoorProductCapa(BasicPowerMessage):
     MESSAGE_NAME = "Outdoor Product Capacity"
 
 
-class OutdoorTempSet(BasicTemperatureMessage):
-    """Parser for message 0x4201 (Outdoor Temp Set)."""
+class OutdoorInstantaneousPower(BasicPowerMessage):
+    """Parser for message 0x8413 (Outdoor Instantaneous Power)."""
 
-    MESSAGE_ID = 0x4201
-    MESSAGE_NAME = "Outdoor Temp Set"
-
-
-class OutdoorTempEvaIn(BasicTemperatureMessage):
-    """Parser for message 0x4204 (Outdoor Temp Eva In)."""
-
-    MESSAGE_ID = 0x4204
-    MESSAGE_NAME = "Outdoor Temp Eva In"
+    MESSAGE_ID = 0x8413
+    MESSAGE_NAME = "Outdoor Instantaneous Power"
+    SIGNED = False
+    ARITHMETIC = 0.001
 
 
-class OutdoorTempEvaOut(BasicTemperatureMessage):
-    """Parser for message 0x4205 (Outdoor Temp Eva Out)."""
+class OutdoorCumulativeEnergy(BasicEnergyMessage):
+    """Parser for message 0x8414 (Outdoor Cumulative Energy)."""
 
-    MESSAGE_ID = 0x4205
-    MESSAGE_NAME = "Outdoor Temp Eva Out"
+    MESSAGE_ID = 0x8414
+    MESSAGE_NAME = "Outdoor Cumulative Energy"
+    SIGNED = False
+    ARITHMETIC = 0.001

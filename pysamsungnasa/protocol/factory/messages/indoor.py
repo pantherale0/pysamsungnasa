@@ -1,10 +1,12 @@
 """Messages from the indoor unit."""
 
-from ..messaging import EnumMessage, BoolMessage, BasicTemperatureMessage
+from ..messaging import BoolMessage, EnumMessage, FloatMessage, BasicTemperatureMessage, BasicPowerMessage
 
 from ...enum import (
     InOperationMode,
     InOperationModeReal,
+    InFanMode,
+    InAltMode,
     InOperationVentMode,
     InFanModeReal,
     InFsv3042DayOfWeek,
@@ -64,6 +66,14 @@ class InOperationVentModeMessage(EnumMessage):
     MESSAGE_ENUM = InOperationVentMode
 
 
+class InFanModeMessage(EnumMessage):
+    """Parser for message 0x4006 (Indoor Fan Mode)."""
+
+    MESSAGE_ID = 0x4006
+    MESSAGE_NAME = "Indoor Fan Mode"
+    MESSAGE_ENUM = InFanMode
+
+
 class InFanModeRealMessage(EnumMessage):
     """Parser for message 0x4007 (Indoor Fan Mode Real)."""
 
@@ -78,6 +88,13 @@ class InErvFanSpeedMessage(EnumMessage):
     MESSAGE_ID = 0x4008
     MESSAGE_NAME = "Indoor ERV Fan Speed"
     MESSAGE_ENUM = ErvFanSpeed
+
+
+class InLouverHlSwing(BoolMessage):
+    """Parser for message 0x4011 (Indoor Louver HL Swing)."""
+
+    MESSAGE_ID = 0x4011
+    MESSAGE_NAME = "Indoor Louver HL Swing"
 
 
 class InLouverHlPartSwingMessage(EnumMessage):
@@ -95,8 +112,33 @@ class InStateThermo(BoolMessage):
     MESSAGE_NAME = "Indoor Thermo State"
 
 
+class InHumidity(FloatMessage):
+    """Parser for message 0x4038 (Indoor Humidity)."""
+
+    MESSAGE_ID = 0x4038
+    MESSAGE_NAME = "Indoor Humidity"
+    UNIT_OF_MEASUREMENT = "%"
+    SIGNED = False
+    ARITHMETIC = 1.0
+
+
+class InAutomaticCleaning(BoolMessage):
+    """Parser for message 0x4111 (Indoor Automatic Cleaning)."""
+
+    MESSAGE_ID = 0x4111
+    MESSAGE_NAME = "Indoor Automatic Cleaning"
+
+
+class InAltModeMessage(EnumMessage):
+    """Parser for message 0x4060 (Indoor Alternative Mode)."""
+
+    MESSAGE_ID = 0x4060
+    MESSAGE_NAME = "Indoor Alternative Mode"
+    MESSAGE_ENUM = InAltMode
+
+
 class InDhwWaterHeaterPower(BoolMessage):
-    """Parser for message 0x4029 (Indoor DHW Water Heater Power)."""
+    """Parser for message 0x4065 (Indoor DHW Water Heater Power)."""
 
     MESSAGE_ID = 0x4065
     MESSAGE_NAME = "Indoor DHW Water Heater Power"
@@ -149,11 +191,11 @@ class InRoomTempSensorMessage(BoolMessage):
     MESSAGE_NAME = "Indoor Room Temperature Sensor"
 
 
-class AirflowLeftRightMessage(BoolMessage):
-    """Parser for message 0x407E (Indoor Airflow Swing)."""
+class InLouverLrSwing(BoolMessage):
+    """Parser for message 0x407E (Indoor Louver LR Swing)."""
 
     MESSAGE_ID = 0x407E
-    MESSAGE_NAME = "Indoor Airflow Swing"
+    MESSAGE_NAME = "Indoor Louver LR Swing"
 
 
 class In2WayValveMessage(EnumMessage):
@@ -350,17 +392,195 @@ class InFsvLoadSaveAlt(BoolMessage):
     MESSAGE_ID = 0x412D
     MESSAGE_NAME = "Indoor FSV Load Save Alternative"
 
+
+class InGeneratedPowerLastMinute(BasicPowerMessage):
+    """Parser for message 0x4426 (Generated power last minute)."""
+
+    MESSAGE_ID = 0x4426
+    MESSAGE_NAME = "Generated Power Last Minute"
+    SIGNED = False
+    ARITHMETIC = 0.001
+
+
+class InFsv3021(BasicTemperatureMessage):
+    """Parser for message 0x4260 (FSV 3021 DHW Heating Mode Max)."""
+
+    MESSAGE_ID = 0x4260
+    MESSAGE_NAME = "FSV 3021 DHW Heating Mode Max"
+    SIGNED = True
+
+
+class InFsv3022(BasicTemperatureMessage):
+    """Parser for message 0x4261 (FSV 3022)."""
+
+    MESSAGE_ID = 0x4261
+    MESSAGE_NAME = "FSV 3022"
+    SIGNED = True
+
+
+class InFsv3023(BasicTemperatureMessage):
+    """Parser for message 0x4262 (FSV 3023 DHW Heat Pump Start)."""
+
+    MESSAGE_ID = 0x4262
+    MESSAGE_NAME = "FSV 3023 DHW Heat Pump Start"
+    SIGNED = True
+
+
+class InFsv3025(FloatMessage):
+    """Parser for message 0x4264 (FSV 3025 DHW Max Operating Time)."""
+
+    MESSAGE_ID = 0x4264
+    MESSAGE_NAME = "FSV 3025 DHW Max Operating Time"
+    UNIT_OF_MEASUREMENT = "min"
+    SIGNED = False
+    ARITHMETIC = 1.0
+
+
+class InFsv3024(FloatMessage):
+    """Parser for message 0x4263 (FSV 3024 DHW Min Operating Time)."""
+
+    MESSAGE_ID = 0x4263
+    MESSAGE_NAME = "FSV 3024 DHW Min Operating Time"
+    UNIT_OF_MEASUREMENT = "min"
+    SIGNED = False
+    ARITHMETIC = 1.0
+
+
+class InFsv3026(FloatMessage):
+    """Parser for message 0x4265 (FSV 3026 DHW Operation Interval)."""
+
+    MESSAGE_ID = 0x4265
+    MESSAGE_NAME = "FSV 3026 DHW Operation Interval"
+    UNIT_OF_MEASUREMENT = "h"
+    SIGNED = False
+    ARITHMETIC = 1.0
+
+
+class InFsv3032(FloatMessage):
+    """Parser for message 0x4266 (FSV 3032 Booster Heater Delay Time)."""
+
+    MESSAGE_ID = 0x4266
+    MESSAGE_NAME = "FSV 3032 Booster Heater Delay Time"
+    UNIT_OF_MEASUREMENT = "min"
+    SIGNED = False
+    ARITHMETIC = 1.0
+
+
+class InFsv3033(BasicTemperatureMessage):
+    """Parser for message 0x4267 (FSV 3033 Booster Heater Overshoot)."""
+
+    MESSAGE_ID = 0x4267
+    MESSAGE_NAME = "FSV 3033 Booster Heater Overshoot"
+    SIGNED = True
+
+
+class InFsv3043(FloatMessage):
+    """Parser for message 0x4269 (FSV 3043 Disinfection Start Time)."""
+
+    MESSAGE_ID = 0x4269
+    MESSAGE_NAME = "FSV 3043 Disinfection Start Time"
+    UNIT_OF_MEASUREMENT = "h"
+    SIGNED = False
+    ARITHMETIC = 1.0
+
+
+class InFsv3044(BasicTemperatureMessage):
+    """Parser for message 0x426A (FSV 3044 Disinfection Target Temp)."""
+
+    MESSAGE_ID = 0x426A
+    MESSAGE_NAME = "FSV 3044 Disinfection Target Temp"
+    SIGNED = True
+
+
+class InFsv3045(FloatMessage):
+    """Parser for message 0x426B (FSV 3045 Disinfection Duration)."""
+
+    MESSAGE_ID = 0x426B
+    MESSAGE_NAME = "FSV 3045 Disinfection Duration"
+    UNIT_OF_MEASUREMENT = "min"
+    SIGNED = True
+    ARITHMETIC = 1.0
+
+
+class InFsv3046(FloatMessage):
+    """Parser for message 0x42CE (FSV 3046 Disinfection Max Time)."""
+
+    MESSAGE_ID = 0x42CE
+    MESSAGE_NAME = "FSV 3046 Disinfection Max Time"
+    UNIT_OF_MEASUREMENT = "h"
+    SIGNED = False
+    ARITHMETIC = 1.0
+
+
+class InFsv3052(FloatMessage):
+    """Parser for message 0x426C (FSV 3052 Forced DHW Time Duration)."""
+
+    MESSAGE_ID = 0x426C
+    MESSAGE_NAME = "FSV 3052 Forced DHW Time Duration"
+    UNIT_OF_MEASUREMENT = "min"
+    SIGNED = True
+    ARITHMETIC = 10.0
+
+
+class InTargetTemperature(BasicTemperatureMessage):
+    """Parser for message 0x4201 (Indoor Target Temperature)."""
+
+    MESSAGE_ID = 0x4201
+    MESSAGE_NAME = "Indoor Target Temperature"
+    SIGNED = True
+
+
+class InRoomTemperature(BasicTemperatureMessage):
+    """Parser for message 0x4203 (Indoor Room Temperature)."""
+
+    MESSAGE_ID = 0x4203
+    MESSAGE_NAME = "Indoor Room Temperature"
+    SIGNED = True
+
+
+class InTempEvaIn(BasicTemperatureMessage):
+    """Parser for 0x4205 (Indoor Temp Eva In)."""
+
+    MESSAGE_ID = 0x4205
+    MESSAGE_NAME = "Indoor Temp Eva In"
+
+
+class InTempEvaOut(BasicTemperatureMessage):
+    """Parser for 0x4206 (Indoor Temp Eva Out)."""
+
+    MESSAGE_ID = 0x4206
+    MESSAGE_NAME = "Indoor Temp Eva Out"
+
+
 class DhwTargetTemperature(BasicTemperatureMessage):
     """Parser for 0x4235 (Indoor DHW Target Temperature)."""
 
     MESSAGE_ID = 0x4235
     MESSAGE_NAME = "Indoor DHW Target Temperature"
+    SIGNED = True
+
 
 class DhwCurrentTemperature(BasicTemperatureMessage):
     """Parser for 0x4237 (Indoor DHW Current Temperature)."""
 
     MESSAGE_ID = 0x4237
     MESSAGE_NAME = "Indoor DHW Current Temperature"
+
+
+class InWaterOutletTargetTemperature(BasicTemperatureMessage):
+    """Parser for message 0x4247 (Indoor Water Outlet Target Temperature)."""
+
+    MESSAGE_ID = 0x4247
+    MESSAGE_NAME = "Indoor Water Outlet Target Temperature"
+    SIGNED = True
+
+
+class InWaterLawTargetTemperature(BasicTemperatureMessage):
+    """Parser for message 0x4248 (Indoor Water Law Target Temperature)."""
+
+    MESSAGE_ID = 0x4248
+    MESSAGE_NAME = "Indoor Water Law Target Temperature"
+    SIGNED = True
 
 
 class IndoorFlowTemperature(BasicTemperatureMessage):

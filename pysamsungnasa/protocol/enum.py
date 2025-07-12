@@ -129,6 +129,27 @@ class InOperationMode(SamsungEnum, IntEnum):
     HOT_WATER = 24
 
 
+class InFanMode(SamsungEnum, IntEnum):
+    """
+    Indoor unit fan mode (Message 0x4006).
+    """
+
+    AUTO = 0
+    LOW = 1
+    MID = 2
+    HIGH = 3
+    TURBO = 4
+
+
+class InAltMode(SamsungEnum, IntEnum):
+    """
+    Indoor unit alternative mode (Message 0x4060).
+    """
+
+    OFF = 0
+    ON = 9
+
+
 class OutdoorOperationStatus(SamsungEnum, IntEnum):
     """
     Outdoor Driving Mode / Outdoor Operation Status (Message 0x8001).
@@ -450,8 +471,8 @@ class InFsv3011EnableDhw(SamsungEnum, IntEnum):
     """
 
     NO = 0
-    VALUE_1 = 1  # Possibly YES or some level
-    VALUE_2 = 2  # Possibly another level
+    YES_THERMO_ON = 1  # Based on thermo on
+    YES_THERMO_OFF = 2  # Based on thermo off
 
 
 class InFsv3042DayOfWeek(SamsungEnum, IntEnum):

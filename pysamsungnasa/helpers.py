@@ -38,3 +38,12 @@ class Address:
 
     def __repr__(self):
         return f"Address(class_id={self.class_id}, channel={self.channel}, address={self.address})"
+
+    @classmethod
+    def parse(cls, data: str):
+        """Parse into a address object."""
+        return cls(
+            class_id=int(data[0:2], 16),
+            channel=int(data[2:4], 16),
+            address=int(data[4:6], 16),
+        )
