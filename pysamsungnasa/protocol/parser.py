@@ -17,6 +17,7 @@ class NasaPacketParser:
     """Represents a NASA Packet Parser."""
 
     _device_handlers: dict[str, list] = {}
+    _packet_listeners: dict[int, list] = {}
     _new_device_handler: Callable | None = None
 
     def __init__(
@@ -39,6 +40,18 @@ class NasaPacketParser:
         self._device_handlers.setdefault(address, [])
         if callback in self._device_handlers[address]:
             self._device_handlers[address].remove(callback)
+
+    def add_packet_listener(self, message_number: int, callback):
+        """Add a packet listener."""
+        self._packet_listeners.setdefault(message_number, [])
+        if callback not in self._packet_listeners[message_number]:
+            self._packet_listeners[message_number].append(callback)
+
+    def remove_packet_listener(self, message_number: int, callback):
+        """Remove a packet listener."""
+        self._packet_listeners.setdefault(message_number, [])
+        if callback in self._packet_listeners[message_number]:
+            self._packet_listeners[message_number].remove(callback)
 
     def _process_packet(self, *nargs, **kwargs: str | bytes | PacketType | DataType | int | list[list]):
         """Process a packet."""
@@ -157,6 +170,12 @@ class NasaPacketParser:
                     self._new_device_handler(**handler_kwargs)
                 except Exception as e:
                     _LOGGER.exception("Error in new device event handler: %s", e)
+
+            # some devices can mirror the state of another device (indoor units for current action)
+            # broadcast this via the packet handlers
+            if msg_number in self._packet_listeners:
+                for listener in self._packet_listeners[msg_number]:
+                    listener(**handler_kwargs)
 
     def parse_packet(self, p: bytes):
         if len(p) < 3 + 3 + 1 + 1 + 1 + 1:

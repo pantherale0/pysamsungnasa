@@ -22,12 +22,18 @@ _LOGGER = logging.getLogger(__name__)
 class NasaDevice:
     """NASA Device."""
 
+    _MESSAGES_TO_LISTEN = [
+        0x8000,
+        0x8002,  # Reflect NASA outdoor status.
+    ]
+
     _DHW_MESSAGE_MAP = {
         0x4065: "power",
         0x4066: "operation_mode",
         0x406F: "reference_temp_source",
         0x4235: "target_temperature",
         0x4237: "current_temperature",
+        0x8000: "outdoor_operation_status",
     }
 
     _CLIMATE_MESSAGE_MAP = {
@@ -42,6 +48,7 @@ class NasaDevice:
         0x4008: "current_fan_speed",
         0x4248: "water_law_target_temperature",
         0x4247: "water_outlet_target_temperature",
+        0x8000: "outdoor_operation_status",
     }
 
     attributes: dict[int, Any]
@@ -62,9 +69,19 @@ class NasaDevice:
         self._device_callbacks = []
         self._packet_callbacks = {}
         self._client = client
-        self._dhw_controller = None
-        self._climate_controller = None
+        self._dhw_controller = (
+            None
+            if device_type != AddressClass.INDOOR
+            else DhwController(address=address, message_sender=client.send_message)
+        )
+        self._climate_controller = (
+            None
+            if device_type != AddressClass.INDOOR
+            else ClimateController(address=address, message_sender=client.send_message)
+        )
         packet_parser.add_device_handler(address, self.handle_packet)
+        for message_number in self._MESSAGES_TO_LISTEN:
+            packet_parser.add_packet_listener(message_number, self.handle_packet)
 
     def add_device_callback(self, callback):
         """Add a device callback."""
@@ -113,17 +130,6 @@ class NasaDevice:
         dhw_enabled_setting = self.attributes.get(0x4097, {}).get("value")
         if dhw_enabled_setting is None or dhw_enabled_setting == InFsv3011EnableDhw.NO:
             return None
-
-        if self._dhw_controller is None:
-            self._dhw_controller = DhwController(
-                address=self.address,
-                power=self.attributes.get(0x4065, {}).get("value"),
-                operation_mode=self.attributes.get(0x4066, {}).get("value"),
-                reference_temp_source=self.attributes.get(0x406F, {}).get("value"),
-                target_temperature=self.attributes.get(0x4235, {}).get("value"),
-                current_temperature=self.attributes.get(0x4237, {}).get("value"),
-                message_sender=self._client.send_message,
-            )
         return self._dhw_controller
 
     @property
@@ -131,22 +137,6 @@ class NasaDevice:
         """Return the climate state."""
         if self.device_type != AddressClass.INDOOR:
             return None
-        if self._climate_controller is None:
-            self._climate_controller = ClimateController(
-                address=self.address,
-                message_sender=self._client.send_message,
-                power=self.attributes.get(0x4000, {}).get("value"),
-                current_mode=self.attributes.get(0x4001, {}).get("value"),
-                current_temperature=self.attributes.get(0x4203, {}).get("value"),
-                target_temperature=self.attributes.get(0x4201, {}).get("value"),
-                current_humidity=self.attributes.get(0x4038, {}).get("value"),
-                zone_1_status=self.attributes.get(0x4069, {}).get("value"),
-                zone_2_status=self.attributes.get(0x406A, {}).get("value"),
-                current_fan_mode=self.attributes.get(0x4006, {}).get("value"),
-                current_fan_speed=self.attributes.get(0x4008, {}).get("value"),
-                water_law_target_temperature=self.attributes.get(0x4248, {}).get("value"),
-                water_outlet_target_temperature=self.attributes.get(0x4247, {}).get("value"),
-            )
         return self._climate_controller
 
     def handle_packet(self, *nargs, **kwargs):

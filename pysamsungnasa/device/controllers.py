@@ -23,6 +23,7 @@ from ..protocol.enum import (
     InThermostatStatus,
     InFanMode,
     ErvFanSpeed,
+    OutdoorOperationStatus,
 )
 
 
@@ -37,6 +38,7 @@ class DhwController:
     reference_temp_source: Optional[DhwReferenceTemp] = None
     target_temperature: Optional[float] = None
     current_temperature: Optional[float] = None
+    outdoor_operation_status: Optional[OutdoorOperationStatus] = None
 
     async def turn_on(self):
         """Turn on the DHW."""
@@ -110,6 +112,7 @@ class ClimateController:
     current_fan_speed: Optional[ErvFanSpeed] = None
     water_law_target_temperature: Optional[float] = None
     water_outlet_target_temperature: Optional[float] = None
+    outdoor_operation_status: Optional[OutdoorOperationStatus] = None
 
     @property
     def f_target_temperature(self):
