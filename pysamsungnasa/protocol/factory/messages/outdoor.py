@@ -34,14 +34,6 @@ class OutdoorOperationModeLimit(FloatMessage):
     MESSAGE_NAME = "Outdoor Operation Mode Limit"
 
 
-class OutdoorOperationServiceMessage(RawMessage):
-    """Parser for message 0x8000 (Outdoor Operation Service)."""
-
-    MESSAGE_ID = 0x8000
-    MESSAGE_NAME = "Outdoor Operation Service"
-    MESSAGE_ENUM = OutdoorOperationStatus
-
-
 class OutdoorOperationStatusMessage(EnumMessage):
     """Parser for message 0x8001 (Outdoor Operation Status)."""
 

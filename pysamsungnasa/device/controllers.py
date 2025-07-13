@@ -24,6 +24,8 @@ from ..protocol.enum import (
     InFanMode,
     ErvFanSpeed,
     OutdoorOperationStatus,
+    OutdoorOperationMode,
+    InFsv3011EnableDhw,
 )
 
 
@@ -39,6 +41,8 @@ class DhwController:
     target_temperature: Optional[float] = None
     current_temperature: Optional[float] = None
     outdoor_operation_status: Optional[OutdoorOperationStatus] = None
+    outdoor_operation_mode: Optional[OutdoorOperationMode] = None
+    dhw_enable_status: Optional[InFsv3011EnableDhw] = None
 
     async def turn_on(self):
         """Turn on the DHW."""
@@ -112,17 +116,26 @@ class ClimateController:
     current_fan_speed: Optional[ErvFanSpeed] = None
     water_law_target_temperature: Optional[float] = None
     water_outlet_target_temperature: Optional[float] = None
+    water_outlet_current_temperature: Optional[float] = None
     outdoor_operation_status: Optional[OutdoorOperationStatus] = None
+    outdoor_operation_mode: Optional[OutdoorOperationMode] = None
 
     @property
     def f_target_temperature(self):
         """Computed target temperature based on current mode."""
-        if self.current_mode == InOperationMode.AUTO:
-            return self.water_law_target_temperature
-        elif self.current_mode == InOperationMode.COOL:
+        if self.current_mode == InOperationMode.COOL:
             return self.water_outlet_target_temperature
-        elif self.current_mode == InOperationMode.HEAT:
+        elif self.current_mode == InOperationMode.AUTO or self.current_mode == InOperationMode.HEAT:
             return self.target_temperature
+        return None
+
+    @property
+    def f_current_temperature(self):
+        """Computed current temperature based on current mode."""
+        if self.current_mode == InOperationMode.AUTO or self.current_mode == InOperationMode.HEAT:
+            return self.current_temperature
+        elif self.current_mode == InOperationMode.COOL:
+            return self.water_outlet_current_temperature
         return None
 
     async def turn_on(self):

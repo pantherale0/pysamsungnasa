@@ -23,17 +23,19 @@ class NasaDevice:
     """NASA Device."""
 
     _MESSAGES_TO_LISTEN = [
-        0x8000,
-        0x8002,  # Reflect NASA outdoor status.
+        0x8001,
+        0x8003,  # Reflect NASA outdoor status.
     ]
 
     _DHW_MESSAGE_MAP = {
         0x4065: "power",
         0x4066: "operation_mode",
+        0x4097: "dhw_enable_status",
         0x406F: "reference_temp_source",
         0x4235: "target_temperature",
         0x4237: "current_temperature",
-        0x8000: "outdoor_operation_status",
+        0x8001: "outdoor_operation_status",
+        0x8003: "outdoor_operation_mode",
     }
 
     _CLIMATE_MESSAGE_MAP = {
@@ -46,9 +48,11 @@ class NasaDevice:
         0x406A: "zone_2_status",
         0x4006: "current_fan_mode",
         0x4008: "current_fan_speed",
+        0x4238: "water_outlet_current_temperature",
         0x4248: "water_law_target_temperature",
         0x4247: "water_outlet_target_temperature",
-        0x8000: "outdoor_operation_status",
+        0x8001: "outdoor_operation_status",
+        0x8003: "outdoor_operation_mode",
     }
 
     attributes: dict[int, Any]
@@ -123,12 +127,6 @@ class NasaDevice:
     def dhw_controller(self) -> DhwController | None:
         """Return the DHW state."""
         if self.device_type != AddressClass.INDOOR:
-            return None
-
-        # Per the manual, DHW is only available if FSV #3011 is not "No".
-        # The message for this is 0x4097 (InFsv3011EnableDhw).
-        dhw_enabled_setting = self.attributes.get(0x4097, {}).get("value")
-        if dhw_enabled_setting is None or dhw_enabled_setting == InFsv3011EnableDhw.NO:
             return None
         return self._dhw_controller
 
