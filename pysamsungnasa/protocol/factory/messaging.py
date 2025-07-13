@@ -7,7 +7,8 @@ from dataclasses import dataclass
 from typing import final, ClassVar, Optional, Any
 import struct
 from abc import ABC
-from enum import Enum
+
+from ..enum import SamsungEnum
 
 
 @dataclass
@@ -23,7 +24,8 @@ class BaseMessage(ABC):
 
     MESSAGE_ID: ClassVar[Optional[int]] = None
     MESSAGE_NAME: ClassVar[Optional[str]] = None
-    MESSAGE_ENUM: ClassVar[Optional[type[Enum]]] = None
+    MESSAGE_ENUM: ClassVar[Optional[type[SamsungEnum]]] = None
+    ENUM_DEFAULT: ClassVar[Optional[Any]] = None
     UNIT_OF_MEASUREMENT: ClassVar[Optional[str]] = None
 
     @classmethod
@@ -123,12 +125,20 @@ class EnumMessage(BaseMessage):
         """Parse the payload into an enum value."""
         if cls.MESSAGE_ENUM is None:
             raise ValueError(f"{cls.__name__} does not have a MESSAGE_ENUM defined.")
-        return {
-            "message": cls.MESSAGE_NAME,
-            "uom": cls.UNIT_OF_MEASUREMENT,
-            "value": cls.MESSAGE_ENUM(payload[0]) if payload else None,
-            "options": {option.name: option.value for option in cls.MESSAGE_ENUM},
-        }
+        if cls.MESSAGE_ENUM.has_value(payload[0]):
+            return {
+                "message": cls.MESSAGE_NAME,
+                "uom": cls.UNIT_OF_MEASUREMENT,
+                "value": cls.MESSAGE_ENUM(payload[0]) if payload else None,
+                "options": {option.name: option.value for option in cls.MESSAGE_ENUM},
+            }
+        else:
+            return {
+                "message": cls.MESSAGE_NAME,
+                "uom": cls.UNIT_OF_MEASUREMENT,
+                "value": cls.ENUM_DEFAULT,
+                "options": {option.name: option.value for option in cls.MESSAGE_ENUM},
+            }
 
 
 class BasicTemperatureMessage(FloatMessage):

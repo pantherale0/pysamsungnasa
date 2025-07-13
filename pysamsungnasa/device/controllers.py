@@ -25,6 +25,7 @@ from ..protocol.enum import (
     ErvFanSpeed,
     OutdoorOperationStatus,
     OutdoorOperationMode,
+    OutdoorIndoorDefrostStep,
     InFsv3011EnableDhw,
 )
 
@@ -119,6 +120,7 @@ class ClimateController:
     water_outlet_current_temperature: Optional[float] = None
     outdoor_operation_status: Optional[OutdoorOperationStatus] = None
     outdoor_operation_mode: Optional[OutdoorOperationMode] = None
+    outdoor_defrost_status: Optional[OutdoorIndoorDefrostStep] = None
 
     @property
     def f_target_temperature(self):

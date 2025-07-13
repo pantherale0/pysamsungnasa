@@ -9,6 +9,10 @@ class SamsungEnum(Enum):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def has_value(cls, value):
+        return value in cls._value2member_map_
+
 
 class AddressClass(SamsungEnum, IntEnum):
     """NASA Device Address Class from protocol byte 3 & 6."""

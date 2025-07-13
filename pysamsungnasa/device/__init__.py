@@ -9,7 +9,7 @@ from datetime import datetime
 
 from .controllers import DhwController, ClimateController
 from ..config import NasaConfig
-from ..protocol.enum import DataType, AddressClass, InFsv3011EnableDhw
+from ..protocol.enum import DataType, AddressClass, InFsv3011EnableDhw, OutOutdoorCoolonlyModel
 from ..protocol.parser import NasaPacketParser
 from ..protocol.factory.messaging import SendMessage
 
@@ -22,10 +22,7 @@ _LOGGER = logging.getLogger(__name__)
 class NasaDevice:
     """NASA Device."""
 
-    _MESSAGES_TO_LISTEN = [
-        0x8001,
-        0x8003,  # Reflect NASA outdoor status.
-    ]
+    _MESSAGES_TO_LISTEN = [0x8001, 0x8003, 0x8061, 0x809D]  # Reflect NASA outdoor status.
 
     _DHW_MESSAGE_MAP = {
         0x4065: "power",
@@ -53,6 +50,7 @@ class NasaDevice:
         0x4247: "water_outlet_target_temperature",
         0x8001: "outdoor_operation_status",
         0x8003: "outdoor_operation_mode",
+        0x8061: "outdoor_defrost_status",
     }
 
     attributes: dict[int, Any]
@@ -127,6 +125,11 @@ class NasaDevice:
     def dhw_controller(self) -> DhwController | None:
         """Return the DHW state."""
         if self.device_type != AddressClass.INDOOR:
+            return None
+        if (
+            self.attributes.get(0x809D, {}).get("value") == OutOutdoorCoolonlyModel.NO_HEAT_PUMP
+            and self._dhw_controller.current_temperature is None
+        ):
             return None
         return self._dhw_controller
 

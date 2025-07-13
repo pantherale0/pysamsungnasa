@@ -10,7 +10,7 @@ from ..messaging import (
     RawMessage,
     StrMessage,
 )
-from ...enum import OutdoorOperationStatus, OutdoorOperationMode, OutdoorIndoorDefrostStep
+from ...enum import OutdoorOperationStatus, OutdoorOperationMode, OutdoorIndoorDefrostStep, OutOutdoorCoolonlyModel
 
 
 class OutdoorErrorCode1(RawMessage):
@@ -91,6 +91,15 @@ class OutdoorDefrostStatus(EnumMessage):
     MESSAGE_ID = 0x8061
     MESSAGE_NAME = "Outdoor Defrost Status"
     MESSAGE_ENUM = OutdoorIndoorDefrostStep
+    ENUM_DEFAULT = OutdoorIndoorDefrostStep.NO_DEFROST_OPERATION
+
+
+class OutdoorCoolOnlyModel(EnumMessage):
+    """Parser for message 0x809D (Outdoor Cool Only Model)."""
+
+    MESSAGE_ID = 0x809D
+    MESSAGE_NAME = "Outdoor Cool Only Model"
+    MESSAGE_ENUM = OutOutdoorCoolonlyModel
 
 
 class OutdoorAirTemperature(BasicTemperatureMessage):
