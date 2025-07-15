@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 
 from typing import Any, TYPE_CHECKING
-from datetime import datetime
+from datetime import datetime, timezone
 
 from .controllers import DhwController, ClimateController
 from ..config import NasaConfig
@@ -142,7 +142,7 @@ class NasaDevice:
 
     def handle_packet(self, *nargs, **kwargs):
         """Handle a packet sent to this device from the parser."""
-        self.last_packet_time = datetime.now().isoformat()
+        self.last_packet_time = datetime.now(timezone.utc)
         message_number = kwargs["messageNumber"]
         packet_data = kwargs["packet"]
         log_message = (

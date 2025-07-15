@@ -12,11 +12,7 @@ MESSAGE_PARSERS: dict[int, BaseMessage] = load_message_classes()
 _LOGGER = logging.getLogger(__name__)
 
 
-def build_message(
-        source: str,
-        destination: str,
-        data_type: DataType,
-        messages: list[SendMessage]) -> str:
+def build_message(source: str, destination: str, data_type: DataType, messages: list[SendMessage]) -> str:
     """Build a message to send to a device."""
     if not messages:
         raise ValueError("At least one message is required to build.")

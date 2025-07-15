@@ -113,7 +113,10 @@ class NasaClient:
                 _LOGGER.error("Already connected. To reconnect, disconnect first or use reconnect method.")
                 return True
             try:
-                self._socket_reader, self._socket_writer = await asyncio.open_connection(self.host, self.port)
+                (
+                    self._socket_reader,
+                    self._socket_writer,
+                ) = await asyncio.open_connection(self.host, self.port)
                 _LOGGER.debug("Successfully connected to %s:%s", self.host, self.port)
                 self._connection_status = True
                 self._last_rx_time = asyncio.get_event_loop().time()
@@ -138,7 +141,11 @@ class NasaClient:
         """Read buffer handler."""
         self._rx_buffer += data
         if len(self._rx_buffer) > self._config.max_buffer_size:
-            _LOGGER.error("Max buffer sized reached %s/%s", len(self._rx_buffer), self._config.max_buffer_size)
+            _LOGGER.error(
+                "Max buffer sized reached %s/%s",
+                len(self._rx_buffer),
+                self._config.max_buffer_size,
+            )
             self._rx_buffer = b""
             return
         while len(self._rx_buffer) >= 3:
@@ -146,7 +153,11 @@ class NasaClient:
                 _LOGGER.warning("RX queue became None mid-loop.")
                 return
             if self._config.log_buffer_messages:
-                _LOGGER.debug("Buffer (len=%s): %s", len(self._rx_buffer), bin2hex(self._rx_buffer))
+                _LOGGER.debug(
+                    "Buffer (len=%s): %s",
+                    len(self._rx_buffer),
+                    bin2hex(self._rx_buffer),
+                )
             fields = struct.unpack_from(">BH", self._rx_buffer)
             if fields[0] != 0x32:
                 next_prefix = self._rx_buffer.find(b"\x32", 1)
@@ -332,7 +343,10 @@ class NasaClient:
                 except asyncio.CancelledError:
                     _LOGGER.debug("Queue processor task successfully cancelled.")
                 except Exception as e:
-                    _LOGGER.debug("Exception during queue processor task cancellation/cleanup: %s", e)
+                    _LOGGER.debug(
+                        "Exception during queue processor task cancellation/cleanup: %s",
+                        e,
+                    )
             _LOGGER.debug("Read queue session ended.")
 
         if self._rx_queue:  # Drain and clear queue
@@ -366,7 +380,10 @@ class NasaClient:
 
                     # Validate packet structure
                     if len(packet) < 6 or packet[0] != 0x32 or packet[-1] != 0x34:
-                        _LOGGER.error("QueueProcessor: Invalid packet structure: %s", bin2hex(packet))
+                        _LOGGER.error(
+                            "QueueProcessor: Invalid packet structure: %s",
+                            bin2hex(packet),
+                        )
                         continue
                     try:
                         packet_crc_from_msg = struct.unpack_from(">H", packet, -3)[0]
@@ -398,7 +415,9 @@ class NasaClient:
                         )
                     except Exception as ex:
                         _LOGGER.exception(
-                            "QueueProcessor: Exception while processing a packet: %s. Packet: %s.", ex, bin2hex(packet)
+                            "QueueProcessor: Exception while processing a packet: %s. Packet: %s.",
+                            ex,
+                            bin2hex(packet),
                         )
             except asyncio.CancelledError:
                 _LOGGER.info("Queue processor task was cancelled.")
@@ -430,7 +449,7 @@ class NasaClient:
                     _LOGGER.debug("Writer: Writing data: %s", bin2hex(cmd))
                     self._socket_writer.write(cmd)
                     await self._socket_writer.drain()  # Crucial for flow control
-                    await self._rx_queue.put(cmd)  # Loop back into the read queue
+                    await asyncio.sleep(0.05)  # delay 50ms to prevent overloading the protocol.
                     if self._tx_event_handler:
                         try:
                             self._tx_event_handler(cmd)
@@ -452,8 +471,11 @@ class NasaClient:
                 break
 
     async def send_command(
-        self, message: list[str], wait_for_reply: bool = False, reply_timeout: float = 5.0
-    ) -> int | None:
+        self,
+        message: list[str],
+        wait_for_reply: bool = False,
+        reply_timeout: float = 5.0,
+    ) -> int | bytes | None:
         """Send a command to the NASA device."""
         if not self._connection_status or self._tx_queue is None:
             return False
@@ -477,7 +499,11 @@ class NasaClient:
                 _LOGGER.debug("Command enqueued: %s", bin2hex(data))
                 try:
                     if wait_for_reply:
-                        await asyncio.wait_for(self._pending_requests[last_packet_number], timeout=reply_timeout)
+                        result = await asyncio.wait_for(
+                            self._pending_requests[last_packet_number],
+                            timeout=reply_timeout,
+                        )
+                        return result
                 except asyncio.TimeoutError as e:
                     raise TimeoutError(f"No response received within {reply_timeout} seconds.") from e
                 finally:
@@ -502,7 +528,7 @@ class NasaClient:
         destination: NasaDevice | str,
         request_type: DataType = DataType.REQUEST,
         messages: list[SendMessage] | None = None,
-    ) -> None:
+    ) -> int | bytes | None:
         """Send a message to the device using the client."""
         if not self.is_connected:
             _LOGGER.error("Cannot send message, client is not connected.")
@@ -517,7 +543,7 @@ class NasaClient:
         if messages is None:
             raise ValueError("At least one message is required.")
         try:
-            await self.send_command(
+            return await self.send_command(
                 [
                     build_message(
                         source=str(self._config.address),
@@ -531,10 +557,10 @@ class NasaClient:
         except Exception as e:
             _LOGGER.exception("Error sending message to device %s: %s", destination_address, e)
 
-    async def nasa_read(self, msgs: list[int], destination: NasaDevice | str = "B0FF20") -> None:
+    async def nasa_read(self, msgs: list[int], destination: NasaDevice | str = "B20020") -> int | bytes | None:
         """Send read requests to a device to read data."""
-        messages = [SendMessage(MESSAGE_ID=imn, PAYLOAD=0x05A5A5A5.to_bytes(4, "big")) for imn in msgs]
-        await self.send_message(
+        messages = [SendMessage(MESSAGE_ID=imn, PAYLOAD=b"") for imn in msgs]
+        return await self.send_message(
             destination=destination,
             request_type=DataType.READ,
             messages=messages,
