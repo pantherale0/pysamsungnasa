@@ -10,7 +10,7 @@ from .nasa import SamsungNasa
 _LOGGER = logging.getLogger(__name__)
 
 
-async def follow_logs(nasa: SamsungNasa):
+async def follow_logs():
     """Follow logs."""
 
     def log_handler(record: logging.LogRecord):
@@ -157,7 +157,7 @@ async def interactive_cli(nasa: SamsungNasa):
                 else:
                     print("Usage: config set <key> <value> or config read <key>")
             elif command == "logger" and len(parts) == 2 and parts[1] == "follow":
-                await follow_logs(nasa)
+                await follow_logs()
             elif command == "logger" and len(parts) == 2 and parts[1] == "print":
                 await print_logs()
             elif command == "quit":

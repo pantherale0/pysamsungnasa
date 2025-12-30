@@ -143,8 +143,8 @@ class NasaClient:
                     _LOGGER.debug("Not enough data for header, waiting for more.")
                 break
 
+            expected_packet_len = 0
             try:
-                expected_packet_len = 0
                 _, packet_len_val = struct.unpack_from(">BH", self._rx_buffer)
 
                 if packet_len_val > 4096:
@@ -155,9 +155,7 @@ class NasaClient:
                     self._rx_buffer = self._rx_buffer[1:]
                     continue
 
-                expected_packet_len = (
-                    1 + packet_len_val + 1
-                )  # STX + payload_len + ETX
+                expected_packet_len = 1 + packet_len_val + 1  # STX + payload_len + ETX
 
                 if len(self._rx_buffer) < expected_packet_len:
                     if self._config.log_buffer_messages:

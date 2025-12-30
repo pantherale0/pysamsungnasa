@@ -3,7 +3,6 @@
 import asyncio
 import os
 import logging
-import argparse
 
 from dotenv import load_dotenv
 from pysamsungnasa import SamsungNasa

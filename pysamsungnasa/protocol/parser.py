@@ -56,7 +56,7 @@ class NasaPacketParser:
     def _process_packet(self, *nargs, **kwargs: str | bytes | PacketType | DataType | int | list[list]):
         """Process a packet."""
         source_address = str(kwargs["source"]).upper()
-        dest_address = kwargs["dest"]
+        dest_address = str(kwargs["dest"])
         payload_type = kwargs["payloadType"]
         packet_type = kwargs["packetType"]
         client_address = str(self._config.address)
@@ -103,7 +103,7 @@ class NasaPacketParser:
         if not should_process:
             return  # Packet was filtered out by the above logic
 
-        for ds in kwargs["dataSets"]:
+        for ds in kwargs["dataSets"]:  # type: ignore
             if not isinstance(ds, list):
                 _LOGGER.warning("Invalid data set: %s", ds)
                 continue
@@ -156,7 +156,7 @@ class NasaPacketParser:
             }
 
             # Dispatch to the appropriate device handler(s)
-            target_handler_address = dest_address if is_outgoing_from_self else source_address
+            target_handler_address: str = dest_address if is_outgoing_from_self else source_address
 
             if target_handler_address in self._device_handlers:
                 for handler in self._device_handlers[target_handler_address]:
@@ -223,6 +223,8 @@ class NasaPacketParser:
                     raise BaseException("Invalid encoded packet containing a struct: " + bin2hex(p))
                 ds.append([-1, "STRUCTURE", p[off:], bin2hex(p[off:]), p[off:], [p[off:]]])
                 break
+            else:
+                raise BaseException("Invalid kind value")
             messageNumber = struct.unpack(">H", p[off : off + 2])[0]
             value = p[off + 2 : off + 2 + s]
             valuehex = bin2hex(value)

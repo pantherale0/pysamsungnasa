@@ -672,127 +672,85 @@ class OutEhsWateroutType(SamsungEnum, IntEnum):
 class InUnknown400F(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x400F. Specifics unknown."""
 
-    pass
-
 
 class InUnknown4010(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4010. Specifics unknown."""
-
-    pass
 
 
 class InUnknown4015(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4015. Specifics unknown."""
 
-    pass
-
 
 class InUnknown4029(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4029. Specifics unknown."""
-
-    pass
 
 
 class InUnknown402A(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x402A. Specifics unknown."""
 
-    pass
-
 
 class InUnknown402B(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x402B. Specifics unknown."""
-
-    pass
 
 
 class InUnknown402D(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x402D. Specifics unknown."""
 
-    pass
-
 
 class InUnknown4031(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4031. Specifics unknown."""
-
-    pass
 
 
 class InUnknown4035(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4035. Specifics unknown."""
 
-    pass
-
 
 class InUnknown4047(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4047. Specifics unknown."""
-
-    pass
 
 
 class InUnknown4048(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4048. Specifics unknown."""
 
-    pass
-
 
 class InUnknown404F(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x404F. Specifics unknown."""
-
-    pass
 
 
 class InUnknown4051(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4051. Specifics unknown."""
 
-    pass
-
 
 class InUnknown4059(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4059. Specifics unknown."""
-
-    pass
 
 
 class InUnknown405F(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x405F. Specifics unknown."""
 
-    pass
-
 
 class InUnknown4073(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4073. Specifics unknown."""
-
-    pass
 
 
 class InUnknown4074(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4074. Specifics unknown."""
 
-    pass
-
 
 class InUnknown4077(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4077. Specifics unknown."""
-
-    pass
 
 
 class InUnknown407B(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x407B. Specifics unknown."""
 
-    pass
-
 
 class InUnknown407D(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x407D. Specifics unknown."""
 
-    pass
-
 
 class InUnknown4085(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4085. Specifics unknown."""
-
-    pass
 
 
 class InFsv4011(SamsungEnum, IntEnum):
@@ -866,43 +824,29 @@ class InFsv5051(SamsungEnum, IntEnum):
 class InFsv5061(SamsungEnum, IntEnum):  # 0x40B4
     """Indoor unit enum for FSV message 0x40B4. Specifics unknown."""
 
-    pass
-
 
 class InUnknown40B5(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x40B5. Specifics unknown."""
-
-    pass
 
 
 class InFsv4044(SamsungEnum, IntEnum):  # 0x40C1
     """Indoor unit enum for FSV message 0x40C1. Specifics unknown."""
 
-    pass
-
 
 class InFsv4051(SamsungEnum, IntEnum):  # 0x40C2
     """Indoor unit enum for FSV message 0x40C2. Specifics unknown."""
-
-    pass
 
 
 class InFsv4053(SamsungEnum, IntEnum):  # 0x40C3
     """Indoor unit enum for FSV message 0x40C3. Specifics unknown."""
 
-    pass
-
 
 class InUnknown40C6(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x40C6. Specifics unknown."""
 
-    pass
-
 
 class InUnknown40E3(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x40E3. Specifics unknown."""
-
-    pass
 
 
 class InChillerWaterlawSensor(SamsungEnum, IntEnum):
@@ -976,37 +920,25 @@ class In3WayValve2(SamsungEnum, IntEnum):
 class InUnknown4117(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4117. Specifics unknown."""
 
-    pass
-
 
 class InRoomTempSensorZone2(SamsungEnum, IntEnum):  # 0x4118
     """Indoor unit enum for message 0x4118 (Room Temp Sensor Zone 2). Specifics unknown."""
-
-    pass
 
 
 class InFsv5081(SamsungEnum, IntEnum):  # 0x411B
     """Indoor unit enum for FSV message 0x411B. Specifics unknown."""
 
-    pass
-
 
 class InFsv5091(SamsungEnum, IntEnum):  # 0x411C
     """Indoor unit enum for FSV message 0x411C. Specifics unknown."""
-
-    pass
 
 
 class InFsv5094(SamsungEnum, IntEnum):  # 0x411D
     """Indoor unit enum for FSV message 0x411D. Specifics unknown."""
 
-    pass
-
 
 class InSilenceLevel(SamsungEnum, IntEnum):  # 0x4129
     """Indoor unit enum for message 0x4129 (Silence Level). Specifics unknown."""
-
-    pass
 
 
 class IndoorModelInformation(SamsungEnum, IntEnum):  # Derived from VAR_in_model_information (0x4229) Enum block in XML
@@ -1037,223 +969,149 @@ class IndoorModelInformation(SamsungEnum, IntEnum):  # Derived from VAR_in_model
 class OutUnknown8002(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8002. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown8005(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8005. Specifics unknown."""
-
-    pass
 
 
 class OutUnknown800D(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x800D. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown8031(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8031. Specifics unknown."""
-
-    pass
 
 
 class OutUnknown8032(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8032. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown8033(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8033. Specifics unknown."""
-
-    pass
 
 
 class OutUnknown803F(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x803F. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown8043(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8043. Specifics unknown."""
-
-    pass
 
 
 class OutUnknown8045(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8045. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown8048(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8048. Specifics unknown."""
-
-    pass
 
 
 class OutUnknown805E(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x805E. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown8063(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8063. Specifics unknown."""
-
-    pass
 
 
 class OutUnknown8077(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8077. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown8078(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8078. Specifics unknown."""
-
-    pass
 
 
 class OutUnknown8079(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8079. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown807A(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x807A. Specifics unknown."""
-
-    pass
 
 
 class OutUnknown807B(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x807B. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown807C(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x807C. Specifics unknown."""
-
-    pass
 
 
 class OutUnknown807D(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x807D. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown807E(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x807E. Specifics unknown."""
-
-    pass
 
 
 class OutUnknown807F(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x807F. Specifics unknown."""
 
-    pass
-
 
 class OutdoorExtCmdOperation(SamsungEnum, IntEnum):  # 0x8081
     """Outdoor unit enum for message 0x8081 (NASA_OUTDOOR_EXT_CMD_OPERATION). Specifics unknown."""
-
-    pass
 
 
 class OutUnknown8083(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x8083. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown808C(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x808C. Specifics unknown."""
-
-    pass
 
 
 class OutUnknown808D(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x808D. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown808F(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x808F. Specifics unknown."""
-
-    pass
 
 
 class OutdoorDredLevel(SamsungEnum, IntEnum):  # 0x80A7
     """Outdoor unit enum for message 0x80A7 (NASA_OUTDOOR_DRED_LEVEL). Specifics unknown."""
 
-    pass
-
 
 class OutUnknown80A8(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80A8. Specifics unknown."""
-
-    pass
 
 
 class OutUnknown80A9(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80A9. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown80AA(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80AA. Specifics unknown."""
-
-    pass
 
 
 class OutUnknown80AB(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80AB. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown80AE(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80AE. Specifics unknown."""
-
-    pass
 
 
 class OutUnknown80B1(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80B1. Specifics unknown."""
 
-    pass
-
 
 class OutdoorChSwitchValue(SamsungEnum, IntEnum):  # 0x80B2
     """Outdoor unit enum for message 0x80B2 (NASA_OUTDOOR_CH_SWITCH_VALUE). Specifics unknown."""
-
-    pass
 
 
 class OutUnknown80B6(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80B6. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown80BC(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80BC. Specifics unknown."""
 
-    pass
-
 
 class OutUnknown80CE(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80CE. Specifics unknown."""
-
-    pass
 
 
 class InOperationVentPower(SamsungEnum, IntEnum):
@@ -1635,4 +1493,3 @@ class InFsv302TimeSchedule(SamsungEnum, IntEnum):
 
     DISABLED = 0
     ENABLED = 1
-    pass
