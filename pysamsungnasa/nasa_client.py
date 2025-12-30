@@ -5,6 +5,8 @@ import logging
 import asyncio
 import struct
 
+from asyncio import iscoroutinefunction
+
 from aiotelnet import TelnetClient
 
 from .device import NasaDevice
@@ -155,10 +157,11 @@ class NasaClient:
             try:
                 _, packet_len_val = struct.unpack_from(">BH", self._rx_buffer)
 
-                if packet_len_val > 4096:
+                if packet_len_val > self._config.max_buffer_size:
                     _LOGGER.debug(
-                        "Parsed packet length %d exceeds max size. Assuming parse error.",
+                        "Parsed packet length %d exceeds max size %d. Assuming parse error.",
                         packet_len_val,
+                        self._config.max_buffer_size,
                     )
                     self._rx_buffer = self._rx_buffer[1:]
                     continue
@@ -337,8 +340,11 @@ class NasaClient:
                             if future:
                                 future.set_result(packet_data)
 
-                        if self._rx_event_handler:
-                            self._rx_event_handler(packet_data)
+                        if self._rx_event_handler and callable(self._rx_event_handler):
+                            if iscoroutinefunction(self._rx_event_handler):
+                                await self._rx_event_handler(packet_data)
+                            else:
+                                self._rx_event_handler(packet_data)
 
                     except struct.error as e:
                         _LOGGER.error(
@@ -496,18 +502,17 @@ class NasaClient:
                         messages=messages,
                     )
                 ],
-                wait_for_reply=request_type == DataType.READ or request_type == DataType.WRITE,
+                wait_for_reply=False,
             )
         except Exception as e:
             _LOGGER.exception("Error sending message to device %s: %s", destination_address, e)
 
-    async def nasa_read(self, msgs: list[int], destination: NasaDevice | str = "B20020") -> int | bytes | None:
+    async def nasa_read(self, msgs: list[int], destination: NasaDevice | str = "B0FF20") -> int | bytes | None:
         """Send read requests to a device to read data."""
-        messages = [SendMessage(MESSAGE_ID=imn, PAYLOAD=b"") for imn in msgs]
         return await self.send_message(
             destination=destination,
             request_type=DataType.READ,
-            messages=messages,
+            messages=[SendMessage(MESSAGE_ID=imn, PAYLOAD=b"\x05\xa5\xa5\xa5") for imn in msgs],
         )
 
     async def nasa_write(

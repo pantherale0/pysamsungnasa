@@ -6,6 +6,8 @@ import logging
 import aioconsole
 
 from .nasa import SamsungNasa
+from .device import NasaDevice
+from .protocol.enum import AddressClass
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,7 +33,7 @@ async def follow_logs():
         logger.removeHandler(handler)
 
 
-def print_device_header(device):
+def print_device_header(device: NasaDevice):
     """Print device header."""
     print(f"Device {device.address}:")
     print(f"  Last seen: {device.last_packet_time}")
@@ -40,6 +42,15 @@ def print_device_header(device):
     print(f"  Config: {device.config}")
     print(f"  Total attributes: {len(device.attributes)}")
     print(f"  FSV Config: {device.fsv_config}")
+    if device.device_type == AddressClass.INDOOR:
+        print(f"  DHW Controller: {'Yes' if device.dhw_controller else 'No'}")
+        print(f"  Climate Controller: {'Yes' if device.climate_controller else 'No'}")
+        print(
+            f"  Climate Controller mode: {device.climate_controller.current_mode if device.climate_controller else 'N/A'}"
+        )
+        print(
+            f"  Climate Controller target temp: {device.climate_controller.target_temperature if device.climate_controller else 'N/A'}"
+        )
 
 
 async def print_logs():

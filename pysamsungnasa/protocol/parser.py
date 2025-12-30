@@ -1,6 +1,7 @@
 """NASA Packet Parser."""
 
 from typing import Callable
+from asyncio import iscoroutinefunction
 
 import logging
 import struct
@@ -53,7 +54,7 @@ class NasaPacketParser:
         if callback in self._packet_listeners[message_number]:
             self._packet_listeners[message_number].remove(callback)
 
-    def _process_packet(self, *nargs, **kwargs: str | bytes | PacketType | DataType | int | list[list]):
+    async def _process_packet(self, *nargs, **kwargs: str | bytes | PacketType | DataType | int | list[list]):
         """Process a packet."""
         source_address = str(kwargs["source"]).upper()
         dest_address = str(kwargs["dest"])
@@ -84,7 +85,7 @@ class NasaPacketParser:
                 _LOGGER.debug("Ignoring outgoing packet with payload type %s from self.", payload_type)
         else:
             # For incoming messages, we process NOTIFICATIONs, WRITEs, and RESPONSEs
-            if payload_type in [DataType.NOTIFICATION, DataType.WRITE, DataType.RESPONSE]:
+            if payload_type in [DataType.NOTIFICATION, DataType.WRITE, DataType.RESPONSE, DataType.ACK]:
                 should_process = True
                 _LOGGER.debug(
                     "Processing incoming packet (type=%s, payload=%s) from %s.",
@@ -167,7 +168,10 @@ class NasaPacketParser:
             elif not is_outgoing_from_self and self._new_device_handler is not None:
                 # Only call new device handler for incoming packets from unknown sources
                 try:
-                    self._new_device_handler(**handler_kwargs)
+                    if callable(self._new_device_handler) and not iscoroutinefunction(self._new_device_handler):
+                        self._new_device_handler(**handler_kwargs)
+                    elif callable(self._new_device_handler) and iscoroutinefunction(self._new_device_handler):
+                        await self._new_device_handler(**handler_kwargs)
                 except Exception as e:
                     _LOGGER.exception("Error in new device event handler: %s", e)
 
@@ -177,7 +181,7 @@ class NasaPacketParser:
                 for listener in self._packet_listeners[msg_number]:
                     listener(**handler_kwargs)
 
-    def parse_packet(self, packet_data: bytes):
+    async def parse_packet(self, packet_data: bytes):
         if len(packet_data) < 3 + 3 + 1 + 1 + 1 + 1:
             return  # too short
         source_address = bin2hex(packet_data[0:3])
@@ -274,7 +278,7 @@ class NasaPacketParser:
         if seen_message_count != dataset_count:
             raise BaseException("Not every message processed")
 
-        self._process_packet(
+        await self._process_packet(
             source=source_address,
             source_class=source_class,
             dest=destination_address,

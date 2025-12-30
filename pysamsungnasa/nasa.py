@@ -1,7 +1,8 @@
 """Represent the NASA protocol."""
 
 import logging
-from typing import Any
+from typing import Any, Callable
+from asyncio import iscoroutinefunction
 
 from .config import NasaConfig
 from .device import NasaDevice
@@ -21,7 +22,7 @@ class SamsungNasa:
     devices: dict[str, NasaDevice] = {}
 
     def __init__(
-        self, host: str, port: int, config: dict[str, Any], new_device_event_handler=None, disconnect_event_handler=None
+        self, host: str, port: int, config: dict[str, Any], new_device_event_handler: Callable | None=None, disconnect_event_handler: Callable | None=None
     ) -> None:
         """Initialize the NASA protocol."""
         self.config = NasaConfig(**config)
@@ -45,7 +46,7 @@ class SamsungNasa:
                     client=self.client,
                 )
 
-    def _new_device_handler(self, **kwargs):
+    async def _new_device_handler(self, **kwargs):
         """Handle messages from a new device."""
         if kwargs["source"] not in self.devices:
             self.devices[kwargs["source"]] = NasaDevice(
@@ -56,9 +57,15 @@ class SamsungNasa:
                 client=self.client,
             )
             _LOGGER.info("New %s device discovered: %s", kwargs["source_class"], kwargs["source"])
+            # Request device configuration
+            await self.devices[kwargs["source"]].get_configuration()
+            # Call the user-defined new device event handler
             if callable(self.new_device_event_handler):
                 try:
-                    self.new_device_event_handler(self.devices[kwargs["source"]])
+                    if iscoroutinefunction(self.new_device_event_handler):
+                        await self.new_device_event_handler(self.devices[kwargs["source"]])
+                    else:
+                        self.new_device_event_handler(self.devices[kwargs["source"]])
                 except Exception as e:
                     _LOGGER.exception("Error in new device event handler: %s", e)
 

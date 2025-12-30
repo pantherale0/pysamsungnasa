@@ -21,7 +21,6 @@ async def main():
             "device_dump_only": False,
             "log_all_messages": False,
             "log_buffer_messages": False,
-            "devices_to_log": ["200000"],
         },
     )
     try:
@@ -43,7 +42,6 @@ async def start_cli():
             "device_dump_only": False,
             "log_all_messages": False,
             "log_buffer_messages": False,
-            "devices_to_log": ["200000"],
         },
     )
     try:
@@ -62,4 +60,6 @@ if __name__ == "__main__":
         datefmt="%Y-%m-%d %H:%M:%S",
         filename="nasa.log",
     )
+    # Suppress noisy aiotelnet.client debug logs
+    logging.getLogger("aiotelnet.client").setLevel(logging.INFO)
     asyncio.run(start_cli())
