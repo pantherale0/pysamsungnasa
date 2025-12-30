@@ -290,7 +290,7 @@ class ClimateController(ControllerBase):
         """
         messages = []
 
-        if self.current_mode == InOperationMode.COOL:
+        if self.current_mode == InOperationMode.COOL or self.current_mode == InOperationMode.HEAT:
             # Cooling always uses water outlet target temperature
             self.water_outlet_target_temperature = temperature
             messages.append(
@@ -299,7 +299,7 @@ class ClimateController(ControllerBase):
                     PAYLOAD=int(temperature * 10).to_bytes(2, "big"),
                 )
             )
-        elif self.current_mode == InOperationMode.AUTO or self.current_mode == InOperationMode.HEAT:
+        elif self.current_mode == InOperationMode.AUTO:
             if self.water_law_mode == WaterLawMode.WATER_TARGET:
                 # Direct water outlet temperature control
                 self.water_target_temperature_setpoint = temperature

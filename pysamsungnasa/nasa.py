@@ -5,7 +5,7 @@ from typing import Any, Callable
 from asyncio import iscoroutinefunction
 
 from .config import NasaConfig
-from .device import NasaDevice
+from .device import NasaDevice, IndoorNasaDevice, OutdoorNasaDevice
 from .helpers import Address
 from .protocol.enum import DataType, AddressClass
 from .protocol.parser import NasaPacketParser
@@ -45,13 +45,29 @@ class SamsungNasa:
         if self.config.device_addresses is not None:
             for address in self.config.device_addresses:
                 address = Address.parse(address)
-                self.devices[str(address)] = NasaDevice(
-                    address=str(address),
-                    device_type=AddressClass(address.class_id),
-                    packet_parser=self.parser,
-                    config=self.config,
-                    client=self.client,
-                )
+                if address.class_id is AddressClass.INDOOR:
+                    new_device = IndoorNasaDevice(
+                        address=str(address),
+                        packet_parser=self.parser,
+                        config=self.config,
+                        client=self.client,
+                    )
+                elif address.class_id is AddressClass.OUTDOOR:
+                    new_device = OutdoorNasaDevice(
+                        address=str(address),
+                        packet_parser=self.parser,
+                        config=self.config,
+                        client=self.client,
+                    )
+                else:
+                    new_device = NasaDevice(
+                        address=str(address),
+                        device_type=AddressClass(address.class_id),
+                        packet_parser=self.parser,
+                        config=self.config,
+                        client=self.client,
+                    )
+                self.devices[str(address)] = new_device
 
     async def _new_device_handler(self, **kwargs):
         """Handle messages from a new device."""

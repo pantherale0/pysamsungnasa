@@ -9,9 +9,9 @@ from datetime import datetime, timezone
 
 from .controllers import DhwController, ClimateController, WaterLawMode
 from ..config import NasaConfig
-from ..protocol.enum import DataType, AddressClass, InFsv3011EnableDhw, OutOutdoorCoolonlyModel, InUseThermostat
+from ..protocol.enum import AddressClass, InFsv3011EnableDhw, OutOutdoorCoolonlyModel, InUseThermostat
 from ..protocol.parser import NasaPacketParser
-from ..protocol.factory.messaging import SendMessage, BaseMessage
+from ..protocol.factory.messaging import BaseMessage
 
 if TYPE_CHECKING:
     from ..nasa_client import NasaClient
@@ -21,6 +21,114 @@ _LOGGER = logging.getLogger(__name__)
 
 class NasaDevice:
     """NASA Device."""
+
+    _MESSAGES_TO_LISTEN: list[int] = []
+
+    def __init__(
+        self,
+        address: str,
+        device_type: AddressClass,
+        packet_parser: NasaPacketParser,
+        config: NasaConfig,
+        client: NasaClient,
+    ) -> None:
+        self.address = address
+        self.device_type = device_type
+        self.attributes: dict[int, BaseMessage] = {}
+        self.config = config
+        self.last_packet_time = None
+        self.fsv_config = {}
+        self._device_callbacks = []
+        self._packet_callbacks = {}
+        self._client = client
+        packet_parser.add_device_handler(address, self.handle_packet)
+        for message_number in self._MESSAGES_TO_LISTEN:
+            packet_parser.add_packet_listener(message_number, self.handle_packet)
+
+    def add_device_callback(self, callback):
+        """Add a device callback."""
+        if callback not in self._device_callbacks:
+            self._device_callbacks.append(callback)
+
+    def add_packet_callback(self, message_number: int, callback):
+        """Add a packet callback."""
+        if message_number not in self._packet_callbacks:
+            self._packet_callbacks[message_number] = []
+        if callback not in self._packet_callbacks[message_number]:
+            self._packet_callbacks[message_number].append(callback)
+
+    def remove_packet_callback(self, message_number: int, callback):
+        """Remove a packet callback."""
+        if message_number in self._packet_callbacks:
+            if callback in self._packet_callbacks[message_number]:
+                self._packet_callbacks[message_number].remove(callback)
+
+    def remove_device_callback(self, callback):
+        """Remove a device callback."""
+        if callback in self._device_callbacks:
+            self._device_callbacks.remove(callback)
+
+    async def get_configuration(self):
+        """Get the configuration (FSVs) of the device."""
+        if self.device_type != AddressClass.INDOOR:
+            return  # Nothing to do
+        _LOGGER.debug("Requesting FSV configuration for device %s", self.address)
+        for k in self._MESSAGES_TO_LISTEN:
+            if k not in self.attributes:
+                await self._client.nasa_read(
+                    msgs=[k],
+                    destination=self.address,
+                )
+
+    def handle_packet(self, *nargs, **kwargs):
+        """Handle a packet sent to this device from the parser."""
+        self.last_packet_time = datetime.now(timezone.utc)
+        message_number = kwargs["messageNumber"]
+        packet_data: BaseMessage = kwargs["packet"]
+        log_message = (
+            str(self.config.address) == kwargs["dest"]
+            or self.config.log_all_messages
+            or kwargs["dest"] in self.config.devices_to_log
+        )
+
+        if log_message:
+            _LOGGER.debug("Handing packet for device %s: %s", self.address, kwargs)
+        self.attributes[message_number] = packet_data
+        if log_message:
+            _LOGGER.debug(
+                "Device %s: Stored parsed attribute for msg %s (%s): %s",
+                self.address,
+                kwargs["formattedMessageNumber"],
+                message_number,
+                self.attributes[message_number],
+            )
+
+        if message_number == 0x4097:  # DHW ENABLE
+            if packet_data.VALUE != InFsv3011EnableDhw.NO:
+                self._dhw_controller = DhwController(
+                    address=self.address,
+                    message_sender=self._client.send_message,
+                )
+
+        # Test if the packet is an FSV configuration packet
+        if packet_data.is_fsv_message:
+            self.fsv_config[message_number] = packet_data.VALUE
+
+        for callback in self._device_callbacks:
+            try:
+                callback(self)
+            except Exception as e:
+                _LOGGER.error("Error in device %s callback: %s", self.address, e)
+        if message_number in self._packet_callbacks:
+            for callback in self._packet_callbacks[message_number]:
+                try:
+                    callback(self, **kwargs)
+                except Exception as e:
+                    _LOGGER.error("Error in device %s packet callback: %s", self.address, e)
+
+
+class IndoorNasaDevice(NasaDevice):
+    """NASA Indoor Device."""
 
     _MESSAGES_TO_LISTEN = [0x8001, 0x8003, 0x8061, 0x809D]  # Reflect NASA outdoor status.
 
@@ -61,77 +169,15 @@ class NasaDevice:
     def __init__(
         self,
         address: str,
-        device_type: AddressClass,
         packet_parser: NasaPacketParser,
         config: NasaConfig,
         client: NasaClient,
     ) -> None:
-        self.address = address
-        self.device_type = device_type
-        self.attributes: dict[int, BaseMessage] = {}
-        self.config = config
-        self.last_packet_time = None
-        self.fsv_config = {}
-        self._device_callbacks = []
-        self._packet_callbacks = {}
-        self._client = client
-        self._dhw_controller = (
-            None
-            if device_type != AddressClass.INDOOR
-            else DhwController(address=address, message_sender=client.send_message)
-        )
-        self._climate_controller = (
-            None
-            if device_type != AddressClass.INDOOR
-            else ClimateController(address=address, message_sender=client.send_message)
-        )
+        self._dhw_controller = DhwController(address=address, message_sender=client.send_message)
+        self._climate_controller = ClimateController(address=address, message_sender=client.send_message)
         # Set default water law mode (will be updated when config messages arrive)
-        if self._climate_controller is not None:
-            self._climate_controller.water_law_mode = WaterLawMode.WATER_LAW_INTERNAL_THERMOSTAT
-        packet_parser.add_device_handler(address, self.handle_packet)
-        for message_number in self._MESSAGES_TO_LISTEN:
-            packet_parser.add_packet_listener(message_number, self.handle_packet)
-
-    def add_device_callback(self, callback):
-        """Add a device callback."""
-        if callback not in self._device_callbacks:
-            self._device_callbacks.append(callback)
-
-    def add_packet_callback(self, message_number: int, callback):
-        """Add a packet callback."""
-        if message_number not in self._packet_callbacks:
-            self._packet_callbacks[message_number] = []
-        if callback not in self._packet_callbacks[message_number]:
-            self._packet_callbacks[message_number].append(callback)
-
-    def remove_packet_callback(self, message_number: int, callback):
-        """Remove a packet callback."""
-        if message_number in self._packet_callbacks:
-            if callback in self._packet_callbacks[message_number]:
-                self._packet_callbacks[message_number].remove(callback)
-
-    def remove_device_callback(self, callback):
-        """Remove a device callback."""
-        if callback in self._device_callbacks:
-            self._device_callbacks.remove(callback)
-
-    async def get_configuration(self):
-        """Get the configuration (FSVs) of the device."""
-        if self.device_type != AddressClass.INDOOR:
-            return  # Nothing to do
-        _LOGGER.debug("Requesting FSV configuration for device %s", self.address)
-        for k in self._CLIMATE_MESSAGE_MAP.keys():
-            if k not in self.fsv_config:
-                await self._client.nasa_read(
-                    msgs=[k],
-                    destination=self.address,
-                )
-        for k in self._DHW_MESSAGE_MAP.keys():
-            if k not in self.fsv_config:
-                await self._client.nasa_read(
-                    msgs=[k],
-                    destination=self.address,
-                )
+        self._climate_controller.water_law_mode = WaterLawMode.WATER_LAW_INTERNAL_THERMOSTAT
+        super().__init__(address, AddressClass.INDOOR, packet_parser, config, client)
 
     @property
     def dhw_controller(self) -> DhwController | None:
@@ -157,6 +203,22 @@ class NasaDevice:
         if self.device_type != AddressClass.INDOOR:
             return None
         return self._climate_controller
+
+    async def get_configuration(self):
+        """Get the configuration (FSVs) of the device."""
+        await super().get_configuration()
+        for k in self._CLIMATE_MESSAGE_MAP.keys():
+            if k not in self.fsv_config:
+                await self._client.nasa_read(
+                    msgs=[k],
+                    destination=self.address,
+                )
+        for k in self._DHW_MESSAGE_MAP.keys():
+            if k not in self.fsv_config:
+                await self._client.nasa_read(
+                    msgs=[k],
+                    destination=self.address,
+                )
 
     def _infer_water_law_mode(self):
         """
@@ -208,39 +270,8 @@ class NasaDevice:
         self._climate_controller.water_law_mode = inferred_mode
 
     def handle_packet(self, *nargs, **kwargs):
-        """Handle a packet sent to this device from the parser."""
-        self.last_packet_time = datetime.now(timezone.utc)
         message_number = kwargs["messageNumber"]
         packet_data: BaseMessage = kwargs["packet"]
-        log_message = (
-            str(self.config.address) == kwargs["dest"]
-            or self.config.log_all_messages
-            or kwargs["dest"] in self.config.devices_to_log
-        )
-
-        if log_message:
-            _LOGGER.debug("Handing packet for device %s: %s", self.address, kwargs)
-        self.attributes[message_number] = packet_data
-        if log_message:
-            _LOGGER.debug(
-                "Device %s: Stored parsed attribute for msg %s (%s): %s",
-                self.address,
-                kwargs["formattedMessageNumber"],
-                message_number,
-                self.attributes[message_number],
-            )
-
-        if message_number == 0x4097:  # DHW ENABLE
-            if packet_data.VALUE != InFsv3011EnableDhw.NO:
-                self._dhw_controller = DhwController(
-                    address=self.address,
-                    message_sender=self._client.send_message,
-                )
-
-        # Test if the packet is an FSV configuration packet
-        if packet_data.is_fsv_message:
-            self.fsv_config[message_number] = packet_data.VALUE
-
         # Update DHW controller if it exists and the message is relevant
         if self._dhw_controller and message_number in self._DHW_MESSAGE_MAP:
             attr_name = self._DHW_MESSAGE_MAP[message_number]
@@ -253,15 +284,92 @@ class NasaDevice:
         # Infer water law mode if we have updated a relevant configuration message
         if self._climate_controller and message_number in (0x4095, 0x4096):
             self._infer_water_law_mode()
+        return super().handle_packet(*nargs, **kwargs)
 
-        for callback in self._device_callbacks:
-            try:
-                callback(self)
-            except Exception as e:
-                _LOGGER.error("Error in device %s callback: %s", self.address, e)
-        if message_number in self._packet_callbacks:
-            for callback in self._packet_callbacks[message_number]:
-                try:
-                    callback(self, **kwargs)
-                except Exception as e:
-                    _LOGGER.error("Error in device %s packet callback: %s", self.address, e)
+
+class OutdoorNasaDevice(NasaDevice):
+    """NASA Outdoor Device."""
+
+    _MESSAGES_TO_LISTEN = [0x4426, 0x4427]
+
+    def __init__(
+        self,
+        address: str,
+        packet_parser: NasaPacketParser,
+        config: NasaConfig,
+        client: NasaClient,
+    ) -> None:
+        super().__init__(address, AddressClass.OUTDOOR, packet_parser, config, client)
+
+    @property
+    def outdoor_temperature(self) -> float | None:
+        """Return the outdoor air temperature."""
+        if 0x8204 in self.attributes:
+            return self.attributes[0x8204].VALUE
+        return None
+
+    @property
+    def heatpump_voltage(self) -> float | None:
+        """Return the heatpump voltage."""
+        if 0x24FC in self.attributes:
+            return self.attributes[0x24FC].VALUE
+        return None
+
+    @property
+    def power_consumption(self) -> float | None:
+        """Return the current power consumption."""
+        if 0x8413 in self.attributes:
+            return self.attributes[0x8413].VALUE
+        return None
+
+    @property
+    def power_generated_last_minute(self) -> float | None:
+        """Return the power generated in the last minute."""
+        if 0x4426 in self.attributes:
+            return self.attributes[0x4426].VALUE
+        return None
+
+    @property
+    def power_produced(self) -> float | None:
+        """Return the power produced."""
+        if 0x4427 in self.attributes:
+            return self.attributes[0x4427].VALUE
+        return None
+
+    @property
+    def power_current(self) -> float | None:
+        """Return the power current."""
+        if 0x82DB in self.attributes:
+            return self.attributes[0x82DB].VALUE
+        return None
+
+    @property
+    def cumulative_energy(self) -> float | None:
+        """Return the cumulative energy consumption."""
+        if 0x8414 in self.attributes:
+            return self.attributes[0x8414].VALUE
+        return None
+
+    @property
+    def compressor_frequency(self) -> float | None:
+        """Return the compressor frequency."""
+        if 0x8238 in self.attributes:
+            return self.attributes[0x8238].VALUE
+        return None
+
+    @property
+    def fan_speed(self) -> float | None:
+        """Return the fan speed."""
+        if 0x823D in self.attributes:
+            return self.attributes[0x823D].VALUE
+        return None
+
+    # Virtual properties
+    @property
+    def cop_rating(self) -> float | None:
+        """Return the COP rating (power produced / power consumed)."""
+        power_produced = self.power_produced
+        cumulative_energy = self.cumulative_energy
+        if power_produced is not None and cumulative_energy not in (None, 0):
+            return power_produced / cumulative_energy
+        return None
