@@ -103,13 +103,6 @@ class NasaDevice:
                 self.attributes[message_number],
             )
 
-        if message_number == 0x4097:  # DHW ENABLE
-            if packet_data.VALUE != InFsv3011EnableDhw.NO:
-                self._dhw_controller = DhwController(
-                    address=self.address,
-                    message_sender=self._client.send_message,
-                )
-
         # Test if the packet is an FSV configuration packet
         if packet_data.is_fsv_message:
             self.fsv_config[message_number] = packet_data.VALUE
