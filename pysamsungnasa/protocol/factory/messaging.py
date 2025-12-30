@@ -28,36 +28,51 @@ class BaseMessage(ABC):
     ENUM_DEFAULT: ClassVar[Optional[Any]] = None
     UNIT_OF_MEASUREMENT: ClassVar[Optional[str]] = None
 
+    def __init__(self, value: Any, options: Optional[list[str]] = None):
+        self.VALUE = value
+        self.OPTIONS = options
+
+    @property
+    def is_fsv_message(self) -> bool:
+        """Return True if this message is an FSV configuration message."""
+        if self.MESSAGE_NAME is None:
+            return False
+        assert self.__doc__ is not None
+        return "FSV" in (self.MESSAGE_NAME.upper() or self.__doc__.upper())
+
+    @property
+    def as_dict(self) -> dict:
+        """Return the message as a dictionary."""
+        return {
+            "message_id": self.MESSAGE_ID,
+            "message_name": self.MESSAGE_NAME,
+            "unit_of_measurement": self.UNIT_OF_MEASUREMENT,
+            "value": self.VALUE,
+            "is_fsv_message": self.is_fsv_message,
+        }
+
     @classmethod
-    def parse_payload(cls, payload: bytes) -> dict:
-        """Parse the payload into a usable format."""
-        return {}
+    def parse_payload(cls, payload: bytes) -> "BaseMessage":
+        """Parse the payload into a message instance."""
+        raise NotImplementedError("parse_payload must be implemented in subclasses.")
 
 
 class BoolMessage(BaseMessage):
     """Parser for boolean messages."""
 
     @classmethod
-    def parse_payload(cls, payload: bytes):
+    def parse_payload(cls, payload: bytes) -> "BoolMessage":
         """Parse the payload into a boolean value."""
-        return {
-            "message": cls.MESSAGE_NAME,
-            "uom": cls.UNIT_OF_MEASUREMENT,
-            "value": bool(payload[0]),
-        }
+        return cls(value=bool(payload[0]))
 
 
 class StrMessage(BaseMessage):
     """Parser for str messages."""
 
     @classmethod
-    def parse_payload(cls, payload: bytes) -> dict:
+    def parse_payload(cls, payload: bytes) -> "StrMessage":
         """Parse the payload into a string value."""
-        return {
-            "message": cls.MESSAGE_NAME,
-            "uom": cls.UNIT_OF_MEASUREMENT,
-            "value": payload.decode("utf-8") if payload else None,
-        }
+        return cls(value=payload.decode("utf-8") if payload else None)
 
 
 class RawMessage(BaseMessage):
@@ -66,13 +81,9 @@ class RawMessage(BaseMessage):
     MESSAGE_NAME = "UNKNOWN"
 
     @classmethod
-    def parse_payload(cls, payload: bytes) -> dict:
+    def parse_payload(cls, payload: bytes) -> "RawMessage":
         """Parse the payload into a raw hex string."""
-        return {
-            "message": cls.MESSAGE_NAME,
-            "uom": cls.UNIT_OF_MEASUREMENT,
-            "value": payload.hex() if payload else None,
-        }
+        return cls(value=payload.hex() if payload else None)
 
 
 class FloatMessage(BaseMessage):
@@ -82,7 +93,7 @@ class FloatMessage(BaseMessage):
     SIGNED: ClassVar[bool] = True
 
     @classmethod
-    def parse_payload(cls, payload: bytes) -> dict:
+    def parse_payload(cls, payload: bytes) -> "FloatMessage":
         """Parse the payload into a float value."""
         parsed_value: float | None = None
         if payload:
@@ -110,35 +121,27 @@ class FloatMessage(BaseMessage):
             except ValueError as e:
                 raise ValueError(f"Error processing payload for {cls.__name__}: {e}") from e
 
-        return {
-            "message": cls.MESSAGE_NAME,
-            "uom": cls.UNIT_OF_MEASUREMENT,
-            "value": parsed_value,
-        }
+        return cls(value=parsed_value)
 
 
 class EnumMessage(BaseMessage):
     """Parser for enum messages."""
 
     @classmethod
-    def parse_payload(cls, payload: bytes) -> dict:
+    def parse_payload(cls, payload: bytes) -> "EnumMessage":
         """Parse the payload into an enum value."""
         if cls.MESSAGE_ENUM is None:
             raise ValueError(f"{cls.__name__} does not have a MESSAGE_ENUM defined.")
         if cls.MESSAGE_ENUM.has_value(payload[0]):
-            return {
-                "message": cls.MESSAGE_NAME,
-                "uom": cls.UNIT_OF_MEASUREMENT,
-                "value": cls.MESSAGE_ENUM(payload[0]) if payload else None,
-                "options": {option.name: option.value for option in cls.MESSAGE_ENUM},
-            }
+            return cls(
+                value=cls.MESSAGE_ENUM(payload[0]),
+                options=[option.name for option in cls.MESSAGE_ENUM],
+            )
         else:
-            return {
-                "message": cls.MESSAGE_NAME,
-                "uom": cls.UNIT_OF_MEASUREMENT,
-                "value": cls.ENUM_DEFAULT,
-                "options": {option.name: option.value for option in cls.MESSAGE_ENUM},
-            }
+            return cls(
+                value=cls.ENUM_DEFAULT,
+                options=[option.name for option in cls.MESSAGE_ENUM],
+            )
 
 
 class BasicTemperatureMessage(FloatMessage):

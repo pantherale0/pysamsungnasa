@@ -74,7 +74,7 @@ def get_nasa_message_id(message_name: str) -> int:
     raise ValueError(f"No message ID found for name: {message_name}")
 
 
-def parse_message(message_number: int, payload: bytes, description: str) -> dict:
+def parse_message(message_number: int, payload: bytes, description: str) -> BaseMessage:
     parser_class = MESSAGE_PARSERS.get(message_number)
     if not parser_class:
         parser_class = RawMessage

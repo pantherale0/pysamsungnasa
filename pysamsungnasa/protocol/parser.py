@@ -132,7 +132,7 @@ class NasaPacketParser:
                         "Parsed message %s (%s): %s",
                         formatted_msg_number,
                         description,
-                        parsed_message,
+                        parsed_message.as_dict,
                     )
             except Exception as e:
                 _LOGGER.error("Failed to parse message %s (%s): %s", formatted_msg_number, description, e)

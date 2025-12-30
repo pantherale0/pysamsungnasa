@@ -1254,3 +1254,385 @@ class OutUnknown80CE(SamsungEnum, IntEnum):
     """Outdoor unit enum for message 0x80CE. Specifics unknown."""
 
     pass
+
+
+class InOperationVentPower(SamsungEnum, IntEnum):
+    """
+    Indoor unit ventilation power (Message 0x4003).
+    Label (NASA.prc): ENUM_IN_OPERATION_VENT_POWER
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InOperationVentPowerSetting(SamsungEnum, IntEnum):
+    """
+    Indoor unit ventilation mode (Message 0x4004).
+    Label (NASA.prc): ENUM_IN_OPERATION_VENT_MODE
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InOperationRoomFan(SamsungEnum, IntEnum):
+    """
+    Indoor unit room fan operation (Message 0x400F).
+    Label (NASA.prc): ENUM_IN_OPERATION_ROOM_FAN
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InOperationRoomFanControl(SamsungEnum, IntEnum):
+    """
+    Indoor unit room fan control (Message 0x4010).
+    Label (NASA.prc): ENUM_IN_OPERATION_ROOM_FAN_CONTROL
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InOperationOutdoorFan(SamsungEnum, IntEnum):
+    """
+    Indoor unit outdoor fan operation (Message 0x4015).
+    Label (NASA.prc): ENUM_IN_OPERATION_OUTDOOR_FAN
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InLouverLrFull(SamsungEnum, IntEnum):
+    """
+    Indoor unit louver LR full control (Message 0x4019).
+    Label (NASA.prc): ENUM_IN_LOUVER_LR_FULL
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InLouverLr(SamsungEnum, IntEnum):
+    """
+    Indoor unit louver LR control (Message 0x401B).
+    Label (NASA.prc): ENUM_IN_LOUVER_LR
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InLouverVlRightDownSwing(SamsungEnum, IntEnum):
+    """
+    Indoor unit louver VL right down swing (Message 0x4023).
+    Label (NASA.prc): ENUM_IN_LOUVER_VL_RIGHT_DOWN_SWING
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InLouverVlLeftDownSwing(SamsungEnum, IntEnum):
+    """
+    Indoor unit louver VL left down swing (Message 0x4024).
+    Label (NASA.prc): ENUM_IN_LOUVER_VL_LEFT_DOWN_SWING
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InDrainPumpPower(SamsungEnum, IntEnum):
+    """
+    Indoor unit drain pump power (Message 0x4027).
+    Label (NASA.prc): ENUM_IN_DRAIN_PUMP_POWER
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InBackupHeaterPower(SamsungEnum, IntEnum):
+    """
+    Indoor unit backup heater power (Message 0x4029).
+    Label (NASA.prc): ENUM_IN_BACKUP_HEATER_POWER
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InIceCtrlState(SamsungEnum, IntEnum):
+    """
+    Indoor unit ice control state (Message 0x402A).
+    Label (NASA.prc): ENUM_IN_ICE_CTRL_STATE
+    """
+
+    STOP = 0
+    RUNNING = 1
+
+
+class InCoilFreezingControl(SamsungEnum, IntEnum):
+    """
+    Indoor unit coil freezing control (Message 0x402B).
+    Label (NASA.prc): ENUM_IN_COIL_FREEZING_CONTROL
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InStateDefrostControl(SamsungEnum, IntEnum):
+    """
+    Indoor unit defrost control state (Message 0x402D).
+    Label (NASA.prc): ENUM_IN_STATE_DEFROST_CONTROL
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InStateDefrostMode(SamsungEnum, IntEnum):
+    """
+    Indoor unit defrost mode state (Message 0x402E).
+    Label (NASA.prc): ENUM_IN_STATE_DEFROST_MODE
+    """
+
+    NORMAL = 0
+    DEFROST = 1
+
+
+class InMtfc(SamsungEnum, IntEnum):
+    """
+    Indoor unit MTFC control (Message 0x402F).
+    Label (NASA.prc): ENUM_IN_MTFC
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InLouverVlFull(SamsungEnum, IntEnum):
+    """
+    Indoor unit louver VL full control (Message 0x4031).
+    Label (NASA.prc): ENUM_IN_LOUVER_VL_FULL
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InThermistorOpen(SamsungEnum, IntEnum):
+    """
+    Indoor unit thermistor open status (Message 0x4035).
+    Label (NASA.prc): ENUM_IN_THERMISTOR_OPEN
+    """
+
+    NORMAL = 0
+    OPEN = 1
+
+
+class InIceCheckPoint(SamsungEnum, IntEnum):
+    """
+    Indoor unit ice check point (Message 0x4043).
+    Label (NASA.prc): ENUM_IN_ICE_CHECK_POINT
+    """
+
+    NORMAL = 0
+    CHECK = 1
+
+
+class InSilence(SamsungEnum, IntEnum):
+    """
+    Indoor unit silence mode (Message 0x4046).
+    Label (NASA.prc): ENUM_IN_SILENCE
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InWifiKitPower(SamsungEnum, IntEnum):
+    """
+    Indoor unit WiFi kit power (Message 0x4047).
+    Label (NASA.prc): ENUM_IN_WIFI_KIT_POWER
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InWifiKitControl(SamsungEnum, IntEnum):
+    """
+    Indoor unit WiFi kit control (Message 0x4048).
+    Label (NASA.prc): ENUM_IN_WIFI_KIT_CONTROL
+    """
+
+    DISABLED = 0
+    ENABLED = 1
+
+
+class InLouverVl(SamsungEnum, IntEnum):
+    """
+    Indoor unit louver VL control (Message 0x404F).
+    Label (NASA.prc): ENUM_IN_LOUVER_VL
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InLouverHlDownUp(SamsungEnum, IntEnum):
+    """
+    Indoor unit louver HL down up control (Message 0x4051).
+    Label (NASA.prc): ENUM_IN_LOUVER_HL_DOWN_UP
+    """
+
+    DOWN = 0
+    UP = 1
+
+
+class InLouverHlNowPos(SamsungEnum, IntEnum):
+    """
+    Indoor unit louver HL current position (Message 0x4059).
+    Label (NASA.prc): ENUM_IN_LOUVER_HL_NOW_POS
+    """
+
+    DOWN = 0
+    UP = 1
+
+
+class InLouverVlPos(SamsungEnum, IntEnum):
+    """
+    Indoor unit louver VL position (Message 0x405F).
+    Label (NASA.prc): ENUM_IN_LOUVER_VL_POS
+    """
+
+    FULL_CLOSE = 0
+    PARTIAL_OPEN = 1
+    FULL_OPEN = 2
+
+
+class InThermostatMode(SamsungEnum, IntEnum):
+    """
+    Indoor unit thermostat mode (Message 0x4067).
+    Label (NASA.prc): ENUM_IN_THERMOSTAT_MODE
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InSolarPump(SamsungEnum, IntEnum):
+    """
+    Indoor unit solar pump control (Message 0x4068).
+    Label (NASA.prc): ENUM_IN_SOLAR_PUMP
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InThermostat0(SamsungEnum, IntEnum):
+    """
+    Indoor unit thermostat 0 mode (Message 0x406B).
+    Label (NASA.prc): ENUM_IN_THERMOSTAT0
+    """
+
+    DISABLED = 0
+    ENABLED = 1
+
+
+class InOutingMode(SamsungEnum, IntEnum):
+    """
+    Indoor unit outing mode (Message 0x406D).
+    Label (NASA.prc): ENUM_IN_OUTING_MODE
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InQuietMode(SamsungEnum, IntEnum):
+    """
+    Indoor unit quiet mode (Message 0x406E).
+    Label (NASA.prc): ENUM_IN_QUIET_MODE
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InDischargeTempControl(SamsungEnum, IntEnum):
+    """
+    Indoor unit discharge temperature control (Message 0x4070).
+    Label (NASA.prc): ENUM_IN_DISCHARGE_TEMP_CONTROL
+    """
+
+    DISABLED = 0
+    ENABLED = 1
+
+
+class InLouverHlAuto(SamsungEnum, IntEnum):
+    """
+    Indoor unit louver HL auto control (Message 0x4073).
+    Label (NASA.prc): ENUM_IN_LOUVER_HL_AUTO
+    """
+
+    MANUAL = 0
+    AUTO = 1
+
+
+class InLouverHlAutoUpDown(SamsungEnum, IntEnum):
+    """
+    Indoor unit louver HL auto up/down control (Message 0x4074).
+    Label (NASA.prc): ENUM_IN_LOUVER_HL_AUTO_UP_DOWN
+    """
+
+    DOWN = 0
+    UP = 1
+
+
+class InWallMountedRemoteControl(SamsungEnum, IntEnum):
+    """
+    Indoor unit wall mounted remote control (Message 0x4077).
+    Label (NASA.prc): ENUM_IN_WALL_MOUNTED_REMOTE_CONTROL
+    """
+
+    DISABLED = 0
+    ENABLED = 1
+
+
+class InFsv302LouverControl(SamsungEnum, IntEnum):
+    """
+    Indoor unit FSV 302 louver control (Message 0x407B).
+    Label (NASA.prc): ENUM_IN_FSV302_LOUVER_CONTROL
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InFsv302LouverValue(SamsungEnum, IntEnum):
+    """
+    Indoor unit FSV 302 louver value (Message 0x407D).
+    Label (NASA.prc): ENUM_IN_FSV302_LOUVER_VALUE
+    """
+
+    CLOSE = 0
+    OPEN = 1
+
+
+class InFsv302TimeSchedule(SamsungEnum, IntEnum):
+    """
+    Indoor unit FSV 302 time schedule (Message 0x4085).
+    Label (NASA.prc): ENUM_IN_FSV302_TIME_SCHEDULE
+    """
+
+    DISABLED = 0
+    ENABLED = 1
+    pass

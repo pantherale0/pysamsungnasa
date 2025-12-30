@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import logging
 
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from datetime import datetime, timezone
 
 from .controllers import DhwController, ClimateController
 from ..config import NasaConfig
 from ..protocol.enum import DataType, AddressClass, InFsv3011EnableDhw, OutOutdoorCoolonlyModel
 from ..protocol.parser import NasaPacketParser
-from ..protocol.factory.messaging import SendMessage
+from ..protocol.factory.messaging import SendMessage, BaseMessage
 
 if TYPE_CHECKING:
     from ..nasa_client import NasaClient
@@ -53,8 +53,6 @@ class NasaDevice:
         0x8061: "outdoor_defrost_status",
     }
 
-    attributes: dict[int, Any]
-
     def __init__(
         self,
         address: str,
@@ -65,9 +63,10 @@ class NasaDevice:
     ) -> None:
         self.address = address
         self.device_type = device_type
-        self.attributes = {}
+        self.attributes: dict[int, BaseMessage] = {}
         self.config = config
         self.last_packet_time = None
+        self.fsv_config = {}
         self._device_callbacks = []
         self._packet_callbacks = {}
         self._client = client
@@ -126,8 +125,12 @@ class NasaDevice:
         """Return the DHW state."""
         if self.device_type != AddressClass.INDOOR:
             return None
+        if self._dhw_controller is None:
+            return None
+        if 0x809D not in self.attributes:
+            return None
         if (
-            self.attributes.get(0x809D, {}).get("value") == OutOutdoorCoolonlyModel.NO_HEAT_PUMP
+            self.attributes[0x809D].VALUE == OutOutdoorCoolonlyModel.NO_HEAT_PUMP
             and self._dhw_controller.current_temperature is None
         ):
             return None
@@ -144,7 +147,7 @@ class NasaDevice:
         """Handle a packet sent to this device from the parser."""
         self.last_packet_time = datetime.now(timezone.utc)
         message_number = kwargs["messageNumber"]
-        packet_data = kwargs["packet"]
+        packet_data: BaseMessage = kwargs["packet"]
         log_message = (
             str(self.config.address) == kwargs["dest"]
             or self.config.log_all_messages
@@ -153,10 +156,7 @@ class NasaDevice:
 
         if log_message:
             _LOGGER.debug("Handing packet for device %s: %s", self.address, kwargs)
-        self.attributes[message_number] = {
-            **packet_data,
-            "formatted_message": kwargs["formattedMessageNumber"],
-        }
+        self.attributes[message_number] = packet_data
         if log_message:
             _LOGGER.debug(
                 "Device %s: Stored parsed attribute for msg %s (%s): %s",
@@ -166,25 +166,25 @@ class NasaDevice:
                 self.attributes[message_number],
             )
 
-        value = packet_data.get("value")
-
         if message_number == 0x4097:  # DHW ENABLE
-            if value != InFsv3011EnableDhw.NO:
+            if packet_data.VALUE != InFsv3011EnableDhw.NO:
                 self._dhw_controller = DhwController(
                     address=self.address,
                     message_sender=self._client.send_message,
                 )
 
+        # Test if the packet is an FSV configuration packet
+        if packet_data.is_fsv_message:
+            self.fsv_config[message_number] = packet_data.VALUE
+
         # Update DHW controller if it exists and the message is relevant
         if self._dhw_controller and message_number in self._DHW_MESSAGE_MAP:
             attr_name = self._DHW_MESSAGE_MAP[message_number]
-            setattr(self._dhw_controller, attr_name, value)
-
+            setattr(self._dhw_controller, attr_name, packet_data.VALUE)
         # Update Climate controller if it exists and the message is relevant
         if self._climate_controller and message_number in self._CLIMATE_MESSAGE_MAP:
             attr_name = self._CLIMATE_MESSAGE_MAP[message_number]
-            setattr(self._climate_controller, attr_name, value)
-
+            setattr(self._climate_controller, attr_name, packet_data.VALUE)
         for callback in self._device_callbacks:
             try:
                 callback(self)

@@ -26,11 +26,45 @@ from ...enum import (
     InFsv3011EnableDhw as InFsv3011EnableDhwEnum,
     InFsv3061UseDhwThermostat as InFsv3061UseDhwThermostatEnum,
     InFsv3071 as InFsv3071Enum,
-    InFsv4011,
-    InFsv4021,
-    InFsv4022,
-    InFsv4041,
     InFsv5022 as InFsv5022Enum,
+    InOperationVentPower,
+    InOperationVentPowerSetting,
+    InOperationRoomFan,
+    InOperationRoomFanControl,
+    InOperationOutdoorFan,
+    InLouverLrFull,
+    InLouverLr,
+    InLouverVlRightDownSwing,
+    InLouverVlLeftDownSwing,
+    InDrainPumpPower,
+    InBackupHeaterPower,
+    InIceCtrlState,
+    InCoilFreezingControl,
+    InStateDefrostControl,
+    InStateDefrostMode,
+    InMtfc,
+    InLouverVlFull,
+    InThermistorOpen,
+    InIceCheckPoint,
+    InSilence,
+    InWifiKitPower,
+    InWifiKitControl,
+    InLouverVl,
+    InLouverHlDownUp,
+    InLouverHlNowPos,
+    InLouverVlPos,
+    InThermostatMode,
+    InSolarPump,
+    InThermostat0,
+    InOutingMode,
+    InQuietMode,
+    InDischargeTempControl,
+    InLouverHlAuto,
+    InLouverHlAutoUpDown,
+    InWallMountedRemoteControl,
+    InFsv302LouverControl,
+    InFsv302LouverValue,
+    InFsv302TimeSchedule,
 )
 
 
@@ -58,11 +92,11 @@ class InOperationModeRealMessage(EnumMessage):
     MESSAGE_ENUM = InOperationModeReal
 
 
-class InOperationVentModeMessage(EnumMessage):
-    """Parser for message 0x4005 (Indoor Operation Ventilation Mode)."""
+class InOperationVentModeMessage2(EnumMessage):
+    """Parser for message 0x4005 (Indoor Operation Ventilation Mode 2)."""
 
     MESSAGE_ID = 0x4005
-    MESSAGE_NAME = "Indoor Operation Ventilation Mode"
+    MESSAGE_NAME = "Indoor Operation Ventilation Mode 2"
     MESSAGE_ENUM = InOperationVentMode
 
 
@@ -588,3 +622,307 @@ class IndoorFlowTemperature(BasicTemperatureMessage):
 
     MESSAGE_ID = 0x4238
     MESSAGE_NAME = "Indoor Flow Temperature"
+
+
+class InOperationVentPowerMessage(EnumMessage):
+    """Parser for message 0x4003 (Indoor Operation Ventilation Power)."""
+
+    MESSAGE_ID = 0x4003
+    MESSAGE_NAME = "Indoor Operation Ventilation Power"
+    MESSAGE_ENUM = InOperationVentPower
+
+
+class InOperationVentModeMessage(EnumMessage):
+    """Parser for message 0x4004 (Indoor Operation Ventilation Mode Setting)."""
+
+    MESSAGE_ID = 0x4004
+    MESSAGE_NAME = "Indoor Operation Ventilation Mode Setting"
+    MESSAGE_ENUM = InOperationVentPowerSetting
+
+
+class InOperationRoomFanMessage(EnumMessage):
+    """Parser for message 0x400F (Indoor Operation Room Fan)."""
+
+    MESSAGE_ID = 0x400F
+    MESSAGE_NAME = "Indoor Operation Room Fan"
+    MESSAGE_ENUM = InOperationRoomFan
+
+
+class InOperationRoomFanControlMessage(EnumMessage):
+    """Parser for message 0x4010 (Indoor Operation Room Fan Control)."""
+
+    MESSAGE_ID = 0x4010
+    MESSAGE_NAME = "Indoor Operation Room Fan Control"
+    MESSAGE_ENUM = InOperationRoomFanControl
+
+
+class InOperationOutdoorFanMessage(EnumMessage):
+    """Parser for message 0x4015 (Indoor Operation Outdoor Fan)."""
+
+    MESSAGE_ID = 0x4015
+    MESSAGE_NAME = "Indoor Operation Outdoor Fan"
+    MESSAGE_ENUM = InOperationOutdoorFan
+
+
+class InLouverLrFullMessage(EnumMessage):
+    """Parser for message 0x4019 (Indoor Louver LR Full)."""
+
+    MESSAGE_ID = 0x4019
+    MESSAGE_NAME = "Indoor Louver LR Full"
+    MESSAGE_ENUM = InLouverLrFull
+
+
+class InLouverLrMessage(EnumMessage):
+    """Parser for message 0x401B (Indoor Louver LR)."""
+
+    MESSAGE_ID = 0x401B
+    MESSAGE_NAME = "Indoor Louver LR"
+    MESSAGE_ENUM = InLouverLr
+
+
+class InLouverVlRightDownSwingMessage(EnumMessage):
+    """Parser for message 0x4023 (Indoor Louver VL Right Down Swing)."""
+
+    MESSAGE_ID = 0x4023
+    MESSAGE_NAME = "Indoor Louver VL Right Down Swing"
+    MESSAGE_ENUM = InLouverVlRightDownSwing
+
+
+class InLouverVlLeftDownSwingMessage(EnumMessage):
+    """Parser for message 0x4024 (Indoor Louver VL Left Down Swing)."""
+
+    MESSAGE_ID = 0x4024
+    MESSAGE_NAME = "Indoor Louver VL Left Down Swing"
+    MESSAGE_ENUM = InLouverVlLeftDownSwing
+
+
+class InDrainPumpPowerMessage(EnumMessage):
+    """Parser for message 0x4027 (Indoor Drain Pump Power)."""
+
+    MESSAGE_ID = 0x4027
+    MESSAGE_NAME = "Indoor Drain Pump Power"
+    MESSAGE_ENUM = InDrainPumpPower
+
+
+class InBackupHeaterPowerMessage(EnumMessage):
+    """Parser for message 0x4029 (Indoor Backup Heater Power)."""
+
+    MESSAGE_ID = 0x4029
+    MESSAGE_NAME = "Indoor Backup Heater Power"
+    MESSAGE_ENUM = InBackupHeaterPower
+
+
+class InIceCtrlStateMessage(EnumMessage):
+    """Parser for message 0x402A (Indoor Ice Control State)."""
+
+    MESSAGE_ID = 0x402A
+    MESSAGE_NAME = "Indoor Ice Control State"
+    MESSAGE_ENUM = InIceCtrlState
+
+
+class InCoilFreezingControlMessage(EnumMessage):
+    """Parser for message 0x402B (Indoor Coil Freezing Control)."""
+
+    MESSAGE_ID = 0x402B
+    MESSAGE_NAME = "Indoor Coil Freezing Control"
+    MESSAGE_ENUM = InCoilFreezingControl
+
+
+class InStateDefrostControlMessage(EnumMessage):
+    """Parser for message 0x402D (Indoor State Defrost Control)."""
+
+    MESSAGE_ID = 0x402D
+    MESSAGE_NAME = "Indoor State Defrost Control"
+    MESSAGE_ENUM = InStateDefrostControl
+
+
+class InStateDefrostModeMessage(EnumMessage):
+    """Parser for message 0x402E (Indoor State Defrost Mode)."""
+
+    MESSAGE_ID = 0x402E
+    MESSAGE_NAME = "Indoor State Defrost Mode"
+    MESSAGE_ENUM = InStateDefrostMode
+
+
+class InMtfcMessage(EnumMessage):
+    """Parser for message 0x402F (Indoor MTFC)."""
+
+    MESSAGE_ID = 0x402F
+    MESSAGE_NAME = "Indoor MTFC"
+    MESSAGE_ENUM = InMtfc
+
+
+class InLouverVlFullMessage(EnumMessage):
+    """Parser for message 0x4031 (Indoor Louver VL Full)."""
+
+    MESSAGE_ID = 0x4031
+    MESSAGE_NAME = "Indoor Louver VL Full"
+    MESSAGE_ENUM = InLouverVlFull
+
+
+class InThermistorOpenMessage(EnumMessage):
+    """Parser for message 0x4035 (Indoor Thermistor Open)."""
+
+    MESSAGE_ID = 0x4035
+    MESSAGE_NAME = "Indoor Thermistor Open"
+    MESSAGE_ENUM = InThermistorOpen
+
+
+class InIceCheckPointMessage(EnumMessage):
+    """Parser for message 0x4043 (Indoor Ice Check Point)."""
+
+    MESSAGE_ID = 0x4043
+    MESSAGE_NAME = "Indoor Ice Check Point"
+    MESSAGE_ENUM = InIceCheckPoint
+
+
+class InSilenceMessage(EnumMessage):
+    """Parser for message 0x4046 (Indoor Silence Mode)."""
+
+    MESSAGE_ID = 0x4046
+    MESSAGE_NAME = "Indoor Silence Mode"
+    MESSAGE_ENUM = InSilence
+
+
+class InWifiKitPowerMessage(EnumMessage):
+    """Parser for message 0x4047 (Indoor WiFi Kit Power)."""
+
+    MESSAGE_ID = 0x4047
+    MESSAGE_NAME = "Indoor WiFi Kit Power"
+    MESSAGE_ENUM = InWifiKitPower
+
+
+class InWifiKitControlMessage(EnumMessage):
+    """Parser for message 0x4048 (Indoor WiFi Kit Control)."""
+
+    MESSAGE_ID = 0x4048
+    MESSAGE_NAME = "Indoor WiFi Kit Control"
+    MESSAGE_ENUM = InWifiKitControl
+
+
+class InLouverVlMessage(EnumMessage):
+    """Parser for message 0x404F (Indoor Louver VL)."""
+
+    MESSAGE_ID = 0x404F
+    MESSAGE_NAME = "Indoor Louver VL"
+    MESSAGE_ENUM = InLouverVl
+
+
+class InLouverHlDownUpMessage(EnumMessage):
+    """Parser for message 0x4051 (Indoor Louver HL Down Up)."""
+
+    MESSAGE_ID = 0x4051
+    MESSAGE_NAME = "Indoor Louver HL Down Up"
+    MESSAGE_ENUM = InLouverHlDownUp
+
+
+class InLouverHlNowPosMessage(EnumMessage):
+    """Parser for message 0x4059 (Indoor Louver HL Now Position)."""
+
+    MESSAGE_ID = 0x4059
+    MESSAGE_NAME = "Indoor Louver HL Now Position"
+    MESSAGE_ENUM = InLouverHlNowPos
+
+
+class InLouverVlPosMessage(EnumMessage):
+    """Parser for message 0x405F (Indoor Louver VL Position)."""
+
+    MESSAGE_ID = 0x405F
+    MESSAGE_NAME = "Indoor Louver VL Position"
+    MESSAGE_ENUM = InLouverVlPos
+
+
+class InThermostatModeMessage(EnumMessage):
+    """Parser for message 0x4067 (Indoor Thermostat Mode)."""
+
+    MESSAGE_ID = 0x4067
+    MESSAGE_NAME = "Indoor Thermostat Mode"
+    MESSAGE_ENUM = InThermostatMode
+
+
+class InSolarPumpMessage(EnumMessage):
+    """Parser for message 0x4068 (Indoor Solar Pump)."""
+
+    MESSAGE_ID = 0x4068
+    MESSAGE_NAME = "Indoor Solar Pump"
+    MESSAGE_ENUM = InSolarPump
+
+
+class InThermostat0Message(EnumMessage):
+    """Parser for message 0x406B (Indoor Thermostat 0)."""
+
+    MESSAGE_ID = 0x406B
+    MESSAGE_NAME = "Indoor Thermostat 0"
+    MESSAGE_ENUM = InThermostat0
+
+
+class InOutingModeMessage(EnumMessage):
+    """Parser for message 0x406D (Indoor Outing Mode)."""
+
+    MESSAGE_ID = 0x406D
+    MESSAGE_NAME = "Indoor Outing Mode"
+    MESSAGE_ENUM = InOutingMode
+
+
+class InQuietModeMessage(EnumMessage):
+    """Parser for message 0x406E (Indoor Quiet Mode)."""
+
+    MESSAGE_ID = 0x406E
+    MESSAGE_NAME = "Indoor Quiet Mode"
+    MESSAGE_ENUM = InQuietMode
+
+
+class InDischargeTempControlMessage(EnumMessage):
+    """Parser for message 0x4070 (Indoor Discharge Temperature Control)."""
+
+    MESSAGE_ID = 0x4070
+    MESSAGE_NAME = "Indoor Discharge Temperature Control"
+    MESSAGE_ENUM = InDischargeTempControl
+
+
+class InLouverHlAutoMessage(EnumMessage):
+    """Parser for message 0x4073 (Indoor Louver HL Auto)."""
+
+    MESSAGE_ID = 0x4073
+    MESSAGE_NAME = "Indoor Louver HL Auto"
+    MESSAGE_ENUM = InLouverHlAuto
+
+
+class InLouverHlAutoUpDownMessage(EnumMessage):
+    """Parser for message 0x4074 (Indoor Louver HL Auto Up Down)."""
+
+    MESSAGE_ID = 0x4074
+    MESSAGE_NAME = "Indoor Louver HL Auto Up Down"
+    MESSAGE_ENUM = InLouverHlAutoUpDown
+
+
+class InWallMountedRemoteControlMessage(EnumMessage):
+    """Parser for message 0x4077 (Indoor Wall Mounted Remote Control)."""
+
+    MESSAGE_ID = 0x4077
+    MESSAGE_NAME = "Indoor Wall Mounted Remote Control"
+    MESSAGE_ENUM = InWallMountedRemoteControl
+
+
+class InFsv302LouverControlMessage(EnumMessage):
+    """Parser for message 0x407B (Indoor FSV 302 Louver Control)."""
+
+    MESSAGE_ID = 0x407B
+    MESSAGE_NAME = "Indoor FSV 302 Louver Control"
+    MESSAGE_ENUM = InFsv302LouverControl
+
+
+class InFsv302LouverValueMessage(EnumMessage):
+    """Parser for message 0x407D (Indoor FSV 302 Louver Value)."""
+
+    MESSAGE_ID = 0x407D
+    MESSAGE_NAME = "Indoor FSV 302 Louver Value"
+    MESSAGE_ENUM = InFsv302LouverValue
+
+
+class InFsv302TimeScheduleMessage(EnumMessage):
+    """Parser for message 0x4085 (Indoor FSV 302 Time Schedule)."""
+
+    MESSAGE_ID = 0x4085
+    MESSAGE_NAME = "Indoor FSV 302 Time Schedule"
+    MESSAGE_ENUM = InFsv302TimeSchedule

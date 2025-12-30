@@ -21,8 +21,7 @@ def load_message_classes():
         for name, obj in inspect.getmembers(module, inspect.isclass):
             # Ensure the class is defined in the module (not imported)
             if obj.__module__ == full_module_name:
-                pass
-            if issubclass(obj, BaseMessage) and hasattr(obj, "MESSAGE_ID"):
-                classes[obj.MESSAGE_ID] = obj
+                if issubclass(obj, BaseMessage) and hasattr(obj, "MESSAGE_ID"):
+                    classes[obj.MESSAGE_ID] = obj
 
     return classes

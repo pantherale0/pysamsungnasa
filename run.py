@@ -3,9 +3,11 @@
 import asyncio
 import os
 import logging
+import argparse
 
 from dotenv import load_dotenv
 from pysamsungnasa import SamsungNasa
+from pysamsungnasa.cli import interactive_cli
 
 load_dotenv()
 
@@ -19,22 +21,38 @@ async def main():
             "device_pnp": True,
             "device_dump_only": False,
             "log_all_messages": True,
-            "log_buffer_messages": False,
+            "log_buffer_messages": True,
             "devices_to_log": ["200000"],
         },
     )
     try:
         await nasa.start()
-        await nasa.client.nasa_read([0x4097])
+        await nasa.client.nasa_read([0x4097], "200000")
         while True:
-            await asyncio.sleep(5)
-            # for k, v in nasa.devices.items():
-            #     logging.info("Device %s:", k)
-            #     logging.info("  Type: %s", v.device_type.name)
-            #     logging.info("  Address: %s", v.address)
-            #     logging.info("  Attributes: %s", v.attributes)
-            #     logging.info("  Last packet time: %s", v.last_packet_time)
+            await asyncio.sleep(0.1)
     except (KeyboardInterrupt, asyncio.exceptions.CancelledError):
+        await nasa.stop()
+
+
+async def start_cli():
+    """Start the interactive CLI."""
+    nasa = SamsungNasa(
+        host=os.getenv("SAMSUNG_HP_HOST", "unknown"),
+        port=int(os.getenv("SAMSUNG_HP_PORT", 0)),
+        config={
+            "device_pnp": True,
+            "device_dump_only": False,
+            "log_all_messages": True,
+            "log_buffer_messages": True,
+            "devices_to_log": ["200000"],
+        },
+    )
+    try:
+        await nasa.start()
+        await interactive_cli(nasa)
+    except (KeyboardInterrupt, asyncio.exceptions.CancelledError):
+        pass
+    finally:
         await nasa.stop()
 
 
@@ -43,6 +61,6 @@ if __name__ == "__main__":
         level=logging.DEBUG,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
-        # filename="nasa.log",
+        filename="nasa.log",
     )
-    asyncio.run(main())
+    asyncio.run(start_cli())
