@@ -571,8 +571,6 @@ class NasaClient:
         self, msg: int, value: str, destination: NasaDevice | str, data_type: DataType
     ) -> int | bytes | None:
         """Send write requests to a device to write data."""
-        from .helpers import hex2bin
-
         message = SendMessage(MESSAGE_ID=msg, PAYLOAD=hex2bin(value))
         return await self.send_message(
             destination=destination,

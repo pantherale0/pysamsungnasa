@@ -15,8 +15,8 @@ from ..enum import SamsungEnum
 class SendMessage:
     """Base class that represents all sent NASA messages."""
 
-    MESSAGE_ID: int
-    PAYLOAD: bytes
+    MESSAGE_ID: int  # pylint: disable=invalid-name
+    PAYLOAD: bytes  # pylint: disable=invalid-name
 
 
 class BaseMessage(ABC):
@@ -29,8 +29,8 @@ class BaseMessage(ABC):
     UNIT_OF_MEASUREMENT: ClassVar[Optional[str]] = None
 
     def __init__(self, value: Any, options: Optional[list[str]] = None):
-        self.VALUE = value
-        self.OPTIONS = options
+        self.VALUE = value  # pylint: disable=invalid-name
+        self.OPTIONS = options  # pylint: disable=invalid-name
 
     @property
     def is_fsv_message(self) -> bool:
@@ -132,6 +132,8 @@ class EnumMessage(BaseMessage):
         """Parse the payload into an enum value."""
         if cls.MESSAGE_ENUM is None:
             raise ValueError(f"{cls.__name__} does not have a MESSAGE_ENUM defined.")
+        if not isinstance(cls.MESSAGE_ENUM, type) or not issubclass(cls.MESSAGE_ENUM, SamsungEnum):
+            raise TypeError(f"{cls.__name__}.MESSAGE_ENUM must be a SamsungEnum subclass.")
         if cls.MESSAGE_ENUM.has_value(payload[0]):
             return cls(
                 value=cls.MESSAGE_ENUM(payload[0]),

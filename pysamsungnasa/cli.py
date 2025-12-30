@@ -7,6 +7,7 @@ import aioconsole
 
 from .nasa import SamsungNasa
 from .device import NasaDevice, IndoorNasaDevice, OutdoorNasaDevice
+from .protocol.enum import DataType
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -46,17 +47,16 @@ def print_device_header(device: NasaDevice):
         print(f"  DHW power: {device.dhw_controller.power if device.dhw_controller else 'N/A'}")
         print(f"  DHW target temp: {device.dhw_controller.target_temperature if device.dhw_controller else 'N/A'}")
         print(f"  DHW operation mode: {device.dhw_controller.operation_mode if device.dhw_controller else 'N/A'}")
-        print(f"  Climate Controller: {'Yes' if device.climate_controller else 'No'}")
-        print(f"  Climate power: {device.climate_controller.power if device.climate_controller else 'N/A'}")
-        print(
-            f"  Climate Controller mode: {device.climate_controller.current_mode if device.climate_controller else 'N/A'}"
-        )
-        print(
-            f"  Climate Controller target temp: {device.climate_controller.f_target_temperature if device.climate_controller else 'N/A'}"
-        )
-        print(
-            f"  Climate Controller current temp: {device.climate_controller.f_current_temperature if device.climate_controller else 'N/A'}"
-        )
+        has_cc = device.climate_controller
+        print(f"  Climate Controller: {'Yes' if has_cc else 'No'}")
+        cc_power = has_cc.power if has_cc else "N/A"
+        print(f"  Climate power: {cc_power}")
+        cc_mode = has_cc.current_mode if has_cc else "N/A"
+        print(f"  Climate Controller mode: {cc_mode}")
+        cc_target_temp = has_cc.f_target_temperature if has_cc else "N/A"
+        print(f"  Climate Controller target temp: {cc_target_temp}")
+        cc_current_temp = has_cc.f_current_temperature if has_cc else "N/A"
+        print(f"  Climate Controller current temp: {cc_current_temp}")
     if isinstance(device, OutdoorNasaDevice):
         print(f"  Outdoor air temp: {device.outdoor_temperature}")
         print(f"  Heatpump voltage: {device.heatpump_voltage}")
@@ -75,7 +75,7 @@ async def print_logs():
 
     try:
         # Read nasa.log to get last 20 lines
-        with open("nasa.log", "r") as f:
+        with open("nasa.log", "r", encoding="utf-8") as f:
             lines = f.readlines()[-20:]
         for line in lines:
             print(line.strip())
@@ -130,9 +130,6 @@ async def interactive_cli(nasa: SamsungNasa):
                         continue
                     value = parts[3]
                     print(f"Writing to {device_id}, message {hex(message_id)}, value {value}")
-                    # Assuming nasa_write needs a specific data_type, using default for now
-                    from .protocol.enum import DataType
-
                     response = await nasa.client.nasa_write(message_id, value, device_id, DataType.WRITE)
                     print(f"Response: {response}")
             elif command == "device":
@@ -172,7 +169,7 @@ async def interactive_cli(nasa: SamsungNasa):
                     if len(parts) == 4:
                         key = parts[2]
                         value = parts[3]
-                        nasa.config.__setattr__(key, value)
+                        setattr(nasa.config, key, value)
                         print(f"Config set: {key} = {value}")
                     else:
                         print("Usage: config set <key> <value>")

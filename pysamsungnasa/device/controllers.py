@@ -25,7 +25,7 @@ from ..protocol.enum import (
     InFanMode,
     ErvFanSpeed,
     OutdoorOperationStatus,
-    OutdoorOperationMode,
+    OutdoorOperationHeatCool,
     OutdoorIndoorDefrostStep,
     InFsv3011EnableDhw,
     InFsv2041WaterLawTypeHeating,
@@ -60,7 +60,7 @@ class DhwController(ControllerBase):
     target_temperature: Optional[float] = None
     current_temperature: Optional[float] = None
     outdoor_operation_status: Optional[OutdoorOperationStatus] = None
-    outdoor_operation_mode: Optional[OutdoorOperationMode] = None
+    outdoor_operation_mode: Optional[OutdoorOperationHeatCool] = None
     dhw_enable_status: Optional[InFsv3011EnableDhw] = None
 
     async def turn_on(self):
@@ -134,7 +134,7 @@ class ClimateController(ControllerBase):
     water_outlet_target_temperature: Optional[float] = None
     water_outlet_current_temperature: Optional[float] = None
     outdoor_operation_status: Optional[OutdoorOperationStatus] = None
-    outdoor_operation_mode: Optional[OutdoorOperationMode] = None
+    outdoor_operation_mode: Optional[OutdoorOperationHeatCool] = None
     outdoor_defrost_status: Optional[OutdoorIndoorDefrostStep] = None
 
     # Water law mode configuration

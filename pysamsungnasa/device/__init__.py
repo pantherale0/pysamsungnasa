@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 
 from .controllers import DhwController, ClimateController, WaterLawMode
 from ..config import NasaConfig
-from ..protocol.enum import AddressClass, InFsv3011EnableDhw, OutOutdoorCoolonlyModel, InUseThermostat
+from ..protocol.enum import AddressClass, OutOutdoorCoolonlyModel, InUseThermostat
 from ..protocol.parser import NasaPacketParser
 from ..protocol.factory.messaging import BaseMessage
 
@@ -80,7 +80,7 @@ class NasaDevice:
                     destination=self.address,
                 )
 
-    def handle_packet(self, *nargs, **kwargs):
+    def handle_packet(self, *_nargs, **kwargs):
         """Handle a packet sent to this device from the parser."""
         self.last_packet_time = datetime.now(timezone.utc)
         message_number = kwargs["messageNumber"]
@@ -200,13 +200,13 @@ class IndoorNasaDevice(NasaDevice):
     async def get_configuration(self):
         """Get the configuration (FSVs) of the device."""
         await super().get_configuration()
-        for k in self._CLIMATE_MESSAGE_MAP.keys():
+        for k in self._CLIMATE_MESSAGE_MAP:
             if k not in self.fsv_config:
                 await self._client.nasa_read(
                     msgs=[k],
                     destination=self.address,
                 )
-        for k in self._DHW_MESSAGE_MAP.keys():
+        for k in self._DHW_MESSAGE_MAP:
             if k not in self.fsv_config:
                 await self._client.nasa_read(
                     msgs=[k],
@@ -247,7 +247,7 @@ class IndoorNasaDevice(NasaDevice):
             # External thermostat is enabled
             inferred_mode = WaterLawMode.WATER_LAW_EXTERNAL_THERMOSTAT
             _LOGGER.debug(
-                "Device %s: Inferred water law mode EXTERNAL_THERMOSTAT " "(thermostat_1=%s, thermostat_2=%s)",
+                "Device %s: Inferred water law mode EXTERNAL_THERMOSTAT (thermostat_1=%s, thermostat_2=%s)",
                 self.address,
                 self._climate_controller.use_external_thermostat_1,
                 self._climate_controller.use_external_thermostat_2,
@@ -256,13 +256,13 @@ class IndoorNasaDevice(NasaDevice):
             # No external thermostat, must be using internal room temperature feedback
             inferred_mode = WaterLawMode.WATER_LAW_INTERNAL_THERMOSTAT
             _LOGGER.debug(
-                "Device %s: Inferred water law mode INTERNAL_THERMOSTAT " "(no external thermostat detected)",
+                "Device %s: Inferred water law mode INTERNAL_THERMOSTAT (no external thermostat detected)",
                 self.address,
             )
 
         self._climate_controller.water_law_mode = inferred_mode
 
-    def handle_packet(self, *nargs, **kwargs):
+    def handle_packet(self, *_nargs, **kwargs):
         message_number = kwargs["messageNumber"]
         packet_data: BaseMessage = kwargs["packet"]
         # Update DHW controller if it exists and the message is relevant
@@ -277,7 +277,7 @@ class IndoorNasaDevice(NasaDevice):
         # Infer water law mode if we have updated a relevant configuration message
         if self._climate_controller and message_number in (0x4095, 0x4096):
             self._infer_water_law_mode()
-        return super().handle_packet(*nargs, **kwargs)
+        return super().handle_packet(*_nargs, **kwargs)
 
 
 class OutdoorNasaDevice(NasaDevice):

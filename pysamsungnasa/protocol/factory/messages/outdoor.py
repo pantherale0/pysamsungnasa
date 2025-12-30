@@ -10,7 +10,24 @@ from ..messaging import (
     RawMessage,
     StrMessage,
 )
-from ...enum import OutdoorOperationStatus, OutdoorOperationMode, OutdoorIndoorDefrostStep, OutOutdoorCoolonlyModel
+from ...enum import (
+    OutdoorOperationStatus,
+    OutdoorIndoorDefrostStep,
+    OutOutdoorCoolonlyModel,
+    OutdoorEviSolenoid,
+    OutdoorOperationServiceOp,
+    OutdoorOperationHeatCool,
+    OutdoorCompressorLoad,
+    OutdoorCchLoad,
+    OutdoorHotGasLoad,
+    OutdoorLiquidLoad,
+    Outdoor4WayLoad,
+    OutdoorMainCoolLoad,
+    OutdoorEviBypassLoad,
+    OutdoorGasChargeLoad,
+    OutdoorWaterValveLoad,
+    OutdoorPumpOutLoad,
+)
 
 
 class OutdoorErrorCode1(RawMessage):
@@ -34,6 +51,14 @@ class OutdoorOperationModeLimit(FloatMessage):
     MESSAGE_NAME = "Outdoor Operation Mode Limit"
 
 
+class OutdoorOperationServiceOpMessage(EnumMessage):
+    """Parser for message 0x8000 (Outdoor Operation Service Operation)."""
+
+    MESSAGE_ID = 0x8000
+    MESSAGE_NAME = "Outdoor Operation Service Operation"
+    MESSAGE_ENUM = OutdoorOperationServiceOp
+
+
 class OutdoorOperationStatusMessage(EnumMessage):
     """Parser for message 0x8001 (Outdoor Operation Status)."""
 
@@ -46,39 +71,91 @@ class OutdoorOperationHeatCoolMessage(EnumMessage):
     """Parser for message 0x8003 (Outdoor Operation Heat/Cool)."""
 
     MESSAGE_ID = 0x8003
-    MESSAGE_NAME = "Outdoor Operation Mode"
-    MESSAGE_ENUM = OutdoorOperationMode
+    MESSAGE_NAME = "Outdoor Operation Heat/Cool Mode"
+    MESSAGE_ENUM = OutdoorOperationHeatCool
 
 
-class OutdoorCompressor1Status(FloatMessage):
-    """Parser for message 0x8010 (Outdoor Compressor 1 Status)."""
+class OutdoorCompressor1LoadMessage(EnumMessage):
+    """Parser for message 0x8010 (Outdoor Compressor 1 Load)."""
 
     MESSAGE_ID = 0x8010
-    MESSAGE_NAME = "Outdoor Compressor 1 Status"
+    MESSAGE_NAME = "Outdoor Compressor 1 Load"
+    MESSAGE_ENUM = OutdoorCompressorLoad
 
 
-class OutdoorLoadHotGas1(RawMessage):
-    """Parser for message 0x8011 (Outdoor Load Hot Gas 1)."""
+class OutdoorCompressor2LoadMessage(EnumMessage):
+    """Parser for message 0x8011 (Outdoor Compressor 2 Load)."""
 
     MESSAGE_ID = 0x8011
-    MESSAGE_NAME = "Outdoor Load Hot Gas 1"
+    MESSAGE_NAME = "Outdoor Compressor 2 Load"
+    MESSAGE_ENUM = OutdoorCompressorLoad
 
 
-class OutdoorLoadHotGas2(RawMessage):
-    """Parser for message 0x8012 (Outdoor Load Hot Gas 2)."""
+class OutdoorCompressor3LoadMessage(EnumMessage):
+    """Parser for message 0x8012 (Outdoor Compressor 3 Load)."""
 
     MESSAGE_ID = 0x8012
-    MESSAGE_NAME = "Outdoor Load Hot Gas 2"
+    MESSAGE_NAME = "Outdoor Compressor 3 Load"
+    MESSAGE_ENUM = OutdoorCompressorLoad
 
 
-class OutdoorLoad4WayValveMessage(RawMessage):
+class OutdoorCch1LoadMessage(EnumMessage):
+    """Parser for message 0x8013 (Outdoor CCH1 Load)."""
+
+    MESSAGE_ID = 0x8013
+    MESSAGE_NAME = "Outdoor CCH1 Load"
+    MESSAGE_ENUM = OutdoorCchLoad
+
+
+class OutdoorCch2LoadMessage(EnumMessage):
+    """Parser for message 0x8014 (Outdoor CCH2 Load)."""
+
+    MESSAGE_ID = 0x8014
+    MESSAGE_NAME = "Outdoor CCH2 Load"
+    MESSAGE_ENUM = OutdoorCchLoad
+
+
+class OutdoorHotGas1LoadMessage(EnumMessage):
+    """Parser for message 0x8017 (Outdoor Hot Gas 1 Load)."""
+
+    MESSAGE_ID = 0x8017
+    MESSAGE_NAME = "Outdoor Hot Gas 1 Load"
+    MESSAGE_ENUM = OutdoorHotGasLoad
+
+
+class OutdoorHotGas2LoadMessage(EnumMessage):
+    """Parser for message 0x8018 (Outdoor Hot Gas 2 Load)."""
+
+    MESSAGE_ID = 0x8018
+    MESSAGE_NAME = "Outdoor Hot Gas 2 Load"
+    MESSAGE_ENUM = OutdoorHotGasLoad
+
+
+class OutdoorLiquidLoadMessage(EnumMessage):
+    """Parser for message 0x8019 (Outdoor Liquid Load)."""
+
+    MESSAGE_ID = 0x8019
+    MESSAGE_NAME = "Outdoor Liquid Load"
+    MESSAGE_ENUM = OutdoorLiquidLoad
+
+
+class OutdoorLoad4WayValveMessage(EnumMessage):
     """Parser for message 0x801A (Outdoor Load 4-Way Valve)."""
 
     MESSAGE_ID = 0x801A
     MESSAGE_NAME = "Outdoor Load 4-Way Valve"
+    MESSAGE_ENUM = Outdoor4WayLoad
 
 
-class OutdoorLoadOutEev(RawMessage):
+class OutdoorMainCoolLoadMessage(EnumMessage):
+    """Parser for message 0x801F (Outdoor Main Cool Load)."""
+
+    MESSAGE_ID = 0x801F
+    MESSAGE_NAME = "Outdoor Main Cool Load"
+    MESSAGE_ENUM = OutdoorMainCoolLoad
+
+
+class OutdoorLoadOutEevMessage(EnumMessage):
     """Parser for message 0x8020 (Load EEV status) - Enum value indicating on/off state."""
 
     MESSAGE_ID = 0x8020
@@ -295,6 +372,58 @@ class OutdoorProjectCode(StrMessage):
     MESSAGE_NAME = "Outdoor Project Code"
 
 
+class OutdoorSerialNumber(StrMessage):
+    """Parser for message 0x0607 (Serial Number).
+
+    This is a string structure message containing the device serial number.
+    Type: STR (String structure)
+
+    IMPORTANT: This structure returns INCOMPLETE data via submessages:
+    - 0x0730: Manufacturer/model prefix (e.g., "TYXP")
+    - 0x4654: Serial number suffix (e.g., "900834F")
+
+    Known device example:
+    Physical label: "0TYXPAFT900834F"
+    Structure response:
+      - 0x0730: "TYXP"
+      - 0x4654: "900834F"
+
+    Missing from structure: "0" (prefix), "AFT" (middle section)
+
+    The complete serial number cannot be reconstructed from the structure alone.
+    Recommendation: Query other message IDs (0x861A, 0x8608, etc.) for complete model info.
+    """
+
+    MESSAGE_ID = 0x0607
+    MESSAGE_NAME = "Serial Number"
+
+
+class OutdoorSerialNumberPrefix(StrMessage):
+    """Parser for message 0x0730 (Serial Number Manufacturer/Model Prefix).
+
+    Submessage returned as part of the 0x0607 structure response.
+    Contains the manufacturer/model code portion of the serial number.
+
+    Example: "TYXP" (from serial "0TYXPAFT900834F")
+    """
+
+    MESSAGE_ID = 0x0730
+    MESSAGE_NAME = "Serial Number Prefix"
+
+
+class OutdoorSerialNumberSuffix(StrMessage):
+    """Parser for message 0x4654 (Serial Number Numeric Suffix).
+
+    Submessage returned as part of the 0x0607 structure response.
+    Contains the numeric suffix portion of the serial number.
+
+    Example: "900834F" (from serial "0TYXPAFT900834F")
+    """
+
+    MESSAGE_ID = 0x4654
+    MESSAGE_NAME = "Serial Number Suffix"
+
+
 class OutdoorPhaseCurrent(FloatMessage):
     """Parser for message 0x82DB (Outdoor Phase Current)."""
 
@@ -350,13 +479,6 @@ class OutdoorCumulativeEnergy(BasicEnergyMessage):
     ARITHMETIC = 0.001
 
 
-class OutdoorDefrostStepsindoorUnit(RawMessage):
-    """Parser for message 0x8000 (Defrost steps (Indoor Unit?))."""
-
-    MESSAGE_ID = 0x8000
-    MESSAGE_NAME = "Defrost steps (Indoor Unit?)"
-
-
 class OutdoorMessage8005(RawMessage):
     """Parser for message 0x8005 (Message 8005)."""
 
@@ -371,95 +493,60 @@ class OutdoorMessage800d(RawMessage):
     MESSAGE_NAME = "Message 800D"
 
 
-class OutdoorCch1Status(RawMessage):
-    """Parser for message 0x8013 (CCH1 status)."""
-
-    MESSAGE_ID = 0x8013
-    MESSAGE_NAME = "CCH1 status"
-
-
-class OutdoorCch2Status(RawMessage):
-    """Parser for message 0x8014 (CCH2 status)."""
-
-    MESSAGE_ID = 0x8014
-    MESSAGE_NAME = "CCH2 status"
-
-
-class OutdoorHotGasValve(RawMessage):
-    """Parser for message 0x8017 (Hot Gas Valve)."""
-
-    MESSAGE_ID = 0x8017
-    MESSAGE_NAME = "Hot Gas Valve"
-
-
-class OutdoorHotGasValve2Status(RawMessage):
-    """Parser for message 0x8018 (Hot gas valve 2 status)."""
-
-    MESSAGE_ID = 0x8018
-    MESSAGE_NAME = "Hot gas valve 2 status"
-
-
-class OutdoorLiquidValve(RawMessage):
-    """Parser for message 0x8019 (Liquid Valve)."""
-
-    MESSAGE_ID = 0x8019
-    MESSAGE_NAME = "Liquid Valve"
-
-
-class OutdoorMainCoolingValveStatus(RawMessage):
-    """Parser for message 0x801F (Main cooling valve status)."""
-
-    MESSAGE_ID = 0x801F
-    MESSAGE_NAME = "Main cooling valve status"
-
-
-class OutdoorEviBypass(RawMessage):
-    """Parser for message 0x8021 (EVI Bypass)."""
+class OutdoorEviBypassLoadMessage(EnumMessage):
+    """Parser for message 0x8021 (EVI Bypass Load)."""
 
     MESSAGE_ID = 0x8021
-    MESSAGE_NAME = "EVI Bypass"
+    MESSAGE_NAME = "EVI Bypass Load"
+    MESSAGE_ENUM = OutdoorEviBypassLoad
 
 
-class OutdoorVapourInjectionSolenoid1Status(RawMessage):
+class OutdoorVapourInjectionSolenoid1Status(EnumMessage):
     """Parser for message 0x8022 (Vapour injection solenoid1 status)."""
 
     MESSAGE_ID = 0x8022
     MESSAGE_NAME = "Vapour injection solenoid1 status"
+    MESSAGE_ENUM = OutdoorEviSolenoid
 
 
-class OutdoorVapourInjectionSolenoid2Status(RawMessage):
+class OutdoorVapourInjectionSolenoid2Status(EnumMessage):
     """Parser for message 0x8023 (Vapour injection solenoid2 status)."""
 
     MESSAGE_ID = 0x8023
     MESSAGE_NAME = "Vapour injection solenoid2 status"
+    MESSAGE_ENUM = OutdoorEviSolenoid
 
 
-class OutdoorGasChargeValveStatus(RawMessage):
+class OutdoorGasChargeValveStatus(EnumMessage):
     """Parser for message 0x8025 (Gas charge valve status)."""
 
     MESSAGE_ID = 0x8025
     MESSAGE_NAME = "Gas charge valve status"
+    MESSAGE_ENUM = OutdoorGasChargeLoad
 
 
-class OutdoorWaterLoadValveStatus(RawMessage):
+class OutdoorWaterLoadValveStatus(EnumMessage):
     """Parser for message 0x8026 (Water load valve status)."""
 
     MESSAGE_ID = 0x8026
     MESSAGE_NAME = "Water load valve status"
+    MESSAGE_ENUM = OutdoorWaterValveLoad
 
 
-class OutdoorPumpOutValveStatus(RawMessage):
+class OutdoorPumpOutValveStatus(EnumMessage):
     """Parser for message 0x8027 (Pump out valve status)."""
 
     MESSAGE_ID = 0x8027
     MESSAGE_NAME = "Pump out valve status"
+    MESSAGE_ENUM = OutdoorPumpOutLoad
 
 
-class Outdoor4wayValve2Status(RawMessage):
-    """Parser for message 0x802A (4Way valve2 status)."""
+class Outdoor4wayValve2StatusMessage(EnumMessage):
+    """Parser for message 0x802A (4Way valve 2 status)."""
 
     MESSAGE_ID = 0x802A
-    MESSAGE_NAME = "4Way valve2 status"
+    MESSAGE_NAME = "4-Way Valve 2 Load"
+    MESSAGE_ENUM = Outdoor4WayLoad
 
 
 class OutdoorMessage8031(RawMessage):
@@ -1687,11 +1774,32 @@ class OutdoorMessage8404(RawMessage):
     MESSAGE_NAME = "Message 8404"
 
 
-class OutdoorCompressorRunningTime(RawMessage):
-    """Parser for message 0x8405 (Compressor running time)."""
+class OutdoorCompressorRunningTime(FloatMessage):
+    """Parser for message 0x8405 (Compressor running time 1).
+
+    Represents the total cumulative running time of compressor 1 in hours.
+    Type: LVAR (Long Variable - 4 bytes, unsigned)
+    Unit: hours
+    """
 
     MESSAGE_ID = 0x8405
-    MESSAGE_NAME = "Compressor running time"
+    MESSAGE_NAME = "Compressor running time 1"
+    ARITHMETIC = 1  # Direct value, no scaling
+    SIGNED = False  # Unsigned integer
+
+
+class OutdoorCompressor2RunningTime(FloatMessage):
+    """Parser for message 0x8406 (Compressor running time 2).
+
+    Represents the total cumulative running time of compressor 2 in hours.
+    Type: LVAR (Long Variable - 4 bytes, unsigned)
+    Unit: hours
+    """
+
+    MESSAGE_ID = 0x8406
+    MESSAGE_NAME = "Compressor running time 2"
+    ARITHMETIC = 1  # Direct value, no scaling
+    SIGNED = False  # Unsigned integer
 
 
 class OutdoorMessage8408(RawMessage):
@@ -1764,32 +1872,158 @@ class OutdoorMessage8608(StrMessage):
     MESSAGE_NAME = "Message 8608"
 
 
-class OutdoorBaseOptionInfo(StrMessage):
-    """Parser for message 0x860A (Base option info)."""
+class OutdoorBaseOptionInfo(RawMessage):
+    """Parser for message 0x860A (Base option info).
+
+    This is a binary structure message containing base/default option settings
+    for the outdoor unit. The structure format is:
+    - Bytes 0-3: Header (reserved/metadata)
+    - Bytes 4+: Variable-length configuration fields
+
+    Example payload breakdown:
+    Header: 00000000 (metadata)
+    Data: Configuration option bytes
+    """
 
     MESSAGE_ID = 0x860A
     MESSAGE_NAME = "Base option info"
 
+    @classmethod
+    def parse_payload(cls, payload: bytes) -> "OutdoorBaseOptionInfo":
+        """Parse the payload into a structured representation."""
+        if not payload or len(payload) < 4:
+            return cls(value=payload.hex() if payload else None)
 
-class OutdoorMessage860c(StrMessage):
-    """Parser for message 0x860C (Message 860C)."""
+        # Extract header (4 bytes) - contains metadata about the structure
+        header_bytes = payload[0:4]
+        header_int = int.from_bytes(header_bytes, byteorder="big")
+
+        # Extract data portion (remaining bytes)
+        data_portion = payload[4:]
+
+        # Return decoded structure with hex representation and interpretations
+        result = {
+            "header_hex": header_bytes.hex(),
+            "header_value": header_int,
+            "data_hex": data_portion.hex() if data_portion else "",
+            "data_length": len(data_portion),
+            "total_length": len(payload),
+            "raw_hex": payload.hex(),
+            "note": "Structure definition not yet available in NASA.ptc - fields represent outdoor unit base option configuration",
+        }
+        return cls(value=result)
+
+
+class OutdoorMessage860c(RawMessage):
+    """Parser for message 0x860C (Message 860C).
+
+    This is a binary structure message. The exact purpose is not yet documented.
+    The structure format is:
+    - Bytes 0-3: Header (reserved/metadata)
+    - Bytes 4+: Variable-length configuration fields
+    """
 
     MESSAGE_ID = 0x860C
     MESSAGE_NAME = "Message 860C"
 
+    @classmethod
+    def parse_payload(cls, payload: bytes) -> "OutdoorMessage860c":
+        """Parse the payload into a structured representation."""
+        if not payload or len(payload) < 4:
+            return cls(value=payload.hex() if payload else None)
 
-class OutdoorInstalledOutdoorUnitModelInfo(StrMessage):
-    """Parser for message 0x860D (Installed Outdoor Unit model info)."""
+        header_bytes = payload[0:4]
+        header_int = int.from_bytes(header_bytes, byteorder="big")
+        data_portion = payload[4:]
+
+        result = {
+            "header_hex": header_bytes.hex(),
+            "header_value": header_int,
+            "data_hex": data_portion.hex() if data_portion else "",
+            "data_length": len(data_portion),
+            "total_length": len(payload),
+            "raw_hex": payload.hex(),
+        }
+        return cls(value=result)
+
+
+class OutdoorInstalledOutdoorUnitModelInfo(RawMessage):
+    """Parser for message 0x860D (Installed Outdoor Unit model info).
+
+    This is a binary structure message containing model information for the
+    outdoor unit. The structure format is:
+    - Bytes 0-3: Header (reserved/metadata)
+    - Bytes 4+: Variable-length configuration fields
+    """
 
     MESSAGE_ID = 0x860D
     MESSAGE_NAME = "Installed Outdoor Unit model info"
 
+    @classmethod
+    def parse_payload(cls, payload: bytes) -> "OutdoorInstalledOutdoorUnitModelInfo":
+        """Parse the payload into a structured representation."""
+        if not payload or len(payload) < 4:
+            return cls(value=payload.hex() if payload else None)
 
-class OutdoorInstalledOutdoorUnitSetupInfo(StrMessage):
-    """Parser for message 0x860F (Installed Outdoor Unit setup info)."""
+        header_bytes = payload[0:4]
+        header_int = int.from_bytes(header_bytes, byteorder="big")
+        data_portion = payload[4:]
+
+        result = {
+            "header_hex": header_bytes.hex(),
+            "header_value": header_int,
+            "data_hex": data_portion.hex() if data_portion else "",
+            "data_length": len(data_portion),
+            "total_length": len(payload),
+            "raw_hex": payload.hex(),
+            "note": "Structure definition not yet available in NASA.ptc - fields represent outdoor unit model information",
+        }
+        return cls(value=result)
+
+
+class OutdoorInstalledOutdoorUnitSetupInfo(RawMessage):
+    """Parser for message 0x860F (Installed Outdoor Unit setup info).
+
+    This is a binary structure message with the format:
+    - Bytes 0-3: Header (reserved, appears to contain a count or version)
+    - Bytes 4+: Variable-length configuration fields
+
+    The payload structure contains installation setup information for the outdoor unit,
+    including various configuration parameters. The exact field definitions are not yet
+    documented in NASA.ptc, but the data is preserved for analysis.
+
+    Example payload breakdown:
+    Header: 00000009 (9 configuration items)
+    Data: 7 variable-length fields following
+    """
 
     MESSAGE_ID = 0x860F
     MESSAGE_NAME = "Installed Outdoor Unit setup info"
+
+    @classmethod
+    def parse_payload(cls, payload: bytes) -> "OutdoorInstalledOutdoorUnitSetupInfo":
+        """Parse the payload into a structured representation."""
+        if not payload or len(payload) < 4:
+            return cls(value=payload.hex() if payload else None)
+
+        # Extract header (4 bytes) - contains metadata about the structure
+        header_bytes = payload[0:4]
+        header_int = int.from_bytes(header_bytes, byteorder="big")
+
+        # Extract data portion (remaining bytes)
+        data_portion = payload[4:]
+
+        # Return decoded structure with hex representation and interpretations
+        result = {
+            "header_hex": header_bytes.hex(),
+            "header_value": header_int,
+            "data_hex": data_portion.hex() if data_portion else "",
+            "data_length": len(data_portion),
+            "total_length": len(payload),
+            "raw_hex": payload.hex(),
+            "note": "Structure definition not yet available in NASA.ptc - fields represent outdoor unit setup configuration",
+        }
+        return cls(value=result)
 
 
 class OutdoorOutdoorUnitCheckInfo(StrMessage):

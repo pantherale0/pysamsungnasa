@@ -22,11 +22,13 @@ from ...enum import (
     InFsv2081WaterLawTypeCooling as InFsv2081WaterLawTypeCoolingEnum,
     InUseThermostat,
     InFsv2093 as InFsv2093Enum,
-    InFsv2094 as InFsv2094Enum,
+    InFsv2094,
     InFsv3011EnableDhw as InFsv3011EnableDhwEnum,
     InFsv3061UseDhwThermostat as InFsv3061UseDhwThermostatEnum,
     InFsv3071 as InFsv3071Enum,
     InFsv5022 as InFsv5022Enum,
+    InFsv5033,
+    InFsv5061,
     InOperationVentPower,
     InOperationVentPowerSetting,
     InOperationRoomFan,
@@ -66,6 +68,28 @@ from ...enum import (
     InFsv302LouverValue,
     InFsv302TimeSchedule,
     InModelInformation,
+    InAutoStaticPressure,
+    InVacancyControl,
+    InEnterRoomControl,
+    InChillerWaterlawSensor,
+    InChillerWaterlaw,
+    InChillerSettingSilentLevel,
+    InChillerSettingDemandLevel,
+    InTdmIndoorType,
+    InWaterValve,
+    InEnthalpyControl,
+    InFreeCooling,
+    InZone1Power,
+    InGasLevel,
+    InDiffuserOperation,
+    InFsv4061,
+    InFsv5081,
+    InFsv5091,
+    InFsv5094,
+    InZone2Power,
+    In3WayValve2,
+    InPvContactState,
+    InSgReadyModeState,
 )
 
 
@@ -389,14 +413,6 @@ class InStateFlowCheck(BoolMessage):
     MESSAGE_NAME = "Indoor Flow Check State"
 
 
-class InPvContactState(BoolMessage):
-    """Parser for message 0x4123 (Indoor PV Contact State)."""
-
-    # 0x4102 NASA_IN_STATE_FLOW_CHECK or ENUM_IN_STATE_FLOW_CHECK. OFF/OK=0, ON/FAIL=1
-    MESSAGE_ID = 0x4123
-    MESSAGE_NAME = "Indoor PV Contact State"
-
-
 class InFsvLoadSave(BoolMessage):
     """Parser for message 0x4125 (Indoor FSV Load Save)."""
 
@@ -418,14 +434,6 @@ class InFsv5022(EnumMessage):
     MESSAGE_ID = 0x4128
     MESSAGE_NAME = "FSV 5022"
     MESSAGE_ENUM = InFsv5022Enum
-
-
-class InFsv2094(EnumMessage):
-    """Parser for message 0x4129 (FSV 2094)."""
-
-    MESSAGE_ID = 0x4129
-    MESSAGE_NAME = "FSV 2094"
-    MESSAGE_ENUM = InFsv2094Enum
 
 
 class InFsvLoadSaveAlt(BoolMessage):
@@ -951,3 +959,259 @@ class InModelInformationMessage(EnumMessage):
     MESSAGE_ID = 0x4229
     MESSAGE_NAME = "Indoor Model Information"
     MESSAGE_ENUM = InModelInformation
+
+
+class InDustSensorPM10Value(FloatMessage):
+    """Parser for message 0x42D1 (Dust Sensor PM10.0 Value).
+
+    Represents the particulate matter (PM10.0) measurement from the dust sensor.
+    Type: VAR (2 bytes, unsigned)
+    Unit: μg/m³ (micrograms per cubic meter)
+
+    Note: 0xFFFF (65535) typically indicates sensor not available or error.
+    """
+
+    MESSAGE_ID = 0x42D1
+    MESSAGE_NAME = "Dust Sensor PM10.0 Value"
+    UNIT_OF_MEASUREMENT = "μg/m³"
+    SIGNED = False
+
+
+class InDustSensorPM25Value(FloatMessage):
+    """Parser for message 0x42D2 (Dust Sensor PM2.5 Value).
+
+    Represents the fine particulate matter (PM2.5) measurement from the dust sensor.
+    Type: VAR (2 bytes, unsigned)
+    Unit: μg/m³ (micrograms per cubic meter)
+
+    Note: 0xFFFF (65535) typically indicates sensor not available or error.
+    """
+
+    MESSAGE_ID = 0x42D2
+    MESSAGE_NAME = "Dust Sensor PM2.5 Value"
+    UNIT_OF_MEASUREMENT = "μg/m³"
+    SIGNED = False
+
+
+class InDustSensorPM1Value(FloatMessage):
+    """Parser for message 0x42D3 (Dust Sensor PM1.0 Value).
+
+    Represents the very fine particulate matter (PM1.0) measurement from the dust sensor.
+    Type: VAR (2 bytes, unsigned)
+    Unit: μg/m³ (micrograms per cubic meter)
+
+    Note: 0xFFFF (65535) typically indicates sensor not available or error.
+    """
+
+    MESSAGE_ID = 0x42D3
+    MESSAGE_NAME = "Dust Sensor PM1.0 Value"
+    UNIT_OF_MEASUREMENT = "μg/m³"
+    SIGNED = False
+
+
+class InFsv5061Message(EnumMessage):
+    """Parser for message 0x40B4 (FSV 5061 CH/DHW supply ratio)."""
+
+    MESSAGE_ID = 0x40B4
+    MESSAGE_NAME = "FSV 5061 CH/DHW supply ratio"
+    MESSAGE_ENUM = InFsv5061
+
+
+class InAutoStaticPressureMessage(EnumMessage):
+    """Parser for message 0x40BB (Automatic pressure control status)."""
+
+    MESSAGE_ID = 0x40BB
+    MESSAGE_NAME = "Automatic pressure control status"
+    MESSAGE_ENUM = InAutoStaticPressure
+
+
+class InVacancyControlMessage(EnumMessage):
+    """Parser for message 0x40BD (Vacancy control)."""
+
+    MESSAGE_ID = 0x40BD
+    MESSAGE_NAME = "Vacancy control"
+    MESSAGE_ENUM = InVacancyControl
+
+
+class InEnterRoomControlMessage(EnumMessage):
+    """Parser for message 0x40D5 (Enable room entry control option)."""
+
+    MESSAGE_ID = 0x40D5
+    MESSAGE_NAME = "Enable room entry control option"
+    MESSAGE_ENUM = InEnterRoomControl
+
+
+class InChillerWaterlawSensorMessage(EnumMessage):
+    """Parser for message 0x40E7 (Set chiller WL sensor)."""
+
+    MESSAGE_ID = 0x40E7
+    MESSAGE_NAME = "Set chiller WL sensor"
+    MESSAGE_ENUM = InChillerWaterlawSensor
+
+
+class InChillerWaterlawMessage(EnumMessage):
+    """Parser for message 0x40F7 (Enable chiller WL)."""
+
+    MESSAGE_ID = 0x40F7
+    MESSAGE_NAME = "Enable chiller WL"
+    MESSAGE_ENUM = InChillerWaterlaw
+
+
+class InChillerSettingSilentLevelMessage(EnumMessage):
+    """Parser for message 0x40FB (Set chiller silence level)."""
+
+    MESSAGE_ID = 0x40FB
+    MESSAGE_NAME = "Set chiller silence level"
+    MESSAGE_ENUM = InChillerSettingSilentLevel
+
+
+class InChillerSettingDemandLevelMessage(EnumMessage):
+    """Parser for message 0x40FC (Set chiller demand level)."""
+
+    MESSAGE_ID = 0x40FC
+    MESSAGE_NAME = "Set chiller demand level"
+    MESSAGE_ENUM = InChillerSettingDemandLevel
+
+
+class InWaterValve1Message(EnumMessage):
+    """Parser for message 0x4103 (Set water valve 1)."""
+
+    MESSAGE_ID = 0x4103
+    MESSAGE_NAME = "Set water valve 1"
+    MESSAGE_ENUM = InWaterValve
+
+
+class InWaterValve2Message(EnumMessage):
+    """Parser for message 0x4104 (Set water valve 2)."""
+
+    MESSAGE_ID = 0x4104
+    MESSAGE_NAME = "Set water valve 2"
+    MESSAGE_ENUM = InWaterValve
+
+
+class InEnthalpyControlMessage(EnumMessage):
+    """Parser for message 0x4105 (Set enthalpy control state)."""
+
+    MESSAGE_ID = 0x4105
+    MESSAGE_NAME = "Set enthalpy control state"
+    MESSAGE_ENUM = InEnthalpyControl
+
+
+class InFsv5033Message(EnumMessage):
+    """Parser for message 0x4107 (FSV 5033 set TDM control)."""
+
+    MESSAGE_ID = 0x4107
+    MESSAGE_NAME = "FSV 5033 set TDM control"
+    MESSAGE_ENUM = InFsv5033
+
+
+class InTdmIndoorTypeMessage(EnumMessage):
+    """Parser for message 0x4108 (Set TDM equipment type)."""
+
+    MESSAGE_ID = 0x4108
+    MESSAGE_NAME = "Set TDM equipment type"
+    MESSAGE_ENUM = InTdmIndoorType
+
+
+class InFreeCoolingMessage(EnumMessage):
+    """Parser for message 0x410D (Set free cooling state)."""
+
+    MESSAGE_ID = 0x410D
+    MESSAGE_NAME = "Set free cooling state"
+    MESSAGE_ENUM = InFreeCooling
+
+
+class InZone1PowerMessage(EnumMessage):
+    """Parser for message 0x4119 (Zone 1 operating power)."""
+
+    MESSAGE_ID = 0x4119
+    MESSAGE_NAME = "Zone 1 operating power"
+    MESSAGE_ENUM = InZone1Power
+
+
+class InFsv2094Message(EnumMessage):
+    """Parser for message 0x412A (FSV 2094)."""
+
+    MESSAGE_ID = 0x412A
+    MESSAGE_NAME = "FSV 2094"
+    MESSAGE_ENUM = InFsv2094
+
+
+class InGasLevelMessage(EnumMessage):
+    """Parser for message 0x4147 (Gas level / Refrigerant inventory)."""
+
+    MESSAGE_ID = 0x4147
+    MESSAGE_NAME = "Gas level"
+    MESSAGE_ENUM = InGasLevel
+
+
+class In3WayValve2Message(EnumMessage):
+    """Parser for message 0x4113 (3-Way Valve 2 control)."""
+
+    MESSAGE_ID = 0x4113
+    MESSAGE_NAME = "3-Way Valve 2 control"
+    MESSAGE_ENUM = In3WayValve2
+
+
+class InFsv4061Message(EnumMessage):
+    """Parser for message 0x411A (FSV 4061)."""
+
+    MESSAGE_ID = 0x411A
+    MESSAGE_NAME = "FSV 4061"
+    MESSAGE_ENUM = InFsv4061
+
+
+class InFsv5081Message(EnumMessage):
+    """Parser for message 0x411B (FSV 5081)."""
+
+    MESSAGE_ID = 0x411B
+    MESSAGE_NAME = "FSV 5081"
+    MESSAGE_ENUM = InFsv5081
+
+
+class InFsv5091Message(EnumMessage):
+    """Parser for message 0x411C (FSV 5091)."""
+
+    MESSAGE_ID = 0x411C
+    MESSAGE_NAME = "FSV 5091"
+    MESSAGE_ENUM = InFsv5091
+
+
+class InFsv5094Message(EnumMessage):
+    """Parser for message 0x411D (FSV 5094)."""
+
+    MESSAGE_ID = 0x411D
+    MESSAGE_NAME = "FSV 5094"
+    MESSAGE_ENUM = InFsv5094
+
+
+class InZone2PowerMessage(EnumMessage):
+    """Parser for message 0x411E (Zone 2 operating power)."""
+
+    MESSAGE_ID = 0x411E
+    MESSAGE_NAME = "Zone 2 operating power"
+    MESSAGE_ENUM = InZone2Power
+
+
+class InPvContactStateMessage(EnumMessage):
+    """Parser for message 0x4123 (PV Contact State)."""
+
+    MESSAGE_ID = 0x4123
+    MESSAGE_NAME = "PV Contact State"
+    MESSAGE_ENUM = InPvContactState
+
+
+class InSgReadyModeStateMessage(EnumMessage):
+    """Parser for message 0x4124 (SG Ready Mode State)."""
+
+    MESSAGE_ID = 0x4124
+    MESSAGE_NAME = "SG Ready Mode State"
+    MESSAGE_ENUM = InSgReadyModeState
+
+
+class InDiffuserOperationMessage(EnumMessage):
+    """Parser for message 0x4149 (Diffuser operation)."""
+
+    MESSAGE_ID = 0x4149
+    MESSAGE_NAME = "Diffuser operation"
+    MESSAGE_ENUM = InDiffuserOperation

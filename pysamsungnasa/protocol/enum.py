@@ -553,20 +553,6 @@ class InFsv5022(SamsungEnum, IntEnum):
     VALUE_1 = 1
 
 
-class InFsv2094(SamsungEnum, IntEnum):
-    """
-    FSV setting (Message 0x412A).
-    Label (NASA.prc): ENUM_IN_FSV_2094
-    Remarks: "values 0="No" up to 4="4""
-    """
-
-    NO = 0
-    VALUE_1 = 1
-    VALUE_2 = 2
-    VALUE_3 = 3
-    VALUE_4 = 4
-
-
 class OutOperationServiceOp(SamsungEnum, IntEnum):
     """
     Outdoor unit service operation steps (Message 0x8000).
@@ -578,32 +564,6 @@ class OutOperationServiceOp(SamsungEnum, IntEnum):
     PUMP_OUT = 3
     COOLING_TEST_RUN = 13
     PUMP_DOWN = 14
-
-
-class OutdoorOperationMode(SamsungEnum, IntEnum):  # Or OutOperationHeatCool
-    """
-    Outdoor unit cooling/heating mode (Message 0x8003).
-    Label (NASA.prc): ENUM*OUT_OPERATION_HEATCOOL
-    Label (NasaConst.java): NASA_OUTDOOR_OPERATION_MODE
-    Remarks: "1 Cool, 2 Heat, 3 CoolMain, 4 HeatMain"
-    """
-
-    UNDEFINED = 0
-    COOL = 1
-    HEAT = 2
-    COOL_MAIN = 3
-    HEAT_MAIN = 4
-
-
-class OutOpTestOpComplete(SamsungEnum, IntEnum):
-    """
-    Outdoor unit test operation complete status (Message 0x8046).
-    Label (NASA.prc): ENUM*OUT_OP_TEST_OP_COMPLETE
-    Label (NasaConst.java): NASA_OUTDOOR_TEST_OP_COMPLETE
-    """
-
-    NOT_COMPLETE = 0  # Assumed
-    COMPLETE = 1  # Assumed
 
 
 class OutdoorIndoorDefrostStep(SamsungEnum, IntEnum):  # Or OutDeiceStepIndoor
@@ -784,13 +744,6 @@ class InFsv4041(SamsungEnum, IntEnum):
     VALUE_2 = 2
 
 
-class InFsv4061(SamsungEnum, IntEnum):
-    """FSV setting (Message 0x411A). Label (NASA.prc): ENUM_IN_FSV_4061"""
-
-    VALUE_0 = 0
-    VALUE_1 = 1
-
-
 class InFsv5033(SamsungEnum, IntEnum):
     """FSV setting (Message 0x4107). Label (NASA.prc): ENUM_IN_FSV_5033"""
 
@@ -821,8 +774,21 @@ class InFsv5051(SamsungEnum, IntEnum):
     YES = 1
 
 
-class InFsv5061(SamsungEnum, IntEnum):  # 0x40B4
-    """Indoor unit enum for FSV message 0x40B4. Specifics unknown."""
+class InFsv5061(SamsungEnum, IntEnum):
+    """
+    FSV 5061 CH/DHW supply ratio (Message 0x40B4).
+    Label (NASA.prc): ENUM_IN_FSV_5061
+    XML ProtocolID: ENUM_IN_FSV_5061
+    Values 1-7 per user manual
+    """
+
+    VALUE_1 = 1
+    VALUE_2 = 2
+    VALUE_3 = 3
+    VALUE_4 = 4
+    VALUE_5 = 5
+    VALUE_6 = 6
+    VALUE_7 = 7
 
 
 class InUnknown40B5(SamsungEnum, IntEnum):
@@ -849,6 +815,40 @@ class InUnknown40E3(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x40E3. Specifics unknown."""
 
 
+class InAutoStaticPressure(SamsungEnum, IntEnum):
+    """
+    Automatic pressure control status (Message 0x40BB).
+    Label (NASA.prc): ENUM_IN_STATE_AUTO_STATIC_PRESSURE_RUNNING
+    XML ProtocolID: ENUM_IN_STATE_AUTO_STATIC_PRESSURE_RUNNING
+    """
+
+    OFF = 0
+    COMPLETE = 1
+    RUNNING = 2
+
+
+class InVacancyControl(SamsungEnum, IntEnum):
+    """
+    Vacancy control (Message 0x40BD).
+    Label (NASA.prc): ENUM_IN_EMPTY_ROOM_CONTROL_USED
+    XML ProtocolID: ENUM_IN_EMPTY_ROOM_CONTROL_USED
+    """
+
+    DISABLE = 0
+    ENABLE = 1
+
+
+class InEnterRoomControl(SamsungEnum, IntEnum):
+    """
+    Enable room entry control option (Message 0x40D5).
+    Label (NASA.prc): ENUM_IN_ENTER_ROOM_CONTROL_USED
+    XML ProtocolID: ENUM_IN_ENTER_ROOM_CONTROL_USED
+    """
+
+    DISABLE = 0
+    ENABLE = 1
+
+
 class InChillerWaterlawSensor(SamsungEnum, IntEnum):
     """
     DMV Chiller Option / Chiller Water Law Sensor (Message 0x40E7).
@@ -858,6 +858,17 @@ class InChillerWaterlawSensor(SamsungEnum, IntEnum):
 
     OUTDOOR = 0
     ROOM = 1
+
+
+class InChillerWaterlaw(SamsungEnum, IntEnum):
+    """
+    Enable chiller WL (Message 0x40F7).
+    Label (NASA.prc): ENUM_IN_CHILLER_WATERLAW_ON_OFF
+    XML ProtocolID: ENUM_IN_CHILLER_WATERLAW_ON_OFF
+    """
+
+    OFF = 0
+    ON = 1
 
 
 class InChillerSettingSilentLevel(SamsungEnum, IntEnum):
@@ -895,6 +906,89 @@ class InChillerSettingDemandLevel(SamsungEnum, IntEnum):
     # XML Default: Unknown
 
 
+class InWaterValve(SamsungEnum, IntEnum):
+    """
+    Water valve state (Messages 0x4103, 0x4104).
+    Label (NASA.prc): ENUM_IN_WATER_VALVE_*_ON_OFF
+    XML ProtocolID: ENUM_IN_WATER_VALVE_*_ON_OFF
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InEnthalpyControl(SamsungEnum, IntEnum):
+    """
+    Set enthalpy control state (Message 0x4105).
+    Label (NASA.prc): ENUM_IN_ENTHALPY_CONTROL_STATE
+    XML ProtocolID: ENUM_IN_ENTHALPY_CONTROL_STATE
+    """
+
+
+class InFreeCooling(SamsungEnum, IntEnum):
+    """
+    Set free cooling state (Message 0x410D).
+    Label (NASA.prc): ENUM_IN_FREE_COOLING_STATE
+    XML ProtocolID: ENUM_IN_FREE_COOLING_STATE
+    """
+
+
+class InZone1Power(SamsungEnum, IntEnum):
+    """
+    Zone 1 operating power (Message 0x4119).
+    Label (NASA.prc): ENUM_IN_OPERATION_POWER_ZONE1
+    XML ProtocolID: ENUM_IN_OPERATION_POWER_ZONE1
+    Range: 0-1
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InGasLevel(SamsungEnum, IntEnum):
+    """
+    Gas level / Refrigerant inventory (Message 0x4147).
+    Label (NASA.prc): ENUM_IN_GAS_LEVEL
+    XML ProtocolID: ENUM_IN_GAS_LEVEL
+    Range: 0-7
+    """
+
+    VALUE_0 = 0
+    VALUE_1 = 1
+    VALUE_2 = 2
+    VALUE_3 = 3
+    VALUE_4 = 4
+    VALUE_5 = 5
+    VALUE_6 = 6
+    VALUE_7 = 7
+
+
+class InDiffuserOperation(SamsungEnum, IntEnum):
+    """
+    Diffuser operation (Message 0x4149).
+    Label (NASA.prc): ENUM_IN_DIFFUSER_OPERATION_POWER
+    XML ProtocolID: ENUM_IN_DIFFUSER_OPERATION_POWER
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InFsv2094(SamsungEnum, IntEnum):
+    """
+    FSV 2094 setting (Message 0x412A).
+    Label (NASA.prc): ENUM_IN_FSV_2094
+    XML ProtocolID: ENUM_IN_FSV_2094
+    Values 0-4 per user manual
+    """
+
+    VALUE_0 = 0
+    VALUE_1 = 1
+    VALUE_2 = 2
+    VALUE_3 = 3
+    VALUE_4 = 4
+
+
 class InTdmIndoorType(SamsungEnum, IntEnum):
     """
     TDM Indoor Type (Message 0x4108).
@@ -917,24 +1011,111 @@ class In3WayValve2(SamsungEnum, IntEnum):
     TANK = 1
 
 
+class InFsv4061(SamsungEnum, IntEnum):
+    """
+    FSV 4061 (Message 0x411A).
+    Label (NASA.prc): ENUM_IN_FSV_4061
+    XML ProtocolID: ENUM_IN_FSV_4061
+    """
+
+    VALUE_0 = 0
+    VALUE_1 = 1
+
+
+class InFsv5081(SamsungEnum, IntEnum):
+    """
+    FSV 5081 (Message 0x411B).
+    Label (NASA.prc): ENUM_IN_FSV_5081
+    XML ProtocolID: ENUM_IN_FSV_5081
+    """
+
+    VALUE_0 = 0
+    VALUE_1 = 1
+
+
+class InFsv5091(SamsungEnum, IntEnum):
+    """
+    FSV 5091 (Message 0x411C).
+    Label (NASA.prc): ENUM_IN_FSV_5091
+    XML ProtocolID: ENUM_IN_FSV_5091
+    """
+
+    VALUE_0 = 0
+    VALUE_1 = 1
+
+
+class InFsv5094(SamsungEnum, IntEnum):
+    """
+    FSV 5094 (Message 0x411D).
+    Label (NASA.prc): ENUM_IN_FSV_5094
+    XML ProtocolID: ENUM_IN_FSV_5094
+    """
+
+    VALUE_0 = 0
+    VALUE_1 = 1
+
+
+class InZone2Power(SamsungEnum, IntEnum):
+    """
+    Zone 2 operating power (Message 0x411E).
+    Label (NASA.prc): ENUM_IN_OPERATION_POWER_ZONE2
+    XML ProtocolID: ENUM_IN_OPERATION_POWER_ZONE2
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class InPvContactState(SamsungEnum, IntEnum):
+    """
+    PV Contact State (Message 0x4123).
+    Label (NASA.prc): ENUM_IN_PV_CONTACT_STATE
+    XML ProtocolID: ENUM_IN_PV_CONTACT_STATE
+    """
+
+    DISABLE = 0
+    ENABLE = 1
+
+
+class InSgReadyModeState(SamsungEnum, IntEnum):
+    """
+    SG Ready Mode State (Message 0x4124).
+    Label (NASA.prc): ENUM_IN_SG_READY_MODE_STATE
+    XML ProtocolID: ENUM_IN_SG_READY_MODE_STATE
+    Values not defined in NASA.ptc
+    """
+
+    pass
+
+
+class NmNetworkPositionLayer(SamsungEnum, IntEnum):
+    """
+    Network Position Layer (Message 0x200F).
+    Label (NASA.prc): ENUM_NM_network_positinon_layer
+    XML ProtocolID: ENUM_NM_network_positinon_layer
+    """
+
+    CONTROL_LAYER = 0
+    SET_LAYER = 1
+
+
+class NmNetworkTrackingState(SamsungEnum, IntEnum):
+    """
+    Network Tracking State (Message 0x2010).
+    Label (NASA.prc): ENUM_NM_network_tracking_state
+    XML ProtocolID: ENUM_NM_network_tracking_state
+    Values not defined in NASA.ptc
+    """
+
+    pass
+
+
 class InUnknown4117(SamsungEnum, IntEnum):
     """Indoor unit enum for message 0x4117. Specifics unknown."""
 
 
 class InRoomTempSensorZone2(SamsungEnum, IntEnum):  # 0x4118
     """Indoor unit enum for message 0x4118 (Room Temp Sensor Zone 2). Specifics unknown."""
-
-
-class InFsv5081(SamsungEnum, IntEnum):  # 0x411B
-    """Indoor unit enum for FSV message 0x411B. Specifics unknown."""
-
-
-class InFsv5091(SamsungEnum, IntEnum):  # 0x411C
-    """Indoor unit enum for FSV message 0x411C. Specifics unknown."""
-
-
-class InFsv5094(SamsungEnum, IntEnum):  # 0x411D
-    """Indoor unit enum for FSV message 0x411D. Specifics unknown."""
 
 
 class InSilenceLevel(SamsungEnum, IntEnum):  # 0x4129
@@ -1100,6 +1281,164 @@ class OutUnknown80B1(SamsungEnum, IntEnum):
 
 class OutdoorChSwitchValue(SamsungEnum, IntEnum):  # 0x80B2
     """Outdoor unit enum for message 0x80B2 (NASA_OUTDOOR_CH_SWITCH_VALUE). Specifics unknown."""
+
+
+class OutdoorEviSolenoid(SamsungEnum, IntEnum):
+    """
+    Outdoor unit EVI solenoid valve state (Messages 0x8022, 0x8023).
+    Label (NASA.ptc): ENUM_out_load_evi_sol1, ENUM_out_load_evi_sol2
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class OutdoorOperationServiceOp(SamsungEnum, IntEnum):
+    """
+    Outdoor operation service operation (Message 0x8000).
+    Label (NASA.ptc): ENUM_OUT_OPERATION_SERVICE_OP
+    XML ProtocolID: ENUM_OUT_OPERATION_SERVICE_OP
+    """
+
+    HEATING_COMMISSIONING = 2
+    PUMP_OUT = 3
+    COOLING_COMMISSIONING = 13
+    PUMP_DOWN = 14
+
+
+class OutdoorOperationHeatCool(SamsungEnum, IntEnum):
+    """
+    Outdoor heat/cool mode (Message 0x8003).
+    Label (NASA.ptc): ENUM_out_operation_heatcool
+    XML ProtocolID: ENUM_out_operation_heatcool
+    """
+
+    UNDEFINED = 0
+    COOL = 1
+    HEAT = 2
+    COOL_MAIN = 3
+    HEAT_MAIN = 4
+
+
+class OutdoorCompressorLoad(SamsungEnum, IntEnum):
+    """
+    Outdoor compressor on/off state (Messages 0x8010, 0x8011, 0x8012).
+    Label (NASA.ptc): ENUM_out_load_comp1, ENUM_out_load_comp2, ENUM_out_load_comp3
+    Values not defined in NASA.ptc - using OFF/ON pattern
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class OutdoorCchLoad(SamsungEnum, IntEnum):
+    """
+    Outdoor CCH (Crankcase Heater) on/off state (Messages 0x8013, 0x8014).
+    Label (NASA.ptc): ENUM_out_load_cch1, ENUM_out_load_cch2
+    Values not defined in NASA.ptc - using OFF/ON pattern
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class OutdoorHotGasLoad(SamsungEnum, IntEnum):
+    """
+    Outdoor hot gas on/off state (Messages 0x8017, 0x8018).
+    Label (NASA.ptc): ENUM_out_load_hotgas, ENUM_out_load_hotgas2
+    Values not defined in NASA.ptc - using OFF/ON pattern
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class OutdoorLiquidLoad(SamsungEnum, IntEnum):
+    """
+    Outdoor liquid on/off state (Message 0x8019).
+    Label (NASA.ptc): ENUM_OUT_LOAD_LIQUID
+    Values not defined in NASA.ptc - using OFF/ON pattern
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class Outdoor4WayLoad(SamsungEnum, IntEnum):
+    """
+    Outdoor 4-way valve on/off state (Messages 0x801A, 0x802A).
+    Label (NASA.ptc): ENUM_out_load_4way, ENUM_OUT_LOAD_4WAY2
+    Values not defined in NASA.ptc - using OFF/ON pattern
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class OutdoorMainCoolLoad(SamsungEnum, IntEnum):
+    """
+    Outdoor main cool on/off state (Message 0x801F).
+    Label (NASA.ptc): ENUM_out_load_maincool
+    Values not defined in NASA.ptc - using OFF/ON pattern
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class OutdoorOutEevLoad(SamsungEnum, IntEnum):
+    """
+    Outdoor expansion valve on/off state (Message 0x8020).
+    Label (NASA.ptc): ENUM_out_load_outeev
+    Values not defined in NASA.ptc - using OFF/ON pattern
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class OutdoorEviBypassLoad(SamsungEnum, IntEnum):
+    """
+    Outdoor EVI bypass on/off state (Message 0x8021).
+    Label (NASA.ptc): ENUM_out_load_evi_bypass
+    Values not defined in NASA.ptc - using OFF/ON pattern
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class OutdoorGasChargeLoad(SamsungEnum, IntEnum):
+    """
+    Outdoor hot gas charging on/off state (Message 0x8025).
+    Label (NASA.ptc): ENUM_out_load_gascharge
+    Values not defined in NASA.ptc - using OFF/ON pattern
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class OutdoorWaterValveLoad(SamsungEnum, IntEnum):
+    """
+    Outdoor water valve on/off state (Message 0x8026).
+    Label (NASA.ptc): ENUM_out_load_water
+    Values not defined in NASA.ptc - using OFF/ON pattern
+    """
+
+    OFF = 0
+    ON = 1
+
+
+class OutdoorPumpOutLoad(SamsungEnum, IntEnum):
+    """
+    Outdoor pump out on/off state (Message 0x8027).
+    Label (NASA.ptc): ENUM_out_load_pumpout
+    Values not defined in NASA.ptc - using OFF/ON pattern
+    """
+
+    OFF = 0
+    ON = 1
 
 
 class OutUnknown80B6(SamsungEnum, IntEnum):
