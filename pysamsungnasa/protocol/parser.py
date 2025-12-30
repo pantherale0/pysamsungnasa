@@ -177,77 +177,113 @@ class NasaPacketParser:
                 for listener in self._packet_listeners[msg_number]:
                     listener(**handler_kwargs)
 
-    def parse_packet(self, p: bytes):
-        if len(p) < 3 + 3 + 1 + 1 + 1 + 1:
+    def parse_packet(self, packet_data: bytes):
+        if len(packet_data) < 3 + 3 + 1 + 1 + 1 + 1:
             return  # too short
-        src = bin2hex(p[0:3])
+        source_address = bin2hex(packet_data[0:3])
         try:
-            src_class = AddressClass(p[0])
+            source_class = AddressClass(packet_data[0])
         except ValueError:
-            src_class = AddressClass.UNKNOWN
-        dst = bin2hex(p[3:6])
+            source_class = AddressClass.UNKNOWN
+        destination_address = bin2hex(packet_data[3:6])
         try:
-            dst_class = AddressClass(p[3])
+            destination_class = AddressClass(packet_data[3])
         except ValueError:
-            dst_class = AddressClass.UNKNOWN
-        isInfo = (p[6] & 0x80) >> 7
-        protVersion = (p[6] & 0x60) >> 5
-        retryCnt = (p[6] & 0x18) >> 3
-        # rfu = p[6] & 0x7
+            destination_class = AddressClass.UNKNOWN
+        is_info = (packet_data[6] & 0x80) >> 7
+        protocol_version = (packet_data[6] & 0x60) >> 5
+        retry_count = (packet_data[6] & 0x18) >> 3
+        # rfu = packet_data[6] & 0x7
         try:
-            packetType = PacketType(p[7] >> 4)
+            packet_type = PacketType(packet_data[7] >> 4)
         except ValueError:
-            packetType = PacketType.UNKNOWN
+            packet_type = PacketType.UNKNOWN
         try:
-            payloadType = DataType(p[7] & 0xF)
+            payload_type = DataType(packet_data[7] & 0xF)
         except ValueError:
-            payloadType = DataType.UNKNOWN
-        packetNumber = p[8]
-        dsCnt = p[9]
+            payload_type = DataType.UNKNOWN
+        packet_number = packet_data[8]
+        dataset_count = packet_data[9]
 
-        ds = []
-        off = 10
-        seenMsgCnt = 0
-        messageNumber = None
-        for i in range(0, dsCnt):
-            seenMsgCnt += 1
-            kind = (p[off] & 0x6) >> 1
-            if kind == 0:
-                s = 1
-            elif kind == 1:
-                s = 2
-            elif kind == 2:
-                s = 4
-            elif kind == 3:
-                if dsCnt != 1:
-                    raise BaseException("Invalid encoded packet containing a struct: " + bin2hex(p))
-                ds.append([-1, "STRUCTURE", p[off:], bin2hex(p[off:]), p[off:], [p[off:]]])
-                break
+        datasets = []
+        offset = 10
+        seen_message_count = 0
+        message_number = None
+        for i in range(0, dataset_count):
+            seen_message_count += 1
+            message_type_kind = (packet_data[offset] & 0x6) >> 1
+            if message_type_kind == 0:
+                payload_size = 1
+            elif message_type_kind == 1:
+                payload_size = 2
+            elif message_type_kind == 2:
+                payload_size = 4
+            elif message_type_kind == 3:
+                if dataset_count != 1:
+                    raise BaseException("Invalid encoded packet containing a struct: " + bin2hex(packet_data))
+                # Parse structure as TLV-encoded sub-messages
+                struct_payload = packet_data[offset:]
+                struct_offset = 0
+                while struct_offset < len(struct_payload):
+                    if struct_offset + 1 >= len(struct_payload):
+                        break
+                    # First byte is length
+                    message_length = struct_payload[struct_offset]
+                    struct_offset += 1
+
+                    if struct_offset + 2 > len(struct_payload):
+                        break
+                    # Next two bytes are message ID
+                    try:
+                        message_number = struct.unpack(">H", struct_payload[struct_offset : struct_offset + 2])[0]
+                    except struct.error:
+                        break
+                    struct_offset += 2
+
+                    # Remaining bytes are the value
+                    if message_length >= 2:
+                        value_length = message_length - 2
+                        if struct_offset + value_length > len(struct_payload):
+                            value = struct_payload[struct_offset:]
+                            struct_offset = len(struct_payload)
+                        else:
+                            value = struct_payload[struct_offset : struct_offset + value_length]
+                            struct_offset += value_length
+                    else:
+                        value = b""
+
+                    value_hex = bin2hex(value)
+                    try:
+                        message_description = get_nasa_message_name(message_number)
+                    except Exception:
+                        message_description = "UNSPECIFIED"
+                    datasets.append([message_number, message_description, value_hex, value])
+                continue
             else:
-                raise BaseException("Invalid kind value")
-            messageNumber = struct.unpack(">H", p[off : off + 2])[0]
-            value = p[off + 2 : off + 2 + s]
-            valuehex = bin2hex(value)
+                raise BaseException("Invalid message type kind value")
+            message_number = struct.unpack(">H", packet_data[offset : offset + 2])[0]
+            value = packet_data[offset + 2 : offset + 2 + payload_size]
+            value_hex = bin2hex(value)
             try:
-                desc = get_nasa_message_name(messageNumber)
+                message_description = get_nasa_message_name(message_number)
             except Exception:
-                desc = "UNSPECIFIED"
-            ds.append([messageNumber, desc, valuehex, value])
-            off += 2 + s
+                message_description = "UNSPECIFIED"
+            datasets.append([message_number, message_description, value_hex, value])
+            offset += 2 + payload_size
 
-        if seenMsgCnt != dsCnt:
+        if seen_message_count != dataset_count:
             raise BaseException("Not every message processed")
 
         self._process_packet(
-            source=src,
-            source_class=src_class,
-            dest=dst,
-            dest_class=dst_class,
-            isInfo=isInfo,
-            protocolVersion=protVersion,
-            retryCounter=retryCnt,
-            packetType=packetType,
-            payloadType=payloadType,
-            packetNumber=packetNumber,
-            dataSets=ds,
+            source=source_address,
+            source_class=source_class,
+            dest=destination_address,
+            dest_class=destination_class,
+            isInfo=is_info,
+            protocolVersion=protocol_version,
+            retryCounter=retry_count,
+            packetType=packet_type,
+            payloadType=payload_type,
+            packetNumber=packet_number,
+            dataSets=datasets,
         )

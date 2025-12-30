@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from typing import final, ClassVar, Optional, Any
+from typing import ClassVar, Optional, Any
 import struct
 from abc import ABC
 

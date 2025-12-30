@@ -44,7 +44,12 @@ class NasaClient:
         self.host = host
         self.port = port
         self._client = TelnetClient(
-            host=host, port=port, message_handler=self._read_buffer_handler, break_line=0x34.to_bytes()
+            host=host,
+            port=port,
+            message_handler=self._read_buffer_handler,
+            break_line=0x34.to_bytes(),
+            disconnect_callback=self._handle_disconnection,
+            connect_callback=self._handle_connection,
         )
         self._rx_event_handler = recv_event_handler
         self._tx_event_handler = send_event_handler
@@ -81,6 +86,13 @@ class NasaClient:
             except Exception as handler_ex:
                 _LOGGER.error("Error in disconnection_handler: %s", handler_ex)
 
+    async def _handle_connection(self) -> None:
+        """Handle connection."""
+        _LOGGER.debug("Successfully connected to %s:%s", self.host, self.port)
+        self._last_rx_time = asyncio.get_event_loop().time()
+        await self._start_read_queue_session()
+        await self._start_writer_session()
+
     async def connect(self) -> bool:
         """Connect to the server and start background tasks."""
         if not (self.host and self.port):
@@ -92,10 +104,6 @@ class NasaClient:
 
         try:
             await self._client.connect()
-            _LOGGER.debug("Successfully connected to %s:%s", self.host, self.port)
-            self._last_rx_time = asyncio.get_event_loop().time()
-            await self._start_read_queue_session()
-            await self._start_writer_session()
             return True
         except ConnectionError as ex:
             _LOGGER.error("NASA Connection error: %s", ex)
