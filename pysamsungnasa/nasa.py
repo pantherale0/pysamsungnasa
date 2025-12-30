@@ -45,40 +45,40 @@ class SamsungNasa:
         if self.config.device_addresses is not None:
             for address in self.config.device_addresses:
                 address = Address.parse(address)
-                if address.class_id is AddressClass.INDOOR:
-                    new_device = IndoorNasaDevice(
-                        address=str(address),
-                        packet_parser=self.parser,
-                        config=self.config,
-                        client=self.client,
-                    )
-                elif address.class_id is AddressClass.OUTDOOR:
-                    new_device = OutdoorNasaDevice(
-                        address=str(address),
-                        packet_parser=self.parser,
-                        config=self.config,
-                        client=self.client,
-                    )
-                else:
-                    new_device = NasaDevice(
-                        address=str(address),
-                        device_type=AddressClass(address.class_id),
-                        packet_parser=self.parser,
-                        config=self.config,
-                        client=self.client,
-                    )
-                self.devices[str(address)] = new_device
+                self._add_device(str(address))
 
-    async def _new_device_handler(self, **kwargs):
-        """Handle messages from a new device."""
-        if kwargs["source"] not in self.devices:
-            self.devices[kwargs["source"]] = NasaDevice(
-                address=kwargs["source"],
-                device_type=kwargs["source_class"],
+    def _add_device(self, address: str) -> NasaDevice:
+        """Add a device to the devices list."""
+        device_type = (Address.parse(address)).class_id
+        if device_type == AddressClass.INDOOR:
+            new_device = IndoorNasaDevice(
+                address=address,
                 packet_parser=self.parser,
                 config=self.config,
                 client=self.client,
             )
+        elif device_type == AddressClass.OUTDOOR:
+            new_device = OutdoorNasaDevice(
+                address=address,
+                packet_parser=self.parser,
+                config=self.config,
+                client=self.client,
+            )
+        else:
+            new_device = NasaDevice(
+                address=address,
+                device_type=AddressClass(device_type),
+                packet_parser=self.parser,
+                config=self.config,
+                client=self.client,
+            )
+        self.devices[address] = new_device
+        return new_device
+
+    async def _new_device_handler(self, **kwargs):
+        """Handle messages from a new device."""
+        if kwargs["source"] not in self.devices:
+            self.devices[kwargs["source"]] = self._add_device(kwargs["source"])
             _LOGGER.info("New %s device discovered: %s", kwargs["source_class"], kwargs["source"])
             # Request device configuration
             await self.devices[kwargs["source"]].get_configuration()
@@ -95,13 +95,13 @@ class SamsungNasa:
     async def start(self):
         """Start the NASA protocol."""
         await self.client.connect()
-        if self.client.is_connected:
-            # Perform a "poke"
-            await self.client.send_message(
-                destination="200000",
-                request_type=DataType.REQUEST,
-                messages=[SendMessage(0x4242, bytes.fromhex("FFFF"))],
-            )
+        # if self.client.is_connected:
+        # Perform a "poke"
+        # await self.client.send_message(
+        #     destination="200000",
+        #     request_type=DataType.REQUEST,
+        #     messages=[SendMessage(0x4242, bytes.fromhex("FFFF"))],
+        # )
 
     async def stop(self):
         """Stop the NASA protocol."""

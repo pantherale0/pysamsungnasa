@@ -298,63 +298,90 @@ class OutdoorNasaDevice(NasaDevice):
     def outdoor_temperature(self) -> float | None:
         """Return the outdoor air temperature."""
         if 0x8204 in self.attributes:
-            return self.attributes[0x8204].VALUE
+            try:
+                return float(self.attributes[0x8204].VALUE)
+            except (ValueError, TypeError):
+                return None
         return None
 
     @property
     def heatpump_voltage(self) -> float | None:
         """Return the heatpump voltage."""
         if 0x24FC in self.attributes:
-            return self.attributes[0x24FC].VALUE
+            try:
+                return float(self.attributes[0x24FC].VALUE)
+            except (ValueError, TypeError):
+                return None
         return None
 
     @property
     def power_consumption(self) -> float | None:
         """Return the current power consumption."""
         if 0x8413 in self.attributes:
-            return self.attributes[0x8413].VALUE
+            try:
+                return float(self.attributes[0x8413].VALUE)
+            except (ValueError, TypeError):
+                return None
         return None
 
     @property
     def power_generated_last_minute(self) -> float | None:
         """Return the power generated in the last minute."""
         if 0x4426 in self.attributes:
-            return self.attributes[0x4426].VALUE
+            try:
+                return float(self.attributes[0x4426].VALUE)
+            except (ValueError, TypeError):
+                return None
         return None
 
     @property
     def power_produced(self) -> float | None:
         """Return the power produced."""
         if 0x4427 in self.attributes:
-            return self.attributes[0x4427].VALUE
+            try:
+                return float(self.attributes[0x4427].VALUE)
+            except (ValueError, TypeError):
+                return None
         return None
 
     @property
     def power_current(self) -> float | None:
         """Return the power current."""
         if 0x82DB in self.attributes:
-            return self.attributes[0x82DB].VALUE
+            try:
+                return float(self.attributes[0x82DB].VALUE)
+            except (ValueError, TypeError):
+                return None
         return None
 
     @property
     def cumulative_energy(self) -> float | None:
         """Return the cumulative energy consumption."""
         if 0x8414 in self.attributes:
-            return self.attributes[0x8414].VALUE
+            try:
+                return float(self.attributes[0x8414].VALUE)
+            except (ValueError, TypeError):
+                return None
         return None
 
     @property
     def compressor_frequency(self) -> float | None:
         """Return the compressor frequency."""
         if 0x8238 in self.attributes:
-            return self.attributes[0x8238].VALUE
+            try:
+                return float(self.attributes[0x8238].VALUE)
+            except (ValueError, TypeError):
+                return None
         return None
 
     @property
     def fan_speed(self) -> float | None:
         """Return the fan speed."""
         if 0x823D in self.attributes:
-            return self.attributes[0x823D].VALUE
+            try:
+                return float(self.attributes[0x823D].VALUE)
+            except (ValueError, TypeError):
+                return None
         return None
 
     # Virtual properties
@@ -364,5 +391,11 @@ class OutdoorNasaDevice(NasaDevice):
         power_produced = self.power_produced
         cumulative_energy = self.cumulative_energy
         if power_produced is not None and cumulative_energy not in (None, 0):
-            return power_produced / cumulative_energy
+            try:
+                # Ensure both values are numeric
+                power_produced = float(power_produced)
+                cumulative_energy = float(cumulative_energy)
+                return power_produced / cumulative_energy
+            except (ValueError, TypeError):
+                return None
         return None

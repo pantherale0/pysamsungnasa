@@ -443,6 +443,15 @@ class InGeneratedPowerLastMinute(BasicPowerMessage):
     ARITHMETIC = 0.001
 
 
+class TotalEnergyGenerated(BasicPowerMessage):
+    """Parser for message 0x4427 (Total energy generated)."""
+
+    MESSAGE_ID = 0x4427
+    MESSAGE_NAME = "Total Energy Generated"
+    SIGNED = False
+    ARITHMETIC = 0.001
+
+
 class InFsv3021(BasicTemperatureMessage):
     """Parser for message 0x4260 (FSV 3021 DHW Heating Mode Max)."""
 
