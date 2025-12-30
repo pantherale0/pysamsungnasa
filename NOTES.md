@@ -1,6 +1,6 @@
 # Protocol Notes
 
-This file contains a number of notes and descriptors explaining the protocol, this was been taken from the work done here https://github.com/omerfaruk-aran/esphome_samsung_hvac_bus/issues/28
+This file contains a number of notes and descriptors explaining the protocol, this has been taken from the work done here https://github.com/omerfaruk-aran/esphome_samsung_hvac_bus/issues/28
 
 A massive thanks goes to all those involved in documententing these on the MyEHS website (https://web.archive.org/web/20240330070335/https://wiki.myehs.eu/wiki/NASA_Protocol)
 

@@ -65,6 +65,7 @@ from ...enum import (
     InFsv302LouverControl,
     InFsv302LouverValue,
     InFsv302TimeSchedule,
+    InModelInformation,
 )
 
 
@@ -942,3 +943,11 @@ class InFsv302TimeScheduleMessage(EnumMessage):
     MESSAGE_ID = 0x4085
     MESSAGE_NAME = "Indoor FSV 302 Time Schedule"
     MESSAGE_ENUM = InFsv302TimeSchedule
+
+
+class InModelInformationMessage(EnumMessage):
+    """Parser for message 0x4229 (Indoor Model Information)."""
+
+    MESSAGE_ID = 0x4229
+    MESSAGE_NAME = "Indoor Model Information"
+    MESSAGE_ENUM = InModelInformation

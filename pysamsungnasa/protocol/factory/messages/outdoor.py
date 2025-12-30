@@ -281,6 +281,13 @@ class OutdoorSensorLowPressTemp(BasicTemperatureMessage):
     MESSAGE_NAME = "Outdoor Sensor Low Press Temp"
 
 
+class OutdoorProductModelName(StrMessage):
+    """Parser for message 0x4548 (Outdoor Product Model Name - from 0x061A structure)."""
+
+    MESSAGE_ID = 0x4548
+    MESSAGE_NAME = "Outdoor Product Model Name"
+
+
 class OutdoorProjectCode(StrMessage):
     """Parser for message 0x82BC (Outdoor Project Code)."""
 

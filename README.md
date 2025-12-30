@@ -44,10 +44,13 @@ TODO
 
 ## Thanks
 
-This project utilizes or incorporates ideas and code from the following sources,
+This project utilizes or incorporates ideas, code and work from the following sources,
 and I would like to express my sincere gratitude to their creators and contributors:
 
 - [ESPHome Samsung HVAC Bus](https://github.com/omerfaruk-aran/esphome_samsung_hvac_bus/)
 - [Samsung NASA MQTT Bridge](https://github.com/70p4z/samsung-nasa-mqtt/)
 - [Samsung ASHP NASA link MQTT bridge / Home Assistant](https://community.openenergymonitor.org/t/contribution-samsung-ashp-nasa-link-mqtt-bridge-home-assistant)
+- [OpenEnergyMonitoring Forum](https://community.openenergymonitor.org/search?q=samsung) for all the shared wisdom on multiple threads.
 - @betaphi for the [EHS Wiki](https://wiki.myehs.eu/wiki/Main_Page), which provided valuable insights into different messages. The protocol is mostly documented [here](NOTES.md) as the NASA Protocol page is no longer on the wiki. More messages are defined within the parser classes from the latest version of S-Net.
+
+None of this would have been possible without the above.

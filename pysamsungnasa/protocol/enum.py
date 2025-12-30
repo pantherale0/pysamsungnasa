@@ -1493,3 +1493,203 @@ class InFsv302TimeSchedule(SamsungEnum, IntEnum):
 
     DISABLED = 0
     ENABLED = 1
+
+
+class InModelInformation(SamsungEnum, IntEnum):
+    """
+    Indoor unit model information (Message 0x4229).
+    Label (NASA.ptc): VAR_in_model_information
+    """
+
+    # Specific model types
+    MASTER_N = 0x12
+    SLIM_1WAY = 0x1F
+    BIG_SLIM_1WAY = 0x20
+    GLOBAL_4WAY = 0x33
+    GLOBAL_MINI_4WAY = 0x34
+    MINI_4WAY = 0x35
+    BIG_DUCT = 0x3E
+    GLOBAL_BIG_DUCT = 0x3F
+    FRESH_DUCT = 0x44
+    BIG_CEILING = 0x47
+    MINI_AHU = 0x62
+    ERV_PLUS = 0x6C
+    EHS_SPLIT = 0x73
+    EHS_MONO = 0x74
+    EHS_TDM = 0x75
+    EHS_HT = 0x7D
+    DIFFUSER = 0xAA
+
+    # Range-based categories (using representative values)
+    # FSC/PAC (1-9)
+    FSC_PAC_1 = 0x01
+    FSC_PAC_2 = 0x02
+    FSC_PAC_3 = 0x03
+    FSC_PAC_4 = 0x04
+    FSC_PAC_5 = 0x05
+    FSC_PAC_6 = 0x06
+    FSC_PAC_7 = 0x07
+    FSC_PAC_8 = 0x08
+    FSC_PAC_9 = 0x09
+    # RAC (10-19)
+    RAC_10 = 0x0A
+    RAC_11 = 0x0B
+    RAC_12 = 0x0C
+    RAC_13 = 0x0D
+    RAC_14 = 0x0E
+    RAC_15 = 0x0F
+    RAC_16 = 0x10
+    RAC_17 = 0x11
+    RAC_18 = 0x12
+    RAC_19 = 0x13
+    # 1Way (30-39)
+    ONE_WAY_30 = 0x1E
+    ONE_WAY_31 = 0x1F
+    ONE_WAY_32 = 0x20
+    ONE_WAY_33 = 0x21
+    ONE_WAY_34 = 0x22
+    ONE_WAY_35 = 0x23
+    ONE_WAY_36 = 0x24
+    ONE_WAY_37 = 0x25
+    ONE_WAY_38 = 0x26
+    ONE_WAY_39 = 0x27
+    # 2Way (40-49)
+    TWO_WAY_40 = 0x28
+    TWO_WAY_41 = 0x29
+    TWO_WAY_42 = 0x2A
+    TWO_WAY_43 = 0x2B
+    TWO_WAY_44 = 0x2C
+    TWO_WAY_45 = 0x2D
+    TWO_WAY_46 = 0x2E
+    TWO_WAY_47 = 0x2F
+    TWO_WAY_48 = 0x30
+    TWO_WAY_49 = 0x31
+    # 4Way (50-59)
+    FOUR_WAY_50 = 0x32
+    FOUR_WAY_51 = 0x33
+    FOUR_WAY_52 = 0x34
+    FOUR_WAY_53 = 0x35
+    FOUR_WAY_54 = 0x36
+    FOUR_WAY_55 = 0x37
+    FOUR_WAY_56 = 0x38
+    FOUR_WAY_57 = 0x39
+    FOUR_WAY_58 = 0x3A
+    FOUR_WAY_59 = 0x3B
+    # Duct (60-69)
+    DUCT_60 = 0x3C
+    DUCT_61 = 0x3D
+    DUCT_62 = 0x3E
+    DUCT_63 = 0x3F
+    DUCT_64 = 0x40
+    DUCT_65 = 0x41
+    DUCT_66 = 0x42
+    DUCT_67 = 0x43
+    DUCT_68 = 0x44
+    DUCT_69 = 0x45
+    # Ceiling (70-79)
+    CEILING_70 = 0x46
+    CEILING_71 = 0x47
+    CEILING_72 = 0x48
+    CEILING_73 = 0x49
+    CEILING_74 = 0x4A
+    CEILING_75 = 0x4B
+    CEILING_76 = 0x4C
+    CEILING_77 = 0x4D
+    CEILING_78 = 0x4E
+    CEILING_79 = 0x4F
+    # Console (80-89)
+    CONSOLE_80 = 0x50
+    CONSOLE_81 = 0x51
+    CONSOLE_82 = 0x52
+    CONSOLE_83 = 0x53
+    CONSOLE_84 = 0x54
+    CONSOLE_85 = 0x55
+    CONSOLE_86 = 0x56
+    CONSOLE_87 = 0x57
+    CONSOLE_88 = 0x58
+    CONSOLE_89 = 0x59
+    # AHU (90-99)
+    AHU_90 = 0x5A
+    AHU_91 = 0x5B
+    AHU_92 = 0x5C
+    AHU_93 = 0x5D
+    AHU_94 = 0x5E
+    AHU_95 = 0x5F
+    AHU_96 = 0x60
+    AHU_97 = 0x61
+    AHU_98 = 0x62
+    AHU_99 = 0x63
+    # ERV (100-109)
+    ERV_100 = 0x64
+    ERV_101 = 0x65
+    ERV_102 = 0x66
+    ERV_103 = 0x67
+    ERV_104 = 0x68
+    ERV_105 = 0x69
+    ERV_106 = 0x6A
+    ERV_107 = 0x6B
+    ERV_108 = 0x6C
+    ERV_109 = 0x6D
+    # DVM HE (110-114)
+    DVM_HE_110 = 0x6E
+    DVM_HE_111 = 0x6F
+    DVM_HE_112 = 0x70
+    DVM_HE_113 = 0x71
+    DVM_HE_114 = 0x72
+    # EHS (115-119)
+    EHS_115 = 0x73
+    EHS_116 = 0x74
+    EHS_117 = 0x75
+    EHS_118 = 0x76
+    EHS_119 = 0x77
+    # DVM HT (120-124)
+    DVM_HT_120 = 0x78
+    DVM_HT_121 = 0x79
+    DVM_HT_122 = 0x7A
+    DVM_HT_123 = 0x7B
+    DVM_HT_124 = 0x7C
+    # EHS HT (125-129)
+    EHS_HT_125 = 0x7D
+    EHS_HT_126 = 0x7E
+    EHS_HT_127 = 0x7F
+    EHS_HT_128 = 0x80
+    EHS_HT_129 = 0x81
+    # DVM Chiller (140-149)
+    DVM_CHILLER_140 = 0x8C
+    DVM_CHILLER_141 = 0x8D
+    DVM_CHILLER_142 = 0x8E
+    DVM_CHILLER_143 = 0x8F
+    DVM_CHILLER_144 = 0x90
+    DVM_CHILLER_145 = 0x91
+    DVM_CHILLER_146 = 0x92
+    DVM_CHILLER_147 = 0x93
+    DVM_CHILLER_148 = 0x94
+    DVM_CHILLER_149 = 0x95
+    # 360CST (150-159)
+    CST_360_150 = 0x96
+    CST_360_151 = 0x97
+    CST_360_152 = 0x98
+    CST_360_153 = 0x99
+    CST_360_154 = 0x9A
+    CST_360_155 = 0x9B
+    CST_360_156 = 0x9C
+    CST_360_157 = 0x9D
+    CST_360_158 = 0x9E
+    CST_360_159 = 0x9F
+    # FCU Kit (160-169)
+    FCU_KIT_160 = 0xA0
+    FCU_KIT_161 = 0xA1
+    FCU_KIT_162 = 0xA2
+    FCU_KIT_163 = 0xA3
+    FCU_KIT_164 = 0xA4
+    FCU_KIT_165 = 0xA5
+    FCU_KIT_166 = 0xA6
+    FCU_KIT_167 = 0xA7
+    FCU_KIT_168 = 0xA8
+    FCU_KIT_169 = 0xA9
+    # CAC (256-511)
+    CAC_256 = 0x100
+    CAC_511 = 0x1FF
+    # CAC Inverter (512-767)
+    CAC_INVERTER_512 = 0x200
+    CAC_INVERTER_767 = 0x2FF
