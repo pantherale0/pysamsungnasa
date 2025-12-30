@@ -163,9 +163,19 @@ class NasaClient:
                     self._rx_buffer = self._rx_buffer[1:]
                     continue
 
-                expected_packet_len = 1 + packet_len_val + 1  # STX + payload_len + ETX
+                expected_packet_len = packet_len_val + 2  # + STX and ETX
 
                 if len(self._rx_buffer) < expected_packet_len:
+                    # If the expected packet is suspiciously large, check if there's
+                    # another STX marker nearby (indicating a malformed packet)
+                    if expected_packet_len > 2000 and len(self._rx_buffer) > 500:
+                        # Look for the next STX within a reasonable distance
+                        next_stx = self._rx_buffer.find(b"\x32", 1)  # Start searching after current STX
+                        if next_stx > 0 and next_stx < 300:
+                            # Found another STX marker nearby - current packet is likely malformed
+                            self._rx_buffer = self._rx_buffer[next_stx:]
+                            continue
+
                     if self._config.log_buffer_messages:
                         _LOGGER.debug(
                             "Incomplete packet. Have %d, need %d. Waiting for more data.",

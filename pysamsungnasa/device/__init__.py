@@ -7,9 +7,9 @@ import logging
 from typing import TYPE_CHECKING
 from datetime import datetime, timezone
 
-from .controllers import DhwController, ClimateController
+from .controllers import DhwController, ClimateController, WaterLawMode
 from ..config import NasaConfig
-from ..protocol.enum import DataType, AddressClass, InFsv3011EnableDhw, OutOutdoorCoolonlyModel
+from ..protocol.enum import DataType, AddressClass, InFsv3011EnableDhw, OutOutdoorCoolonlyModel, InUseThermostat
 from ..protocol.parser import NasaPacketParser
 from ..protocol.factory.messaging import SendMessage, BaseMessage
 
@@ -51,6 +51,11 @@ class NasaDevice:
         0x8001: "outdoor_operation_status",
         0x8003: "outdoor_operation_mode",
         0x8061: "outdoor_defrost_status",
+        # Water law mode configuration messages
+        0x4093: "heating_water_law_type",  # FSV 2041 Water Law Type Heating
+        0x4094: "cooling_water_law_type",  # FSV 2081 Water Law Type Cooling
+        0x4095: "use_external_thermostat_1",  # FSV 2091 Use Thermostat 1
+        0x4096: "use_external_thermostat_2",  # FSV 2092 Use Thermostat 2
     }
 
     def __init__(
@@ -80,6 +85,9 @@ class NasaDevice:
             if device_type != AddressClass.INDOOR
             else ClimateController(address=address, message_sender=client.send_message)
         )
+        # Set default water law mode (will be updated when config messages arrive)
+        if self._climate_controller is not None:
+            self._climate_controller.water_law_mode = WaterLawMode.WATER_LAW_INTERNAL_THERMOSTAT
         packet_parser.add_device_handler(address, self.handle_packet)
         for message_number in self._MESSAGES_TO_LISTEN:
             packet_parser.add_packet_listener(message_number, self.handle_packet)
@@ -127,13 +135,15 @@ class NasaDevice:
             return None
         if self._dhw_controller is None:
             return None
-        if 0x809D not in self.attributes:
-            return None
-        if (
-            self.attributes[0x809D].VALUE == OutOutdoorCoolonlyModel.NO_HEAT_PUMP
-            and self._dhw_controller.current_temperature is None
-        ):
-            return None
+        # If we've received the cool-only model indicator and it's a cool-only model
+        # with no current temperature, don't expose the DHW controller
+        if 0x809D in self.attributes:
+            if (
+                self.attributes[0x809D].VALUE == OutOutdoorCoolonlyModel.NO_HEAT_PUMP
+                and self._dhw_controller.current_temperature is None
+            ):
+                return None
+        # Otherwise, expose the DHW controller
         return self._dhw_controller
 
     @property
@@ -142,6 +152,55 @@ class NasaDevice:
         if self.device_type != AddressClass.INDOOR:
             return None
         return self._climate_controller
+
+    def _infer_water_law_mode(self):
+        """
+        Infer the water law mode based on device configuration packets.
+
+        This method analyzes the use_external_thermostat_1 and use_external_thermostat_2
+        settings received from the device to determine which water law mode is active:
+
+        - If any external thermostat is enabled (VALUE_1, VALUE_2, or VALUE_3):
+          → WATER_LAW_EXTERNAL_THERMOSTAT
+        - Otherwise:
+          → WATER_LAW_INTERNAL_THERMOSTAT (default for most systems)
+
+        Note: We infer INTERNAL_THERMOSTAT as the default because:
+        1. Most modern systems use internal room temperature feedback
+        2. The device will only send external thermostat configs if using external sensors
+        3. If no external thermostat is configured, the system must be using internal feedback
+        """
+        if not self._climate_controller:
+            return
+
+        # Check if any external thermostat is enabled (non-zero and not explicitly "NO")
+        thermostat_1_enabled = (
+            self._climate_controller.use_external_thermostat_1 is not None
+            and self._climate_controller.use_external_thermostat_1 != InUseThermostat.NO
+        )
+        thermostat_2_enabled = (
+            self._climate_controller.use_external_thermostat_2 is not None
+            and self._climate_controller.use_external_thermostat_2 != InUseThermostat.NO
+        )
+
+        if thermostat_1_enabled or thermostat_2_enabled:
+            # External thermostat is enabled
+            inferred_mode = WaterLawMode.WATER_LAW_EXTERNAL_THERMOSTAT
+            _LOGGER.debug(
+                "Device %s: Inferred water law mode EXTERNAL_THERMOSTAT " "(thermostat_1=%s, thermostat_2=%s)",
+                self.address,
+                self._climate_controller.use_external_thermostat_1,
+                self._climate_controller.use_external_thermostat_2,
+            )
+        else:
+            # No external thermostat, must be using internal room temperature feedback
+            inferred_mode = WaterLawMode.WATER_LAW_INTERNAL_THERMOSTAT
+            _LOGGER.debug(
+                "Device %s: Inferred water law mode INTERNAL_THERMOSTAT " "(no external thermostat detected)",
+                self.address,
+            )
+
+        self._climate_controller.water_law_mode = inferred_mode
 
     def handle_packet(self, *nargs, **kwargs):
         """Handle a packet sent to this device from the parser."""
@@ -185,6 +244,11 @@ class NasaDevice:
         if self._climate_controller and message_number in self._CLIMATE_MESSAGE_MAP:
             attr_name = self._CLIMATE_MESSAGE_MAP[message_number]
             setattr(self._climate_controller, attr_name, packet_data.VALUE)
+
+        # Infer water law mode if we have updated a relevant configuration message
+        if self._climate_controller and message_number in (0x4095, 0x4096):
+            self._infer_water_law_mode()
+
         for callback in self._device_callbacks:
             try:
                 callback(self)

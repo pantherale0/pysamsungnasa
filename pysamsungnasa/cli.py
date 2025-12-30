@@ -164,11 +164,12 @@ async def interactive_cli(nasa: SamsungNasa):
                 break
             elif command == "climate":
                 # Show and control climate information (DHW/Heating)
-                if len(parts) != 3:
-                    print("Usage: climate <device_address>")
+                if len(parts) < 3 or len(parts) > 4:
+                    print("Usage: climate <device_address> <dhw/heat> [<on/off>]")
                     continue
                 device_id = parts[1]
                 climate_type = parts[2]
+                command = parts[3] if len(parts) > 3 else None
                 if device_id not in nasa.devices:
                     print(f"Device {device_id} not found")
                     continue
@@ -182,6 +183,15 @@ async def interactive_cli(nasa: SamsungNasa):
                     print(f"  Target Temp: {device.dhw_controller.target_temperature}")
                     print(f"  Mode: {device.dhw_controller.operation_mode}")
                     print(f"  Fan Speed: {device.dhw_controller.power}")
+                    if command is not None:
+                        if command == "on":
+                            await device.dhw_controller.turn_on()
+                            print("DHW turned on")
+                        elif command == "off":
+                            await device.dhw_controller.turn_off()
+                            print("DHW turned off")
+                        else:
+                            print(f"Unknown command for DHW: {command}")
                 elif climate_type == "heat":
                     if not device.climate_controller:
                         print(f"Device {device_id} has no Heating controller")
@@ -191,6 +201,15 @@ async def interactive_cli(nasa: SamsungNasa):
                     print(f"  Target Temp: {device.climate_controller.target_temperature}")
                     print(f"  Mode: {device.climate_controller.current_mode}")
                     print(f"  Fan Speed: {device.climate_controller.power}")
+                    if command is not None:
+                        if command == "on":
+                            await device.climate_controller.turn_on()
+                            print("Heating turned on")
+                        elif command == "off":
+                            await device.climate_controller.turn_off()
+                            print("Heating turned off")
+                        else:
+                            print(f"Unknown command for Heating: {command}")
                 else:
                     print(f"Unknown climate type: {climate_type}")
             else:

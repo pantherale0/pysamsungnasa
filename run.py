@@ -19,8 +19,8 @@ async def main():
         config={
             "device_pnp": True,
             "device_dump_only": False,
-            "log_all_messages": True,
-            "log_buffer_messages": True,
+            "log_all_messages": False,
+            "log_buffer_messages": False,
             "devices_to_log": ["200000"],
         },
     )
@@ -41,8 +41,8 @@ async def start_cli():
         config={
             "device_pnp": True,
             "device_dump_only": False,
-            "log_all_messages": True,
-            "log_buffer_messages": True,
+            "log_all_messages": False,
+            "log_buffer_messages": False,
             "devices_to_log": ["200000"],
         },
     )

@@ -240,6 +240,13 @@ class In2WayValveMessage(EnumMessage):
     MESSAGE_ENUM = In2WayValve
 
 
+class InDhwOperating(BoolMessage):
+    """Parser for message 0x408b (Indoor DHW Operating)."""
+
+    MESSAGE_ID = 0x408B
+    MESSAGE_NAME = "Indoor DHW Operating"
+
+
 class InFsv2041WaterLawTypeHeating(EnumMessage):
     """Parser for message 0x4093 (FSV 2041 Water Law Type Heating)."""
 

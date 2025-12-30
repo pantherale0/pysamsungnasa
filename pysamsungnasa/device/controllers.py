@@ -3,6 +3,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional, Callable
+from enum import Enum
 
 from ..protocol.factory.messaging import SendMessage
 from ..protocol.factory.messages.indoor import (
@@ -27,16 +28,33 @@ from ..protocol.enum import (
     OutdoorOperationMode,
     OutdoorIndoorDefrostStep,
     InFsv3011EnableDhw,
+    InFsv2041WaterLawTypeHeating,
+    InFsv2081WaterLawTypeCooling,
+    InUseThermostat,
 )
 
 
+class WaterLawMode(Enum):
+    """Water law operational modes."""
+
+    WATER_TARGET = "water_target"  # Direct water outlet temperature control
+    WATER_LAW_EXTERNAL_THERMOSTAT = "water_law_ext_thermo"  # Water law with external thermostat
+    WATER_LAW_INTERNAL_THERMOSTAT = "water_law_int_thermo"  # Water law with internal/room thermostat
+
+
 @dataclass
-class DhwController:
-    """Data class to store DHW state information."""
+class ControllerBase:
+    """Base class for controllers."""
 
     address: str
     message_sender: Callable
     power: Optional[bool] = None
+
+
+@dataclass
+class DhwController(ControllerBase):
+    """Data class to store DHW state information."""
+
     operation_mode: Optional[DhwOpMode] = None
     reference_temp_source: Optional[DhwReferenceTemp] = None
     target_temperature: Optional[float] = None
@@ -98,12 +116,9 @@ class DhwController:
 
 
 @dataclass
-class ClimateController:
-    """Climate controller."""
+class ClimateController(ControllerBase):
+    """Climate controller with multi-mode water law support."""
 
-    address: str
-    message_sender: Callable
-    power: Optional[bool] = None
     supports_h_swing: Optional[bool] = False
     supports_v_swing: Optional[bool] = False
     supports_fan: Optional[bool] = False
@@ -122,20 +137,45 @@ class ClimateController:
     outdoor_operation_mode: Optional[OutdoorOperationMode] = None
     outdoor_defrost_status: Optional[OutdoorIndoorDefrostStep] = None
 
+    # Water law mode configuration
+    water_law_mode: Optional[WaterLawMode] = None
+    heating_water_law_type: Optional[InFsv2041WaterLawTypeHeating] = None  # Floor (1) or FCU (2)
+    cooling_water_law_type: Optional[InFsv2081WaterLawTypeCooling] = None  # Floor (1) or FCU (2)
+    use_external_thermostat_1: Optional[InUseThermostat] = None  # External thermostat 1
+    use_external_thermostat_2: Optional[InUseThermostat] = None  # External thermostat 2
+
+    # Per-mode temperature setpoints (for flexible temperature management)
+    room_temperature_setpoint: Optional[float] = None  # For water law with internal thermostat
+    external_thermostat_setpoint: Optional[float] = None  # For water law with external thermostat
+    water_target_temperature_setpoint: Optional[float] = None  # For direct water outlet temperature
+
     @property
     def f_target_temperature(self):
-        """Computed target temperature based on current mode."""
+        """Computed target temperature based on current mode and water law mode."""
         if self.current_mode == InOperationMode.COOL:
             return self.water_outlet_target_temperature
         elif self.current_mode == InOperationMode.AUTO or self.current_mode == InOperationMode.HEAT:
-            return self.target_temperature
+            # For water law modes, use mode-specific setpoint
+            if self.water_law_mode == WaterLawMode.WATER_LAW_INTERNAL_THERMOSTAT:
+                return self.room_temperature_setpoint
+            elif self.water_law_mode == WaterLawMode.WATER_LAW_EXTERNAL_THERMOSTAT:
+                return self.external_thermostat_setpoint
+            else:
+                return self.target_temperature
         return None
 
     @property
     def f_current_temperature(self):
-        """Computed current temperature based on current mode."""
+        """Computed current temperature based on current mode and water law mode."""
         if self.current_mode == InOperationMode.AUTO or self.current_mode == InOperationMode.HEAT:
-            return self.current_temperature
+            # For water law with internal thermostat, use room temperature
+            if self.water_law_mode == WaterLawMode.WATER_LAW_INTERNAL_THERMOSTAT:
+                return self.current_temperature
+            # For water law with external thermostat, external device provides feedback
+            elif self.water_law_mode == WaterLawMode.WATER_LAW_EXTERNAL_THERMOSTAT:
+                return self.current_temperature
+            else:
+                return self.current_temperature
         elif self.current_mode == InOperationMode.COOL:
             return self.water_outlet_current_temperature
         return None
@@ -159,7 +199,7 @@ class ClimateController:
         self.power = False
 
     async def set_mode(self, mode: InOperationMode):
-        """Set the mode."""
+        """Set the operation mode."""
         self.current_mode = mode
         await self.message_sender(
             destination=self.address,
@@ -172,38 +212,145 @@ class ClimateController:
             ],
         )
 
-    async def set_target_temperature(self, temperature: float):
-        """Set the target temperature of the climate device."""
+    async def set_water_law_mode(self, water_law_mode: WaterLawMode):
+        """
+        Set the water law operational mode.
+
+        This determines how the controller manages temperature setpoints:
+        - WATER_TARGET: Direct water outlet temperature control (0x4247)
+        - WATER_LAW_EXTERNAL_THERMOSTAT: External device controls room temp via water law curve
+        - WATER_LAW_INTERNAL_THERMOSTAT: Uses room temperature feedback for water law curve
+        """
+        self.water_law_mode = water_law_mode
+        # Implementation note: Actual mode activation depends on device capabilities
+        # and may require additional configuration messages based on device state
+
+    async def set_water_law_type(
+        self,
+        heating_type: Optional[InFsv2041WaterLawTypeHeating] = None,
+        cooling_type: Optional[InFsv2081WaterLawTypeCooling] = None,
+    ):
+        """
+        Set water law types for heating and cooling.
+
+        Args:
+            heating_type: InFsv2041WaterLawTypeHeating.FLOOR or .FCU
+            cooling_type: InFsv2081WaterLawTypeCooling.FLOOR or .FCU
+        """
         messages = []
-        if self.current_mode == InOperationMode.AUTO:
-            self.water_law_target_temperature = temperature
+        if heating_type is not None:
+            self.heating_water_law_type = heating_type
             messages.append(
                 SendMessage(
-                    MESSAGE_ID=InWaterLawTargetTemperature.MESSAGE_ID,  # type: ignore
-                    PAYLOAD=int(temperature * 10).to_bytes(2, "big"),
+                    MESSAGE_ID=0x4093,  # FSV 2041 Water Law Type Heating
+                    PAYLOAD=heating_type.value.to_bytes(1, "little"),
                 )
             )
-        elif self.current_mode == InOperationMode.COOL:
-            self.water_outlet_target_temperature = temperature
+        if cooling_type is not None:
+            self.cooling_water_law_type = cooling_type
             messages.append(
                 SendMessage(
-                    MESSAGE_ID=InWaterOutletTargetTemperature.MESSAGE_ID,  # type: ignore
-                    PAYLOAD=int(temperature * 10).to_bytes(2, "big"),
+                    MESSAGE_ID=0x4094,  # FSV 2081 Water Law Type Cooling
+                    PAYLOAD=cooling_type.value.to_bytes(1, "little"),
                 )
             )
-        elif self.current_mode == InOperationMode.HEAT:
-            self.target_temperature = temperature
-            messages.append(
-                SendMessage(
-                    MESSAGE_ID=InTargetTemperature.MESSAGE_ID,  # type: ignore
-                    PAYLOAD=int(temperature * 10).to_bytes(2, "big"),
-                )
+        if messages:
+            await self.message_sender(
+                destination=self.address,
+                request_type=DataType.REQUEST,
+                messages=messages,
             )
+
+    async def set_external_thermostat(self, thermostat_index: int, enabled: InUseThermostat):
+        """
+        Configure external thermostat usage.
+
+        Args:
+            thermostat_index: 1 or 2 (for thermostats 1 and 2)
+            enabled: InUseThermostat enum value (NO=0, VALUE_1=1, VALUE_2=2, VALUE_3=3)
+        """
+        if thermostat_index == 1:
+            self.use_external_thermostat_1 = enabled
+            message_id = 0x4095  # FSV 2091 Use Thermostat 1
+        elif thermostat_index == 2:
+            self.use_external_thermostat_2 = enabled
+            message_id = 0x4096  # FSV 2092 Use Thermostat 2
+        else:
+            raise ValueError("Thermostat index must be 1 or 2")
+
         await self.message_sender(
             destination=self.address,
             request_type=DataType.REQUEST,
-            messages=messages,
+            messages=[SendMessage(MESSAGE_ID=message_id, PAYLOAD=enabled.value.to_bytes(1, "little"))],
         )
+
+    async def set_target_temperature(self, temperature: float):
+        """
+        Set the target temperature of the climate device.
+
+        The actual message sent depends on the current operation mode and water law mode:
+        - In COOL mode: Sets water outlet target temp (0x4247)
+        - In AUTO/HEAT with WATER_LAW_EXTERNAL_THERMOSTAT: Sets water law target temp (0x4248)
+        - In AUTO/HEAT with WATER_LAW_INTERNAL_THERMOSTAT: Sets room target via water law (0x4248)
+        - In AUTO/HEAT with WATER_TARGET: Sets water outlet target temp (0x4247)
+        - In AUTO/HEAT without water law: Sets room target temp (0x4201)
+        """
+        messages = []
+
+        if self.current_mode == InOperationMode.COOL:
+            # Cooling always uses water outlet target temperature
+            self.water_outlet_target_temperature = temperature
+            messages.append(
+                SendMessage(
+                    MESSAGE_ID=InWaterOutletTargetTemperature.MESSAGE_ID,  # type: ignore  # 0x4247
+                    PAYLOAD=int(temperature * 10).to_bytes(2, "big"),
+                )
+            )
+        elif self.current_mode == InOperationMode.AUTO or self.current_mode == InOperationMode.HEAT:
+            if self.water_law_mode == WaterLawMode.WATER_TARGET:
+                # Direct water outlet temperature control
+                self.water_target_temperature_setpoint = temperature
+                messages.append(
+                    SendMessage(
+                        MESSAGE_ID=InWaterOutletTargetTemperature.MESSAGE_ID,  # type: ignore  # 0x4247
+                        PAYLOAD=int(temperature * 10).to_bytes(2, "big"),
+                    )
+                )
+            elif self.water_law_mode == WaterLawMode.WATER_LAW_EXTERNAL_THERMOSTAT:
+                # External thermostat provides room temperature feedback
+                # Set water law curve target (ambient-based curve)
+                self.external_thermostat_setpoint = temperature
+                messages.append(
+                    SendMessage(
+                        MESSAGE_ID=InWaterLawTargetTemperature.MESSAGE_ID,  # type: ignore  # 0x4248
+                        PAYLOAD=int(temperature * 10).to_bytes(2, "big"),
+                    )
+                )
+            elif self.water_law_mode == WaterLawMode.WATER_LAW_INTERNAL_THERMOSTAT:
+                # Use room temperature feedback via water law curve
+                self.room_temperature_setpoint = temperature
+                messages.append(
+                    SendMessage(
+                        MESSAGE_ID=InWaterLawTargetTemperature.MESSAGE_ID,  # type: ignore  # 0x4248
+                        PAYLOAD=int(temperature * 10).to_bytes(2, "big"),
+                    )
+                )
+            else:
+                # No water law mode specified, use standard room temperature setpoint
+                self.target_temperature = temperature
+                messages.append(
+                    SendMessage(
+                        MESSAGE_ID=InTargetTemperature.MESSAGE_ID,  # type: ignore  # 0x4201
+                        PAYLOAD=int(temperature * 10).to_bytes(2, "big"),
+                    )
+                )
+
+        if messages:
+            await self.message_sender(
+                destination=self.address,
+                request_type=DataType.REQUEST,
+                messages=messages,
+            )
 
     async def send_zone_1_temperature(self, temperature: float):
         """Send a zone 1 temperature."""
