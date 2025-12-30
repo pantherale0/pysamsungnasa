@@ -120,15 +120,6 @@ class NasaDevice:
         if self.device_type != AddressClass.INDOOR:
             return  # Nothing to do
         _LOGGER.debug("Requesting FSV configuration for device %s", self.address)
-        # Request FSV configuration
-        from pysamsungnasa.protocol.factory import MESSAGE_PARSERS
-
-        for msg in MESSAGE_PARSERS.values():
-            if msg.is_fsv_message and msg.MESSAGE_ID and msg.MESSAGE_ID not in self.fsv_config:
-                await self._client.nasa_read(
-                    msgs=[msg.MESSAGE_ID],
-                    destination=self.address,
-                )
         for k in self._CLIMATE_MESSAGE_MAP.keys():
             if k not in self.fsv_config:
                 await self._client.nasa_read(
