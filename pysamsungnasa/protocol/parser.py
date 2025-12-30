@@ -20,6 +20,7 @@ class NasaPacketParser:
     _device_handlers: dict[str, list] = {}
     _packet_listeners: dict[int, list] = {}
     _new_device_handler: Callable | None = None
+    _pending_read_handler: Callable | None = None  # Callback for handling received read responses
 
     def __init__(
         self,
@@ -29,6 +30,10 @@ class NasaPacketParser:
         """Init a NASA Packet Parser."""
         self._config = config
         self._new_device_handler = _new_device_handler
+
+    def set_pending_read_handler(self, handler: Callable | None) -> None:
+        """Set the pending read handler callback."""
+        self._pending_read_handler = handler
 
     def add_device_handler(self, address: str, callback):
         """Add the device handler."""
@@ -103,6 +108,41 @@ class NasaPacketParser:
 
         if not should_process:
             return  # Packet was filtered out by the above logic
+
+        # Notify pending read handler when we receive a response or acknowledgment
+        # ACK packets can also indicate that a read request was processed
+        if (
+            not is_outgoing_from_self
+            and payload_type in [DataType.RESPONSE, DataType.ACK]
+            and self._pending_read_handler
+        ):
+            # For RESPONSE packets, extract message numbers from the datasets
+            # For ACK packets, we need to match based on destination only (ACK doesn't contain message data)
+            message_numbers = []
+            if payload_type == DataType.RESPONSE:
+                for ds in kwargs.get("dataSets", []):  # type: ignore
+                    if isinstance(ds, list) and len(ds) > 0:
+                        message_numbers.append(ds[0])
+
+            # Call handler for RESPONSE packets with specific messages, or for ACK packets (use None to indicate "any pending")
+            if payload_type == DataType.RESPONSE:
+                if message_numbers:
+                    try:
+                        result = self._pending_read_handler(source_address, message_numbers)
+                        # Handle async callbacks
+                        if iscoroutinefunction(self._pending_read_handler):
+                            await result
+                    except Exception as e:
+                        _LOGGER.error("Error in pending_read_handler: %s", e)
+            elif payload_type == DataType.ACK:
+                # For ACK, trigger queue processing without clearing a specific read (let retry manager handle clearing)
+                try:
+                    result = self._pending_read_handler(source_address, [])
+                    # Handle async callbacks
+                    if iscoroutinefunction(self._pending_read_handler):
+                        await result
+                except Exception as e:
+                    _LOGGER.error("Error in pending_read_handler for ACK: %s", e)
 
         for ds in kwargs["dataSets"]:  # type: ignore
             if not isinstance(ds, list):

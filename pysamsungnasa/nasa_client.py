@@ -26,12 +26,14 @@ class NasaClient:
     pnp_auto_discovery_packet_handler = None
     _queue_processor_task: asyncio.Task | None = None
     _writer_task: asyncio.Task | None = None
+    _retry_manager_task: asyncio.Task | None = None
     _tx_queue: asyncio.Queue[bytes] | None = None
     _rx_queue: asyncio.Queue[bytes] | None = None
-    _pending_requests: dict[int, asyncio.Future] = {}
     _rx_buffer = b""
     _last_rx_time: float = 0.0
     _packet_number_counter: int = 0
+    _pending_reads: dict = {}  # Track pending read requests for retry logic
+    _queued_reads: dict = {}  # Queue of read requests per destination waiting to be sent
 
     def __init__(
         self,
@@ -65,6 +67,10 @@ class NasaClient:
         """Return connection status."""
         return self._client.is_connected()
 
+    def set_receive_event_handler(self, handler) -> None:
+        """Set the receive event handler."""
+        self._rx_event_handler = handler
+
     async def _handle_disconnection(self, ex: Exception | None = None) -> None:
         """Handle disconnection."""
         if not self.is_connected:
@@ -79,6 +85,7 @@ class NasaClient:
         # These methods cancel tasks and set them (and their queues) to None
         await self._end_writer_session()
         await self._end_read_queue_session()
+        await self._end_retry_manager_session()
 
         if self._disconnect_event_handler:
             try:
@@ -94,6 +101,7 @@ class NasaClient:
         self._last_rx_time = asyncio.get_event_loop().time()
         await self._start_read_queue_session()
         await self._start_writer_session()
+        await self._start_retry_manager_session()
 
     async def connect(self) -> bool:
         """Connect to the server and start background tasks."""
@@ -295,6 +303,38 @@ class NasaClient:
             self._rx_queue = None
         return task_was_present
 
+    async def _start_retry_manager_session(self) -> bool:
+        """Start retry manager task."""
+        if self._retry_manager_task and not self._retry_manager_task.done():
+            _LOGGER.error("Retry manager task already running.")
+            return True
+        if not self._config.enable_read_retries:
+            _LOGGER.debug("Read retries are disabled in config.")
+            return False
+        self._retry_manager_task = asyncio.create_task(self._retry_manager())
+        _LOGGER.debug("Retry manager session started.")
+        return True
+
+    async def _end_retry_manager_session(self) -> bool:
+        """End retry manager session."""
+        task_was_present = self._retry_manager_task is not None
+        if self._retry_manager_task:
+            task = self._retry_manager_task
+            self._retry_manager_task = None
+            if not task.done():
+                task.cancel()
+                try:
+                    await task
+                except asyncio.CancelledError:
+                    _LOGGER.debug("Retry manager task successfully cancelled.")
+                except Exception as e:
+                    _LOGGER.debug(
+                        "Exception during retry manager task cancellation/cleanup: %s",
+                        e,
+                    )
+            _LOGGER.debug("Retry manager session ended.")
+        return task_was_present
+
     async def _read_queue_processor(self):
         """Async read queue processor task. Processes complete packets from the queue."""
         if self._rx_queue is None:
@@ -333,12 +373,6 @@ class NasaClient:
                                 hex(packet_crc_from_msg),
                             )
                             continue
-
-                        if packet_data and len(packet_data) > 8:
-                            packet_number = packet_data[8]
-                            future = self._pending_requests.pop(packet_number, None)
-                            if future:
-                                future.set_result(packet_data)
 
                         if self._rx_event_handler and callable(self._rx_event_handler):
                             if iscoroutinefunction(self._rx_event_handler):
@@ -412,8 +446,6 @@ class NasaClient:
     async def send_command(
         self,
         message: list[str],
-        wait_for_reply: bool = False,
-        reply_timeout: float = 5.0,
     ) -> int | bytes | None:
         """Send a command to the NASA device."""
         if not self.is_connected or self._tx_queue is None:
@@ -436,28 +468,8 @@ class NasaClient:
                 packet_size_hex = f"{(len(data_bytes) + 4):04x}"
                 full_packet_hex = f"32{packet_size_hex}{msg}{crc_hex}34"  # STX, Size, Data, CRC, ETX
                 data = hex2bin(full_packet_hex)
-
-                if not wait_for_reply:
-                    await self._tx_queue.put(data)
-                    _LOGGER.debug("Command enqueued (no reply): %s", bin2hex(data))
-                    continue  # Process next message
-
-                # Logic for sending a command and waiting for a specific reply
-                future = asyncio.Future()
-                self._pending_requests[last_packet_number] = future
                 await self._tx_queue.put(data)
-                _LOGGER.debug("Command enqueued (waiting for reply for packet %d)", last_packet_number)
-
-                try:
-                    return await asyncio.wait_for(future, timeout=reply_timeout)
-                except asyncio.TimeoutError as e:
-                    # The future timed out, so we need to clean it up from the pending requests.
-                    # The reader task will not have popped it.
-                    self._pending_requests.pop(last_packet_number, None)
-                    raise TimeoutError(
-                        f"No response received for packet {last_packet_number} within {reply_timeout} seconds."
-                    ) from e
-
+                _LOGGER.debug("Command enqueued (no reply): %s", bin2hex(data))
             except (binascii.Error, ValueError) as e:
                 self._packet_number_counter = (self._packet_number_counter - 1) % 256
                 _LOGGER.error("Error encoding command %s: %s", msg, e)
@@ -502,18 +514,58 @@ class NasaClient:
                         messages=messages,
                     )
                 ],
-                wait_for_reply=False,
             )
         except Exception as e:
             _LOGGER.exception("Error sending message to device %s: %s", destination_address, e)
 
     async def nasa_read(self, msgs: list[int], destination: NasaDevice | str = "B0FF20") -> int | bytes | None:
         """Send read requests to a device to read data."""
-        return await self.send_message(
+        dest_addr = destination if isinstance(destination, str) else destination.address
+
+        # Check if there's already a pending read to this destination
+        if self._config.enable_read_retries:
+            has_pending_read = any(read_info["destination"] == dest_addr for read_info in self._pending_reads.values())
+            if has_pending_read:
+                # Queue this read to be sent after the current one completes
+                if dest_addr not in self._queued_reads:
+                    self._queued_reads[dest_addr] = []
+                self._queued_reads[dest_addr].append(msgs)
+                _LOGGER.debug(
+                    "Queuing read request for messages %s to %s (queue size: %d)",
+                    msgs,
+                    dest_addr,
+                    len(self._queued_reads[dest_addr]),
+                )
+                return None
+
+        packet_number = await self.send_message(
             destination=destination,
             request_type=DataType.READ,
             messages=[SendMessage(MESSAGE_ID=imn, PAYLOAD=b"\x05\xa5\xa5\xa5") for imn in msgs],
         )
+
+        # Track this read request for retry logic if enabled
+        if self._config.enable_read_retries and packet_number is not None:
+            # Use message IDs as the key for matching responses
+            read_key = f"{dest_addr}_{tuple(sorted(msgs))}"
+            current_time = asyncio.get_event_loop().time()
+            self._pending_reads[read_key] = {
+                "destination": dest_addr,
+                "messages": msgs,
+                "packet_number": packet_number,
+                "attempts": 0,
+                "last_attempt_time": current_time,
+                "next_retry_time": current_time + self._config.read_retry_interval,
+                "retry_interval": self._config.read_retry_interval,
+            }
+            _LOGGER.debug(
+                "Tracking read request for messages %s to %s for retry (max %d attempts)",
+                msgs,
+                dest_addr,
+                self._config.read_retry_max_attempts,
+            )
+
+        return packet_number
 
     async def nasa_write(
         self, msg: int, value: str, destination: NasaDevice | str, data_type: DataType
@@ -527,3 +579,121 @@ class NasaClient:
             request_type=data_type,
             messages=[message],
         )
+
+    def _clear_pending_read(self, destination: str, message_numbers: list[int]) -> bool:
+        """Clear a pending read request when a response is received with matching message numbers."""
+        # Create a key from the sorted message numbers, same as when we track the request
+        read_key = f"{destination}_{tuple(sorted(message_numbers))}"
+        if read_key in self._pending_reads:
+            del self._pending_reads[read_key]
+            _LOGGER.debug("Cleared pending read request for messages %s from %s", message_numbers, destination)
+            return True
+        return False
+
+    async def _mark_read_received(self, destination: str, message_numbers: list[int]) -> None:
+        """Mark a read request as received (event callback from parser)."""
+        # If message_numbers is empty, this is an ACK packet - just process the queue
+        if not message_numbers:
+            await self._process_queued_reads(destination)
+            return
+
+        # If message_numbers is provided, this is a RESPONSE packet - clear and process queue
+        if self._clear_pending_read(destination, message_numbers):
+            _LOGGER.debug("Read response received for messages %s from %s", message_numbers, destination)
+            # Process any queued reads for this destination
+            await self._process_queued_reads(destination)
+
+    async def _process_queued_reads(self, destination: str) -> None:
+        """Process queued reads for a destination after a response is received."""
+        if destination not in self._queued_reads or not self._queued_reads[destination]:
+            return
+
+        # Get the next queued read
+        queued_msgs = self._queued_reads[destination].pop(0)
+        _LOGGER.debug(
+            "Processing queued read for messages %s to %s (remaining in queue: %d)",
+            queued_msgs,
+            destination,
+            len(self._queued_reads[destination]),
+        )
+
+        # Send the queued read
+        try:
+            await self.nasa_read(queued_msgs, destination=destination)
+        except Exception as e:
+            _LOGGER.error("Error processing queued read: %s", e)
+
+    async def _retry_manager(self):
+        """Manage retry logic for pending read requests."""
+        _LOGGER.debug("Retry manager task started.")
+        while self.is_connected:
+            try:
+                await asyncio.sleep(1.0)  # Check every second
+
+                if not self._config.enable_read_retries or not self._pending_reads:
+                    continue
+
+                current_time = asyncio.get_event_loop().time()
+                reads_to_retry = []
+                reads_to_remove = []
+                abandoned_destinations = set()
+
+                # Identify reads that need to be retried
+                for read_key, read_info in list(self._pending_reads.items()):
+                    if current_time >= read_info["next_retry_time"]:
+                        if read_info["attempts"] < self._config.read_retry_max_attempts:
+                            reads_to_retry.append(read_info)
+                        else:
+                            # Max retries exceeded
+                            _LOGGER.warning(
+                                "Abandoning read request %s to %s after %d attempts",
+                                read_info["packet_number"],
+                                read_info["destination"],
+                                read_info["attempts"],
+                            )
+                            reads_to_remove.append(read_key)
+                            abandoned_destinations.add(read_info["destination"])
+
+                # Remove reads that have exceeded max attempts
+                for read_key in reads_to_remove:
+                    del self._pending_reads[read_key]
+
+                # Process queued reads for abandoned destinations
+                for destination in abandoned_destinations:
+                    await self._process_queued_reads(destination)
+
+                # Retry the reads
+                for read_info in reads_to_retry:
+                    read_info["attempts"] += 1
+                    read_info["last_attempt_time"] = current_time
+                    read_info["retry_interval"] *= self._config.read_retry_backoff_factor
+                    read_info["next_retry_time"] = current_time + read_info["retry_interval"]
+
+                    _LOGGER.debug(
+                        "Retrying read request to %s (attempt %d/%d, interval=%.1fs)",
+                        read_info["destination"],
+                        read_info["attempts"],
+                        self._config.read_retry_max_attempts,
+                        read_info["retry_interval"],
+                    )
+
+                    # Resend the read request
+                    try:
+                        await self.send_message(
+                            destination=read_info["destination"],
+                            request_type=DataType.READ,
+                            messages=[
+                                SendMessage(MESSAGE_ID=msg_id, PAYLOAD=b"\x05\xa5\xa5\xa5")
+                                for msg_id in read_info["messages"]
+                            ],
+                        )
+                    except Exception as e:
+                        _LOGGER.error("Error retrying read request: %s", e)
+
+            except asyncio.CancelledError:
+                _LOGGER.info("Retry manager task was cancelled.")
+                break
+            except Exception as e:
+                _LOGGER.exception("Error in retry manager: %s", e)
+
+        _LOGGER.debug("Retry manager task finished.")

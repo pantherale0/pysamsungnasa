@@ -152,14 +152,14 @@ class ClimateController(ControllerBase):
     @property
     def f_target_temperature(self):
         """Computed target temperature based on current mode and water law mode."""
-        if self.current_mode == InOperationMode.COOL:
+        if self.current_mode == InOperationMode.COOL or self.current_mode == InOperationMode.HEAT:
             return self.water_outlet_target_temperature
-        elif self.current_mode == InOperationMode.AUTO or self.current_mode == InOperationMode.HEAT:
+        elif self.current_mode == InOperationMode.AUTO:
             # For water law modes, use mode-specific setpoint
             if self.water_law_mode == WaterLawMode.WATER_LAW_INTERNAL_THERMOSTAT:
-                return self.room_temperature_setpoint
+                return self.target_temperature
             elif self.water_law_mode == WaterLawMode.WATER_LAW_EXTERNAL_THERMOSTAT:
-                return self.external_thermostat_setpoint
+                return self.water_law_target_temperature
             else:
                 return self.target_temperature
         return None
@@ -167,16 +167,9 @@ class ClimateController(ControllerBase):
     @property
     def f_current_temperature(self):
         """Computed current temperature based on current mode and water law mode."""
-        if self.current_mode == InOperationMode.AUTO or self.current_mode == InOperationMode.HEAT:
-            # For water law with internal thermostat, use room temperature
-            if self.water_law_mode == WaterLawMode.WATER_LAW_INTERNAL_THERMOSTAT:
-                return self.current_temperature
-            # For water law with external thermostat, external device provides feedback
-            elif self.water_law_mode == WaterLawMode.WATER_LAW_EXTERNAL_THERMOSTAT:
-                return self.current_temperature
-            else:
-                return self.current_temperature
-        elif self.current_mode == InOperationMode.COOL:
+        if self.current_mode == InOperationMode.AUTO:
+            return self.current_temperature
+        elif self.current_mode == InOperationMode.COOL or self.current_mode == InOperationMode.HEAT:
             return self.water_outlet_current_temperature
         return None
 

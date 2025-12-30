@@ -10,7 +10,7 @@ from .helpers import Address
 from .protocol.enum import DataType, AddressClass
 from .protocol.parser import NasaPacketParser
 from .nasa_client import NasaClient
-from .protocol.factory import build_message, SendMessage
+from .protocol.factory import SendMessage
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,18 +22,25 @@ class SamsungNasa:
     devices: dict[str, NasaDevice] = {}
 
     def __init__(
-        self, host: str, port: int, config: dict[str, Any], new_device_event_handler: Callable | None=None, disconnect_event_handler: Callable | None=None
+        self,
+        host: str,
+        port: int,
+        config: dict[str, Any],
+        new_device_event_handler: Callable | None = None,
+        disconnect_event_handler: Callable | None = None,
     ) -> None:
         """Initialize the NASA protocol."""
         self.config = NasaConfig(**config)
-        self.parser = NasaPacketParser(_new_device_handler=self._new_device_handler, config=self.config)
         self.client = NasaClient(
             host=host,
             port=port,
             config=self.config,
-            recv_event_handler=self.parser.parse_packet,
+            recv_event_handler=None,
             disconnect_event_handler=disconnect_event_handler,
         )
+        self.parser = NasaPacketParser(_new_device_handler=self._new_device_handler, config=self.config)
+        self.parser.set_pending_read_handler(self.client._mark_read_received)
+        self.client.set_receive_event_handler(self.parser.parse_packet)
         self.new_device_event_handler = new_device_event_handler
         if self.config.device_addresses is not None:
             for address in self.config.device_addresses:

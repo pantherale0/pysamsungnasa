@@ -19,6 +19,10 @@ class NasaConfig:
         default_factory=list
     )  # Optional: add the device address here to only log messages for a specific device
     log_buffer_messages: bool = False  # If set to true, messsages relating to the buffer are logged
+    enable_read_retries: bool = True  # Enable automatic retry of read requests that don't get responses
+    read_retry_max_attempts: int = 3  # Maximum number of retry attempts for read requests
+    read_retry_interval: float = 1.0  # Interval in seconds between retry attempts
+    read_retry_backoff_factor: float = 1.1  # Multiply retry interval by this factor after each attempt
 
     @property
     def address(self) -> Address:

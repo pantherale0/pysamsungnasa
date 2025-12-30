@@ -44,12 +44,19 @@ def print_device_header(device: NasaDevice):
     print(f"  FSV Config: {device.fsv_config}")
     if device.device_type == AddressClass.INDOOR:
         print(f"  DHW Controller: {'Yes' if device.dhw_controller else 'No'}")
+        print(f"  DHW power: {device.dhw_controller.power if device.dhw_controller else 'N/A'}")
+        print(f"  DHW target temp: {device.dhw_controller.target_temperature if device.dhw_controller else 'N/A'}")
+        print(f"  DHW operation mode: {device.dhw_controller.operation_mode if device.dhw_controller else 'N/A'}")
         print(f"  Climate Controller: {'Yes' if device.climate_controller else 'No'}")
+        print(f"  Climate power: {device.climate_controller.power if device.climate_controller else 'N/A'}")
         print(
             f"  Climate Controller mode: {device.climate_controller.current_mode if device.climate_controller else 'N/A'}"
         )
         print(
-            f"  Climate Controller target temp: {device.climate_controller.target_temperature if device.climate_controller else 'N/A'}"
+            f"  Climate Controller target temp: {device.climate_controller.f_target_temperature if device.climate_controller else 'N/A'}"
+        )
+        print(
+            f"  Climate Controller current temp: {device.climate_controller.f_current_temperature if device.climate_controller else 'N/A'}"
         )
 
 
@@ -208,10 +215,10 @@ async def interactive_cli(nasa: SamsungNasa):
                         print(f"Device {device_id} has no Heating controller")
                         continue
                     print("Heating Climate Control:")
-                    print(f"  Current Temp: {device.climate_controller.current_temperature}")
-                    print(f"  Target Temp: {device.climate_controller.target_temperature}")
+                    print(f"  Current Temp: {device.climate_controller.f_current_temperature}")
+                    print(f"  Target Temp: {device.climate_controller.f_target_temperature}")
                     print(f"  Mode: {device.climate_controller.current_mode}")
-                    print(f"  Fan Speed: {device.climate_controller.power}")
+                    print(f"  Power: {device.climate_controller.power}")
                     if command is not None:
                         if command == "on":
                             await device.climate_controller.turn_on()
