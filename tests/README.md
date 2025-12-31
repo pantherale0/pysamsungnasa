@@ -11,6 +11,7 @@ The test suite covers the following modules:
 - **test_config.py** - Tests for the NasaConfig dataclass
 - **test_parser.py** - Tests for NasaPacketParser (packet parsing, device handlers, packet listeners)
 - **test_factory.py** - Tests for message factory functions (build_message, parse_message, message name lookups)
+- **test_structure_messages.py** - Tests for complex structure-based message parsing with TLV (Type-Length-Value) encoding
 
 ## Running Tests
 
