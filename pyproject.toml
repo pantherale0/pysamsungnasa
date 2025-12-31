@@ -114,9 +114,9 @@ executionEnvironments = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "--cov-report xml:coverage.xml --cov src/pysamsungnasa --cov-fail-under 0 --cov-append -m 'not integration'"
+addopts = "--cov-report xml:coverage.xml --cov pysamsungnasa --cov-fail-under 0 --cov-append -m 'not integration'"
 pythonpath = [
-  "src/pysamsungnasa"
+  "."
 ]
 testpaths = "tests"
 junit_family = "xunit2"
