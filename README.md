@@ -1,5 +1,8 @@
 # pysamsungnasa
 
+[![Tests](https://github.com/pantherale0/pysamsungnasa/actions/workflows/test.yml/badge.svg)](https://github.com/pantherale0/pysamsungnasa/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/pantherale0/pysamsungnasa/branch/main/graph/badge.svg)](https://codecov.io/gh/pantherale0/pysamsungnasa)
+
 A Python library to communicate with Samsung heat pumps, in theory both cool only and cool+heat units are supported, although only tested on an EHS unit (cool+heat)
 
 ## Features
