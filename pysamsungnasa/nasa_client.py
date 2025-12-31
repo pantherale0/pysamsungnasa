@@ -611,7 +611,7 @@ class NasaClient:
         
         Args:
             destination: The destination address
-            message_numbers: List of message IDs in the ACK packet
+            message_numbers: List of message IDs in the ACK packet. If empty, clears all pending writes for the destination.
         
         Returns the list of write keys that were cleared.
         """
@@ -620,7 +620,8 @@ class NasaClient:
         
         for write_key, write_info in self._pending_writes.items():
             if write_info["destination"] == destination:
-                # If message_numbers is provided, only clear writes for those specific messages
+                # If message_numbers is provided and not empty, only clear writes for those specific messages
+                # If message_numbers is empty, clear all pending writes for this destination (ACK without specific message IDs)
                 if message_numbers and write_info["message_id"] not in message_numbers:
                     continue
                 keys_to_delete.append(write_key)
@@ -659,22 +660,23 @@ class NasaClient:
         return False
 
     async def _mark_read_received(self, destination: str, message_numbers: list[int]) -> None:
-        """Mark a read/write request as received (event callback from parser)."""
-        # For ACK packets, handle both pending writes and queued reads
-        # ACK packets now contain message numbers that we can match against
+        """Mark a read/write request as received (event callback from parser).
+        
+        Args:
+            destination: The destination address
+            message_numbers: List of message IDs from the packet (could be from RESPONSE or ACK packets)
+        """
+        # Handle pending writes - ACK packets may contain specific message IDs or be empty
+        # If empty, it clears all pending writes for the destination
         await self._mark_write_received(destination, message_numbers)
         
-        # If message_numbers is empty or this is an ACK without specific messages,
-        # just process queued reads
-        if not message_numbers:
-            await self._process_queued_reads(destination)
-            return
-
-        # If message_numbers is provided, this could be a RESPONSE packet - clear and process queue
-        if self._clear_pending_read(destination, message_numbers):
-            _LOGGER.debug("Read response received for messages %s from %s", message_numbers, destination)
-            # Process any queued reads for this destination
-            await self._process_queued_reads(destination)
+        # Handle pending reads - only for RESPONSE packets with specific message numbers
+        if message_numbers:
+            if self._clear_pending_read(destination, message_numbers):
+                _LOGGER.debug("Read response received for messages %s from %s", message_numbers, destination)
+        
+        # Process any queued reads for this destination
+        await self._process_queued_reads(destination)
 
     async def _process_queued_reads(self, destination: str) -> None:
         """Process queued reads for a destination after a response is received."""

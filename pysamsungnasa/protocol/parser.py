@@ -123,14 +123,14 @@ class NasaPacketParser:
                     message_numbers.append(ds[0])
 
             # Call handler with the extracted message numbers
-            if message_numbers or payload_type == DataType.ACK:
-                try:
-                    result = self._pending_read_handler(source_address, message_numbers)
-                    # Handle async callbacks
-                    if iscoroutinefunction(self._pending_read_handler):
-                        await result
-                except Exception as e:
-                    _LOGGER.error("Error in pending_read_handler: %s", e)
+            # Empty message_numbers is valid for ACK packets that acknowledge without specific message IDs
+            try:
+                result = self._pending_read_handler(source_address, message_numbers)
+                # Handle async callbacks
+                if iscoroutinefunction(self._pending_read_handler):
+                    await result
+            except Exception as e:
+                _LOGGER.error("Error in pending_read_handler: %s", e)
 
         for ds in kwargs["dataSets"]:  # type: ignore
             if not isinstance(ds, list):
