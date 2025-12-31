@@ -17,11 +17,6 @@ _LOGGER = logging.getLogger(__name__)
 class NasaPacketParser:
     """Represents a NASA Packet Parser."""
 
-    _device_handlers: dict[str, list] = {}
-    _packet_listeners: dict[int, list] = {}
-    _new_device_handler: Callable | None = None
-    _pending_read_handler: Callable | None = None  # Callback for handling received read responses
-
     def __init__(
         self,
         config: NasaConfig,
@@ -29,7 +24,10 @@ class NasaPacketParser:
     ) -> None:
         """Init a NASA Packet Parser."""
         self._config = config
+        self._device_handlers: dict[str, list] = {}
+        self._packet_listeners: dict[int, list] = {}
         self._new_device_handler = _new_device_handler
+        self._pending_read_handler: Callable | None = None  # Callback for handling received read responses
 
     def set_pending_read_handler(self, handler: Callable | None) -> None:
         """Set the pending read handler callback."""

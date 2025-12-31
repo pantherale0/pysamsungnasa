@@ -7,13 +7,17 @@ from pysamsungnasa.helpers import bin2hex, hex2bin, getnonce, resetnonce, Addres
 class TestBin2Hex:
     """Tests for bin2hex function."""
 
-    def test_bin2hex_simple(self):
-        """Test converting simple bytes to hex."""
-        assert bin2hex(b"\x00\x01\x02") == "000102"
-
-    def test_bin2hex_empty(self):
-        """Test converting empty bytes."""
-        assert bin2hex(b"") == ""
+    @pytest.mark.parametrize(
+        "input_bytes,expected",
+        [
+            (b"\x00\x01\x02", "000102"),
+            (b"", ""),
+            (b"\xab\xcd\xef", "abcdef"),
+        ],
+    )
+    def test_bin2hex_conversion(self, input_bytes, expected):
+        """Test converting bytes to hex."""
+        assert bin2hex(input_bytes) == expected
 
     def test_bin2hex_all_bytes(self):
         """Test converting all possible byte values."""
@@ -21,41 +25,25 @@ class TestBin2Hex:
         result = bin2hex(test_bytes)
         assert len(result) == 512  # 256 bytes * 2 hex chars
 
-    def test_bin2hex_uppercase(self):
-        """Test hex output is lowercase by default."""
-        assert bin2hex(b"\xAB\xCD\xEF") == "abcdef"
-
 
 class TestHex2Bin:
     """Tests for hex2bin function."""
 
-    def test_hex2bin_simple(self):
-        """Test converting simple hex to bytes."""
-        assert hex2bin("000102") == b"\x00\x01\x02"
-
-    def test_hex2bin_empty(self):
-        """Test converting empty hex."""
-        assert hex2bin("") == b""
-
-    def test_hex2bin_uppercase(self):
-        """Test converting uppercase hex."""
-        assert hex2bin("ABCDEF") == b"\xab\xcd\xef"
-
-    def test_hex2bin_lowercase(self):
-        """Test converting lowercase hex."""
-        assert hex2bin("abcdef") == b"\xab\xcd\xef"
-
-    def test_hex2bin_mixed_case(self):
-        """Test converting mixed case hex."""
-        assert hex2bin("AbCdEf") == b"\xab\xcd\xef"
-
-    def test_hex2bin_with_spaces(self):
-        """Test converting hex with spaces."""
-        assert hex2bin("00 01 02") == b"\x00\x01\x02"
-
-    def test_hex2bin_with_multiple_spaces(self):
-        """Test converting hex with multiple spaces."""
-        assert hex2bin("00  01  02") == b"\x00\x01\x02"
+    @pytest.mark.parametrize(
+        "input_hex,expected",
+        [
+            ("000102", b"\x00\x01\x02"),
+            ("", b""),
+            ("ABCDEF", b"\xab\xcd\xef"),
+            ("abcdef", b"\xab\xcd\xef"),
+            ("AbCdEf", b"\xab\xcd\xef"),
+            ("00 01 02", b"\x00\x01\x02"),
+            ("00  01  02", b"\x00\x01\x02"),
+        ],
+    )
+    def test_hex2bin_conversion(self, input_hex, expected):
+        """Test converting hex to bytes."""
+        assert hex2bin(input_hex) == expected
 
 
 class TestRoundTrip:
@@ -63,7 +51,7 @@ class TestRoundTrip:
 
     def test_roundtrip_bin_to_hex_to_bin(self):
         """Test bin -> hex -> bin conversion."""
-        original = b"\x00\x01\x02\xAB\xCD\xEF"
+        original = b"\x00\x01\x02\xab\xcd\xef"
         hex_value = bin2hex(original)
         result = hex2bin(hex_value)
         assert result == original
@@ -117,37 +105,36 @@ class TestAddress:
         assert addr.channel == 0x00
         assert addr.address == 0x01
 
-    def test_address_str(self):
+    @pytest.mark.parametrize(
+        "class_id,channel,addr,expected_str",
+        [
+            (0x20, 0x00, 0x01, "200001"),
+            (0x01, 0x02, 0x03, "010203"),
+        ],
+    )
+    def test_address_str(self, class_id, channel, addr, expected_str):
         """Test Address string representation."""
-        addr = Address(class_id=0x20, channel=0x00, address=0x01)
-        assert str(addr) == "200001"
-
-    def test_address_str_with_leading_zeros(self):
-        """Test Address string representation with leading zeros."""
-        addr = Address(class_id=0x01, channel=0x02, address=0x03)
-        assert str(addr) == "010203"
+        address = Address(class_id=class_id, channel=channel, address=addr)
+        assert str(address) == expected_str
 
     def test_address_repr(self):
         """Test Address repr."""
         addr = Address(class_id=0x20, channel=0x00, address=0x01)
         assert repr(addr) == "Address(class_id=32, channel=0, address=1)"
 
-    def test_address_parse(self):
+    @pytest.mark.parametrize(
+        "input_str,expected_class,expected_channel,expected_addr",
+        [
+            ("200001", 0x20, 0x00, 0x01),
+            ("010203", 0x01, 0x02, 0x03),
+        ],
+    )
+    def test_address_parse(self, input_str, expected_class, expected_channel, expected_addr):
         """Test parsing address string."""
-        addr = Address.parse("200001")
-        assert addr.class_id == 0x20
-        assert addr.channel == 0x00
-        assert addr.address == 0x01
-
-    def test_address_parse_uppercase(self):
-        """Test parsing uppercase address string."""
-        addr = Address.parse("200001")
-        assert str(addr) == "200001"
-
-    def test_address_parse_lowercase(self):
-        """Test parsing lowercase address string."""
-        addr = Address.parse("200001")
-        assert str(addr) == "200001"
+        addr = Address.parse(input_str)
+        assert addr.class_id == expected_class
+        assert addr.channel == expected_channel
+        assert addr.address == expected_addr
 
     def test_address_parse_roundtrip(self):
         """Test parsing and converting back to string."""

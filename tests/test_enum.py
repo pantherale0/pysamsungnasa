@@ -17,207 +17,335 @@ from pysamsungnasa.protocol.enum import (
 class TestSamsungEnum:
     """Tests for SamsungEnum base class."""
 
-    def test_enum_str(self):
+    @pytest.mark.parametrize(
+        "enum_val,expected_str",
+        [
+            (AddressClass.INDOOR, "INDOOR"),
+            (AddressClass.OUTDOOR, "OUTDOOR"),
+        ],
+    )
+    def test_enum_str(self, enum_val, expected_str):
         """Test enum string representation."""
-        assert str(AddressClass.INDOOR) == "INDOOR"
-        assert str(AddressClass.OUTDOOR) == "OUTDOOR"
+        assert str(enum_val) == expected_str
 
-    def test_enum_has_value(self):
+    @pytest.mark.parametrize(
+        "value,has_value",
+        [
+            (0x20, True),
+            (0x10, True),
+            (0x99, False),
+        ],
+    )
+    def test_enum_has_value(self, value, has_value):
         """Test has_value class method."""
-        assert AddressClass.has_value(0x20)
-        assert AddressClass.has_value(0x10)
-        assert not AddressClass.has_value(0x99)
+        assert AddressClass.has_value(value) == has_value
 
 
 class TestAddressClass:
     """Tests for AddressClass enum."""
 
-    def test_address_class_values(self):
+    @pytest.mark.parametrize(
+        "attr_name,expected_value",
+        [
+            ("UNKNOWN", 0x00),
+            ("OUTDOOR", 0x10),
+            ("HTU", 0x11),
+            ("INDOOR", 0x20),
+            ("ERV", 0x30),
+            ("DIFFUSER", 0x35),
+            ("MCU", 0x38),
+            ("RMC", 0x40),
+            ("WIRED_REMOTE", 0x50),
+            ("PIM", 0x58),
+            ("SIM", 0x59),
+            ("PEAK", 0x5A),
+            ("POWER_DIVIDER", 0x5B),
+            ("WIFI_KIT", 0x62),
+            ("CENTRAL_CONTROLLER", 0x65),
+            ("JIG_TESTER", 0x80),
+            ("BML", 0xB0),
+            ("BCL", 0xB1),
+            ("BSL", 0xB2),
+            ("BCSL", 0xB3),
+            ("BMDL", 0xB4),
+            ("BCSM", 0xB7),
+            ("BLL", 0xB8),
+            ("BCSML", 0xB9),
+            ("UNDEFINED", 0xFF),
+        ],
+    )
+    def test_address_class_values(self, attr_name, expected_value):
         """Test AddressClass enum values."""
-        assert AddressClass.UNKNOWN == 0x00
-        assert AddressClass.OUTDOOR == 0x10
-        assert AddressClass.HTU == 0x11
-        assert AddressClass.INDOOR == 0x20
-        assert AddressClass.ERV == 0x30
-        assert AddressClass.DIFFUSER == 0x35
-        assert AddressClass.MCU == 0x38
-        assert AddressClass.RMC == 0x40
-        assert AddressClass.WIRED_REMOTE == 0x50
-        assert AddressClass.PIM == 0x58
-        assert AddressClass.SIM == 0x59
-        assert AddressClass.PEAK == 0x5A
-        assert AddressClass.POWER_DIVIDER == 0x5B
-        assert AddressClass.WIFI_KIT == 0x62
-        assert AddressClass.CENTRAL_CONTROLLER == 0x65
-        assert AddressClass.JIG_TESTER == 0x80
-        assert AddressClass.BML == 0xB0
-        assert AddressClass.BCL == 0xB1
-        assert AddressClass.BSL == 0xB2
-        assert AddressClass.BCSL == 0xB3
-        assert AddressClass.BMDL == 0xB4
-        assert AddressClass.BCSM == 0xB7
-        assert AddressClass.BLL == 0xB8
-        assert AddressClass.BCSML == 0xB9
-        assert AddressClass.UNDEFINED == 0xFF
+        assert getattr(AddressClass, attr_name) == expected_value
 
-    def test_address_class_from_value(self):
+    @pytest.mark.parametrize(
+        "value,expected_class",
+        [
+            (0x20, AddressClass.INDOOR),
+            (0x10, AddressClass.OUTDOOR),
+        ],
+    )
+    def test_address_class_from_value(self, value, expected_class):
         """Test creating AddressClass from value."""
-        assert AddressClass(0x20) == AddressClass.INDOOR
-        assert AddressClass(0x10) == AddressClass.OUTDOOR
+        assert AddressClass(value) == expected_class
 
-    def test_address_class_has_value(self):
+    @pytest.mark.parametrize(
+        "value,has_value",
+        [
+            (0x20, True),
+            (0x10, True),
+            (0x21, False),
+        ],
+    )
+    def test_address_class_has_value(self, value, has_value):
         """Test has_value for AddressClass."""
-        assert AddressClass.has_value(0x20)
-        assert AddressClass.has_value(0x10)
-        assert not AddressClass.has_value(0x21)
+        assert AddressClass.has_value(value) == has_value
 
 
 class TestPacketType:
     """Tests for PacketType enum."""
 
-    def test_packet_type_values(self):
+    @pytest.mark.parametrize(
+        "attr_name,expected_value",
+        [
+            ("UNKNOWN", -1),
+            ("STANDBY", 0),
+            ("NORMAL", 1),
+            ("GATHERING", 2),
+            ("INSTALL", 3),
+            ("DOWNLOAD", 4),
+        ],
+    )
+    def test_packet_type_values(self, attr_name, expected_value):
         """Test PacketType enum values."""
-        assert PacketType.UNKNOWN == -1
-        assert PacketType.STANDBY == 0
-        assert PacketType.NORMAL == 1
-        assert PacketType.GATHERING == 2
-        assert PacketType.INSTALL == 3
-        assert PacketType.DOWNLOAD == 4
+        assert getattr(PacketType, attr_name) == expected_value
 
-    def test_packet_type_from_value(self):
+    @pytest.mark.parametrize(
+        "value,expected_type",
+        [
+            (1, PacketType.NORMAL),
+            (0, PacketType.STANDBY),
+        ],
+    )
+    def test_packet_type_from_value(self, value, expected_type):
         """Test creating PacketType from value."""
-        assert PacketType(1) == PacketType.NORMAL
-        assert PacketType(0) == PacketType.STANDBY
+        assert PacketType(value) == expected_type
 
-    def test_packet_type_str(self):
+    @pytest.mark.parametrize(
+        "packet_type,expected_str",
+        [
+            (PacketType.NORMAL, "NORMAL"),
+            (PacketType.STANDBY, "STANDBY"),
+        ],
+    )
+    def test_packet_type_str(self, packet_type, expected_str):
         """Test PacketType string representation."""
-        assert str(PacketType.NORMAL) == "NORMAL"
-        assert str(PacketType.STANDBY) == "STANDBY"
+        assert str(packet_type) == expected_str
 
 
 class TestDataType:
     """Tests for DataType enum."""
 
-    def test_data_type_values(self):
+    @pytest.mark.parametrize(
+        "attr_name,expected_value",
+        [
+            ("UNKNOWN", -1),
+            ("UNDEFINED", 0),
+            ("READ", 1),
+            ("WRITE", 2),
+            ("REQUEST", 3),
+            ("NOTIFICATION", 4),
+            ("RESPONSE", 5),
+            ("ACK", 6),
+            ("NACK", 7),
+        ],
+    )
+    def test_data_type_values(self, attr_name, expected_value):
         """Test DataType enum values."""
-        assert DataType.UNKNOWN == -1
-        assert DataType.UNDEFINED == 0
-        assert DataType.READ == 1
-        assert DataType.WRITE == 2
-        assert DataType.REQUEST == 3
-        assert DataType.NOTIFICATION == 4
-        assert DataType.RESPONSE == 5
-        assert DataType.ACK == 6
-        assert DataType.NACK == 7
+        assert getattr(DataType, attr_name) == expected_value
 
-    def test_data_type_from_value(self):
+    @pytest.mark.parametrize(
+        "value,expected_type",
+        [
+            (3, DataType.REQUEST),
+            (5, DataType.RESPONSE),
+        ],
+    )
+    def test_data_type_from_value(self, value, expected_type):
         """Test creating DataType from value."""
-        assert DataType(3) == DataType.REQUEST
-        assert DataType(5) == DataType.RESPONSE
+        assert DataType(value) == expected_type
 
-    def test_data_type_str(self):
+    @pytest.mark.parametrize(
+        "data_type,expected_str",
+        [
+            (DataType.REQUEST, "REQUEST"),
+            (DataType.RESPONSE, "RESPONSE"),
+        ],
+    )
+    def test_data_type_str(self, data_type, expected_str):
         """Test DataType string representation."""
-        assert str(DataType.REQUEST) == "REQUEST"
-        assert str(DataType.RESPONSE) == "RESPONSE"
+        assert str(data_type) == expected_str
 
 
 class TestMessageSetType:
     """Tests for MessageSetType enum."""
 
-    def test_message_set_type_values(self):
+    @pytest.mark.parametrize(
+        "attr_name,expected_value",
+        [
+            ("ENUM", 0),
+            ("VARIABLE", 1),
+            ("LONG_VARIABLE", 2),
+            ("STRUCTURE", 3),
+        ],
+    )
+    def test_message_set_type_values(self, attr_name, expected_value):
         """Test MessageSetType enum values."""
-        assert MessageSetType.ENUM == 0
-        assert MessageSetType.VARIABLE == 1
-        assert MessageSetType.LONG_VARIABLE == 2
-        assert MessageSetType.STRUCTURE == 3
+        assert getattr(MessageSetType, attr_name) == expected_value
 
-    def test_message_set_type_from_value(self):
+    @pytest.mark.parametrize(
+        "value,expected_type",
+        [
+            (0, MessageSetType.ENUM),
+            (3, MessageSetType.STRUCTURE),
+        ],
+    )
+    def test_message_set_type_from_value(self, value, expected_type):
         """Test creating MessageSetType from value."""
-        assert MessageSetType(0) == MessageSetType.ENUM
-        assert MessageSetType(3) == MessageSetType.STRUCTURE
+        assert MessageSetType(value) == expected_type
 
 
 class TestInOperationPower:
     """Tests for InOperationPower enum."""
 
-    def test_in_operation_power_values(self):
+    @pytest.mark.parametrize(
+        "attr_name,expected_value",
+        [
+            ("OFF", 0),
+            ("ON_STATE_1", 1),
+            ("ON_STATE_2", 2),
+        ],
+    )
+    def test_in_operation_power_values(self, attr_name, expected_value):
         """Test InOperationPower enum values."""
-        assert InOperationPower.OFF == 0
-        assert InOperationPower.ON_STATE_1 == 1
-        assert InOperationPower.ON_STATE_2 == 2
+        assert getattr(InOperationPower, attr_name) == expected_value
 
-    def test_in_operation_power_str(self):
+    @pytest.mark.parametrize(
+        "power_state,expected_str",
+        [
+            (InOperationPower.OFF, "OFF"),
+            (InOperationPower.ON_STATE_1, "ON_STATE_1"),
+        ],
+    )
+    def test_in_operation_power_str(self, power_state, expected_str):
         """Test InOperationPower string representation."""
-        assert str(InOperationPower.OFF) == "OFF"
-        assert str(InOperationPower.ON_STATE_1) == "ON_STATE_1"
+        assert str(power_state) == expected_str
 
 
 class TestInOperationMode:
     """Tests for InOperationMode enum."""
 
-    def test_in_operation_mode_values(self):
+    @pytest.mark.parametrize(
+        "attr_name,expected_value",
+        [
+            ("AUTO", 0),
+            ("COOL", 1),
+            ("DRY", 2),
+            ("FAN", 3),
+            ("HEAT", 4),
+            ("COOL_STORAGE", 21),
+            ("HOT_WATER", 24),
+        ],
+    )
+    def test_in_operation_mode_values(self, attr_name, expected_value):
         """Test InOperationMode enum values."""
-        assert InOperationMode.AUTO == 0
-        assert InOperationMode.COOL == 1
-        assert InOperationMode.DRY == 2
-        assert InOperationMode.FAN == 3
-        assert InOperationMode.HEAT == 4
-        assert InOperationMode.COOL_STORAGE == 21
-        assert InOperationMode.HOT_WATER == 24
+        assert getattr(InOperationMode, attr_name) == expected_value
 
-    def test_in_operation_mode_str(self):
+    @pytest.mark.parametrize(
+        "mode,expected_str",
+        [
+            (InOperationMode.AUTO, "AUTO"),
+            (InOperationMode.COOL, "COOL"),
+            (InOperationMode.HEAT, "HEAT"),
+        ],
+    )
+    def test_in_operation_mode_str(self, mode, expected_str):
         """Test InOperationMode string representation."""
-        assert str(InOperationMode.AUTO) == "AUTO"
-        assert str(InOperationMode.COOL) == "COOL"
-        assert str(InOperationMode.HEAT) == "HEAT"
+        assert str(mode) == expected_str
 
 
 class TestInFanMode:
     """Tests for InFanMode enum."""
 
-    def test_in_fan_mode_values(self):
+    @pytest.mark.parametrize(
+        "attr_name,expected_value",
+        [
+            ("AUTO", 0),
+            ("LOW", 1),
+            ("MID", 2),
+            ("HIGH", 3),
+            ("TURBO", 4),
+        ],
+    )
+    def test_in_fan_mode_values(self, attr_name, expected_value):
         """Test InFanMode enum values."""
-        assert InFanMode.AUTO == 0
-        assert InFanMode.LOW == 1
-        assert InFanMode.MID == 2
-        assert InFanMode.HIGH == 3
-        assert InFanMode.TURBO == 4
+        assert getattr(InFanMode, attr_name) == expected_value
 
-    def test_in_fan_mode_str(self):
+    @pytest.mark.parametrize(
+        "mode,expected_str",
+        [
+            (InFanMode.AUTO, "AUTO"),
+            (InFanMode.LOW, "LOW"),
+            (InFanMode.TURBO, "TURBO"),
+        ],
+    )
+    def test_in_fan_mode_str(self, mode, expected_str):
         """Test InFanMode string representation."""
-        assert str(InFanMode.AUTO) == "AUTO"
-        assert str(InFanMode.LOW) == "LOW"
-        assert str(InFanMode.TURBO) == "TURBO"
+        assert str(mode) == expected_str
 
 
 class TestOutdoorOperationStatus:
     """Tests for OutdoorOperationStatus enum."""
 
-    def test_outdoor_operation_status_values(self):
+    @pytest.mark.parametrize(
+        "attr_name,expected_value",
+        [
+            ("OP_STOP", 0),
+            ("OP_SAFETY", 1),
+            ("OP_NORMAL", 2),
+            ("OP_BALANCE", 3),
+            ("OP_RECOVERY", 4),
+            ("OP_DEICE", 5),
+        ],
+    )
+    def test_outdoor_operation_status_values(self, attr_name, expected_value):
         """Test OutdoorOperationStatus enum values."""
-        assert OutdoorOperationStatus.OP_STOP == 0
-        assert OutdoorOperationStatus.OP_SAFETY == 1
-        assert OutdoorOperationStatus.OP_NORMAL == 2
-        assert OutdoorOperationStatus.OP_BALANCE == 3
-        assert OutdoorOperationStatus.OP_RECOVERY == 4
-        assert OutdoorOperationStatus.OP_DEICE == 5
+        assert getattr(OutdoorOperationStatus, attr_name) == expected_value
 
-    def test_outdoor_operation_status_str(self):
+    @pytest.mark.parametrize(
+        "status,expected_str",
+        [
+            (OutdoorOperationStatus.OP_STOP, "OP_STOP"),
+            (OutdoorOperationStatus.OP_NORMAL, "OP_NORMAL"),
+            (OutdoorOperationStatus.OP_DEICE, "OP_DEICE"),
+        ],
+    )
+    def test_outdoor_operation_status_str(self, status, expected_str):
         """Test OutdoorOperationStatus string representation."""
-        assert str(OutdoorOperationStatus.OP_STOP) == "OP_STOP"
-        assert str(OutdoorOperationStatus.OP_NORMAL) == "OP_NORMAL"
-        assert str(OutdoorOperationStatus.OP_DEICE) == "OP_DEICE"
+        assert str(status) == expected_str
 
-    def test_outdoor_operation_status_comprehensive(self):
+    @pytest.mark.parametrize(
+        "value,expected_name",
+        [
+            (0, "OP_STOP"),
+            (1, "OP_SAFETY"),
+            (2, "OP_NORMAL"),
+            (5, "OP_DEICE"),
+            (11, "OP_CHARGE"),
+            (19, "OP_CHECKREF"),
+            (36, "OP_AUTO_CHARGE"),
+        ],
+    )
+    def test_outdoor_operation_status_comprehensive(self, value, expected_name):
         """Test comprehensive OutdoorOperationStatus values."""
-        expected_values = {
-            0: "OP_STOP",
-            1: "OP_SAFETY",
-            2: "OP_NORMAL",
-            5: "OP_DEICE",
-            11: "OP_CHARGE",
-            19: "OP_CHECKREF",
-            36: "OP_AUTO_CHARGE",
-        }
-        for value, name in expected_values.items():
-            assert OutdoorOperationStatus(value).name == name
+        assert OutdoorOperationStatus(value).name == expected_name
