@@ -106,7 +106,7 @@ class DhwController(ControllerBase):
         """Set the operation mode."""
         self.operation_mode = mode
         if self.operation_mode is not None:
-            self.message_sender(
+            await self.message_sender(
                 destination=self.address,
                 request_type=DataType.REQUEST,
                 messages=[

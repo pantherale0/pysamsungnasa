@@ -79,6 +79,7 @@ class TestNonce:
         resetnonce()
         # After reset, _NONCE is 0
         # Get 256 nonces: 1, 2, 3, ..., 255, 0, 1, 2, ...
+        nonce = None
         for i in range(256):
             nonce = getnonce()
         # After 256 calls from 0, we should be at 0 again (wraps at 256)
