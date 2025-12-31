@@ -100,8 +100,10 @@ async def interactive_cli(nasa: SamsungNasa):
             elif command == "help":
                 print("Commands:")
                 print("  read <device_address> <message_id_hex>")
+                print("  read-range <device_address> <start_message_id_hex> <count>")
                 print("  write <device_address> <message_id_hex> <value_hex>")
                 print("  device <device_address> <message_id_hex>")
+                print("  dump <device_address>")
                 print("  climate <device_address> <dhw/heat>")
                 print("  config set <key> <value>")
                 print("  config read <key>")
@@ -131,6 +133,19 @@ async def interactive_cli(nasa: SamsungNasa):
                     value = parts[3]
                     print(f"Writing to {device_id}, message {hex(message_id)}, value {value}")
                     response = await nasa.client.nasa_write(message_id, value, device_id, DataType.WRITE)
+                    print(f"Response: {response}")
+            elif command == "read-range" and len(parts) == 4:
+                device_id = parts[1]
+                try:
+                    start_message_id = int(parts[2], 16)
+                    count = int(parts[3])
+                except ValueError:
+                    print(f"Invalid message_id or count: {parts[2]}, {parts[3]}")
+                    continue
+                message_ids = [start_message_id + i for i in range(count)]
+                print(f"Reading from {device_id}, messages {[hex(mid) for mid in message_ids]}")
+                for message_id in message_ids:
+                    response = await nasa.client.nasa_read([message_id], device_id)
                     print(f"Response: {response}")
             elif command == "device":
                 if len(parts) == 1:
@@ -185,6 +200,17 @@ async def interactive_cli(nasa: SamsungNasa):
                 await follow_logs()
             elif command == "logger" and len(parts) == 2 and parts[1] == "print":
                 await print_logs()
+            elif command == "dump" and len(parts) == 2:
+                device_id = parts[1]
+                if device_id in nasa.devices:
+                    device = nasa.devices[device_id]
+                    # Sort attributes by message ID
+                    sorted_attrs = dict(sorted(device.attributes.items()))
+                    for k, v in sorted_attrs.items():
+                        # Print k as hex
+                        print(f"  {hex(k)}: {v.as_dict}")
+                else:
+                    print(f"Device {device_id} not found")
             elif command == "quit":
                 break
             elif command == "climate":

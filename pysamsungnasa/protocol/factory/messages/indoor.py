@@ -575,6 +575,13 @@ class InFsv302TimeScheduleMessage(EnumMessage):
     MESSAGE_ENUM = InFsv302TimeSchedule
 
 
+class InEnumUnknown6086Message(RawMessage):
+    """Parser for message 0x4086 (Unknown enum message)."""
+
+    MESSAGE_ID = 0x4086
+    MESSAGE_NAME = "InEnumUnknown6086Message"
+
+
 class InBoosterHeaterMessage(BoolMessage):
     """Parser for message 0x4087 (Booster Heater)."""
 
@@ -725,6 +732,13 @@ class InFsv5061Message(EnumMessage):
     MESSAGE_ENUM = InFsv5061
 
 
+class InEnumUnknown40b5Message(RawMessage):
+    """Parser for message 0x40B5 (Unknown enum message)."""
+
+    MESSAGE_ID = 0x40B5
+    MESSAGE_NAME = "InEnumUnknown40b5Message"
+
+
 class InAutoStaticPressureMessage(EnumMessage):
     """Parser for message 0x40BB (Automatic pressure control status)."""
 
@@ -761,6 +775,13 @@ class InThermostatWaterHeaterMessage(RawMessage):
 
     MESSAGE_ID = 0x40C5
     MESSAGE_NAME = "Thermostat Water Heater"
+
+
+class InEnumUnknown40c6Message(RawMessage):
+    """Parser for message 0x40C6 (Unknown enum message)."""
+
+    MESSAGE_ID = 0x40C6
+    MESSAGE_NAME = "InEnumUnknown40c6Message"
 
 
 class InEnterRoomControlMessage(EnumMessage):
@@ -885,6 +906,13 @@ class In3WayValve2Message(EnumMessage):
     MESSAGE_ID = 0x4113
     MESSAGE_NAME = "3-Way Valve 2 control"
     MESSAGE_ENUM = In3WayValve2
+
+
+class InEnumUnknown4117Message(RawMessage):
+    """Parser for message 0x4117 (Unknown enum message)."""
+
+    MESSAGE_ID = 0x4117
+    MESSAGE_NAME = "InEnumUnknown4117Message"
 
 
 class InZone1PowerMessage(EnumMessage):
@@ -1013,6 +1041,13 @@ class InTargetTemperature(BasicTemperatureMessage):
     SIGNED = True
 
 
+class InVariableUnknown4202Message(BasicTemperatureMessage):
+    """Parser for message 0x4202 (Unknown temperature variable)."""
+
+    MESSAGE_ID = 0x4202
+    MESSAGE_NAME = "InVariableUnknown4202Message"
+
+
 class InRoomTemperature(BasicTemperatureMessage):
     """Parser for message 0x4203 (Indoor Room Temperature)."""
 
@@ -1061,6 +1096,13 @@ class InCapacityAbsoluteMessage(FloatMessage):
 
     MESSAGE_ID = 0x4212
     MESSAGE_NAME = "Capacity Absolute"
+
+
+class InVariableUnknown4213Message(RawMessage):
+    """Parser for message 0x4213 (Unknown variable)."""
+
+    MESSAGE_ID = 0x4213
+    MESSAGE_NAME = "InVariableUnknown4213Message"
 
 
 class InEevValue1Message(FloatMessage):
@@ -1410,6 +1452,20 @@ class InTempWaterLawMessage(BasicTemperatureMessage):
     MESSAGE_NAME = "Water Law Target Temperature"
 
 
+class InTempMixingValveFahrenheitMessage(BasicTemperatureMessage):
+    """Parser for message 0x428C (Mixing valve temperature)."""
+
+    MESSAGE_ID = 0x428C
+    MESSAGE_NAME = "InTempMixingValveFahrenheitMessage"
+
+
+class InVariableUnknown428dMessage(RawMessage):
+    """Parser for message 0x428D (Unknown variable)."""
+
+    MESSAGE_ID = 0x428D
+    MESSAGE_NAME = "InVariableUnknown428dMessage"
+
+
 class InFsv3046(FloatMessage):
     """Parser for message 0x42CE (FSV 3046 Disinfection Max Time)."""
 
@@ -1468,6 +1524,13 @@ class InDustSensorPM1Value(FloatMessage):
     SIGNED = False
 
 
+class InZone2RoomTemperatureFahrenheitMessage(BasicTemperatureMessage):
+    """Parser for message 0x42D4 (Zone 2 Room Temperature Fahrenheit)."""
+
+    MESSAGE_ID = 0x42D4
+    MESSAGE_NAME = "Zone 2 Room Temperature Fahrenheit"
+
+
 class InZone2TargetTempMessage(BasicTemperatureMessage):
     """Parser for message 0x42D6 (Zone 2 Target Temperature)."""
 
@@ -1482,11 +1545,427 @@ class InZone2WaterOutletTargetTempMessage(BasicTemperatureMessage):
     MESSAGE_NAME = "Zone 2 Water Outlet Target Temperature"
 
 
+class InZone1WaterOutletTemperatureFahrenheitMessage(BasicTemperatureMessage):
+    """Parser for message 0x42D8 (Zone 1 Water Outlet Temperature Fahrenheit)."""
+
+    MESSAGE_ID = 0x42D8
+    MESSAGE_NAME = "Zone 1 Water Outlet Temperature Fahrenheit"
+
+
+class InZone2WaterOutletTemperatureFahrenheitMessage(BasicTemperatureMessage):
+    """Parser for message 0x42D9 (Zone 2 Water Outlet Temperature Fahrenheit)."""
+
+    MESSAGE_ID = 0x42D9
+    MESSAGE_NAME = "Zone 2 Water Outlet Temperature Fahrenheit"
+
+
+class InFlowSensorVoltageMessage(FloatMessage):
+    """Parser for message 0x42E8 (Flow Sensor Voltage)."""
+
+    MESSAGE_ID = 0x42E8
+    MESSAGE_NAME = "Flow Sensor Voltage"
+    UNIT_OF_MEASUREMENT = "V"
+
+
+class InFlowSensorCalculationMessage(FloatMessage):
+    """Parser for message 0x42E9 (Flow Sensor Calculation)."""
+
+    MESSAGE_ID = 0x42E9
+    MESSAGE_NAME = "Flow Sensor Calculation"
+
+
+class InOutdoorCompressorFrequencyRateControlMessage(RawMessage):
+    """Parser for message 0x42F1 (Outdoor Compressor Frequency Rate Control)."""
+
+    MESSAGE_ID = 0x42F1
+    MESSAGE_NAME = "Outdoor Compressor Frequency Rate Control"
+
+
+class InVariableIndoorUnknownMessage(RawMessage):
+    """Parser for message 0x4301 (Variable Indoor Unknown)."""
+
+    MESSAGE_ID = 0x4301
+    MESSAGE_NAME = "Variable Indoor Unknown"
+
+
+class InCapacityVentilationRequestMessage(FloatMessage):
+    """Parser for message 0x4302 (Capacity ventilation request)."""
+
+    MESSAGE_ID = 0x4302
+    MESSAGE_NAME = "Capacity Ventilation Request"
+    UNIT = "kW"
+    ARITHMETIC = 0.116279  # 1 / 8.6
+
+
+class InVariableUnknown4303Message(RawMessage):
+    """Parser for message 0x4303 (Unknown variable)."""
+
+    MESSAGE_ID = 0x4303
+    MESSAGE_NAME = "InVariableUnknown4303Message"
+
+
+class InVariableUnknown4304Message(RawMessage):
+    """Parser for message 0x4304 (Unknown variable)."""
+
+    MESSAGE_ID = 0x4304
+    MESSAGE_NAME = "InVariableUnknown4304Message"
+
+
+class InVariableUnknown4305Message(RawMessage):
+    """Parser for message 0x4305 (Unknown variable)."""
+
+    MESSAGE_ID = 0x4305
+    MESSAGE_NAME = "InVariableUnknown4305Message"
+
+
+class InThermostatInputStatusMessage(RawMessage):
+    """Parser for message 0x4306 (Thermostat input status)."""
+
+    MESSAGE_ID = 0x4306
+    MESSAGE_NAME = "Thermostat Input Status"
+
+
+class InThermostatOutputStatusMessage(RawMessage):
+    """Parser for message 0x4307 (Thermostat output status)."""
+
+    MESSAGE_ID = 0x4307
+    MESSAGE_NAME = "Thermostat Output Status"
+
+
+class InTempDefrostTargetFahrenheitMessage(BasicTemperatureMessage):
+    """Parser for message 0x4308 (Defrost target temperature)."""
+
+    MESSAGE_ID = 0x4308
+    MESSAGE_NAME = "Defrost Target Temperature"
+
+
+class InTempDefrostFahrenheitMessage(BasicTemperatureMessage):
+    """Parser for message 0x4309 (Defrost measured temperature)."""
+
+    MESSAGE_ID = 0x4309
+    MESSAGE_NAME = "Defrost Measured Temperature"
+
+
+class InTempAlarmUpperMessage(BasicTemperatureMessage):
+    """Parser for message 0x430A (Upper temperature alarm)."""
+
+    MESSAGE_ID = 0x430A
+    MESSAGE_NAME = "Upper Temperature Alarm"
+
+
+class InTempAlarmLowerMessage(BasicTemperatureMessage):
+    """Parser for message 0x430B (Lower temperature alarm)."""
+
+    MESSAGE_ID = 0x430B
+    MESSAGE_NAME = "Lower Temperature Alarm"
+
+
+class InTempRoomAdjustMessage(BasicTemperatureMessage):
+    """Parser for message 0x430C (Room temperature adjustment)."""
+
+    MESSAGE_ID = 0x430C
+    MESSAGE_NAME = "Room Temperature Adjustment"
+
+
+class InDefrostSchedule1Message(RawMessage):
+    """Parser for message 0x430D (Defrost schedule 1)."""
+
+    MESSAGE_ID = 0x430D
+    MESSAGE_NAME = "Defrost Schedule 1"
+
+
+class InDefrostSchedule2Message(RawMessage):
+    """Parser for message 0x430E (Defrost schedule 2)."""
+
+    MESSAGE_ID = 0x430E
+    MESSAGE_NAME = "Defrost Schedule 2"
+
+
+class InDefrostSchedule3Message(RawMessage):
+    """Parser for message 0x430F (Defrost schedule 3)."""
+
+    MESSAGE_ID = 0x430F
+    MESSAGE_NAME = "Defrost Schedule 3"
+
+
+class InDefrostSchedule4Message(RawMessage):
+    """Parser for message 0x4310 (Defrost schedule 4)."""
+
+    MESSAGE_ID = 0x4310
+    MESSAGE_NAME = "Defrost Schedule 4"
+
+
+class InDefrostSchedule5Message(RawMessage):
+    """Parser for message 0x4311 (Defrost schedule 5)."""
+
+    MESSAGE_ID = 0x4311
+    MESSAGE_NAME = "Defrost Schedule 5"
+
+
+class InDefrostSchedule6Message(RawMessage):
+    """Parser for message 0x4312 (Defrost schedule 6)."""
+
+    MESSAGE_ID = 0x4312
+    MESSAGE_NAME = "Defrost Schedule 6"
+
+
+class InDefrostSchedule7Message(RawMessage):
+    """Parser for message 0x4313 (Defrost schedule 7)."""
+
+    MESSAGE_ID = 0x4313
+    MESSAGE_NAME = "Defrost Schedule 7"
+
+
+class InDefrostSchedule8Message(RawMessage):
+    """Parser for message 0x4314 (Defrost schedule 8)."""
+
+    MESSAGE_ID = 0x4314
+    MESSAGE_NAME = "Defrost Schedule 8"
+
+
+class InNightStartScheduleMessage(RawMessage):
+    """Parser for message 0x4317 (Night time start schedule)."""
+
+    MESSAGE_ID = 0x4317
+    MESSAGE_NAME = "Night Time Start Schedule"
+
+
+class InNightEndScheduleMessage(RawMessage):
+    """Parser for message 0x4318 (Night time end schedule)."""
+
+    MESSAGE_ID = 0x4318
+    MESSAGE_NAME = "Night Time End Schedule"
+
+
+class InCurrentTimeMessage(RawMessage):
+    """Parser for message 0x4319 (Current time)."""
+
+    MESSAGE_ID = 0x4319
+    MESSAGE_NAME = "Current Time"
+
+
+class InFsv1061Message(BasicTemperatureMessage):
+    """Parser for message 0x431E (FSV 1061 - LWT hysteresis for heating)."""
+
+    MESSAGE_ID = 0x431E
+    MESSAGE_NAME = "FSV 1061 LWT Hysteresis Heating"
+
+
+class InFsv1062Message(BasicTemperatureMessage):
+    """Parser for message 0x431F (FSV 1062 - LWT hysteresis for cooling)."""
+
+    MESSAGE_ID = 0x431F
+    MESSAGE_NAME = "FSV 1062 LWT Hysteresis Cooling"
+
+
+class InFsv1063Message(BasicTemperatureMessage):
+    """Parser for message 0x4320 (FSV 1063 - Roomstat hysteresis for heating)."""
+
+    MESSAGE_ID = 0x4320
+    MESSAGE_NAME = "FSV 1063 Roomstat Hysteresis Heating"
+
+
+class InFsv1064Message(BasicTemperatureMessage):
+    """Parser for message 0x4321 (FSV 1064 - Roomstat hysteresis for cooling)."""
+
+    MESSAGE_ID = 0x4321
+    MESSAGE_NAME = "FSV 1064 Roomstat Hysteresis Cooling"
+
+
+class InVariableUnknown4322Message(RawMessage):
+    """Parser for message 0x4322 (Unknown variable)."""
+
+    MESSAGE_ID = 0x4322
+    MESSAGE_NAME = "InVariableUnknown4322Message"
+
+
+class InVariableUnknown4323Message(RawMessage):
+    """Parser for message 0x4323 (Unknown variable)."""
+
+    MESSAGE_ID = 0x4323
+    MESSAGE_NAME = "InVariableUnknown4323Message"
+
+
+class InVariableUnknown4324Message(RawMessage):
+    """Parser for message 0x4324 (Unknown variable)."""
+
+    MESSAGE_ID = 0x4324
+    MESSAGE_NAME = "InVariableUnknown4324Message"
+
+
+class InVariableUnknown4325Message(RawMessage):
+    """Parser for message 0x4325 (Unknown variable)."""
+
+    MESSAGE_ID = 0x4325
+    MESSAGE_NAME = "InVariableUnknown4325Message"
+
+
+class InVariableUnknown4326Message(RawMessage):
+    """Parser for message 0x4326 (Unknown variable)."""
+
+    MESSAGE_ID = 0x4326
+    MESSAGE_NAME = "InVariableUnknown4326Message"
+
+
+class InVariableUnknown4327Message(RawMessage):
+    """Parser for message 0x4327 (Unknown variable)."""
+
+    MESSAGE_ID = 0x4327
+    MESSAGE_NAME = "InVariableUnknown4327Message"
+
+
+class InVariableUnknown4328Message(RawMessage):
+    """Parser for message 0x4328 (Unknown variable)."""
+
+    MESSAGE_ID = 0x4328
+    MESSAGE_NAME = "InVariableUnknown4328Message"
+
+
+class InLayerVariableIndoorUnknownMessage(RawMessage):
+    """Parser for message 0x4401 (Layer Variable Indoor Unknown)."""
+
+    MESSAGE_ID = 0x4401
+    MESSAGE_NAME = "Layer Variable Indoor Unknown"
+
+
 class InDeviceStatusMessage(RawMessage):
     """Parser for message 0x440A (Device Status - Heatpump/Boiler)."""
 
     MESSAGE_ID = 0x440A
     MESSAGE_NAME = "Device Status"
+
+
+class InLayerVariableUnknown440bMessage(RawMessage):
+    """Parser for message 0x440B (Unknown layer variable)."""
+
+    MESSAGE_ID = 0x440B
+    MESSAGE_NAME = "InLayerVariableUnknown440bMessage"
+
+
+class InLayerVariableUnknown440cMessage(RawMessage):
+    """Parser for message 0x440C (Unknown layer variable)."""
+
+    MESSAGE_ID = 0x440C
+    MESSAGE_NAME = "InLayerVariableUnknown440cMessage"
+
+
+class InLayerVariableUnknown440dMessage(RawMessage):
+    """Parser for message 0x440D (Unknown layer variable)."""
+
+    MESSAGE_ID = 0x440D
+    MESSAGE_NAME = "InLayerVariableUnknown440dMessage"
+
+
+class InLayerVariableIndoorUnknown1Message(RawMessage):
+    """Parser for message 0x440E (Layer Variable Indoor Unknown 1)."""
+
+    MESSAGE_ID = 0x440E
+    MESSAGE_NAME = "Layer Variable Indoor Unknown 1"
+
+
+class InErrorInOutMessage(RawMessage):
+    """Parser for message 0x440F (Error In Out)."""
+
+    MESSAGE_ID = 0x440F
+    MESSAGE_NAME = "Error In Out"
+
+
+class InLayerVariableUnknown4410Message(RawMessage):
+    """Parser for message 0x4410 (Unknown layer variable)."""
+
+    MESSAGE_ID = 0x4410
+    MESSAGE_NAME = "InLayerVariableUnknown4410Message"
+
+
+class InLayerVariableUnknown4411Message(RawMessage):
+    """Parser for message 0x4411 (Unknown layer variable)."""
+
+    MESSAGE_ID = 0x4411
+    MESSAGE_NAME = "InLayerVariableUnknown4411Message"
+
+
+class InLayerVariableUnknown4412Message(RawMessage):
+    """Parser for message 0x4412 (Unknown layer variable)."""
+
+    MESSAGE_ID = 0x4412
+    MESSAGE_NAME = "InLayerVariableUnknown4412Message"
+
+
+class InLayerVariableUnknown4413Message(RawMessage):
+    """Parser for message 0x4413 (Unknown layer variable)."""
+
+    MESSAGE_ID = 0x4413
+    MESSAGE_NAME = "InLayerVariableUnknown4413Message"
+
+
+class InLayerVariableUnknown4414Message(RawMessage):
+    """Parser for message 0x4414 (Unknown layer variable)."""
+
+    MESSAGE_ID = 0x4414
+    MESSAGE_NAME = "InLayerVariableUnknown4414Message"
+
+
+class InLayerVariableUnknown4416Message(RawMessage):
+    """Parser for message 0x4416 (Unknown layer variable)."""
+
+    MESSAGE_ID = 0x4416
+    MESSAGE_NAME = "InLayerVariableUnknown4416Message"
+
+
+class InLayerVariableUnknown4417Message(RawMessage):
+    """Parser for message 0x4417 (Unknown layer variable)."""
+
+    MESSAGE_ID = 0x4417
+    MESSAGE_NAME = "InLayerVariableUnknown4417Message"
+
+
+class InLayerVariableUnknown4419Message(RawMessage):
+    """Parser for message 0x4419 (Unknown layer variable)."""
+
+    MESSAGE_ID = 0x4419
+    MESSAGE_NAME = "InLayerVariableUnknown4419Message"
+
+
+class InLayerVariableUnknown441aMessage(RawMessage):
+    """Parser for message 0x441A (Unknown layer variable)."""
+
+    MESSAGE_ID = 0x441A
+    MESSAGE_NAME = "InLayerVariableUnknown441aMessage"
+
+
+class InLayerVariableUnknown441cMessage(RawMessage):
+    """Parser for message 0x441C (Unknown layer variable)."""
+
+    MESSAGE_ID = 0x441C
+    MESSAGE_NAME = "InLayerVariableUnknown441cMessage"
+
+
+class InLayerVariableUnknown441dMessage(RawMessage):
+    """Parser for message 0x441D (Unknown layer variable)."""
+
+    MESSAGE_ID = 0x441D
+    MESSAGE_NAME = "InLayerVariableUnknown441dMessage"
+
+
+class InLayerVariableUnknown441eMessage(RawMessage):
+    """Parser for message 0x441E (Unknown layer variable)."""
+
+    MESSAGE_ID = 0x441E
+    MESSAGE_NAME = "InLayerVariableUnknown441eMessage"
+
+
+class InMinutesSinceInstallationMessage(FloatMessage):
+    """Parser for message 0x4423 (Minutes Since Installation)."""
+
+    MESSAGE_ID = 0x4423
+    MESSAGE_NAME = "Minutes Since Installation"
+
+
+class InMinutesActiveMessage(FloatMessage):
+    """Parser for message 0x4424 (Minutes Active)."""
+
+    MESSAGE_ID = 0x4424
+    MESSAGE_NAME = "Minutes Active"
 
 
 class InGeneratedPowerLastMinute(BasicPowerMessage):

@@ -1820,6 +1820,18 @@ class OutdoorInspectionResult1(RawMessage):
     MESSAGE_NAME = "Inspection result 1"
 
 
+class OutLayerVariableOut1Message(FloatMessage):
+    """Parser for message 0x840F (Layer Variable OUT 1).
+
+    Undocumented outdoor unit layer variable.
+    Appears to be a numeric value (4 bytes, 0x00001280 = 4736 decimal).
+    Possibly related to system configuration or status.
+    """
+
+    MESSAGE_ID = 0x840F
+    MESSAGE_NAME = "Layer Variable OUT 1"
+
+
 class OutdoorMessage8411(RawMessage):
     """Parser for message 0x8411 (Message 8411)."""
 
