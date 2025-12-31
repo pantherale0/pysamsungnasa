@@ -43,6 +43,7 @@ test = [
     "pytest-cov==7.0.0",
     "pytest-mock<3.15.2",
     "pytest-runner",
+    "pytest-asyncio==0.21.0",
     "pytest==9.0.2",
     "pytest-github-actions-annotate-failures",
     "shellcheck-py==0.11.0.1"
@@ -113,9 +114,9 @@ executionEnvironments = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "--cov-report xml:coverage.xml --cov src/pysamsungnasa --cov-fail-under 0 --cov-append -m 'not integration'"
+addopts = "--cov-report xml:coverage.xml --cov pysamsungnasa --cov-fail-under 0 --cov-append -m 'not integration'"
 pythonpath = [
-  "src/pysamsungnasa"
+  "."
 ]
 testpaths = "tests"
 junit_family = "xunit2"
