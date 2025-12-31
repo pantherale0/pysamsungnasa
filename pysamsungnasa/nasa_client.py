@@ -34,6 +34,7 @@ class NasaClient:
     _packet_number_counter: int = 0
     _pending_reads: dict = {}  # Track pending read requests for retry logic
     _queued_reads: dict = {}  # Queue of read requests per destination waiting to be sent
+    _pending_writes: dict = {}  # Track pending write requests for retry logic
 
     def __init__(
         self,
@@ -571,12 +572,64 @@ class NasaClient:
         self, msg: int, value: str, destination: NasaDevice | str, data_type: DataType
     ) -> int | bytes | None:
         """Send write requests to a device to write data."""
+        dest_addr = destination if isinstance(destination, str) else destination.address
         message = SendMessage(MESSAGE_ID=msg, PAYLOAD=hex2bin(value))
-        return await self.send_message(
+        
+        packet_number = await self.send_message(
             destination=destination,
             request_type=data_type,
             messages=[message],
         )
+        
+        # Track this write request for retry logic if enabled
+        if self._config.enable_write_retries and packet_number is not None:
+            # Use message ID and destination as the key for matching ACKs
+            write_key = f"{dest_addr}_{msg}"
+            current_time = asyncio.get_event_loop().time()
+            self._pending_writes[write_key] = {
+                "destination": dest_addr,
+                "message_id": msg,
+                "value": value,
+                "data_type": data_type,
+                "packet_number": packet_number,
+                "attempts": 0,
+                "last_attempt_time": current_time,
+                "next_retry_time": current_time + self._config.write_retry_interval,
+                "retry_interval": self._config.write_retry_interval,
+            }
+            _LOGGER.debug(
+                "Tracking write request for message %s to %s for retry (max %d attempts)",
+                msg,
+                dest_addr,
+                self._config.write_retry_max_attempts,
+            )
+        
+        return packet_number
+
+    def _clear_pending_write(self, destination: str) -> list[str]:
+        """Clear all pending write requests for a destination when an ACK is received.
+        
+        Returns the list of write keys that were cleared.
+        """
+        cleared_keys = []
+        keys_to_delete = []
+        
+        for write_key, write_info in self._pending_writes.items():
+            if write_info["destination"] == destination:
+                keys_to_delete.append(write_key)
+                cleared_keys.append(write_key)
+        
+        for key in keys_to_delete:
+            del self._pending_writes[key]
+            _LOGGER.debug("Cleared pending write request for key %s", key)
+        
+        return cleared_keys
+
+    async def _mark_write_received(self, destination: str) -> None:
+        """Mark write requests as received when an ACK is received (event callback from parser)."""
+        cleared = self._clear_pending_write(destination)
+        if cleared:
+            _LOGGER.debug("Write ACK received from %s, cleared %d pending write(s)", destination, len(cleared))
 
     def _clear_pending_read(self, destination: str, message_numbers: list[int]) -> bool:
         """Clear a pending read request when a response is received with matching message numbers."""
@@ -589,9 +642,13 @@ class NasaClient:
         return False
 
     async def _mark_read_received(self, destination: str, message_numbers: list[int]) -> None:
-        """Mark a read request as received (event callback from parser)."""
-        # If message_numbers is empty, this is an ACK packet - just process the queue
+        """Mark a read/write request as received (event callback from parser)."""
+        # If message_numbers is empty, this is an ACK packet
+        # ACKs can be for either read or write operations, so we check both
         if not message_numbers:
+            # First, handle any pending writes for this destination
+            await self._mark_write_received(destination)
+            # Then, process any queued reads
             await self._process_queued_reads(destination)
             return
 
@@ -622,71 +679,126 @@ class NasaClient:
             _LOGGER.error("Error processing queued read: %s", e)
 
     async def _retry_manager(self):
-        """Manage retry logic for pending read requests."""
+        """Manage retry logic for pending read and write requests."""
         _LOGGER.debug("Retry manager task started.")
         while self.is_connected:
             try:
                 await asyncio.sleep(1.0)  # Check every second
 
-                if not self._config.enable_read_retries or not self._pending_reads:
-                    continue
-
                 current_time = asyncio.get_event_loop().time()
-                reads_to_retry = []
-                reads_to_remove = []
-                abandoned_destinations = set()
+                
+                # Handle read retries
+                if self._config.enable_read_retries and self._pending_reads:
+                    reads_to_retry = []
+                    reads_to_remove = []
+                    abandoned_destinations = set()
 
-                # Identify reads that need to be retried
-                for read_key, read_info in list(self._pending_reads.items()):
-                    if current_time >= read_info["next_retry_time"]:
-                        if read_info["attempts"] < self._config.read_retry_max_attempts:
-                            reads_to_retry.append(read_info)
-                        else:
-                            # Max retries exceeded
-                            _LOGGER.warning(
-                                "Abandoning read request %s to %s after %d attempts",
-                                read_info["packet_number"],
-                                read_info["destination"],
-                                read_info["attempts"],
-                            )
-                            reads_to_remove.append(read_key)
-                            abandoned_destinations.add(read_info["destination"])
+                    # Identify reads that need to be retried
+                    for read_key, read_info in list(self._pending_reads.items()):
+                        if current_time >= read_info["next_retry_time"]:
+                            if read_info["attempts"] < self._config.read_retry_max_attempts:
+                                reads_to_retry.append(read_info)
+                            else:
+                                # Max retries exceeded
+                                _LOGGER.warning(
+                                    "Abandoning read request %s to %s after %d attempts",
+                                    read_info["packet_number"],
+                                    read_info["destination"],
+                                    read_info["attempts"],
+                                )
+                                reads_to_remove.append(read_key)
+                                abandoned_destinations.add(read_info["destination"])
 
-                # Remove reads that have exceeded max attempts
-                for read_key in reads_to_remove:
-                    del self._pending_reads[read_key]
+                    # Remove reads that have exceeded max attempts
+                    for read_key in reads_to_remove:
+                        del self._pending_reads[read_key]
 
-                # Process queued reads for abandoned destinations
-                for destination in abandoned_destinations:
-                    await self._process_queued_reads(destination)
+                    # Process queued reads for abandoned destinations
+                    for destination in abandoned_destinations:
+                        await self._process_queued_reads(destination)
 
-                # Retry the reads
-                for read_info in reads_to_retry:
-                    read_info["attempts"] += 1
-                    read_info["last_attempt_time"] = current_time
-                    read_info["retry_interval"] *= self._config.read_retry_backoff_factor
-                    read_info["next_retry_time"] = current_time + read_info["retry_interval"]
+                    # Retry the reads
+                    for read_info in reads_to_retry:
+                        read_info["attempts"] += 1
+                        read_info["last_attempt_time"] = current_time
+                        read_info["retry_interval"] *= self._config.read_retry_backoff_factor
+                        read_info["next_retry_time"] = current_time + read_info["retry_interval"]
 
-                    _LOGGER.debug(
-                        "Retrying read request to %s (attempt %d/%d, interval=%.1fs)",
-                        read_info["destination"],
-                        read_info["attempts"],
-                        self._config.read_retry_max_attempts,
-                        read_info["retry_interval"],
-                    )
-
-                    # Resend the read request
-                    try:
-                        await self.send_message(
-                            destination=read_info["destination"],
-                            request_type=DataType.READ,
-                            messages=[
-                                SendMessage(MESSAGE_ID=msg_id, PAYLOAD=b"\x05\xa5\xa5\xa5")
-                                for msg_id in read_info["messages"]
-                            ],
+                        _LOGGER.debug(
+                            "Retrying read request to %s (attempt %d/%d, interval=%.1fs)",
+                            read_info["destination"],
+                            read_info["attempts"],
+                            self._config.read_retry_max_attempts,
+                            read_info["retry_interval"],
                         )
-                    except Exception as e:
-                        _LOGGER.error("Error retrying read request: %s", e)
+
+                        # Resend the read request
+                        try:
+                            await self.send_message(
+                                destination=read_info["destination"],
+                                request_type=DataType.READ,
+                                messages=[
+                                    SendMessage(MESSAGE_ID=msg_id, PAYLOAD=b"\x05\xa5\xa5\xa5")
+                                    for msg_id in read_info["messages"]
+                                ],
+                            )
+                        except Exception as e:
+                            _LOGGER.error("Error retrying read request: %s", e)
+
+                # Handle write retries
+                if self._config.enable_write_retries and self._pending_writes:
+                    writes_to_retry = []
+                    writes_to_remove = []
+
+                    # Identify writes that need to be retried
+                    for write_key, write_info in list(self._pending_writes.items()):
+                        if current_time >= write_info["next_retry_time"]:
+                            if write_info["attempts"] < self._config.write_retry_max_attempts:
+                                writes_to_retry.append((write_key, write_info))
+                            else:
+                                # Max retries exceeded
+                                _LOGGER.warning(
+                                    "Abandoning write request %s (message %s) to %s after %d attempts",
+                                    write_info["packet_number"],
+                                    write_info["message_id"],
+                                    write_info["destination"],
+                                    write_info["attempts"],
+                                )
+                                writes_to_remove.append(write_key)
+
+                    # Remove writes that have exceeded max attempts
+                    for write_key in writes_to_remove:
+                        del self._pending_writes[write_key]
+
+                    # Retry the writes
+                    for write_key, write_info in writes_to_retry:
+                        write_info["attempts"] += 1
+                        write_info["last_attempt_time"] = current_time
+                        write_info["retry_interval"] *= self._config.write_retry_backoff_factor
+                        write_info["next_retry_time"] = current_time + write_info["retry_interval"]
+
+                        _LOGGER.debug(
+                            "Retrying write request (message %s) to %s (attempt %d/%d, interval=%.1fs)",
+                            write_info["message_id"],
+                            write_info["destination"],
+                            write_info["attempts"],
+                            self._config.write_retry_max_attempts,
+                            write_info["retry_interval"],
+                        )
+
+                        # Resend the write request
+                        try:
+                            message = SendMessage(
+                                MESSAGE_ID=write_info["message_id"],
+                                PAYLOAD=hex2bin(write_info["value"])
+                            )
+                            await self.send_message(
+                                destination=write_info["destination"],
+                                request_type=write_info["data_type"],
+                                messages=[message],
+                            )
+                        except Exception as e:
+                            _LOGGER.error("Error retrying write request: %s", e)
 
             except asyncio.CancelledError:
                 _LOGGER.info("Retry manager task was cancelled.")

@@ -23,6 +23,10 @@ class NasaConfig:
     read_retry_max_attempts: int = 3  # Maximum number of retry attempts for read requests
     read_retry_interval: float = 1.0  # Interval in seconds between retry attempts
     read_retry_backoff_factor: float = 1.1  # Multiply retry interval by this factor after each attempt
+    enable_write_retries: bool = True  # Enable automatic retry of write requests that don't get ACKs
+    write_retry_max_attempts: int = 3  # Maximum number of retry attempts for write requests
+    write_retry_interval: float = 1.0  # Interval in seconds between retry attempts
+    write_retry_backoff_factor: float = 1.1  # Multiply retry interval by this factor after each attempt
 
     @property
     def address(self) -> Address:
