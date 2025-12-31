@@ -606,8 +606,12 @@ class NasaClient:
         
         return packet_number
 
-    def _clear_pending_write(self, destination: str) -> list[str]:
-        """Clear all pending write requests for a destination when an ACK is received.
+    def _clear_pending_write(self, destination: str, message_numbers: list[int]) -> list[str]:
+        """Clear pending write requests for a destination when an ACK is received.
+        
+        Args:
+            destination: The destination address
+            message_numbers: List of message IDs in the ACK packet
         
         Returns the list of write keys that were cleared.
         """
@@ -616,6 +620,9 @@ class NasaClient:
         
         for write_key, write_info in self._pending_writes.items():
             if write_info["destination"] == destination:
+                # If message_numbers is provided, only clear writes for those specific messages
+                if message_numbers and write_info["message_id"] not in message_numbers:
+                    continue
                 keys_to_delete.append(write_key)
                 cleared_keys.append(write_key)
         
@@ -625,11 +632,21 @@ class NasaClient:
         
         return cleared_keys
 
-    async def _mark_write_received(self, destination: str) -> None:
-        """Mark write requests as received when an ACK is received (event callback from parser)."""
-        cleared = self._clear_pending_write(destination)
+    async def _mark_write_received(self, destination: str, message_numbers: list[int]) -> None:
+        """Mark write requests as received when an ACK is received (event callback from parser).
+        
+        Args:
+            destination: The destination address
+            message_numbers: List of message IDs in the ACK packet
+        """
+        cleared = self._clear_pending_write(destination, message_numbers)
         if cleared:
-            _LOGGER.debug("Write ACK received from %s, cleared %d pending write(s)", destination, len(cleared))
+            _LOGGER.debug(
+                "Write ACK received from %s for messages %s, cleared %d pending write(s)",
+                destination,
+                message_numbers if message_numbers else "all",
+                len(cleared)
+            )
 
     def _clear_pending_read(self, destination: str, message_numbers: list[int]) -> bool:
         """Clear a pending read request when a response is received with matching message numbers."""
@@ -643,16 +660,17 @@ class NasaClient:
 
     async def _mark_read_received(self, destination: str, message_numbers: list[int]) -> None:
         """Mark a read/write request as received (event callback from parser)."""
-        # If message_numbers is empty, this is an ACK packet
-        # ACKs can be for either read or write operations, so we check both
+        # For ACK packets, handle both pending writes and queued reads
+        # ACK packets now contain message numbers that we can match against
+        await self._mark_write_received(destination, message_numbers)
+        
+        # If message_numbers is empty or this is an ACK without specific messages,
+        # just process queued reads
         if not message_numbers:
-            # First, handle any pending writes for this destination
-            await self._mark_write_received(destination)
-            # Then, process any queued reads
             await self._process_queued_reads(destination)
             return
 
-        # If message_numbers is provided, this is a RESPONSE packet - clear and process queue
+        # If message_numbers is provided, this could be a RESPONSE packet - clear and process queue
         if self._clear_pending_read(destination, message_numbers):
             _LOGGER.debug("Read response received for messages %s from %s", message_numbers, destination)
             # Process any queued reads for this destination
