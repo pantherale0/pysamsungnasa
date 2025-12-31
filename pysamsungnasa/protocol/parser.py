@@ -110,39 +110,27 @@ class NasaPacketParser:
             return  # Packet was filtered out by the above logic
 
         # Notify pending read handler when we receive a response or acknowledgment
-        # ACK packets can also indicate that a read request was processed
+        # ACK packets can also indicate that a read/write request was processed
         if (
             not is_outgoing_from_self
             and payload_type in [DataType.RESPONSE, DataType.ACK]
             and self._pending_read_handler
         ):
-            # For RESPONSE packets, extract message numbers from the datasets
-            # For ACK packets, we need to match based on destination only (ACK doesn't contain message data)
+            # For both RESPONSE and ACK packets, extract message numbers from the datasets
             message_numbers = []
-            if payload_type == DataType.RESPONSE:
-                for ds in kwargs.get("dataSets", []):  # type: ignore
-                    if isinstance(ds, list) and len(ds) > 0:
-                        message_numbers.append(ds[0])
+            for ds in kwargs.get("dataSets", []):  # type: ignore
+                if isinstance(ds, list) and len(ds) > 0:
+                    message_numbers.append(ds[0])
 
-            # Call handler for RESPONSE packets with specific messages, or for ACK packets (use None to indicate "any pending")
-            if payload_type == DataType.RESPONSE:
-                if message_numbers:
-                    try:
-                        result = self._pending_read_handler(source_address, message_numbers)
-                        # Handle async callbacks
-                        if iscoroutinefunction(self._pending_read_handler):
-                            await result
-                    except Exception as e:
-                        _LOGGER.error("Error in pending_read_handler: %s", e)
-            elif payload_type == DataType.ACK:
-                # For ACK, trigger queue processing without clearing a specific read (let retry manager handle clearing)
-                try:
-                    result = self._pending_read_handler(source_address, [])
-                    # Handle async callbacks
-                    if iscoroutinefunction(self._pending_read_handler):
-                        await result
-                except Exception as e:
-                    _LOGGER.error("Error in pending_read_handler for ACK: %s", e)
+            # Call handler with the extracted message numbers
+            # Empty message_numbers is valid for ACK packets that acknowledge without specific message IDs
+            try:
+                result = self._pending_read_handler(source_address, message_numbers)
+                # Handle async callbacks
+                if iscoroutinefunction(self._pending_read_handler):
+                    await result
+            except Exception as e:
+                _LOGGER.error("Error in pending_read_handler: %s", e)
 
         for ds in kwargs["dataSets"]:  # type: ignore
             if not isinstance(ds, list):
