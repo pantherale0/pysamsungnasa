@@ -1,0 +1,25 @@
+#!/bin/bash
+# Git pre-commit hook for sorting message classes
+#
+# Installation:
+# 1. Copy this file to .git/hooks/pre-commit
+# 2. Make it executable: chmod +x .git/hooks/pre-commit
+#
+# This hook will automatically sort message classes in indoor.py and outdoor.py
+# before each commit to keep them organized by MESSAGE_ID.
+
+set -e
+
+echo "Running message sort hook..."
+python3 scripts/sort_messages.py
+
+# Check if there are any changes to the message files
+if git diff --quiet pysamsungnasa/protocol/factory/messages/indoor.py pysamsungnasa/protocol/factory/messages/outdoor.py; then
+    echo "✓ Message files are properly sorted"
+else
+    echo "⚠ Message files were reorganized. Please review the changes and add them to your commit."
+    git add pysamsungnasa/protocol/factory/messages/indoor.py pysamsungnasa/protocol/factory/messages/outdoor.py
+    echo "✓ Changes automatically staged"
+fi
+
+exit 0

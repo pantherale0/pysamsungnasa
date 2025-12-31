@@ -51,6 +51,83 @@ class OutdoorOperationModeLimit(FloatMessage):
     MESSAGE_NAME = "Outdoor Operation Mode Limit"
 
 
+class OutdoorSerialNumber(StrMessage):
+    """Parser for message 0x0607 (Serial Number).
+
+    This is a string structure message containing the device serial number.
+    Type: STR (String structure)
+
+    IMPORTANT: This structure returns INCOMPLETE data via submessages:
+    - 0x0730: Manufacturer/model prefix (e.g., "TYXP")
+    - 0x4654: Serial number suffix (e.g., "900834F")
+
+    Known device example:
+    Physical label: "0TYXPAFT900834F"
+    Structure response:
+      - 0x0730: "TYXP"
+      - 0x4654: "900834F"
+
+    Missing from structure: "0" (prefix), "AFT" (middle section)
+
+    The complete serial number cannot be reconstructed from the structure alone.
+    Recommendation: Query other message IDs (0x861A, 0x8608, etc.) for complete model info.
+    """
+
+    MESSAGE_ID = 0x0607
+    MESSAGE_NAME = "Serial Number"
+
+
+class OutdoorSerialNumberPrefix(StrMessage):
+    """Parser for message 0x0730 (Serial Number Manufacturer/Model Prefix).
+
+    Submessage returned as part of the 0x0607 structure response.
+    Contains the manufacturer/model code portion of the serial number.
+
+    Example: "TYXP" (from serial "0TYXPAFT900834F")
+    """
+
+    MESSAGE_ID = 0x0730
+    MESSAGE_NAME = "Serial Number Prefix"
+
+
+class HeatPumpVoltage(FloatMessage):
+    """Parser for message 0x24FC (Heat Pump Voltage)."""
+
+    MESSAGE_ID = 0x24FC
+    MESSAGE_NAME = "Heat Pump Voltage"
+    UNIT_OF_MEASUREMENT = "V"
+    SIGNED = False
+    ARITHMETIC = 1.0
+
+
+class OutdoorProductModelName(StrMessage):
+    """Parser for message 0x4548 (Outdoor Product Model Name - from 0x061A structure)."""
+
+    MESSAGE_ID = 0x4548
+    MESSAGE_NAME = "Outdoor Product Model Name"
+
+
+class OutdoorSerialNumberSuffix(StrMessage):
+    """Parser for message 0x4654 (Serial Number Numeric Suffix).
+
+    Submessage returned as part of the 0x0607 structure response.
+    Contains the numeric suffix portion of the serial number.
+
+    Example: "900834F" (from serial "0TYXPAFT900834F")
+    """
+
+    MESSAGE_ID = 0x4654
+    MESSAGE_NAME = "Serial Number Suffix"
+
+    @classmethod
+    def parse_payload(cls, payload: bytes) -> "OutdoorSerialNumberSuffix":
+        """Parse the payload into a string value, stripping null terminators."""
+        decoded = payload.decode("utf-8") if payload else None
+        if decoded:
+            decoded = decoded.rstrip("\x00")
+        return cls(value=decoded)
+
+
 class OutdoorOperationServiceOpMessage(EnumMessage):
     """Parser for message 0x8000 (Outdoor Operation Service Operation)."""
 
@@ -73,6 +150,20 @@ class OutdoorOperationHeatCoolMessage(EnumMessage):
     MESSAGE_ID = 0x8003
     MESSAGE_NAME = "Outdoor Operation Heat/Cool Mode"
     MESSAGE_ENUM = OutdoorOperationHeatCool
+
+
+class OutdoorMessage8005(RawMessage):
+    """Parser for message 0x8005 (Message 8005)."""
+
+    MESSAGE_ID = 0x8005
+    MESSAGE_NAME = "Message 8005"
+
+
+class OutdoorMessage800d(RawMessage):
+    """Parser for message 0x800D (Message 800D)."""
+
+    MESSAGE_ID = 0x800D
+    MESSAGE_NAME = "Message 800D"
 
 
 class OutdoorCompressor1LoadMessage(EnumMessage):
@@ -160,337 +251,6 @@ class OutdoorLoadOutEevMessage(EnumMessage):
 
     MESSAGE_ID = 0x8020
     MESSAGE_NAME = "Load EEV status"
-
-
-class OutdoorDefrostStatus(EnumMessage):
-    """Parser for message 0x8061 (Outdoor Defrost Status)."""
-
-    MESSAGE_ID = 0x8061
-    MESSAGE_NAME = "Outdoor Defrost Status"
-    MESSAGE_ENUM = OutdoorIndoorDefrostStep
-    ENUM_DEFAULT = OutdoorIndoorDefrostStep.NO_DEFROST_OPERATION
-
-
-class OutdoorCoolOnlyModel(EnumMessage):
-    """Parser for message 0x809D (Outdoor Cool Only Model)."""
-
-    MESSAGE_ID = 0x809D
-    MESSAGE_NAME = "Outdoor Cool Only Model"
-    MESSAGE_ENUM = OutOutdoorCoolonlyModel
-
-
-class OutdoorAirTemperature(BasicTemperatureMessage):
-    """Parser for message 0x8204 (Outdoor Air Temperature)."""
-
-    MESSAGE_ID = 0x8204
-    MESSAGE_NAME = "Outdoor Air Temperature"
-
-
-class OutdoorCurrent(BasicCurrentMessage):
-    """Parser for message 0x8217 (Outdoor Current)."""
-
-    MESSAGE_ID = 0x8217
-    MESSAGE_NAME = "Outdoor Current"
-    SIGNED = False
-    ARITHMETIC = 0.1
-
-
-class OutdoorSuctionSensorTemperature(BasicTemperatureMessage):
-    """Parser for message 0x821A (Outdoor Suction Sensor Temperature)."""
-
-    MESSAGE_ID = 0x821A
-    MESSAGE_NAME = "Outdoor Suction Sensor Temperature"
-
-
-class OutdoorTargetDischargeTemperature(BasicTemperatureMessage):
-    """Parser for message 0x8223 (Outdoor Target Discharge Temperature)."""
-
-    MESSAGE_ID = 0x8223
-    MESSAGE_NAME = "Outdoor Target Discharge Temperature"
-
-
-class OutdoorUnknownTemperatureSensorA(BasicTemperatureMessage):
-    """Parser for message 0x8225 (Unknown Temperature Sensor)."""
-
-    MESSAGE_ID = 0x8225
-    MESSAGE_NAME = "Unknown Temperature Sensor"
-
-
-class OutdoorOperationCapaSum(FloatMessage):
-    """Parser for message 0x8233 (Outdoor Operation Capacity Sum)."""
-
-    MESSAGE_ID = 0x8233
-    MESSAGE_NAME = "Outdoor Operation Capacity Sum"
-    SIGNED = False
-    ARITHMETIC = 0.086  # might need to change this to 8.5
-
-
-class OutdoorErrorCode(FloatMessage):
-    """Parser for message 0x8235 (Duplicate of 0x0202) - Error code as numeric value."""
-
-    MESSAGE_ID = 0x8235
-    MESSAGE_NAME = "Outdoor Error Code"
-
-
-class OutdoorCompressorOrderFrequency(FloatMessage):
-    """Parser for message 0x8236 (Outdoor Compressor Order Frequency)."""
-
-    MESSAGE_ID = 0x8236
-    MESSAGE_NAME = "Outdoor Compressor Order Frequency"
-    UNIT_OF_MEASUREMENT = "Hz"
-
-
-class OutdoorCompressorTargetFrequency(FloatMessage):
-    """Parser for message 0x8237 (Outdoor Compressor Target Frequency)."""
-
-    MESSAGE_ID = 0x8237
-    MESSAGE_NAME = "Outdoor Compressor Target Frequency"
-    UNIT_OF_MEASUREMENT = "Hz"
-
-
-class OutdoorCompressorRunFrequency(FloatMessage):
-    """Parser for message 0x8238 (Outdoor Compressor Run Frequency)."""
-
-    MESSAGE_ID = 0x8238
-    MESSAGE_NAME = "Outdoor Compressor Run Frequency"
-    UNIT_OF_MEASUREMENT = "Hz"
-
-
-class OutdoorDcLinkVoltage(FloatMessage):
-    """Parser for 0x823b (Outdoor DC Link Voltage)."""
-
-    MESSAGE_ID = 0x823B
-    MESSAGE_NAME = "Outdoor DC Link Voltage"
-    UNIT_OF_MEASUREMENT = "V"
-    ARITHMETIC = 1.0
-    SIGNED = False
-
-
-class HeatPumpVoltage(FloatMessage):
-    """Parser for message 0x24FC (Heat Pump Voltage)."""
-
-    MESSAGE_ID = 0x24FC
-    MESSAGE_NAME = "Heat Pump Voltage"
-    UNIT_OF_MEASUREMENT = "V"
-    SIGNED = False
-    ARITHMETIC = 1.0
-
-
-class OutdoorFanRpm1(FloatMessage):
-    """Parser for message 0x823D (Outdoor Fan RPM 1)."""
-
-    MESSAGE_ID = 0x823D
-    MESSAGE_NAME = "Outdoor Fan RPM 1"
-    UNIT_OF_MEASUREMENT = "RPM"
-    SIGNED = False
-
-
-class OutdoorFanRpm2(FloatMessage):
-    """Parser for message 0x823E (Outdoor Fan RPM 1)."""
-
-    MESSAGE_ID = 0x823E
-    MESSAGE_NAME = "Outdoor Fan RPM 2"
-    UNIT_OF_MEASUREMENT = "RPM"
-    SIGNED = False
-
-
-class OutdoorControlPrimeUnit(FloatMessage):
-    """Parser for message 0x823F (Outdoor Control Prime Unit)."""
-
-    MESSAGE_ID = 0x823F
-    MESSAGE_NAME = "Outdoor Control Prime Unit"
-
-
-class OutdoorDefrostStage(FloatMessage):
-    """Parser for message 0x8247 (Outdoor Defrost Stage)."""
-
-    MESSAGE_ID = 0x8247
-    MESSAGE_NAME = "Outdoor Defrost Stage"
-
-
-class OutdoorSafetyStart(FloatMessage):
-    """Parser for message 0x8248 (Outdoor Safety Start)."""
-
-    MESSAGE_ID = 0x8248
-    MESSAGE_NAME = "Outdoor Safety Start"
-
-
-class OutdoorRefrigerantVolume(FloatMessage):
-    """Parser for message 0x8249 (Outdoor Refrigerant Volume)."""
-
-    MESSAGE_ID = 0x824F
-    MESSAGE_NAME = "Outdoor Refrigerant Volume"
-    ARITHMETIC = 0.1
-
-
-class OutdoorIpmTemp1(BasicTemperatureMessage):
-    """Parser for message 0x8254 (Outdoor IPM Temp 1)."""
-
-    MESSAGE_ID = 0x8254
-    MESSAGE_NAME = "Outdoor IPM Temp 1"
-
-
-class OutdoorIpmTemp2(BasicTemperatureMessage):
-    """Parser for message 0x8255 (Outdoor IPM Temp 2)."""
-
-    MESSAGE_ID = 0x8255
-    MESSAGE_NAME = "Outdoor IPM Temp 2"
-
-
-class OutdoorTopSensorTemp1(BasicTemperatureMessage):
-    """Parser for message 0x8280 (Outdoor Top Sensor Temp 1)."""
-
-    MESSAGE_ID = 0x8280
-    MESSAGE_NAME = "Outdoor Top Sensor Temp 1"
-
-
-class OutdoorTopSensorTemp2(BasicTemperatureMessage):
-    """Parser for message 0x8281 (Outdoor Top Sensor Temp 2)."""
-
-    MESSAGE_ID = 0x8281
-    MESSAGE_NAME = "Outdoor Top Sensor Temp 2"
-
-
-class OutdoorSensorLowPressTemp(BasicTemperatureMessage):
-    """Parser for message 0x82A0 (Outdoor Sensor Low Press Temp)."""
-
-    MESSAGE_ID = 0x82A0
-    MESSAGE_NAME = "Outdoor Sensor Low Press Temp"
-
-
-class OutdoorProductModelName(StrMessage):
-    """Parser for message 0x4548 (Outdoor Product Model Name - from 0x061A structure)."""
-
-    MESSAGE_ID = 0x4548
-    MESSAGE_NAME = "Outdoor Product Model Name"
-
-
-class OutdoorProjectCode(StrMessage):
-    """Parser for message 0x82BC (Outdoor Project Code)."""
-
-    MESSAGE_ID = 0x82BC
-    MESSAGE_NAME = "Outdoor Project Code"
-
-
-class OutdoorSerialNumber(StrMessage):
-    """Parser for message 0x0607 (Serial Number).
-
-    This is a string structure message containing the device serial number.
-    Type: STR (String structure)
-
-    IMPORTANT: This structure returns INCOMPLETE data via submessages:
-    - 0x0730: Manufacturer/model prefix (e.g., "TYXP")
-    - 0x4654: Serial number suffix (e.g., "900834F")
-
-    Known device example:
-    Physical label: "0TYXPAFT900834F"
-    Structure response:
-      - 0x0730: "TYXP"
-      - 0x4654: "900834F"
-
-    Missing from structure: "0" (prefix), "AFT" (middle section)
-
-    The complete serial number cannot be reconstructed from the structure alone.
-    Recommendation: Query other message IDs (0x861A, 0x8608, etc.) for complete model info.
-    """
-
-    MESSAGE_ID = 0x0607
-    MESSAGE_NAME = "Serial Number"
-
-
-class OutdoorSerialNumberPrefix(StrMessage):
-    """Parser for message 0x0730 (Serial Number Manufacturer/Model Prefix).
-
-    Submessage returned as part of the 0x0607 structure response.
-    Contains the manufacturer/model code portion of the serial number.
-
-    Example: "TYXP" (from serial "0TYXPAFT900834F")
-    """
-
-    MESSAGE_ID = 0x0730
-    MESSAGE_NAME = "Serial Number Prefix"
-
-
-class OutdoorSerialNumberSuffix(StrMessage):
-    """Parser for message 0x4654 (Serial Number Numeric Suffix).
-
-    Submessage returned as part of the 0x0607 structure response.
-    Contains the numeric suffix portion of the serial number.
-
-    Example: "900834F" (from serial "0TYXPAFT900834F")
-    """
-
-    MESSAGE_ID = 0x4654
-    MESSAGE_NAME = "Serial Number Suffix"
-
-
-class OutdoorPhaseCurrent(FloatMessage):
-    """Parser for message 0x82DB (Outdoor Phase Current)."""
-
-    MESSAGE_ID = 0x82DB
-    MESSAGE_NAME = "Outdoor Phase Current"
-    UNIT_OF_MEASUREMENT = "A"
-    SIGNED = False
-
-
-class OutdoorEvaInTemperature(BasicTemperatureMessage):
-    """Parser for message 0x82DE (Outdoor Eva In Temperature)."""
-
-    MESSAGE_ID = 0x82DE
-    MESSAGE_NAME = "Outdoor Eva In Temperature"
-
-
-class OutdoorTw1Temperature(BasicTemperatureMessage):
-    """Parser for message 0x82df (Outdoor TW1 Temperature)."""
-
-    MESSAGE_ID = 0x82DF
-    MESSAGE_NAME = "Outdoor TW1 Temperature"
-
-
-class OutdoorTw2Temperature(BasicTemperatureMessage):
-    """Parser for message 0x82E0 (Outdoor TW2 Temperature)."""
-
-    MESSAGE_ID = 0x82E0
-    MESSAGE_NAME = "Outdoor TW2 Temperature"
-
-
-class OutdoorProductCapa(BasicPowerMessage):
-    """Parser for message 0x82e3 (Outdoor Product Capacity)."""
-
-    MESSAGE_ID = 0x82E3
-    MESSAGE_NAME = "Outdoor Product Capacity"
-
-
-class OutdoorInstantaneousPower(BasicPowerMessage):
-    """Parser for message 0x8413 (Outdoor Instantaneous Power)."""
-
-    MESSAGE_ID = 0x8413
-    MESSAGE_NAME = "Outdoor Instantaneous Power"
-    SIGNED = False
-    ARITHMETIC = 0.001
-
-
-class OutdoorCumulativeEnergy(BasicEnergyMessage):
-    """Parser for message 0x8414 (Outdoor Cumulative Energy)."""
-
-    MESSAGE_ID = 0x8414
-    MESSAGE_NAME = "Outdoor Cumulative Energy"
-    SIGNED = False
-    ARITHMETIC = 0.001
-
-
-class OutdoorMessage8005(RawMessage):
-    """Parser for message 0x8005 (Message 8005)."""
-
-    MESSAGE_ID = 0x8005
-    MESSAGE_NAME = "Message 8005"
-
-
-class OutdoorMessage800d(RawMessage):
-    """Parser for message 0x800D (Message 800D)."""
-
-    MESSAGE_ID = 0x800D
-    MESSAGE_NAME = "Message 800D"
 
 
 class OutdoorEviBypassLoadMessage(EnumMessage):
@@ -766,6 +526,15 @@ class OutdoorMessage805e(RawMessage):
     MESSAGE_NAME = "Message 805E"
 
 
+class OutdoorDefrostStatus(EnumMessage):
+    """Parser for message 0x8061 (Outdoor Defrost Status)."""
+
+    MESSAGE_ID = 0x8061
+    MESSAGE_NAME = "Outdoor Defrost Status"
+    MESSAGE_ENUM = OutdoorIndoorDefrostStep
+    ENUM_DEFAULT = OutdoorIndoorDefrostStep.NO_DEFROST_OPERATION
+
+
 class OutdoorMessage8062(RawMessage):
     """Parser for message 0x8062 (Message 8062)."""
 
@@ -904,6 +673,14 @@ class OutdoorRefrigerantInventory(RawMessage):
 
     MESSAGE_ID = 0x809C
     MESSAGE_NAME = "Refrigerant inventory"
+
+
+class OutdoorCoolOnlyModel(EnumMessage):
+    """Parser for message 0x809D (Outdoor Cool Only Model)."""
+
+    MESSAGE_ID = 0x809D
+    MESSAGE_NAME = "Outdoor Cool Only Model"
+    MESSAGE_ENUM = OutOutdoorCoolonlyModel
 
 
 class OutdoorCboxCoolingFanStatus(RawMessage):
@@ -1067,6 +844,13 @@ class OutdoorNoOutdoorCompressors(FloatMessage):
     MESSAGE_NAME = "No. outdoor compressors"
 
 
+class OutdoorAirTemperature(BasicTemperatureMessage):
+    """Parser for message 0x8204 (Outdoor Air Temperature)."""
+
+    MESSAGE_ID = 0x8204
+    MESSAGE_NAME = "Outdoor Air Temperature"
+
+
 class OutdoorHighPressure(FloatMessage):
     """Parser for message 0x8206 (High Pressure)."""
 
@@ -1102,11 +886,27 @@ class OutdoorCompressorDischarge3(FloatMessage):
     MESSAGE_NAME = "Compressor discharge3"
 
 
+class OutdoorCurrent(BasicCurrentMessage):
+    """Parser for message 0x8217 (Outdoor Current)."""
+
+    MESSAGE_ID = 0x8217
+    MESSAGE_NAME = "Outdoor Current"
+    SIGNED = False
+    ARITHMETIC = 0.1
+
+
 class OutdoorCondoutTemp(FloatMessage):
     """Parser for message 0x8218 (CondOut Temp)."""
 
     MESSAGE_ID = 0x8218
     MESSAGE_NAME = "CondOut Temp"
+
+
+class OutdoorSuctionSensorTemperature(BasicTemperatureMessage):
+    """Parser for message 0x821A (Outdoor Suction Sensor Temperature)."""
+
+    MESSAGE_ID = 0x821A
+    MESSAGE_NAME = "Outdoor Suction Sensor Temperature"
 
 
 class OutdoorDoubleTubeTemp(FloatMessage):
@@ -1130,11 +930,25 @@ class OutdoorEviOut(FloatMessage):
     MESSAGE_NAME = "EVI OUT"
 
 
+class OutdoorTargetDischargeTemperature(BasicTemperatureMessage):
+    """Parser for message 0x8223 (Outdoor Target Discharge Temperature)."""
+
+    MESSAGE_ID = 0x8223
+    MESSAGE_NAME = "Outdoor Target Discharge Temperature"
+
+
 class OutdoorMessage8224(FloatMessage):
     """Parser for message 0x8224 (Message 8224)."""
 
     MESSAGE_ID = 0x8224
     MESSAGE_NAME = "Message 8224"
+
+
+class OutdoorUnknownTemperatureSensorA(BasicTemperatureMessage):
+    """Parser for message 0x8225 (Unknown Temperature Sensor)."""
+
+    MESSAGE_ID = 0x8225
+    MESSAGE_NAME = "Unknown Temperature Sensor"
 
 
 class OutdoorFanSpeedStepSetting(FloatMessage):
@@ -1200,11 +1014,51 @@ class OutdoorCompressorRunning(FloatMessage):
     MESSAGE_NAME = "Compressor running?"
 
 
+class OutdoorOperationCapaSum(FloatMessage):
+    """Parser for message 0x8233 (Outdoor Operation Capacity Sum)."""
+
+    MESSAGE_ID = 0x8233
+    MESSAGE_NAME = "Outdoor Operation Capacity Sum"
+    SIGNED = False
+    ARITHMETIC = 0.086  # might need to change this to 8.5
+
+
 class OutdoorMessage8234(FloatMessage):
     """Parser for message 0x8234 (Message 8234)."""
 
     MESSAGE_ID = 0x8234
     MESSAGE_NAME = "Message 8234"
+
+
+class OutdoorErrorCode(FloatMessage):
+    """Parser for message 0x8235 (Duplicate of 0x0202) - Error code as numeric value."""
+
+    MESSAGE_ID = 0x8235
+    MESSAGE_NAME = "Outdoor Error Code"
+
+
+class OutdoorCompressorOrderFrequency(FloatMessage):
+    """Parser for message 0x8236 (Outdoor Compressor Order Frequency)."""
+
+    MESSAGE_ID = 0x8236
+    MESSAGE_NAME = "Outdoor Compressor Order Frequency"
+    UNIT_OF_MEASUREMENT = "Hz"
+
+
+class OutdoorCompressorTargetFrequency(FloatMessage):
+    """Parser for message 0x8237 (Outdoor Compressor Target Frequency)."""
+
+    MESSAGE_ID = 0x8237
+    MESSAGE_NAME = "Outdoor Compressor Target Frequency"
+    UNIT_OF_MEASUREMENT = "Hz"
+
+
+class OutdoorCompressorRunFrequency(FloatMessage):
+    """Parser for message 0x8238 (Outdoor Compressor Run Frequency)."""
+
+    MESSAGE_ID = 0x8238
+    MESSAGE_NAME = "Outdoor Compressor Run Frequency"
+    UNIT_OF_MEASUREMENT = "Hz"
 
 
 class OutdoorMessage8239(FloatMessage):
@@ -1214,11 +1068,46 @@ class OutdoorMessage8239(FloatMessage):
     MESSAGE_NAME = "Message 8239"
 
 
+class OutdoorDcLinkVoltage(FloatMessage):
+    """Parser for 0x823b (Outdoor DC Link Voltage)."""
+
+    MESSAGE_ID = 0x823B
+    MESSAGE_NAME = "Outdoor DC Link Voltage"
+    UNIT_OF_MEASUREMENT = "V"
+    ARITHMETIC = 1.0
+    SIGNED = False
+
+
 class OutdoorMessage823c(FloatMessage):
     """Parser for message 0x823C (Message 823C)."""
 
     MESSAGE_ID = 0x823C
     MESSAGE_NAME = "Message 823C"
+
+
+class OutdoorFanRpm1(FloatMessage):
+    """Parser for message 0x823D (Outdoor Fan RPM 1)."""
+
+    MESSAGE_ID = 0x823D
+    MESSAGE_NAME = "Outdoor Fan RPM 1"
+    UNIT_OF_MEASUREMENT = "RPM"
+    SIGNED = False
+
+
+class OutdoorFanRpm2(FloatMessage):
+    """Parser for message 0x823E (Outdoor Fan RPM 1)."""
+
+    MESSAGE_ID = 0x823E
+    MESSAGE_NAME = "Outdoor Fan RPM 2"
+    UNIT_OF_MEASUREMENT = "RPM"
+    SIGNED = False
+
+
+class OutdoorControlPrimeUnit(FloatMessage):
+    """Parser for message 0x823F (Outdoor Control Prime Unit)."""
+
+    MESSAGE_ID = 0x823F
+    MESSAGE_NAME = "Outdoor Control Prime Unit"
 
 
 class OutdoorMessage8240(FloatMessage):
@@ -1249,6 +1138,20 @@ class OutdoorMessage8245(FloatMessage):
     MESSAGE_NAME = "Message 8245"
 
 
+class OutdoorDefrostStage(FloatMessage):
+    """Parser for message 0x8247 (Outdoor Defrost Stage)."""
+
+    MESSAGE_ID = 0x8247
+    MESSAGE_NAME = "Outdoor Defrost Stage"
+
+
+class OutdoorSafetyStart(FloatMessage):
+    """Parser for message 0x8248 (Outdoor Safety Start)."""
+
+    MESSAGE_ID = 0x8248
+    MESSAGE_NAME = "Outdoor Safety Start"
+
+
 class OutdoorMessage8249(FloatMessage):
     """Parser for message 0x8249 (Message 8249)."""
 
@@ -1268,6 +1171,28 @@ class OutdoorMessage824c(FloatMessage):
 
     MESSAGE_ID = 0x824C
     MESSAGE_NAME = "Message 824C"
+
+
+class OutdoorRefrigerantVolume(FloatMessage):
+    """Parser for message 0x8249 (Outdoor Refrigerant Volume)."""
+
+    MESSAGE_ID = 0x824F
+    MESSAGE_NAME = "Outdoor Refrigerant Volume"
+    ARITHMETIC = 0.1
+
+
+class OutdoorIpmTemp1(BasicTemperatureMessage):
+    """Parser for message 0x8254 (Outdoor IPM Temp 1)."""
+
+    MESSAGE_ID = 0x8254
+    MESSAGE_NAME = "Outdoor IPM Temp 1"
+
+
+class OutdoorIpmTemp2(BasicTemperatureMessage):
+    """Parser for message 0x8255 (Outdoor IPM Temp 2)."""
+
+    MESSAGE_ID = 0x8255
+    MESSAGE_NAME = "Outdoor IPM Temp 2"
 
 
 class OutdoorMessage825a(FloatMessage):
@@ -1480,6 +1405,20 @@ class OutdoorDesuperheaterTemp(FloatMessage):
     MESSAGE_NAME = "Desuperheater temp"
 
 
+class OutdoorTopSensorTemp1(BasicTemperatureMessage):
+    """Parser for message 0x8280 (Outdoor Top Sensor Temp 1)."""
+
+    MESSAGE_ID = 0x8280
+    MESSAGE_NAME = "Outdoor Top Sensor Temp 1"
+
+
+class OutdoorTopSensorTemp2(BasicTemperatureMessage):
+    """Parser for message 0x8281 (Outdoor Top Sensor Temp 2)."""
+
+    MESSAGE_ID = 0x8281
+    MESSAGE_NAME = "Outdoor Top Sensor Temp 2"
+
+
 class OutdoorCondensorMidpointTemp(FloatMessage):
     """Parser for message 0x8285 (Condensor mid-point temp)."""
 
@@ -1520,6 +1459,13 @@ class OutdoorSaturatedTpd(FloatMessage):
 
     MESSAGE_ID = 0x829F
     MESSAGE_NAME = "Saturated T_Pd"
+
+
+class OutdoorSensorLowPressTemp(BasicTemperatureMessage):
+    """Parser for message 0x82A0 (Outdoor Sensor Low Press Temp)."""
+
+    MESSAGE_ID = 0x82A0
+    MESSAGE_NAME = "Outdoor Sensor Low Press Temp"
 
 
 class OutdoorMessage82a2(FloatMessage):
@@ -1576,6 +1522,13 @@ class OutdoorCompressorInterstagePressure(FloatMessage):
 
     MESSAGE_ID = 0x82B8
     MESSAGE_NAME = "Compressor interstage pressure"
+
+
+class OutdoorProjectCode(StrMessage):
+    """Parser for message 0x82BC (Outdoor Project Code)."""
+
+    MESSAGE_ID = 0x82BC
+    MESSAGE_NAME = "Outdoor Project Code"
 
 
 class OutdoorFluxValveLoad(FloatMessage):
@@ -1702,6 +1655,43 @@ class OutdoorMessage82d8(FloatMessage):
 
     MESSAGE_ID = 0x82D8
     MESSAGE_NAME = "Message 82D8"
+
+
+class OutdoorPhaseCurrent(FloatMessage):
+    """Parser for message 0x82DB (Outdoor Phase Current)."""
+
+    MESSAGE_ID = 0x82DB
+    MESSAGE_NAME = "Outdoor Phase Current"
+    UNIT_OF_MEASUREMENT = "A"
+    SIGNED = False
+
+
+class OutdoorEvaInTemperature(BasicTemperatureMessage):
+    """Parser for message 0x82DE (Outdoor Eva In Temperature)."""
+
+    MESSAGE_ID = 0x82DE
+    MESSAGE_NAME = "Outdoor Eva In Temperature"
+
+
+class OutdoorTw1Temperature(BasicTemperatureMessage):
+    """Parser for message 0x82df (Outdoor TW1 Temperature)."""
+
+    MESSAGE_ID = 0x82DF
+    MESSAGE_NAME = "Outdoor TW1 Temperature"
+
+
+class OutdoorTw2Temperature(BasicTemperatureMessage):
+    """Parser for message 0x82E0 (Outdoor TW2 Temperature)."""
+
+    MESSAGE_ID = 0x82E0
+    MESSAGE_NAME = "Outdoor TW2 Temperature"
+
+
+class OutdoorProductCapa(BasicPowerMessage):
+    """Parser for message 0x82e3 (Outdoor Product Capacity)."""
+
+    MESSAGE_ID = 0x82E3
+    MESSAGE_NAME = "Outdoor Product Capacity"
 
 
 class OutdoorCombinedSuctionTemp(FloatMessage):
@@ -1835,6 +1825,24 @@ class OutdoorMessage8411(RawMessage):
 
     MESSAGE_ID = 0x8411
     MESSAGE_NAME = "Message 8411"
+
+
+class OutdoorInstantaneousPower(BasicPowerMessage):
+    """Parser for message 0x8413 (Outdoor Instantaneous Power)."""
+
+    MESSAGE_ID = 0x8413
+    MESSAGE_NAME = "Outdoor Instantaneous Power"
+    SIGNED = False
+    ARITHMETIC = 0.001
+
+
+class OutdoorCumulativeEnergy(BasicEnergyMessage):
+    """Parser for message 0x8414 (Outdoor Cumulative Energy)."""
+
+    MESSAGE_ID = 0x8414
+    MESSAGE_NAME = "Outdoor Cumulative Energy"
+    SIGNED = False
+    ARITHMETIC = 0.001
 
 
 class OutdoorMessage8417(RawMessage):
