@@ -153,7 +153,7 @@ class TestAddress:
         """Test parsing and converting back to string."""
         original = "200001"
         addr = Address.parse(original)
-        assert str(addr) == original.upper()
+        assert str(addr).upper() == original.upper()
 
     def test_address_parse_various_values(self):
         """Test parsing various address values."""

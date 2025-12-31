@@ -59,12 +59,15 @@ class TestNasaPacketParser:
         assert callback not in parser._device_handlers["200001"]
 
     def test_remove_device_handler_nonexistent(self):
-        """Test removing non-existent device handler doesn't raise error."""
+        """Test removing non-existent device handler doesn't raise error and is handled gracefully."""
         config = NasaConfig()
         parser = NasaPacketParser(config=config)
-        callback = Mock()
+        
+        def callback(**kwargs):
+            pass
+        
         parser.remove_device_handler("200001", callback)
-        # Should not raise an error
+        # Should not raise an error - verifies graceful handling
 
     def test_add_packet_listener(self):
         """Test adding packet listener."""
@@ -89,12 +92,15 @@ class TestNasaPacketParser:
         assert callback not in parser._packet_listeners[0x4000]
 
     def test_remove_packet_listener_nonexistent(self):
-        """Test removing non-existent packet listener doesn't raise error."""
+        """Test removing non-existent packet listener doesn't raise error and is handled gracefully."""
         config = NasaConfig()
         parser = NasaPacketParser(config=config)
-        callback = Mock()
+        
+        def callback(**kwargs):
+            pass
+        
         parser.remove_packet_listener(0x4000, callback)
-        # Should not raise an error
+        # Should not raise an error - verifies graceful handling
 
     @pytest.mark.asyncio
     async def test_parse_packet_simple(self):
@@ -229,11 +235,11 @@ class TestNasaPacketParser:
         parser = NasaPacketParser(config=config)
         
         # Create packet with specific protocol values
-        # Info byte: A8 = 10101000 (info=1, proto=2, retry=1)
-        # bits 7=1, bits 6-5=01 (proto=1), bits 4-3=01 (retry=1)
-        # For proto=2: we need bits 6-5 = 10, so: 10101000 = 0xA8 is correct
-        # Actually: bit7=1, bits6-5=2 means (1<<7) | (2<<5) = 0x80 | 0x40 = 0xC0
-        # Let's use 0xC8 = 11001000 = info=1, proto=2, retry=1
+        # Info byte: 0xC8 = 11001000
+        # Bit 7 = 1 (info=1)
+        # Bits 6-5 = 10 (proto=2)
+        # Bits 4-3 = 01 (retry=1)
+        # Therefore: (1<<7) | (2<<5) | (1<<3) = 0x80 | 0x40 | 0x08 = 0xC8
         packet_hex = "200001" + "80FF01" + "C8" + "15" + "42" + "01" + "40000001"
         packet_data = hex2bin(packet_hex)
         
