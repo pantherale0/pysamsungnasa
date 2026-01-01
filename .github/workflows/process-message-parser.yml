@@ -40,19 +40,25 @@ jobs:
               print("Error: Device type not specified")
               sys.exit(1)
 
-          # Extract message ID
-          msg_id_match = re.search(r'Message ID \(hex\):\s*\n?([^\n]+)', issue_body)
+          # Extract message ID - match bold header, skip comments, capture value
+          msg_id_match = re.search(r'\*\*Message ID.*?\*\*.*?(?:\n<!--.*?-->\s*)*\n\s*([^\n]+)', issue_body, re.DOTALL)
           if not msg_id_match:
               print("Error: Message ID not found")
               sys.exit(1)
           message_id = msg_id_match.group(1).strip()
+          if not message_id:
+              print("Error: Message ID not found or empty")
+              sys.exit(1)
 
-          # Extract message name
-          msg_name_match = re.search(r'Message Name:\s*\n?([^\n]+)', issue_body)
+          # Extract message name - match bold header, skip comments, capture value
+          msg_name_match = re.search(r'\*\*Message Name.*?\*\*.*?(?:\n<!--.*?-->\s*)*\n\s*([^\n]+)', issue_body, re.DOTALL)
           if not msg_name_match:
               print("Error: Message name not found")
               sys.exit(1)
           message_name = msg_name_match.group(1).strip()
+          if not message_name:
+              print("Error: Message name not found or empty")
+              sys.exit(1)
 
           # Extract message type
           message_type = None
@@ -76,16 +82,20 @@ jobs:
           # Extract enum name if needed
           enum_name = ''
           if message_type == 'EnumMessage':
-              enum_match = re.search(r'Enum Name \(if EnumMessage\):\s*\n?([^\n]+)', issue_body)
+              enum_match = re.search(r'\*\*Enum Name.*?\*\*.*?(?:\n<!--.*?-->\s*)*\n\s*([^\n]+)', issue_body, re.DOTALL)
               if enum_match:
                   enum_name = enum_match.group(1).strip()
+                  if not enum_name or enum_name.startswith('<!--'):
+                      enum_name = ''
 
           # Extract unit if needed
           unit = ''
           if message_type in ['FloatMessage', 'BasicTemperatureMessage']:
-              unit_match = re.search(r'Unit of Measurement.*?:\s*\n?([^\n]+)', issue_body)
+              unit_match = re.search(r'\*\*Unit of Measurement.*?\*\*.*?(?:\n<!--.*?-->\s*)*\n\s*([^\n]+)', issue_body, re.DOTALL)
               if unit_match:
                   unit = unit_match.group(1).strip()
+                  if not unit or unit.startswith('<!--'):
+                      unit = ''
 
           # Output to workflow
           with open('${{ runner.temp }}/issue_data.txt', 'w') as f:
