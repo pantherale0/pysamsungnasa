@@ -326,3 +326,94 @@ class TestGetAttributeEventSync:
 
         assert result == message1
         assert device.attributes[0x4203] == message1
+
+    @pytest.mark.asyncio
+    async def test_get_attribute_requires_read_forces_new_request(self, setup_device):
+        """Test requires_read parameter forces a fresh read even when cached."""
+        device, client = setup_device
+
+        cached_message = Mock(spec=BaseMessage)
+        cached_message.VALUE = 10.0
+        cached_message.is_fsv_message = False
+
+        fresh_message = Mock(spec=BaseMessage)
+        fresh_message.VALUE = 25.0
+        fresh_message.is_fsv_message = False
+
+        # Pre-populate with cached value
+        device.attributes[0x4203] = cached_message
+
+        async def send_fresh_packet():
+            """Send fresh packet after delay."""
+            await asyncio.sleep(0.1)
+            device.handle_packet(
+                messageNumber=0x4203,
+                packet=fresh_message,
+                dest="80FF01",
+                formattedMessageNumber="0x4203",
+            )
+
+        # Request with requires_read=True (should re-request and get fresh value)
+        packet_task = asyncio.create_task(send_fresh_packet())
+        result = await device.get_attribute(0x4203, requires_read=True)
+        await packet_task
+
+        # Should have called nasa_read even though attribute was cached
+        client.nasa_read.assert_called_once()
+        # Should return the fresh message, not the cached one
+        assert result == fresh_message
+        assert result.VALUE == 25.0
+
+    @pytest.mark.asyncio
+    async def test_get_attribute_requires_read_false_uses_cache(self, setup_device):
+        """Test requires_read=False (default) uses cached value."""
+        device, client = setup_device
+
+        cached_message = Mock(spec=BaseMessage)
+        cached_message.VALUE = 10.0
+        device.attributes[0x4203] = cached_message
+
+        # Request with requires_read=False (default)
+        result = await device.get_attribute(0x4203, requires_read=False)
+
+        # Should not call nasa_read since attribute is cached and requires_read=False
+        client.nasa_read.assert_not_called()
+        assert result == cached_message
+        assert result.VALUE == 10.0
+
+    @pytest.mark.asyncio
+    async def test_get_attribute_requires_read_with_concurrent_requests(self, setup_device):
+        """Test requires_read with concurrent requests."""
+        device, client = setup_device
+
+        message_v1 = Mock(spec=BaseMessage)
+        message_v1.VALUE = 1.0
+        message_v1.is_fsv_message = False
+
+        message_v2 = Mock(spec=BaseMessage)
+        message_v2.VALUE = 2.0
+        message_v2.is_fsv_message = False
+
+        # Pre-populate with v1
+        device.attributes[0x4203] = message_v1
+
+        async def send_packets():
+            """Send updated packet."""
+            await asyncio.sleep(0.1)
+            device.handle_packet(
+                messageNumber=0x4203,
+                packet=message_v2,
+                dest="80FF01",
+                formattedMessageNumber="0x4203",
+            )
+
+        # One request with requires_read=True, another without
+        packet_task = asyncio.create_task(send_packets())
+        result_cached = await device.get_attribute(0x4203, requires_read=False)
+        result_fresh = await device.get_attribute(0x4203, requires_read=True)
+        await packet_task
+
+        # First call should return cached v1
+        assert result_cached.VALUE == 1.0
+        # Second call should wait and get v2
+        assert result_fresh.VALUE == 2.0

@@ -82,23 +82,24 @@ class NasaDevice:
                     destination=self.address,
                 )
 
-    async def get_attribute(self, attribute: int) -> BaseMessage:
+    async def get_attribute(self, attribute: int, requires_read: bool = False) -> BaseMessage:
         """Get a specific attribute from the device, if it is not already known a request will be sent to the device."""
-        if attribute not in self.attributes:
+        if attribute not in self.attributes or requires_read:
             await self._client.nasa_read(
                 msgs=[attribute],
                 destination=self.address,
             )
 
-        if attribute not in self._attribute_events:
+        if attribute not in self._attribute_events or requires_read:
             self._attribute_events[attribute] = asyncio.Event()
 
         event = self._attribute_events[attribute]
 
         async with asyncio.timeout(10):
-            while attribute not in self.attributes:
+            while attribute not in self.attributes or requires_read:
                 event.clear()
                 await event.wait()  # Waits until handle_packet sets it
+                requires_read = False  # Only require read once
 
         if attribute not in self.attributes:
             raise TimeoutError(f"Timeout waiting for attribute {attribute} from device {self.address}")
