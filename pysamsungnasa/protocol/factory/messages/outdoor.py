@@ -2053,3 +2053,11 @@ class OutdoorOutdoorUnitCheckInfo(StrMessage):
 
     MESSAGE_ID = 0x8613
     MESSAGE_NAME = "Outdoor Unit check info"
+
+
+class OutTestMessageMessage(FloatMessage):
+    """Parser for message 0x8999 (Test message)."""
+
+    MESSAGE_ID = 0x8999
+    MESSAGE_NAME = "Test message"
+    UNIT_OF_MEASUREMENT = "## Notes"
