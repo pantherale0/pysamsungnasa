@@ -90,10 +90,7 @@ class NasaDevice:
                 destination=self.address,
             )
 
-        if attribute not in self._attribute_events or requires_read:
-            self._attribute_events[attribute] = asyncio.Event()
-
-        event = self._attribute_events[attribute]
+        event = self._attribute_events.setdefault(attribute, asyncio.Event())
 
         async with asyncio.timeout(10):
             while attribute not in self.attributes or requires_read:
