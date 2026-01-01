@@ -1,0 +1,60 @@
+name: Handle Message Parser Issue Closure
+
+on:
+  issues:
+    types: [closed]
+
+jobs:
+  cleanup-pr-and-branch:
+    if: contains(github.event.issue.labels.*.name, 'message-parser')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Find and close related PR
+        run: |
+          import os
+          import subprocess
+          import json
+
+          issue_number = '${{ github.event.issue.number }}'
+          branch_name = f"fix/{issue_number}"
+
+          # Get all PRs for the branch
+          result = subprocess.run(
+              ['gh', 'pr', 'list', '--head', branch_name, '--json', 'number,state'],
+              capture_output=True,
+              text=True,
+              env={**os.environ, 'GH_TOKEN': '${{ secrets.GITHUB_TOKEN }}'}
+          )
+
+          if result.returncode == 0:
+              prs = json.loads(result.stdout)
+              for pr in prs:
+                  if pr['state'] == 'OPEN':
+                      # Close the PR
+                      subprocess.run(
+                          ['gh', 'pr', 'close', str(pr['number'])],
+                          env={**os.environ, 'GH_TOKEN': '${{ secrets.GITHUB_TOKEN }}'}
+                      )
+                      print(f"Closed PR #{pr['number']}")
+          else:
+              print(f"Failed to find PR: {result.stderr}")
+        shell: python
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git and delete branch
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git fetch origin
+
+          branch_name="fix/${{ github.event.issue.number }}"
+          if git show-ref --verify --quiet "refs/remotes/origin/$branch_name"; then
+              git push origin --delete "$branch_name" || echo "Branch may have already been deleted"
+          else
+              echo "Branch $branch_name does not exist on remote"
+          fi
