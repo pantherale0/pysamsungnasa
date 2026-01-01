@@ -18,186 +18,285 @@ class AddressClass(SamsungEnum, IntEnum):
     """NASA Device Address Class from protocol byte 3 & 6."""
 
     UNKNOWN = 0x00
+    """Unknown or unspecified device address class"""
     OUTDOOR = 0x10
+    """Outdoor unit (condenser)"""
     HTU = 0x11
+    """Heat Transfer Unit"""
     INDOOR = 0x20
+    """Indoor unit (evaporator)"""
     ERV = 0x30
+    """Energy Recovery Ventilation unit"""
     DIFFUSER = 0x35
+    """Air diffuser or outlet device"""
     MCU = 0x38
+    """Master Control Unit"""
     RMC = 0x40
+    """Remote Control Module"""
     WIRED_REMOTE = 0x50
+    """Wired remote control"""
     PIM = 0x58
+    """PIM module"""
     SIM = 0x59
+    """SIM module"""
     PEAK = 0x5A
+    """PEAK device"""
     POWER_DIVIDER = 0x5B
-    WIFI_KIT = 0x62  # From "Notes" section in NOTES.md
+    """Power divider device"""
+    WIFI_KIT = 0x62
+    """WiFi connectivity kit"""
     CENTRAL_CONTROLLER = 0x65
-    JIG_TESTER = 0x80  # Tester
-    BML = 0xB0  # Broadcast Self Layer
-    BCL = 0xB1  # Broadcast Control Layer
-    BSL = 0xB2  # Broadcast Set Layer
-    BCSL = 0xB3  # Broadcast Control and Set Layer
-    BMDL = 0xB4  # Broadcast Module Layer
-    BCSM = 0xB7  # Broadcast CSM
-    BLL = 0xB8  # Broadcast Local Layer
-    BCSML = 0xB9  # Broadcast CSML
+    """Central control system"""
+    JIG_TESTER = 0x80
+    """JIG tester equipment"""
+    BML = 0xB0
+    """Broadcast Self Layer"""
+    BCL = 0xB1
+    """Broadcast Control Layer"""
+    BSL = 0xB2
+    """Broadcast Set Layer"""
+    BCSL = 0xB3
+    """Broadcast Control and Set Layer"""
+    BMDL = 0xB4
+    """Broadcast Module Layer"""
+    BCSM = 0xB7
+    """Broadcast CSM"""
+    BLL = 0xB8
+    """Broadcast Local Layer"""
+    BCSML = 0xB9
+    """Broadcast CSML"""
     UNDEFINED = 0xFF
+    """Undefined or invalid address class"""
 
 
 class PacketType(SamsungEnum, IntEnum):
     """NASA Packet Types from protocol byte 10."""
 
     UNKNOWN = -1
+    """Unknown packet type"""
     STANDBY = 0
+    """Standby mode packet"""
     NORMAL = 1
+    """Normal operation packet"""
     GATHERING = 2
+    """Data gathering packet"""
     INSTALL = 3
+    """Installation mode packet"""
     DOWNLOAD = 4
+    """Download/firmware packet"""
 
 
 class DataType(SamsungEnum, IntEnum):
     """NASA Data Types from protocol byte 10.
+
     (Previously PayloadTypes as StrEnum)
     """
 
     UNKNOWN = -1
+    """Unknown data type"""
     UNDEFINED = 0
+    """Undefined payload"""
     READ = 1
+    """Read request or data"""
     WRITE = 2
+    """Write command"""
     REQUEST = 3
+    """Request message"""
     NOTIFICATION = 4
+    """Notification or notification data"""
     RESPONSE = 5
+    """Response to a request"""
     ACK = 6
+    """Acknowledgement"""
     NACK = 7
+    """Negative acknowledgement"""
 
 
 class MessageSetType(SamsungEnum, IntEnum):
     """NASA Message Set Type derived from Message Number (protocol bytes 13-14)."""
 
-    ENUM = 0  # 1 byte payload
-    VARIABLE = 1  # 2 bytes payload
-    LONG_VARIABLE = 2  # 4 bytes payload
-    STRUCTURE = 3  # structure payload
+    ENUM = 0
+    """1 byte payload"""
+    VARIABLE = 1
+    """2 bytes payload"""
+    LONG_VARIABLE = 2
+    """4 bytes payload"""
+    STRUCTURE = 3
+    """Structure payload"""
 
 
 # Specific Message Enums from NOTES.md
 
 
 class OutOpCheckRefStep(SamsungEnum, IntEnum):
-    """
-    Refrigerant amount level (Message 0x808E).
+    """Refrigerant amount level (Message 0x808E).
+
     Label (NASA.prc): ENUM*OUT_OP_CHECK_REF_STEP
+
     As per NOTES.md, Min = 0, Max = 8.
-    The specific semantic meaning of each level (0-8) is not detailed in the notes.
-    The notes also mention: "This is Enum in definition. But we need operation,
-    so just consider this as variable."
     """
 
     LEVEL_0 = 0
+    """Refrigerant level 0"""
     LEVEL_1 = 1
+    """Refrigerant level 1"""
     LEVEL_2 = 2
+    """Refrigerant level 2"""
     LEVEL_3 = 3
+    """Refrigerant level 3"""
     LEVEL_4 = 4
+    """Refrigerant level 4"""
     LEVEL_5 = 5
+    """Refrigerant level 5"""
     LEVEL_6 = 6
+    """Refrigerant level 6"""
     LEVEL_7 = 7
+    """Refrigerant level 7"""
     LEVEL_8 = 8
+    """Refrigerant level 8"""
 
 
 class InOperationPower(SamsungEnum, IntEnum):
-    """
-    Indoor unit power on/off (Message 0x4000).
+    """Indoor unit power on/off (Message 0x4000).
+
     Label (NASA.prc): ENUM*IN_OPERATION_POWER
-    Remarks from NOTES.md: "0 Off, 1 On, 2 On".
-    The distinction between ON_STATE_1 and ON_STATE_2 (if any) is not specified.
     """
 
     OFF = 0
+    """Power is off"""
     ON_STATE_1 = 1
+    """Power is on (state 1)"""
     ON_STATE_2 = 2
+    """Power is on (state 2)"""
 
 
 class InOperationMode(SamsungEnum, IntEnum):
-    """
-    Indoor unit control mode (Message 0x4001).
+    """Indoor unit control mode (Message 0x4001).
+
     Label (NASA.prc): ENUM_IN_OPERATION_MODE
-    Remarks from NOTES.md: "0 Auto, 1 Cool, 2 Dry, 3 Fan, 4 Heat, 21 Cool Storage, 24 Hot water".
     """
 
     AUTO = 0
+    """Auto mode"""
     COOL = 1
+    """Cool mode"""
     DRY = 2
+    """Dry mode"""
     FAN = 3
+    """Fan only mode"""
     HEAT = 4
+    """Heat mode"""
     COOL_STORAGE = 21
+    """Cool storage mode"""
     HOT_WATER = 24
+    """Hot water mode"""
 
 
 class InFanMode(SamsungEnum, IntEnum):
-    """
-    Indoor unit fan mode (Message 0x4006).
-    """
+    """Indoor unit fan mode (Message 0x4006)."""
 
     AUTO = 0
+    """Auto fan speed"""
     LOW = 1
+    """Low fan speed"""
     MID = 2
+    """Medium fan speed"""
     HIGH = 3
+    """High fan speed"""
     TURBO = 4
+    """Turbo/Maximum fan speed"""
 
 
 class InAltMode(SamsungEnum, IntEnum):
-    """
-    Indoor unit alternative mode (Message 0x4060).
-    """
+    """Indoor unit alternative mode (Message 0x4060)."""
 
     OFF = 0
+    """Alternative mode is off"""
     ON = 9
+    """Alternative mode is on"""
 
 
 class OutdoorOperationStatus(SamsungEnum, IntEnum):
-    """
-    Outdoor Driving Mode / Outdoor Operation Status (Message 0x8001).
+    """Outdoor Driving Mode / Outdoor Operation Status (Message 0x8001).
+
     Derived from Label (NasaConst.java): NASA_OUTDOOR_OPERATION_STATUS
     and remarks for ENUM_OUT_OPERATION_ODU_MODE.
     """
 
     OP_STOP = 0
+    """Operation stopped"""
     OP_SAFETY = 1
+    """Safety mode operation"""
     OP_NORMAL = 2
+    """Normal operation"""
     OP_BALANCE = 3
+    """Balance mode operation"""
     OP_RECOVERY = 4
+    """Recovery mode operation"""
     OP_DEICE = 5
+    """Defrosting operation"""
     OP_COMPDOWN = 6
+    """Compressor down mode"""
     OP_PROHIBIT = 7
+    """Operation prohibited"""
     OP_LINEJIG = 8
+    """Line JIG testing"""
     OP_PCBJIG = 9
+    """PCB JIG testing"""
     OP_TEST = 10
+    """General test mode"""
     OP_CHARGE = 11
+    """Refrigerant charging operation"""
     OP_PUMPDOWN = 12
+    """Pump down operation"""
     OP_PUMPOUT = 13
-    OP_VACCUM = 14  # Note: "VACCUM" as per NOTES.md, likely "VACUUM"
+    """Pump out operation"""
+    OP_VACCUM = 14
+    """Vacuum operation"""
     OP_CALORYJIG = 15
+    """Calorimeter JIG testing"""
     OP_PUMPDOWNSTOP = 16
+    """Pump down stopped"""
     OP_SUBSTOP = 17
+    """Substation stopped"""
     OP_CHECKPIPE = 18
+    """Pipe check operation"""
     OP_CHECKREF = 19
+    """Refrigerant check operation"""
     OP_FPTJIG = 20
+    """FPT JIG testing"""
     OP_NONSTOP_HEAT_COOL_CHANGE = 21
+    """Non-stop heat/cool mode change"""
     OP_AUTO_INSPECT = 22
+    """Automatic inspection"""
     OP_ELECTRIC_DISCHARGE = 23
+    """Electric discharge operation"""
     OP_SPLIT_DEICE = 24
-    OP_INVETER_CHECK = 25  # Note: "INVETER" as per NOTES.md, likely "INVERTER"
+    """Split defrost operation"""
+    OP_INVETER_CHECK = 25
+    """Inverter check operation"""
     OP_NONSTOP_DEICE = 26
+    """Non-stop defrost operation"""
     OP_REM_TEST = 27
+    """REM test operation"""
     OP_RATING = 28
+    """Rating operation"""
     OP_PC_TEST = 29
+    """PC test operation"""
     OP_PUMPDOWN_THERMOOFF = 30
+    """Pump down with thermostat off"""
     OP_3PHASE_TEST = 31
+    """3-phase test operation"""
     OP_SMARTINSTALL_TEST = 32
+    """Smart install test operation"""
     OP_DEICE_PERFORMANCE_TEST = 33
+    """Defrost performance test"""
     OP_INVERTER_FAN_PBA_CHECK = 34
+    """Inverter fan PBA check"""
     OP_AUTO_PIPE_PAIRING = 35
+    """Automatic pipe pairing"""
     OP_AUTO_CHARGE = 36
+    """Automatic refrigerant charging"""
 
 
 class AdMultiTenantNo(SamsungEnum, IntEnum):
@@ -236,70 +335,105 @@ class PnpStep(SamsungEnum, IntEnum):
 
 
 class InOperationModeReal(SamsungEnum, IntEnum):
-    """
-    Indoor unit current operation mode (Message 0x4002).
-    Label (NASA.prc): ENUM_IN_OPERATION_MODE_REAL.
-    XML ProtocolID: ENUM_in_operation_mode_real.
-    Remarks: "0 Auto, 1 Cool, 2 Dry, 3 Fan, 4 Heat, 11 Auto Cool, 12 Auto Dry, 13 Auto Fan, 14 Auto Heat, 21 Cool Storage, 24 Hot water, 255 NULL mode"
-    XML Item Value="0" is "Unknown", NOTES.md is "Auto". Preferring "Auto" from NOTES.md for semantic meaning.
+    """Indoor unit current operation mode (Message 0x4002).
+
+    Label (NASA.prc): ENUM_IN_OPERATION_MODE_REAL
+
+    XML ProtocolID: ENUM_in_operation_mode_real
     """
 
     AUTO = 0
+    """Auto mode"""
     COOL = 1
+    """Cool mode"""
     DRY = 2
+    """Dry mode"""
     FAN = 3
+    """Fan only mode"""
     HEAT = 4
+    """Heat mode"""
     AUTO_COOL = 11
+    """Auto cool mode"""
     AUTO_DRY = 12
+    """Auto dry mode"""
     AUTO_FAN = 13
+    """Auto fan mode"""
     AUTO_HEAT = 14
+    """Auto heat mode"""
     COOL_STORAGE = 21
+    """Cool storage mode"""
     HOT_WATER = 24
+    """Hot water mode"""
     NULL_MODE = 255
+    """Null/unknown mode"""
 
 
 class InOperationVentMode(SamsungEnum, IntEnum):
-    """
-    Ventilation operation mode (Message 0x4004).
+    """Ventilation operation mode (Message 0x4004).
+
     Label (NASA.prc): ENUM_IN_OPERATION_VENT_MODE
+
     Label (NasaConst.java): NASA_ERV_OPMODE
+
     XML ProtocolID: ENUM_IN_OPERATION_VENT_MODE
     """
 
     NORMAL = 0
-    HEAT_EXCHANGE = 1  # XML: HeatEx
+    """Normal ventilation mode"""
+    HEAT_EXCHANGE = 1
+    """Heat exchange mode"""
     BYPASS = 2
-    NORMAL_PURIFY = 3  # XML: Normal+Purify
-    HEAT_EXCHANGE_PURIFY = 4  # XML: HeatEx+Purify
+    """Bypass mode"""
+    NORMAL_PURIFY = 3
+    """Normal with purification"""
+    HEAT_EXCHANGE_PURIFY = 4
+    """Heat exchange with purification"""
     PURIFY = 5
+    """Purification mode"""
     SLEEP = 6
-    BYPASS_PURIFY = 7  # XML: Bypass+Purify
-    # XML Default: Unknown
+    """Sleep mode"""
+    BYPASS_PURIFY = 7
+    """Bypass with purification"""
 
 
 class InFanModeReal(SamsungEnum, IntEnum):
-    """
-    Indoor unit current air volume (Message 0x4007).
+    """Indoor unit current air volume (Message 0x4007).
+
     Label (NASA.prc): ENUM_IN_FAN_MODE_REAL
+
     XML ProtocolID: ENUM_in_fan_mode_real
     """
 
     LOW = 1
+    """Low fan speed"""
     MID = 2
+    """Medium fan speed"""
     HIGH = 3
+    """High fan speed"""
     TURBO = 4
+    """Turbo fan speed"""
     AUTO_LOW = 10
+    """Auto low fan speed"""
     AUTO_MID = 11
+    """Auto medium fan speed"""
     AUTO_HIGH = 12
-    UL = 13  # Ultra Low?
-    LL = 14  # Low Low?
-    HH = 15  # High High?
-    SPEED = 16  # Generic speed?
+    """Auto high fan speed"""
+    UL = 13
+    """Ultra low fan speed"""
+    LL = 14
+    """Very low fan speed"""
+    HH = 15
+    """Very high fan speed"""
+    SPEED = 16
+    """Generic speed mode"""
     NATURAL_LOW = 17
+    """Natural low wind speed"""
     NATURAL_MID = 18
+    """Natural medium wind speed"""
     NATURAL_HIGH = 19
+    """Natural high wind speed"""
     OFF = 254
-    # XML Default: Unknown
+    """Fan is off"""
 
 
 class InLouverHlPartSwing(SamsungEnum, IntEnum):
@@ -355,70 +489,86 @@ class InLouverHlPartSwing(SamsungEnum, IntEnum):
     # XML Default: Unknown
 
 
-class ErvFanSpeed(SamsungEnum, IntEnum):  # Or InFanVentMode
-    """
-    Indoor unit current air volume for ERV (Message 0x4008).
+class ErvFanSpeed(SamsungEnum, IntEnum):
+    """Indoor unit current air volume for ERV (Message 0x4008).
+
     Label (NASA.prc): ENUM_IN_FAN_VENT_MODE
+
     Label (NasaConst.java): NASA_ERV_FANSPEED
+
     XML ProtocolID: ENUM_IN_FAN_VENT_MODE
     """
 
     AUTO = 0
+    """Auto fan speed"""
     LOW = 1
+    """Low fan speed"""
     MID = 2
+    """Medium fan speed"""
     HIGH = 3
+    """High fan speed"""
     TURBO = 4
-    # XML Default: Unknown
+    """Turbo fan speed"""
 
 
-class DhwOpMode(SamsungEnum, IntEnum):  # Or InWaterHeaterMode
-    """
-    Water heater mode (DHW) (Message 0x4066).
+class DhwOpMode(SamsungEnum, IntEnum):
+    """Water heater mode (DHW) (Message 0x4066).
+
     Label (NASA.prc): ENUM_IN_WATER_HEATER_MODE
+
     Label (NasaConst.java): NASA_DHW_OPMODE
-    Remarks: "0 Eco, 1 Standard, 2 Power, 3 Force"
     """
 
     ECO = 0
+    """Eco mode"""
     STANDARD = 1
+    """Standard mode"""
     POWER = 2
+    """Power mode"""
     FORCE = 3
+    """Force mode"""
 
 
-class InThermostatStatus(SamsungEnum, IntEnum):  # 0x4069 and 0x406A
-    """
-    Hydro External Thermostat status (Message 0x4069).
+class InThermostatStatus(SamsungEnum, IntEnum):
+    """Hydro External Thermostat status (Message 0x4069).
+
     Label (NASA.prc): ENUM_IN_THERMOSTAT_STATUS
-    Remarks: "0 Off, 1 Cool, 2 Heat"
     """
 
     OFF = 0
+    """Thermostat is off"""
     COOL = 1
+    """Thermostat in cool mode"""
     HEAT = 2
+    """Thermostat in heat mode"""
 
 
 class InBackupHeater(SamsungEnum, IntEnum):
-    """
-    Backup heater mode (Message 0x406C).
+    """Backup heater mode (Message 0x406C).
+
     Label (NASA.prc): ENUM_IN_BACKUP_HEATER
-    Remarks: "0 Off, 1 Step 1, 2 Step 2"
     """
 
     OFF = 0
+    """Backup heater is off"""
     STEP_1 = 1
+    """Backup heater step 1"""
     STEP_2 = 2
+    """Backup heater step 2"""
 
 
-class DhwReferenceTemp(SamsungEnum, IntEnum):  # Or InReferenceEhsTemp
-    """
-    Hydro Control Choice / DHW Reference Temperature source (Message 0x406F).
+class DhwReferenceTemp(SamsungEnum, IntEnum):
+    """Hydro Control Choice / DHW Reference Temperature source (Message 0x406F).
+
     Label (NASA.prc): ENUM_IN_REFERENCE_EHS_TEMP
+
     Label (NasaConst.java): NASA_DHW_REFERENCE_TEMP
-    Remarks: "0 Room, 1 Water out"
     """
 
     ROOM = 0
+    """Room temperature as reference"""
     WATER_OUT = 1
+    """Water outlet temperature as reference"""
 
 
 class In2WayValve(SamsungEnum, IntEnum):
@@ -429,71 +579,106 @@ class In2WayValve(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """2-Way valve is off"""
     VALUE_1 = 1
-    CV = 2  # Constant Value?
+    """2-Way valve in state 1"""
+    CV = 2
+    """2-Way valve in CV mode"""
     BOILER = 3
+    """2-Way valve in boiler mode"""
 
 
 class InFsv2041WaterLawTypeHeating(SamsungEnum, IntEnum):
     """
-    FSV Water Law Type for Heating (Message 0x4093).
+    FSV #2041: Water Law Type for Heating (Message 0x4093).
+
+    Selects water law for floor heating (UFHs) or fan coil unit (FCU) heating systems.
+    Default: 1 (Floor). Range: 1-2.
+
     Label (NASA.prc): ENUM_IN_FSV_2041
-    Remarks: "1 Floor, 2 FCU"
     """
 
     FLOOR = 1
+    """Water law for floor heating (UFH)"""
     FCU = 2
+    """Water law for fan coil unit (FCU) heating"""
 
 
 class InFsv2081WaterLawTypeCooling(SamsungEnum, IntEnum):
     """
-    FSV Water Law Type for Cooling (Message 0x4094).
+    FSV #2081: Water Law Type for Cooling (Message 0x4094).
+
+    Selects water law for floor cooling (UFHs) or fan coil unit (FCU) cooling systems.
+    Default: 1 (Floor). Range: 1-2.
+
     Label (NASA.prc): ENUM_IN_FSV_2081
-    Remarks: "1 Floor, 2 FCU"
     """
 
     FLOOR = 1
+    """Water law for floor cooling (UFH)"""
     FCU = 2
+    """Water law for fan coil unit (FCU) cooling"""
 
 
 class InUseThermostat(SamsungEnum, IntEnum):
     """FSV Use Thermostat setting (FSV 209*)."""
 
     NO = 0
+    """Thermostat is not used"""
     VALUE_1 = 1
+    """Setting option 1"""
     VALUE_2 = 2
+    """Setting option 2"""
     VALUE_3 = 3
+    """Setting option 3"""
     VALUE_4 = 4
+    """Setting option 4"""
 
 
 class InFsv3011EnableDhw(SamsungEnum, IntEnum):
     """
-    FSV Enable DHW setting (Message 0x4097).
+    FSV #3011: Enable Domestic Hot Water (DHW) (Message 0x4097).
+
+    Controls DHW heating operation mode. Required for DHW operation.
+    Default: 0 (No). Range: 0-2.
+
     Label (NASA.prc): ENUM_IN_FSV_3011
-    Label (NasaConst.java): NASA_ENABLE_DHW
-    Remarks: "values 0="No" up to 2="2""
     """
 
     NO = 0
-    YES_THERMO_ON = 1  # Based on thermo on
-    YES_THERMO_OFF = 2  # Based on thermo off
+    """DHW heating disabled"""
+    YES_THERMO_ON = 1
+    """DHW enabled based on thermostat ON state"""
+    YES_THERMO_OFF = 2
+    """DHW enabled based on thermostat OFF state"""
 
 
 class InFsv3042DayOfWeek(SamsungEnum, IntEnum):
     """
-    FSV Day of Week setting (Message 0x409A).
+    FSV #3042: Day of Week for Schedule (Message 0x409A).
+
+    Selects day(s) for scheduled operation in field setting mode.
+    Range: 0-7 (Sunday through Everyday).
+
     Label (NASA.prc): ENUM_IN_FSV_3042
-    Remarks: "Sunday=0, Monday=1 .. up to 7=Everyday"
     """
 
     SUNDAY = 0
+    """Sunday"""
     MONDAY = 1
+    """Monday"""
     TUESDAY = 2
+    """Tuesday"""
     WEDNESDAY = 3
+    """Wednesday"""
     THURSDAY = 4
+    """Thursday"""
     FRIDAY = 5
+    """Friday"""
     SATURDAY = 6
+    """Saturday"""
     EVERYDAY = 7
+    """Every day of the week"""
 
 
 class InFsv3061UseDhwThermostat(SamsungEnum, IntEnum):
@@ -505,16 +690,29 @@ class InFsv3061UseDhwThermostat(SamsungEnum, IntEnum):
     """
 
     NO = 0
+    """DHW thermostat is not used"""
     VALUE_1 = 1
+    """Setting option 1"""
     VALUE_2 = 2
+    """Setting option 2"""
     VALUE_3 = 3
+    """Setting option 3"""
 
 
 class InFsv3071(SamsungEnum, IntEnum):
-    """FSV setting (Message 0x409D). Label (NASA.prc): ENUM_IN_FSV_3071"""
+    """
+    FSV #3071: Room/Tank Mode Selection (Message 0x409D).
+
+    Selects temperature control reference for heating/cooling.
+    Default: Room. Range: 0-1.
+
+    Label (NASA.prc): ENUM_IN_FSV_3071
+    """
 
     ROOM = 0
+    """Use room temperature as control reference"""
     TANK = 1
+    """Use tank temperature as control reference"""
 
 
 class InStateAutoStaticPressureRunning(SamsungEnum, IntEnum):
@@ -525,21 +723,31 @@ class InStateAutoStaticPressureRunning(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Auto static pressure control is off"""
     COMPLETE = 1
+    """Auto static pressure control is complete"""
     RUNNING = 2
+    """Auto static pressure control is running"""
 
 
 class InFsv2093(SamsungEnum, IntEnum):
     """
-    FSV setting (Message 0x4127).
+    FSV #2093: Remote Controller Room Temperature Control (Message 0x4127).
+
+    Sets remote controller room temperature control mode/sensitivity.
+    Range: 1-4 (sensitivity levels).
+
     Label (NASA.prc): ENUM_IN_FSV_2093
-    Remarks: "Min = 1 Max = 4"
     """
 
     VALUE_1 = 1
+    """Sensitivity level 1 (lowest)"""
     VALUE_2 = 2
+    """Sensitivity level 2"""
     VALUE_3 = 3
+    """Sensitivity level 3"""
     VALUE_4 = 4
+    """Sensitivity level 4 (highest)"""
 
 
 class InFsv5022(SamsungEnum, IntEnum):
@@ -550,82 +758,105 @@ class InFsv5022(SamsungEnum, IntEnum):
     """
 
     VALUE_0 = 0
+    """Setting option 0"""
     VALUE_1 = 1
+    """Setting option 1"""
 
 
 class OutOperationServiceOp(SamsungEnum, IntEnum):
-    """
-    Outdoor unit service operation steps (Message 0x8000).
+    """Outdoor unit service operation steps (Message 0x8000).
+
     Label (NASA.prc): ENUM_OUT_OPERATION_SERVICE_OP
-    Remarks: "2 Heating test run, 3 Pump out, 13 Cooling test run, 14 Pump down"
     """
 
     HEATING_TEST_RUN = 2
+    """Heating test run"""
     PUMP_OUT = 3
+    """Pump out operation"""
     COOLING_TEST_RUN = 13
+    """Cooling test run"""
     PUMP_DOWN = 14
+    """Pump down operation"""
 
 
-class OutdoorIndoorDefrostStep(SamsungEnum, IntEnum):  # Or OutDeiceStepIndoor
-    """
-    Indoor unit defrost operation steps (from outdoor unit's perspective) (Message 0x8061).
+class OutdoorIndoorDefrostStep(SamsungEnum, IntEnum):
+    """Indoor unit defrost operation steps (from outdoor unit's perspective) (Message 0x8061).
+
     Label (NASA.prc): ENUM*OUT_DEICE_STEP_INDOOR
+
     Label (NasaConst.java): NASA_OUTDOOR_INDOOR_DEFROST_STEP
-    Remarks: "1 Defrost stage 1, 2 Defrost stage 2, 3 Defrost stage 3, 7 Defrost operation end stage, 255 No defrost operation"
     """
 
     DEFROST_STAGE_1 = 1
+    """Defrost stage 1"""
     DEFROST_STAGE_2 = 2
+    """Defrost stage 2"""
     DEFROST_STAGE_3 = 3
+    """Defrost stage 3"""
     DEFROST_END_STAGE = 7
+    """Defrost operation end stage"""
     NO_DEFROST_OPERATION = 255
+    """No defrost operation"""
 
 
 class OutOutdoorSystemReset(SamsungEnum, IntEnum):
-    """
-    Outdoor unit system reset command/status (Message 0x8065).
+    """Outdoor unit system reset command/status (Message 0x8065).
+
     Label (NasaConst.java): NASA_OUTDOOR_SYSTEM_RESET
     """
 
-    NO_ACTION = 0  # Assumed
-    RESET = 1  # Assumed
+    NO_ACTION = 0
+    """No reset action"""
+    RESET = 1
+    """System reset"""
 
 
 class OutCheckRefResult(SamsungEnum, IntEnum):
-    """
-    Refrigerant amount determination result (Message 0x809C).
+    """Refrigerant amount determination result (Message 0x809C).
+
     Label (NASA.prc): ENUM_OUT_CHECK_REF_RESULT
     """
 
-    NOT_INSPECTED = 0  # XML: RefResult_NotInspect
-    NORMAL_COMPLETION = 1  # XML: 정상완료 (Normal completion)
-    NOT_JUDGED = 2  # XML: RefResult_NotJudgment
-    SUBCOOLING_FAIL = 3  # XML: 과냉도 확보불가 (Subcooling cannot be secured)
-    NORMAL = 4  # XML: RefResult_Normal
-    INSUFFICIENT = 5  # XML: RefResult_Insufficient
-    CANNOT_JUDGE = 6  # XML: 판단불가 (Cannot judge)
-    TEMP_RANGE_EXCEEDED = 7  # XML: 온도범위 초과 (Temperature range exceeded)
+    NOT_INSPECTED = 0
+    """Refrigerant not yet inspected"""
+    NORMAL_COMPLETION = 1
+    """Normal completion of refrigerant check"""
+    NOT_JUDGED = 2
+    """Refrigerant check not judged"""
+    SUBCOOLING_FAIL = 3
+    """Subcooling cannot be secured"""
+    NORMAL = 4
+    """Refrigerant amount is normal"""
+    INSUFFICIENT = 5
+    """Refrigerant amount is insufficient"""
+    CANNOT_JUDGE = 6
+    """Cannot judge refrigerant amount"""
+    TEMP_RANGE_EXCEEDED = 7
+    """Temperature range exceeded"""
 
 
 class OutOutdoorCoolonlyModel(SamsungEnum, IntEnum):
-    """
-    Outdoor unit cool-only model status (Message 0x809D).
+    """Outdoor unit cool-only model status (Message 0x809D).
+
     Label (NasaConst.java): NASA_OUTDOOR_COOLONLY_MODEL
     """
 
-    NO_HEAT_PUMP = 0  # Assumed (i.e., is cool only)
-    YES_HEAT_PUMP = 1  # Assumed (i.e., not cool only)
+    NO_HEAT_PUMP = 0
+    """Unit is cool-only (no heat pump)"""
+    YES_HEAT_PUMP = 1
+    """Unit has heat pump capability"""
 
 
 class OutEhsWateroutType(SamsungEnum, IntEnum):
-    """
-    EHS Water Outlet Type (Message 0x80D8).
+    """EHS Water Outlet Type (Message 0x80D8).
+
     Label (NASA.prc): ENUM_OUT_EHS_WATEROUT_TYPE
-    Remarks: "0 Default, 1 70°C"
     """
 
     DEFAULT = 0
+    """Default water outlet temperature"""
     TEMP_70C = 1
+    """70°C water outlet temperature"""
 
 
 # Generic Enums for unknown ?? messages based on prefix
@@ -714,81 +945,169 @@ class InUnknown4085(SamsungEnum, IntEnum):
 
 
 class InFsv4011(SamsungEnum, IntEnum):
-    """FSV setting (Message 0x409E). Label (NASA.prc): ENUM_IN_FSV_4011"""
+    """
+    FSV #4011: Priority Mode Selection (Message 0x409E).
+
+    Selects priority between DHW and space heating operation.
+    Default: DHW. Range: 0-1.
+
+    Label (NASA.prc): ENUM_IN_FSV_4011
+    """
 
     DHW = 0
+    """Domestic hot water has priority"""
     HEATING = 1
+    """Space heating has priority"""
 
 
 class InFsv4021(SamsungEnum, IntEnum):
-    """FSV setting (Message 0x409F). Label (NASA.prc): ENUM_IN_FSV_4021"""
+    """
+    FSV #4021: Operation Mode Configuration (Message 0x409F).
+
+    Sets operational mode configuration option.
+    Range: 0-2.
+
+    Label (NASA.prc): ENUM_IN_FSV_4021
+    """
 
     VALUE_0 = 0
+    """Operation mode 0"""
     VALUE_1 = 1
+    """Operation mode 1"""
     VALUE_2 = 2
+    """Operation mode 2"""
 
 
 class InFsv4022(SamsungEnum, IntEnum):
-    """FSV setting (Message 0x40A0). Label (NASA.prc): ENUM_IN_FSV_4022"""
+    """
+    FSV #4022: Backup Heater Type Selection (Message 0x40A0).
 
-    BUH_BSH_BOTH = 0  # XML: BUH/BSH Both
+    Selects backup heater configuration (BUH=Booster, BSH=Backup).
+    Default: Both. Range: 0-2.
+
+    Label (NASA.prc): ENUM_IN_FSV_4022
+    """
+
+    BUH_BSH_BOTH = 0
+    """Both BUH and BSH backup heaters available"""
     BUH = 1
+    """Booster Unit Heater (BUH) only"""
     BSH = 2
+    """Backup Supply Heater (BSH) only"""
 
 
 class InFsv4041(SamsungEnum, IntEnum):
-    """FSV setting (Message 0x40C0). Label (NASA.prc): ENUM_IN_FSV_4041"""
+    """
+    FSV #4041: Feature Configuration (Message 0x40C0).
+
+    Enables/disables optional feature configuration.
+    Default: No. Range: 0-2.
+
+    Label (NASA.prc): ENUM_IN_FSV_4041
+    """
 
     NO = 0
+    """Feature disabled"""
     VALUE_1 = 1
+    """Feature mode 1"""
     VALUE_2 = 2
+    """Feature mode 2"""
 
 
 class InFsv5033(SamsungEnum, IntEnum):
-    """FSV setting (Message 0x4107). Label (NASA.prc): ENUM_IN_FSV_5033"""
+    """
+    FSV #5033: Priority Mode A2A vs DHW (Message 0x4107).
+
+    Sets priority between air-to-air (A2A) and domestic hot water (DHW) operation.
+    Controls time-division switching when both systems operate.
+    Default: 0 (Priority A2A). Range: 0-1.
+
+    Label (NASA.prc): ENUM_IN_FSV_5033
+    """
 
     A2A = 0
+    """Air-to-air operation has priority"""
     DHW = 1
+    """Domestic hot water operation has priority"""
 
 
 class InFsv5042(SamsungEnum, IntEnum):
-    """FSV setting (Message 0x40A5). Label (NASA.prc): ENUM_IN_FSV_5042"""
+    """
+    FSV #5042: Zone/Area Control Configuration (Message 0x40A5).
+
+    Controls zone or area selection for multi-zone systems.
+    Default: All. Range: 0-3.
+
+    Label (NASA.prc): ENUM_IN_FSV_5042
+    """
 
     ALL = 0
+    """All zones"""
     VALUE_1 = 1
+    """Zone 1"""
     VALUE_2 = 2
+    """Zone 2"""
     VALUE_3 = 3
+    """Zone 3"""
 
 
 class InFsv5043(SamsungEnum, IntEnum):
-    """FSV setting (Message 0x40A6). Label (NASA.prc): ENUM_IN_FSV_5043"""
+    """
+    FSV #5043: System Capacity Configuration (Message 0x40A6).
+
+    Sets system capacity or performance mode.
+    Default: Low. Range: 0-1.
+
+    Label (NASA.prc): ENUM_IN_FSV_5043
+    """
 
     LOW = 0
+    """Low capacity/performance mode"""
     HIGH = 1
+    """High capacity/performance mode"""
 
 
 class InFsv5051(SamsungEnum, IntEnum):
-    """FSV setting (Message 0x40A7). Label (NASA.prc): ENUM_IN_FSV_5051"""
+    """
+    FSV #5051: Optional Feature Enable (Message 0x40A7).
+
+    Enables or disables an optional system feature.
+    Default: No. Range: 0-1.
+
+    Label (NASA.prc): ENUM_IN_FSV_5051
+    """
 
     NO = 0
+    """Feature disabled"""
     YES = 1
+    """Feature enabled"""
 
 
 class InFsv5061(SamsungEnum, IntEnum):
     """
-    FSV 5061 CH/DHW supply ratio (Message 0x40B4).
+    FSV #5061: CH/DHW Supply Ratio (Message 0x40B4).
+
+    Sets the energy distribution ratio between space heating (CH) and domestic hot water (DHW).
+    Controls priority when both systems compete for heat pump capacity.
+    Range: 1-7 (1=maximum DHW priority, 7=maximum CH priority).
+
     Label (NASA.prc): ENUM_IN_FSV_5061
-    XML ProtocolID: ENUM_IN_FSV_5061
-    Values 1-7 per user manual
     """
 
     VALUE_1 = 1
+    """DHW priority (ratio 1/7)"""
     VALUE_2 = 2
+    """Supply ratio 2/7"""
     VALUE_3 = 3
+    """Supply ratio 3/7"""
     VALUE_4 = 4
+    """Balanced supply ratio (4/7)"""
     VALUE_5 = 5
+    """Supply ratio 5/7"""
     VALUE_6 = 6
+    """Supply ratio 6/7"""
     VALUE_7 = 7
+    """CH priority (ratio 7/7)"""
 
 
 class InUnknown40B5(SamsungEnum, IntEnum):
@@ -823,8 +1142,11 @@ class InAutoStaticPressure(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Automatic pressure control is off"""
     COMPLETE = 1
+    """Automatic pressure control is complete"""
     RUNNING = 2
+    """Automatic pressure control is running"""
 
 
 class InVacancyControl(SamsungEnum, IntEnum):
@@ -835,7 +1157,9 @@ class InVacancyControl(SamsungEnum, IntEnum):
     """
 
     DISABLE = 0
+    """Vacancy control is disabled"""
     ENABLE = 1
+    """Vacancy control is enabled"""
 
 
 class InEnterRoomControl(SamsungEnum, IntEnum):
@@ -846,7 +1170,9 @@ class InEnterRoomControl(SamsungEnum, IntEnum):
     """
 
     DISABLE = 0
+    """Room entry control is disabled"""
     ENABLE = 1
+    """Room entry control is enabled"""
 
 
 class InChillerWaterlawSensor(SamsungEnum, IntEnum):
@@ -857,7 +1183,9 @@ class InChillerWaterlawSensor(SamsungEnum, IntEnum):
     """
 
     OUTDOOR = 0
+    """Outdoor sensor"""
     ROOM = 1
+    """Room sensor"""
 
 
 class InChillerWaterlaw(SamsungEnum, IntEnum):
@@ -868,7 +1196,9 @@ class InChillerWaterlaw(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Chiller water law is off"""
     ON = 1
+    """Chiller water law is on"""
 
 
 class InChillerSettingSilentLevel(SamsungEnum, IntEnum):
@@ -879,9 +1209,13 @@ class InChillerSettingSilentLevel(SamsungEnum, IntEnum):
     """
 
     NONE = 0
+    """No silent level set"""
     LEVEL1 = 1
+    """Silent level 1"""
     LEVEL2 = 2
+    """Silent level 2"""
     LEVEL3 = 3
+    """Silent level 3"""
 
 
 class InChillerSettingDemandLevel(SamsungEnum, IntEnum):
@@ -892,29 +1226,44 @@ class InChillerSettingDemandLevel(SamsungEnum, IntEnum):
     """
 
     PERCENT_100 = 0
+    """100% demand level"""
     PERCENT_95 = 1
+    """95% demand level"""
     PERCENT_90 = 2
+    """90% demand level"""
     PERCENT_85 = 3
+    """85% demand level"""
     PERCENT_80 = 4
+    """80% demand level"""
     PERCENT_75 = 5
+    """75% demand level"""
     PERCENT_70 = 6
+    """70% demand level"""
     PERCENT_65 = 7
+    """65% demand level"""
     PERCENT_60 = 8
+    """60% demand level"""
     PERCENT_55 = 9
+    """55% demand level"""
     PERCENT_50 = 10
+    """50% demand level"""
     NOT_APPLY = 11
-    # XML Default: Unknown
+    """Demand level not applicable"""
 
 
 class InWaterValve(SamsungEnum, IntEnum):
-    """
-    Water valve state (Messages 0x4103, 0x4104).
+    """Water valve state (Messages 0x4103, 0x4104).
+
     Label (NASA.prc): ENUM_IN_WATER_VALVE_*_ON_OFF
+
     XML ProtocolID: ENUM_IN_WATER_VALVE_*_ON_OFF
     """
 
     OFF = 0
+    """Water valve is off"""
     ON = 1
+    """Water valve is on"""
+    """Water valve is on"""
 
 
 class InEnthalpyControl(SamsungEnum, IntEnum):
@@ -932,6 +1281,8 @@ class InFreeCooling(SamsungEnum, IntEnum):
     XML ProtocolID: ENUM_IN_FREE_COOLING_STATE
     """
 
+    pass
+
 
 class InZone1Power(SamsungEnum, IntEnum):
     """
@@ -942,7 +1293,9 @@ class InZone1Power(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Zone 1 is off"""
     ON = 1
+    """Zone 1 is on"""
 
 
 class InGasLevel(SamsungEnum, IntEnum):
@@ -954,13 +1307,21 @@ class InGasLevel(SamsungEnum, IntEnum):
     """
 
     VALUE_0 = 0
+    """Gas level 0"""
     VALUE_1 = 1
+    """Gas level 1"""
     VALUE_2 = 2
+    """Gas level 2"""
     VALUE_3 = 3
+    """Gas level 3"""
     VALUE_4 = 4
+    """Gas level 4"""
     VALUE_5 = 5
+    """Gas level 5"""
     VALUE_6 = 6
+    """Gas level 6"""
     VALUE_7 = 7
+    """Gas level 7"""
 
 
 class InDiffuserOperation(SamsungEnum, IntEnum):
@@ -971,7 +1332,9 @@ class InDiffuserOperation(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Diffuser is off"""
     ON = 1
+    """Diffuser is on"""
 
 
 class InFsv2094(SamsungEnum, IntEnum):
@@ -983,10 +1346,15 @@ class InFsv2094(SamsungEnum, IntEnum):
     """
 
     VALUE_0 = 0
+    """Setting option 0"""
     VALUE_1 = 1
+    """Setting option 1"""
     VALUE_2 = 2
+    """Setting option 2"""
     VALUE_3 = 3
+    """Setting option 3"""
     VALUE_4 = 4
+    """Setting option 4"""
 
 
 class InTdmIndoorType(SamsungEnum, IntEnum):
@@ -997,7 +1365,9 @@ class InTdmIndoorType(SamsungEnum, IntEnum):
     """
 
     A2A = 0
+    """Air-to-air TDM type"""
     A2W = 1
+    """Air-to-water TDM type"""
 
 
 class In3WayValve2(SamsungEnum, IntEnum):
@@ -1008,7 +1378,9 @@ class In3WayValve2(SamsungEnum, IntEnum):
     """
 
     ROOM = 0
+    """Valve is set to room mode"""
     TANK = 1
+    """Valve is set to tank mode"""
 
 
 class InFsv4061(SamsungEnum, IntEnum):
@@ -1019,7 +1391,9 @@ class InFsv4061(SamsungEnum, IntEnum):
     """
 
     VALUE_0 = 0
+    """Setting value 0"""
     VALUE_1 = 1
+    """Setting value 1"""
 
 
 class InFsv5081(SamsungEnum, IntEnum):
@@ -1030,7 +1404,9 @@ class InFsv5081(SamsungEnum, IntEnum):
     """
 
     VALUE_0 = 0
+    """Setting value 0"""
     VALUE_1 = 1
+    """Setting value 1"""
 
 
 class InFsv5091(SamsungEnum, IntEnum):
@@ -1041,7 +1417,9 @@ class InFsv5091(SamsungEnum, IntEnum):
     """
 
     VALUE_0 = 0
+    """Setting value 0"""
     VALUE_1 = 1
+    """Setting value 1"""
 
 
 class InFsv5094(SamsungEnum, IntEnum):
@@ -1052,7 +1430,9 @@ class InFsv5094(SamsungEnum, IntEnum):
     """
 
     VALUE_0 = 0
+    """Setting value 0"""
     VALUE_1 = 1
+    """Setting value 1"""
 
 
 class InZone2Power(SamsungEnum, IntEnum):
@@ -1063,7 +1443,9 @@ class InZone2Power(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Zone 2 is off"""
     ON = 1
+    """Zone 2 is on"""
 
 
 class InPvContactState(SamsungEnum, IntEnum):
@@ -1074,7 +1456,9 @@ class InPvContactState(SamsungEnum, IntEnum):
     """
 
     DISABLE = 0
+    """PV contact is disabled"""
     ENABLE = 1
+    """PV contact is enabled"""
 
 
 class InSgReadyModeState(SamsungEnum, IntEnum):
@@ -1290,7 +1674,9 @@ class OutdoorEviSolenoid(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """EVI solenoid is off"""
     ON = 1
+    """EVI solenoid is on"""
 
 
 class OutdoorOperationServiceOp(SamsungEnum, IntEnum):
@@ -1301,9 +1687,13 @@ class OutdoorOperationServiceOp(SamsungEnum, IntEnum):
     """
 
     HEATING_COMMISSIONING = 2
+    """Heating commissioning mode"""
     PUMP_OUT = 3
+    """Pump out operation"""
     COOLING_COMMISSIONING = 13
+    """Cooling commissioning mode"""
     PUMP_DOWN = 14
+    """Pump down operation"""
 
 
 class OutdoorOperationHeatCool(SamsungEnum, IntEnum):
@@ -1314,10 +1704,15 @@ class OutdoorOperationHeatCool(SamsungEnum, IntEnum):
     """
 
     UNDEFINED = 0
+    """Undefined heat/cool mode"""
     COOL = 1
+    """Cooling mode"""
     HEAT = 2
+    """Heating mode"""
     COOL_MAIN = 3
+    """Main cooling mode"""
     HEAT_MAIN = 4
+    """Main heating mode"""
 
 
 class OutdoorCompressorLoad(SamsungEnum, IntEnum):
@@ -1328,7 +1723,9 @@ class OutdoorCompressorLoad(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Compressor is off"""
     ON = 1
+    """Compressor is on"""
 
 
 class OutdoorCchLoad(SamsungEnum, IntEnum):
@@ -1339,7 +1736,9 @@ class OutdoorCchLoad(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """CCH is off"""
     ON = 1
+    """CCH is on"""
 
 
 class OutdoorHotGasLoad(SamsungEnum, IntEnum):
@@ -1350,7 +1749,9 @@ class OutdoorHotGasLoad(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Hot gas is off"""
     ON = 1
+    """Hot gas is on"""
 
 
 class OutdoorLiquidLoad(SamsungEnum, IntEnum):
@@ -1361,7 +1762,9 @@ class OutdoorLiquidLoad(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Liquid is off"""
     ON = 1
+    """Liquid is on"""
 
 
 class Outdoor4WayLoad(SamsungEnum, IntEnum):
@@ -1372,7 +1775,9 @@ class Outdoor4WayLoad(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """4-way valve is off"""
     ON = 1
+    """4-way valve is on"""
 
 
 class OutdoorMainCoolLoad(SamsungEnum, IntEnum):
@@ -1383,7 +1788,9 @@ class OutdoorMainCoolLoad(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Main cooling is off"""
     ON = 1
+    """Main cooling is on"""
 
 
 class OutdoorOutEevLoad(SamsungEnum, IntEnum):
@@ -1394,7 +1801,9 @@ class OutdoorOutEevLoad(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Expansion valve is off"""
     ON = 1
+    """Expansion valve is on"""
 
 
 class OutdoorEviBypassLoad(SamsungEnum, IntEnum):
@@ -1405,7 +1814,9 @@ class OutdoorEviBypassLoad(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """EVI bypass is off"""
     ON = 1
+    """EVI bypass is on"""
 
 
 class OutdoorGasChargeLoad(SamsungEnum, IntEnum):
@@ -1416,7 +1827,9 @@ class OutdoorGasChargeLoad(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Gas charging is off"""
     ON = 1
+    """Gas charging is on"""
 
 
 class OutdoorWaterValveLoad(SamsungEnum, IntEnum):
@@ -1427,7 +1840,9 @@ class OutdoorWaterValveLoad(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Water valve is off"""
     ON = 1
+    """Water valve is on"""
 
 
 class OutdoorPumpOutLoad(SamsungEnum, IntEnum):
@@ -1438,7 +1853,9 @@ class OutdoorPumpOutLoad(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Pump out is off"""
     ON = 1
+    """Pump out is on"""
 
 
 class OutUnknown80B6(SamsungEnum, IntEnum):
@@ -1454,13 +1871,15 @@ class OutUnknown80CE(SamsungEnum, IntEnum):
 
 
 class InOperationVentPower(SamsungEnum, IntEnum):
-    """
-    Indoor unit ventilation power (Message 0x4003).
+    """Indoor unit ventilation power (Message 0x4003).
+
     Label (NASA.prc): ENUM_IN_OPERATION_VENT_POWER
     """
 
     OFF = 0
+    """Ventilation is off"""
     ON = 1
+    """Ventilation is on"""
 
 
 class InOperationVentPowerSetting(SamsungEnum, IntEnum):
@@ -1470,7 +1889,9 @@ class InOperationVentPowerSetting(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Ventilation is off"""
     ON = 1
+    """Ventilation is on"""
 
 
 class InOperationRoomFan(SamsungEnum, IntEnum):
@@ -1480,7 +1901,9 @@ class InOperationRoomFan(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Room fan is off"""
     ON = 1
+    """Room fan is on"""
 
 
 class InOperationRoomFanControl(SamsungEnum, IntEnum):
@@ -1490,7 +1913,9 @@ class InOperationRoomFanControl(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Room fan control is off"""
     ON = 1
+    """Room fan control is on"""
 
 
 class InOperationOutdoorFan(SamsungEnum, IntEnum):
@@ -1500,7 +1925,9 @@ class InOperationOutdoorFan(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Outdoor fan is off"""
     ON = 1
+    """Outdoor fan is on"""
 
 
 class InLouverLrFull(SamsungEnum, IntEnum):
@@ -1510,7 +1937,9 @@ class InLouverLrFull(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Louver LR full is off"""
     ON = 1
+    """Louver LR full is on"""
 
 
 class InLouverLr(SamsungEnum, IntEnum):
@@ -1520,7 +1949,9 @@ class InLouverLr(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Louver LR is off"""
     ON = 1
+    """Louver LR is on"""
 
 
 class InLouverVlRightDownSwing(SamsungEnum, IntEnum):
@@ -1530,7 +1961,9 @@ class InLouverVlRightDownSwing(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Right down swing is off"""
     ON = 1
+    """Right down swing is on"""
 
 
 class InLouverVlLeftDownSwing(SamsungEnum, IntEnum):
@@ -1540,7 +1973,9 @@ class InLouverVlLeftDownSwing(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Left down swing is off"""
     ON = 1
+    """Left down swing is on"""
 
 
 class InDrainPumpPower(SamsungEnum, IntEnum):
@@ -1550,7 +1985,9 @@ class InDrainPumpPower(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Drain pump is off"""
     ON = 1
+    """Drain pump is on"""
 
 
 class InBackupHeaterPower(SamsungEnum, IntEnum):
@@ -1560,7 +1997,9 @@ class InBackupHeaterPower(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Backup heater is off"""
     ON = 1
+    """Backup heater is on"""
 
 
 class InIceCtrlState(SamsungEnum, IntEnum):
@@ -1570,7 +2009,9 @@ class InIceCtrlState(SamsungEnum, IntEnum):
     """
 
     STOP = 0
+    """Ice control is stopped"""
     RUNNING = 1
+    """Ice control is running"""
 
 
 class InCoilFreezingControl(SamsungEnum, IntEnum):
@@ -1580,7 +2021,9 @@ class InCoilFreezingControl(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Coil freezing control is off"""
     ON = 1
+    """Coil freezing control is on"""
 
 
 class InStateDefrostControl(SamsungEnum, IntEnum):
@@ -1590,7 +2033,9 @@ class InStateDefrostControl(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Defrost control is off"""
     ON = 1
+    """Defrost control is on"""
 
 
 class InStateDefrostMode(SamsungEnum, IntEnum):
@@ -1600,7 +2045,9 @@ class InStateDefrostMode(SamsungEnum, IntEnum):
     """
 
     NORMAL = 0
+    """Normal mode"""
     DEFROST = 1
+    """Defrost mode"""
 
 
 class InMtfc(SamsungEnum, IntEnum):
@@ -1610,7 +2057,9 @@ class InMtfc(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """MTFC is off"""
     ON = 1
+    """MTFC is on"""
 
 
 class InLouverVlFull(SamsungEnum, IntEnum):
@@ -1620,7 +2069,9 @@ class InLouverVlFull(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Louver VL full is off"""
     ON = 1
+    """Louver VL full is on"""
 
 
 class InThermistorOpen(SamsungEnum, IntEnum):
@@ -1650,7 +2101,9 @@ class InSilence(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Silence mode is off"""
     ON = 1
+    """Silence mode is on"""
 
 
 class InWifiKitPower(SamsungEnum, IntEnum):
@@ -1660,7 +2113,9 @@ class InWifiKitPower(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """WiFi kit is off"""
     ON = 1
+    """WiFi kit is on"""
 
 
 class InWifiKitControl(SamsungEnum, IntEnum):
@@ -1670,7 +2125,9 @@ class InWifiKitControl(SamsungEnum, IntEnum):
     """
 
     DISABLED = 0
+    """WiFi kit control is disabled"""
     ENABLED = 1
+    """WiFi kit control is enabled"""
 
 
 class InLouverVl(SamsungEnum, IntEnum):
@@ -1680,7 +2137,9 @@ class InLouverVl(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Louver VL is off"""
     ON = 1
+    """Louver VL is on"""
 
 
 class InLouverHlDownUp(SamsungEnum, IntEnum):
@@ -1721,7 +2180,9 @@ class InThermostatMode(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Thermostat mode is off"""
     ON = 1
+    """Thermostat mode is on"""
 
 
 class InSolarPump(SamsungEnum, IntEnum):
@@ -1731,7 +2192,9 @@ class InSolarPump(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Solar pump is off"""
     ON = 1
+    """Solar pump is on"""
 
 
 class InThermostat0(SamsungEnum, IntEnum):
@@ -1741,7 +2204,9 @@ class InThermostat0(SamsungEnum, IntEnum):
     """
 
     DISABLED = 0
+    """Thermostat 0 is disabled"""
     ENABLED = 1
+    """Thermostat 0 is enabled"""
 
 
 class InOutingMode(SamsungEnum, IntEnum):
@@ -1751,7 +2216,9 @@ class InOutingMode(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Outing mode is off"""
     ON = 1
+    """Outing mode is on"""
 
 
 class InQuietMode(SamsungEnum, IntEnum):
@@ -1761,7 +2228,9 @@ class InQuietMode(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """Quiet mode is off"""
     ON = 1
+    """Quiet mode is on"""
 
 
 class InDischargeTempControl(SamsungEnum, IntEnum):
@@ -1771,7 +2240,9 @@ class InDischargeTempControl(SamsungEnum, IntEnum):
     """
 
     DISABLED = 0
+    """Discharge temperature control is disabled"""
     ENABLED = 1
+    """Discharge temperature control is enabled"""
 
 
 class InLouverHlAuto(SamsungEnum, IntEnum):
@@ -1781,7 +2252,9 @@ class InLouverHlAuto(SamsungEnum, IntEnum):
     """
 
     MANUAL = 0
+    """Louver HL is in manual mode"""
     AUTO = 1
+    """Louver HL is in auto mode"""
 
 
 class InLouverHlAutoUpDown(SamsungEnum, IntEnum):
@@ -1791,7 +2264,9 @@ class InLouverHlAutoUpDown(SamsungEnum, IntEnum):
     """
 
     DOWN = 0
+    """Louver HL auto moves down"""
     UP = 1
+    """Louver HL auto moves up"""
 
 
 class InWallMountedRemoteControl(SamsungEnum, IntEnum):
@@ -1801,7 +2276,9 @@ class InWallMountedRemoteControl(SamsungEnum, IntEnum):
     """
 
     DISABLED = 0
+    """Wall mounted remote control is disabled"""
     ENABLED = 1
+    """Wall mounted remote control is enabled"""
 
 
 class InFsv302LouverControl(SamsungEnum, IntEnum):
@@ -1811,7 +2288,9 @@ class InFsv302LouverControl(SamsungEnum, IntEnum):
     """
 
     OFF = 0
+    """FSV 302 louver control is off"""
     ON = 1
+    """FSV 302 louver control is on"""
 
 
 class InFsv302LouverValue(SamsungEnum, IntEnum):
@@ -1821,7 +2300,9 @@ class InFsv302LouverValue(SamsungEnum, IntEnum):
     """
 
     CLOSE = 0
+    """Louver is closed"""
     OPEN = 1
+    """Louver is open"""
 
 
 class InFsv302TimeSchedule(SamsungEnum, IntEnum):
@@ -1831,7 +2312,9 @@ class InFsv302TimeSchedule(SamsungEnum, IntEnum):
     """
 
     DISABLED = 0
+    """Time schedule is disabled"""
     ENABLED = 1
+    """Time schedule is enabled"""
 
 
 class InModelInformation(SamsungEnum, IntEnum):
