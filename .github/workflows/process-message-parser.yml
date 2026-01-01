@@ -154,7 +154,5 @@ jobs:
             - Message Type: ${{ env.message_type }}
             ${{ env.enum_name && format('- Enum Name: {0}', env.enum_name) || '' }}
             ${{ env.unit && format('- Unit: {0}', env.unit) || '' }}
-          branch: "fix/${{ env.issue_number }}"
-          delete-branch: true
           labels: message-parser
           related-to: "#${{ env.issue_number }}"
