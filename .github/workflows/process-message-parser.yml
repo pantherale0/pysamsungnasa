@@ -1,0 +1,143 @@
+name: Process New Message Parser
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  create-message-parser:
+    if: contains(github.event.issue.labels.*.name, 'message-parser')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install ruff
+
+      - name: Extract issue data
+        id: extract
+        run: |
+          import re
+          import sys
+
+          issue_body = '''${{ github.event.issue.body }}'''
+          issue_number = '${{ github.event.issue.number }}'
+
+          # Extract device type
+          if '- [x] Indoor' in issue_body or '- [X] Indoor' in issue_body:
+              device_type = 'indoor'
+          elif '- [x] Outdoor' in issue_body or '- [X] Outdoor' in issue_body:
+              device_type = 'outdoor'
+          else:
+              print("Error: Device type not specified")
+              sys.exit(1)
+
+          # Extract message ID
+          msg_id_match = re.search(r'Message ID \(hex\):\s*\n?([^\n]+)', issue_body)
+          if not msg_id_match:
+              print("Error: Message ID not found")
+              sys.exit(1)
+          message_id = msg_id_match.group(1).strip()
+
+          # Extract message name
+          msg_name_match = re.search(r'Message Name:\s*\n?([^\n]+)', issue_body)
+          if not msg_name_match:
+              print("Error: Message name not found")
+              sys.exit(1)
+          message_name = msg_name_match.group(1).strip()
+
+          # Extract message type
+          message_type = None
+          if '- [x] BoolMessage' in issue_body or '- [X] BoolMessage' in issue_body:
+              message_type = 'BoolMessage'
+          elif '- [x] EnumMessage' in issue_body or '- [X] EnumMessage' in issue_body:
+              message_type = 'EnumMessage'
+          elif '- [x] FloatMessage' in issue_body or '- [X] FloatMessage' in issue_body:
+              message_type = 'FloatMessage'
+          elif '- [x] BasicTemperatureMessage' in issue_body or '- [X] BasicTemperatureMessage' in issue_body:
+              message_type = 'BasicTemperatureMessage'
+          elif '- [x] RawMessage' in issue_body or '- [X] RawMessage' in issue_body:
+              message_type = 'RawMessage'
+          elif '- [x] BasicPowerMessage' in issue_body or '- [X] BasicPowerMessage' in issue_body:
+              message_type = 'BasicPowerMessage'
+
+          if not message_type:
+              print("Error: Message type not specified")
+              sys.exit(1)
+
+          # Extract enum name if needed
+          enum_name = ''
+          if message_type == 'EnumMessage':
+              enum_match = re.search(r'Enum Name \(if EnumMessage\):\s*\n?([^\n]+)', issue_body)
+              if enum_match:
+                  enum_name = enum_match.group(1).strip()
+
+          # Extract unit if needed
+          unit = ''
+          if message_type in ['FloatMessage', 'BasicTemperatureMessage']:
+              unit_match = re.search(r'Unit of Measurement.*?:\s*\n?([^\n]+)', issue_body)
+              if unit_match:
+                  unit = unit_match.group(1).strip()
+
+          # Output to workflow
+          with open('${{ runner.temp }}/issue_data.txt', 'w') as f:
+              f.write(f"device_type={device_type}\n")
+              f.write(f"message_id={message_id}\n")
+              f.write(f"message_name={message_name}\n")
+              f.write(f"message_type={message_type}\n")
+              f.write(f"enum_name={enum_name}\n")
+              f.write(f"unit={unit}\n")
+              f.write(f"issue_number={issue_number}\n")
+        shell: python
+
+      - name: Load extracted data
+        id: load_data
+        run: |
+          cat ${{ runner.temp }}/issue_data.txt >> $GITHUB_ENV
+
+      - name: Create branch
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git fetch origin
+          git checkout -b "fix/${{ env.issue_number }}" origin/main
+          git push origin "fix/${{ env.issue_number }}"
+
+      - name: Run add_message script
+        run: |
+          python scripts/add_message_cli.py \
+            --device-type "${{ env.device_type }}" \
+            --message-type "${{ env.message_type }}" \
+            --message-id "${{ env.message_id }}" \
+            --message-name "${{ env.message_name }}" \
+            ${{ env.enum_name && format('--enum-name "{0}"', env.enum_name) || '' }} \
+            ${{ env.unit && format('--unit "{0}"', env.unit) || '' }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Add message parser: ${{ env.message_name }} (${{ env.message_id }})"
+          title: "Add message parser: ${{ env.message_name }} (${{ env.message_id }})"
+          body: |
+            Automatically generated from issue #${{ env.issue_number }}
+
+            **Message Details:**
+            - Device Type: ${{ env.device_type }}
+            - Message ID: ${{ env.message_id }}
+            - Message Name: ${{ env.message_name }}
+            - Message Type: ${{ env.message_type }}
+            ${{ env.enum_name && format('- Enum Name: {0}', env.enum_name) || '' }}
+            ${{ env.unit && format('- Unit: {0}', env.unit) || '' }}
+          branch: "fix/${{ env.issue_number }}"
+          delete-branch: true
+          labels: message-parser
+          related-to: "#${{ env.issue_number }}"
