@@ -4,7 +4,28 @@ Thank you for your interest in contributing to pysamsungnasa! This document outl
 
 ## Adding New Message Parsers
 
-All new message parsers **must** be added using the interactive `add_message.py` script. This ensures:
+### Automated Workflow (Recommended for Simple Messages)
+
+For simple message types (`BoolMessage`, `RawMessage`, `FloatMessage`, `BasicTemperatureMessage`, `BasicPowerMessage`), you can use the automated GitHub workflow:
+
+1. **Create a new issue** using the "Add New Message Parser" issue template
+2. **Fill in the message details** (device type, ID, name, type, unit if needed)
+3. **The workflow will automatically**:
+   - Create a pull request with the new message parser
+   - Run code formatting and linting
+   - Sort messages by MESSAGE_ID
+
+**Note**: For `EnumMessage` types, you must first create the required enum in `pysamsungnasa/enum.py`, then use this workflow.
+
+### Manual Script (For Complex Scenarios)
+
+For full control or complex message additions, use the interactive `add_message.py` script:
+
+```bash
+python3 scripts/add_message.py
+```
+
+This ensures:
 
 - Proper message class structure and naming conventions
 - Correct positioning by MESSAGE_ID ordering
