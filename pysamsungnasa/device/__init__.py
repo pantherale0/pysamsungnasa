@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 
 from typing import TYPE_CHECKING
@@ -41,6 +42,7 @@ class NasaDevice:
         self._device_callbacks = []
         self._packet_callbacks = {}
         self._client = client
+        self._attribute_events: dict[int, asyncio.Event] = {}
         packet_parser.add_device_handler(address, self.handle_packet)
         for message_number in self._MESSAGES_TO_LISTEN:
             packet_parser.add_packet_listener(message_number, self.handle_packet)
@@ -80,6 +82,27 @@ class NasaDevice:
                     destination=self.address,
                 )
 
+    async def get_attribute(self, attribute: int, requires_read: bool = False) -> BaseMessage:
+        """Get a specific attribute from the device, if it is not already known a request will be sent to the device."""
+        if attribute not in self.attributes or requires_read:
+            await self._client.nasa_read(
+                msgs=[attribute],
+                destination=self.address,
+            )
+
+        event = self._attribute_events.setdefault(attribute, asyncio.Event())
+
+        async with asyncio.timeout(10):
+            while attribute not in self.attributes or requires_read:
+                event.clear()
+                await event.wait()  # Waits until handle_packet sets it
+                requires_read = False  # Only require read once
+
+        if attribute not in self.attributes:
+            raise TimeoutError(f"Timeout waiting for attribute {attribute} from device {self.address}")
+
+        return self.attributes[attribute]
+
     def handle_packet(self, *_nargs, **kwargs):
         """Handle a packet sent to this device from the parser."""
         self.last_packet_time = datetime.now(timezone.utc)
@@ -94,6 +117,8 @@ class NasaDevice:
         if log_message:
             _LOGGER.debug("Handing packet for device %s: %s", self.address, kwargs)
         self.attributes[message_number] = packet_data
+        if message_number in self._attribute_events:
+            self._attribute_events[message_number].set()
         if log_message:
             _LOGGER.debug(
                 "Device %s: Stored parsed attribute for msg %s (%s): %s",
