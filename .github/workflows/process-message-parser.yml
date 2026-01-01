@@ -113,13 +113,10 @@ jobs:
         run: |
           cat ${{ runner.temp }}/issue_data.txt >> $GITHUB_ENV
 
-      - name: Create branch
+      - name: Configure git
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git fetch origin
-          git checkout -b "fix/${{ env.issue_number }}" origin/main
-          git push origin "fix/${{ env.issue_number }}"
 
       - name: Run add_message script
         run: |
@@ -131,12 +128,22 @@ jobs:
             ${{ env.enum_name && format('--enum-name "{0}"', env.enum_name) || '' }} \
             ${{ env.unit && format('--unit "{0}"', env.unit) || '' }}
 
+      - name: Lint code with ruff
+        run: |
+          ruff check pysamsungnasa
+
+      - name: Sort message parsers
+        run: |
+          python scripts/sort_messages.py
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Add message parser: ${{ env.message_name }} (${{ env.message_id }})"
           title: "Add message parser: ${{ env.message_name }} (${{ env.message_id }})"
+          branch: "fix/${{ env.issue_number }}"
+          delete-branch: true
           body: |
             Automatically generated from issue #${{ env.issue_number }}
 
