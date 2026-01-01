@@ -17,6 +17,7 @@ from ...enum import (
     OutdoorEviSolenoid,
     OutdoorOperationServiceOp,
     OutdoorOperationHeatCool,
+    OutdoorOutEevLoad,
     OutdoorCompressorLoad,
     OutdoorCchLoad,
     OutdoorHotGasLoad,
@@ -251,6 +252,7 @@ class OutdoorLoadOutEevMessage(EnumMessage):
 
     MESSAGE_ID = 0x8020
     MESSAGE_NAME = "Load EEV status"
+    MESSAGE_ENUM = OutdoorOutEevLoad
 
 
 class OutdoorEviBypassLoadMessage(EnumMessage):
