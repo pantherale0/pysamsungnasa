@@ -1,0 +1,2212 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Connect to Samsung HVAC/EHS units over NASA protocol">
+      
+      
+        <meta name="author" content="Jordan Harvey">
+      
+      
+      
+        <link rel="prev" href="../nasa-device/">
+      
+      
+        <link rel="next" href="../configuration/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Controllers - pysamsungnasa</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="light-blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#controllers-api" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="pysamsungnasa" class="md-header__button md-logo" aria-label="pysamsungnasa" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            pysamsungnasa
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Controllers
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/pantherale0/pysamsungnasa" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pysamsungnasa
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/installation/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user-guide/basic-usage/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../protocol/overview/" class="md-tabs__link">
+          
+  
+  
+  Protocol & Messages
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../samsung-nasa/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../cli/reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  CLI Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../examples/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Examples
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="pysamsungnasa" class="md-nav__button md-logo" aria-label="pysamsungnasa" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.png" alt="logo">
+
+    </a>
+    pysamsungnasa
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/pantherale0/pysamsungnasa" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pysamsungnasa
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/basic-usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/device-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Device Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/controllers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Controllers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Protocol & Messages
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Protocol & Messages
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Protocol Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/packet-structure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Packet Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/enums/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enumerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/messages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Message Types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/message-factory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Message Factory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../samsung-nasa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SamsungNasa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nasa-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NasaClient
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nasa-device/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NasaDevice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Controllers
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Controllers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#climatecontroller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ClimateController
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ClimateController">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#class-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class Definition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Properties
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#power-bool-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        power: bool | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#current_mode-str-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        current_mode: str | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#real_operation_mode-str-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        real_operation_mode: str | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f_current_temperature-float-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        f_current_temperature: float | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f_target_temperature-float-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        f_target_temperature: float | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#current_humidity-int-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        current_humidity: int | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#current_fan_mode-str-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        current_fan_mode: str | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#current_fan_speed-int-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        current_fan_speed: int | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#water_outlet_current_temperature-float-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        water_outlet_current_temperature: float | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#water_law_target_temperature-float-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        water_law_target_temperature: float | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Control Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Control Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#async-turn_on" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        async turn_on()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-turn_off" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        async turn_off()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-set_operation_modemode-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        async set_operation_mode(mode: str)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-set_target_temperaturetemperature-float" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        async set_target_temperature(temperature: float)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-set_fan_speedspeed-int" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        async set_fan_speed(speed: int)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-set_air_swingdirection-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        async set_air_swing(direction: str)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#async-set_target_humidityhumidity-int" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        async set_target_humidity(humidity: int)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-set_water_law_target_temperaturetemp-float" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        async set_water_law_target_temperature(temp: float)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-set_water_outlet_target_temperaturetemp-float" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        async set_water_outlet_target_temperature(temp: float)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dhwcontroller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DhwController
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DhwController">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#class-definition_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class Definition
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#properties_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Properties
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#power-bool-none_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        power: bool | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operation_mode-str-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        operation_mode: str | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target_temperature-float-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        target_temperature: float | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#current_temperature-float-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        current_temperature: float | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reference_temp_source-str-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reference_temp_source: str | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outdoor_operation_status-str-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        outdoor_operation_status: str | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outdoor_operation_mode-str-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        outdoor_operation_mode: str | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dhw_enable_status-bool-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dhw_enable_status: bool | None
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control-methods_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Control Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Control Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#async-turn_on_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        async turn_on()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-turn_off_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        async turn_off()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-set_target_temperaturetemperature-float_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        async set_target_temperature(temperature: float)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-set_operation_modemode-str_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        async set_operation_mode(mode: str)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simple-climate-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simple Climate Control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simple-dhw-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simple DHW Control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-with-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring with Callbacks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conditional-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conditional Control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#temperature-ramping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Temperature Ramping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-device-synchronization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Device Synchronization
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Handling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="controllers-api">Controllers API<a class="headerlink" href="#controllers-api" title="Permanent link">&para;</a></h1>
+<p>Reference for ClimateController and DhwController classes.</p>
+<h2 id="climatecontroller">ClimateController<a class="headerlink" href="#climatecontroller" title="Permanent link">&para;</a></h2>
+<p>Controls heating, cooling, and ventilation for indoor units.</p>
+<h3 id="class-definition">Class Definition<a class="headerlink" href="#class-definition" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClimateController</span><span class="p">:</span>
+    <span class="n">address</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">message_sender</span><span class="p">:</span> <span class="n">Callable</span>
+    <span class="n">power</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">current_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">real_operation_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">f_current_temperature</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">f_target_temperature</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">current_humidity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">current_fan_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">current_fan_speed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">water_outlet_current_temperature</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">water_law_target_temperature</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">zone_1_status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">zone_2_status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+<h3 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">&para;</a></h3>
+<h4 id="power-bool-none"><code>power: bool | None</code><a class="headerlink" href="#power-bool-none" title="Permanent link">&para;</a></h4>
+<p>Whether climate control is powered on.</p>
+<div class="highlight"><pre><span></span><code><span class="n">cc</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span>
+<span class="k">if</span> <span class="n">cc</span><span class="o">.</span><span class="n">power</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Climate control is ON&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Climate control is OFF&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="current_mode-str-none"><code>current_mode: str | None</code><a class="headerlink" href="#current_mode-str-none" title="Permanent link">&para;</a></h4>
+<p>Current operation mode.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mode: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Output: &quot;cool&quot;, &quot;heat&quot;, &quot;auto&quot;, &quot;dry&quot;, &quot;fan&quot;</span>
+</code></pre></div>
+<h4 id="real_operation_mode-str-none"><code>real_operation_mode: str | None</code><a class="headerlink" href="#real_operation_mode-str-none" title="Permanent link">&para;</a></h4>
+<p>Actual current operation mode (read-only, reflects what unit is actually doing).</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Real mode: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">real_operation_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># May differ from current_mode during transitions</span>
+</code></pre></div>
+<h4 id="f_current_temperature-float-none"><code>f_current_temperature: float | None</code><a class="headerlink" href="#f_current_temperature-float-none" title="Permanent link">&para;</a></h4>
+<p>Current room temperature in °C.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Room temperature: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">f_current_temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="f_target_temperature-float-none"><code>f_target_temperature: float | None</code><a class="headerlink" href="#f_target_temperature-float-none" title="Permanent link">&para;</a></h4>
+<p>Target set temperature in °C.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">f_target_temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="current_humidity-int-none"><code>current_humidity: int | None</code><a class="headerlink" href="#current_humidity-int-none" title="Permanent link">&para;</a></h4>
+<p>Current humidity percentage (0-100).</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Humidity: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_humidity</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="current_fan_mode-str-none"><code>current_fan_mode: str | None</code><a class="headerlink" href="#current_fan_mode-str-none" title="Permanent link">&para;</a></h4>
+<p>Current fan mode.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fan mode: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_fan_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="current_fan_speed-int-none"><code>current_fan_speed: int | None</code><a class="headerlink" href="#current_fan_speed-int-none" title="Permanent link">&para;</a></h4>
+<p>Current fan speed (typically 1-4).</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fan speed: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_fan_speed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="water_outlet_current_temperature-float-none"><code>water_outlet_current_temperature: float | None</code><a class="headerlink" href="#water_outlet_current_temperature-float-none" title="Permanent link">&para;</a></h4>
+<p>Water outlet temperature for water-based systems.</p>
+<h4 id="water_law_target_temperature-float-none"><code>water_law_target_temperature: float | None</code><a class="headerlink" href="#water_law_target_temperature-float-none" title="Permanent link">&para;</a></h4>
+<p>Target temperature for water law heating mode.</p>
+<h3 id="control-methods">Control Methods<a class="headerlink" href="#control-methods" title="Permanent link">&para;</a></h3>
+<h4 id="async-turn_on"><code>async turn_on()</code><a class="headerlink" href="#async-turn_on" title="Permanent link">&para;</a></h4>
+<p>Enable climate control.</p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">turn_on</span><span class="p">()</span>
+</code></pre></div>
+<h4 id="async-turn_off"><code>async turn_off()</code><a class="headerlink" href="#async-turn_off" title="Permanent link">&para;</a></h4>
+<p>Disable climate control.</p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">turn_off</span><span class="p">()</span>
+</code></pre></div>
+<h4 id="async-set_operation_modemode-str"><code>async set_operation_mode(mode: str)</code><a class="headerlink" href="#async-set_operation_modemode-str" title="Permanent link">&para;</a></h4>
+<p>Set the operation mode.</p>
+<p><strong>Supported modes:</strong>
+- <code>"auto"</code> - Automatic mode
+- <code>"cool"</code> - Cooling mode
+- <code>"heat"</code> - Heating mode
+- <code>"dry"</code> - Dehumidification mode
+- <code>"fan"</code> - Fan only mode</p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">&quot;cool&quot;</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">&quot;heat&quot;</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="async-set_target_temperaturetemperature-float"><code>async set_target_temperature(temperature: float)</code><a class="headerlink" href="#async-set_target_temperaturetemperature-float" title="Permanent link">&para;</a></h4>
+<p>Set the target temperature in °C.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Set to 22°C</span>
+<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="mf">22.0</span><span class="p">)</span>
+
+<span class="c1"># Set to 23.5°C</span>
+<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="mf">23.5</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Range:</strong> Typically 16-30°C (check your unit's limits)</p>
+<h4 id="async-set_fan_speedspeed-int"><code>async set_fan_speed(speed: int)</code><a class="headerlink" href="#async-set_fan_speedspeed-int" title="Permanent link">&para;</a></h4>
+<p>Set fan speed.</p>
+<p><strong>Speed levels:</strong>
+- <code>1</code> - Low
+- <code>2</code> - Medium
+- <code>3</code> - High
+- <code>4</code> - Very High
+- <code>0</code> - Auto (if supported)</p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_fan_speed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Low</span>
+<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_fan_speed</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># High</span>
+</code></pre></div>
+<h4 id="async-set_air_swingdirection-str"><code>async set_air_swing(direction: str)</code><a class="headerlink" href="#async-set_air_swingdirection-str" title="Permanent link">&para;</a></h4>
+<p>Set vertical air swing direction.</p>
+<p><strong>Directions:</strong>
+- <code>"up"</code> - Swing up
+- <code>"middle"</code> - Middle position
+- <code>"down"</code> - Swing down
+- <code>"swing"</code> - Continuous swing
+- <code>"off"</code> - No swing</p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_air_swing</span><span class="p">(</span><span class="s2">&quot;swing&quot;</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_air_swing</span><span class="p">(</span><span class="s2">&quot;down&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="advanced-methods">Advanced Methods<a class="headerlink" href="#advanced-methods" title="Permanent link">&para;</a></h3>
+<h4 id="async-set_target_humidityhumidity-int"><code>async set_target_humidity(humidity: int)</code><a class="headerlink" href="#async-set_target_humidityhumidity-int" title="Permanent link">&para;</a></h4>
+<p>Set target humidity (if supported).</p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_target_humidity</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>  <span class="c1"># 50%</span>
+</code></pre></div>
+<h4 id="async-set_water_law_target_temperaturetemp-float"><code>async set_water_law_target_temperature(temp: float)</code><a class="headerlink" href="#async-set_water_law_target_temperaturetemp-float" title="Permanent link">&para;</a></h4>
+<p>Set temperature for water law heating mode.</p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_water_law_target_temperature</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="async-set_water_outlet_target_temperaturetemp-float"><code>async set_water_outlet_target_temperature(temp: float)</code><a class="headerlink" href="#async-set_water_outlet_target_temperaturetemp-float" title="Permanent link">&para;</a></h4>
+<p>Set outlet water temperature (for water systems).</p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_water_outlet_target_temperature</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="dhwcontroller">DhwController<a class="headerlink" href="#dhwcontroller" title="Permanent link">&para;</a></h2>
+<p>Controls domestic hot water heating.</p>
+<h3 id="class-definition_1">Class Definition<a class="headerlink" href="#class-definition_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DhwController</span><span class="p">:</span>
+    <span class="n">address</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">message_sender</span><span class="p">:</span> <span class="n">Callable</span>
+    <span class="n">power</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">operation_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">reference_temp_source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">target_temperature</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">current_temperature</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">outdoor_operation_status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">outdoor_operation_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">dhw_enable_status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</code></pre></div>
+<h3 id="properties_1">Properties<a class="headerlink" href="#properties_1" title="Permanent link">&para;</a></h3>
+<h4 id="power-bool-none_1"><code>power: bool | None</code><a class="headerlink" href="#power-bool-none_1" title="Permanent link">&para;</a></h4>
+<p>Whether DHW is powered on.</p>
+<div class="highlight"><pre><span></span><code><span class="n">dhw</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">dhw_controller</span>
+<span class="k">if</span> <span class="n">dhw</span><span class="o">.</span><span class="n">power</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hot water heating is ON&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="operation_mode-str-none"><code>operation_mode: str | None</code><a class="headerlink" href="#operation_mode-str-none" title="Permanent link">&para;</a></h4>
+<p>Current DHW operation mode.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mode: </span><span class="si">{</span><span class="n">dhw</span><span class="o">.</span><span class="n">operation_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="target_temperature-float-none"><code>target_temperature: float | None</code><a class="headerlink" href="#target_temperature-float-none" title="Permanent link">&para;</a></h4>
+<p>Target water temperature in °C.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target: </span><span class="si">{</span><span class="n">dhw</span><span class="o">.</span><span class="n">target_temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="current_temperature-float-none"><code>current_temperature: float | None</code><a class="headerlink" href="#current_temperature-float-none" title="Permanent link">&para;</a></h4>
+<p>Current water temperature in °C.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current: </span><span class="si">{</span><span class="n">dhw</span><span class="o">.</span><span class="n">current_temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="reference_temp_source-str-none"><code>reference_temp_source: str | None</code><a class="headerlink" href="#reference_temp_source-str-none" title="Permanent link">&para;</a></h4>
+<p>Source for reference temperature.</p>
+<h4 id="outdoor_operation_status-str-none"><code>outdoor_operation_status: str | None</code><a class="headerlink" href="#outdoor_operation_status-str-none" title="Permanent link">&para;</a></h4>
+<p>Status reflected from outdoor unit.</p>
+<h4 id="outdoor_operation_mode-str-none"><code>outdoor_operation_mode: str | None</code><a class="headerlink" href="#outdoor_operation_mode-str-none" title="Permanent link">&para;</a></h4>
+<p>Mode reflected from outdoor unit.</p>
+<h4 id="dhw_enable_status-bool-none"><code>dhw_enable_status: bool | None</code><a class="headerlink" href="#dhw_enable_status-bool-none" title="Permanent link">&para;</a></h4>
+<p>Whether DHW is enabled in system settings.</p>
+<h3 id="control-methods_1">Control Methods<a class="headerlink" href="#control-methods_1" title="Permanent link">&para;</a></h3>
+<h4 id="async-turn_on_1"><code>async turn_on()</code><a class="headerlink" href="#async-turn_on_1" title="Permanent link">&para;</a></h4>
+<p>Enable DHW heating.</p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">turn_on</span><span class="p">()</span>
+</code></pre></div>
+<h4 id="async-turn_off_1"><code>async turn_off()</code><a class="headerlink" href="#async-turn_off_1" title="Permanent link">&para;</a></h4>
+<p>Disable DHW heating.</p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">turn_off</span><span class="p">()</span>
+</code></pre></div>
+<h4 id="async-set_target_temperaturetemperature-float_1"><code>async set_target_temperature(temperature: float)</code><a class="headerlink" href="#async-set_target_temperaturetemperature-float_1" title="Permanent link">&para;</a></h4>
+<p>Set target water temperature in °C.</p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Typical range:</strong> 30-55°C (check your unit's limits)</p>
+<h4 id="async-set_operation_modemode-str_1"><code>async set_operation_mode(mode: str)</code><a class="headerlink" href="#async-set_operation_modemode-str_1" title="Permanent link">&para;</a></h4>
+<p>Set DHW operation mode.</p>
+<p><strong>Common modes:</strong>
+- <code>"normal"</code> - Normal heating
+- <code>"eco"</code> - Energy-saving mode
+- <code>"comfort"</code> - Comfort mode</p>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">&quot;normal&quot;</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">&quot;eco&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="usage-examples">Usage Examples<a class="headerlink" href="#usage-examples" title="Permanent link">&para;</a></h2>
+<h3 id="simple-climate-control">Simple Climate Control<a class="headerlink" href="#simple-climate-control" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+<span class="n">cc</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span>
+
+<span class="c1"># Turn on and set to 22°C in cool mode</span>
+<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">turn_on</span><span class="p">()</span>
+<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">&quot;cool&quot;</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="mi">22</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_fan_speed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Set to </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">f_target_temperature</span><span class="si">}</span><span class="s2">°C in </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_mode</span><span class="si">}</span><span class="s2"> mode&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="simple-dhw-control">Simple DHW Control<a class="headerlink" href="#simple-dhw-control" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+<span class="n">dhw</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">dhw_controller</span>
+
+<span class="c1"># Turn on hot water and set to 45°C</span>
+<span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">turn_on</span><span class="p">()</span>
+<span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hot water set to </span><span class="si">{</span><span class="n">dhw</span><span class="o">.</span><span class="n">target_temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="monitoring-with-callbacks">Monitoring with Callbacks<a class="headerlink" href="#monitoring-with-callbacks" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">cc</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">on_temp_change</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">f_current_temperature</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">f_target_temperature</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temp: </span><span class="si">{</span><span class="n">current</span><span class="si">}</span><span class="s2">°C (target </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">°C)&quot;</span><span class="p">)</span>
+
+<span class="n">indoor</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="n">on_temp_change</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="conditional-control">Conditional Control<a class="headerlink" href="#conditional-control" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">smart_cooling</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cool room when temperature exceeds threshold.&quot;&quot;&quot;</span>
+
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="mi">22</span>
+    <span class="n">threshold</span> <span class="o">=</span> <span class="mi">24</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">control_temp</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">f_current_temperature</span>
+
+        <span class="k">if</span> <span class="n">current</span> <span class="o">&gt;</span> <span class="n">threshold</span> <span class="ow">and</span> <span class="n">cc</span><span class="o">.</span><span class="n">current_mode</span> <span class="o">!=</span> <span class="s2">&quot;cool&quot;</span><span class="p">:</span>
+            <span class="c1"># Too hot, start cooling</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">&quot;cool&quot;</span><span class="p">))</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="n">target</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="n">current</span> <span class="o">&lt;</span> <span class="n">target</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="ow">and</span> <span class="n">cc</span><span class="o">.</span><span class="n">power</span><span class="p">:</span>
+            <span class="c1"># Cool enough, turn off</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">turn_off</span><span class="p">())</span>
+
+    <span class="n">indoor</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="n">control_temp</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="temperature-ramping">Temperature Ramping<a class="headerlink" href="#temperature-ramping" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">ramp_temperature</span><span class="p">(</span><span class="n">cc</span><span class="p">,</span> <span class="n">target_temp</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gradually change temperature.&quot;&quot;&quot;</span>
+
+    <span class="n">current</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">f_target_temperature</span> <span class="ow">or</span> <span class="mi">20</span>
+
+    <span class="k">if</span> <span class="n">target_temp</span> <span class="o">&gt;</span> <span class="n">current</span><span class="p">:</span>
+        <span class="c1"># Ramp up</span>
+        <span class="k">while</span> <span class="n">current</span> <span class="o">&lt;</span> <span class="n">target_temp</span><span class="p">:</span>
+            <span class="n">current</span> <span class="o">+=</span> <span class="n">step</span>
+            <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">target_temp</span><span class="p">))</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Ramp down</span>
+        <span class="k">while</span> <span class="n">current</span> <span class="o">&gt;</span> <span class="n">target_temp</span><span class="p">:</span>
+            <span class="n">current</span> <span class="o">-=</span> <span class="n">step</span>
+            <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">target_temp</span><span class="p">))</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+
+<span class="c1"># Usage</span>
+<span class="k">await</span> <span class="n">ramp_temperature</span><span class="p">(</span><span class="n">cc</span><span class="p">,</span> <span class="n">target_temp</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="multi-device-synchronization">Multi-Device Synchronization<a class="headerlink" href="#multi-device-synchronization" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">sync_controllers</span><span class="p">(</span><span class="n">devices</span><span class="p">,</span> <span class="n">property_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set same property on multiple devices.&quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span>
+
+        <span class="k">if</span> <span class="n">property_name</span> <span class="o">==</span> <span class="s2">&quot;temperature&quot;</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">property_name</span> <span class="o">==</span> <span class="s2">&quot;mode&quot;</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">property_name</span> <span class="o">==</span> <span class="s2">&quot;fan&quot;</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_fan_speed</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">property_name</span> <span class="o">==</span> <span class="s2">&quot;power&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">turn_on</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">turn_off</span><span class="p">()</span>
+
+<span class="c1"># Usage</span>
+<span class="n">indoor_units</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;climate_controller&#39;</span><span class="p">)]</span>
+<span class="k">await</span> <span class="n">sync_controllers</span><span class="p">(</span><span class="n">indoor_units</span><span class="p">,</span> <span class="s2">&quot;temperature&quot;</span><span class="p">,</span> <span class="mi">22</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">sync_controllers</span><span class="p">(</span><span class="n">indoor_units</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;cool&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="mi">22</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Climate controller not available&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Read <a href="../../user-guide/controllers/">User Guide Controllers</a></li>
+<li>Check <a href="../../user-guide/basic-usage/">Basic Usage</a></li>
+<li>Explore <a href="../../examples/">Examples</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "toc.integrate", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

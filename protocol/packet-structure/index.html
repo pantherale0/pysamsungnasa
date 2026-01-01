@@ -1,0 +1,1912 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Connect to Samsung HVAC/EHS units over NASA protocol">
+      
+      
+        <meta name="author" content="Jordan Harvey">
+      
+      
+      
+        <link rel="prev" href="../overview/">
+      
+      
+        <link rel="next" href="../enums/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Packet Structure - pysamsungnasa</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="light-blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#packet-structure" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="pysamsungnasa" class="md-header__button md-logo" aria-label="pysamsungnasa" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            pysamsungnasa
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Packet Structure
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/pantherale0/pysamsungnasa" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pysamsungnasa
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/installation/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user-guide/basic-usage/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../overview/" class="md-tabs__link">
+          
+  
+  
+  Protocol & Messages
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../api/samsung-nasa/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../cli/reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  CLI Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../examples/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Examples
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="pysamsungnasa" class="md-nav__button md-logo" aria-label="pysamsungnasa" data-md-component="logo">
+      
+  <img src="../../assets/images/logo.png" alt="logo">
+
+    </a>
+    pysamsungnasa
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/pantherale0/pysamsungnasa" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pysamsungnasa
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/basic-usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic Usage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/device-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Device Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/controllers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Controllers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Protocol & Messages
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Protocol & Messages
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Protocol Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Packet Structure
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Packet Structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#packet-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packet Layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#field-descriptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field Descriptions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Field Descriptions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#packet-start-end" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packet Start &amp; End
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packet Size
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#address-fields-bytes-3-8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Address Fields (Bytes 3-8)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-information-byte-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packet Information (Byte 9)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-type-data-type-bytes-10-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packet Type &amp; Data Type (Bytes 10-11)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-capacity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Message Capacity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-number-bytes-14-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Message Number (Bytes 14-15)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-payloads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Message Payloads
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crc-cyclic-redundancy-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRC (Cyclic Redundancy Check)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-parsing-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Parsing Example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-packet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building a Packet
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../enums/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Enumerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../messages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Message Types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../message-factory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Message Factory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/samsung-nasa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SamsungNasa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/nasa-client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NasaClient
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/nasa-device/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NasaDevice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/controllers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Controllers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="packet-structure">Packet Structure<a class="headerlink" href="#packet-structure" title="Permanent link">&para;</a></h1>
+<p>Detailed specification of the NASA protocol packet format.</p>
+<h2 id="packet-layout">Packet Layout<a class="headerlink" href="#packet-layout" title="Permanent link">&para;</a></h2>
+<p>Each NASA packet follows this structure:</p>
+<table>
+<thead>
+<tr>
+<th>Bytes</th>
+<th>Field</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Packet Start (STX)</td>
+<td>0x32</td>
+<td>Fixed start marker</td>
+</tr>
+<tr>
+<td>1-2</td>
+<td>Packet Size</td>
+<td>16-bit LE</td>
+<td>Total packet size (including size field)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Source Address Class</td>
+<td>Enum</td>
+<td>Device type sending the packet</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Source Channel</td>
+<td>8-bit</td>
+<td>Channel number</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Source Address</td>
+<td>8-bit</td>
+<td>Device address</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Dest Address Class</td>
+<td>Enum</td>
+<td>Destination device type</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Dest Channel</td>
+<td>8-bit</td>
+<td>Destination channel</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Dest Address</td>
+<td>8-bit</td>
+<td>Destination device address</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Packet Information</td>
+<td>Flags</td>
+<td>See details below</td>
+</tr>
+<tr>
+<td>10-11</td>
+<td>Packet Type &amp; Data Type</td>
+<td>Nibbles</td>
+<td>Packet and message types</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Packet Number</td>
+<td>8-bit</td>
+<td>Increasing packet counter</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Capacity</td>
+<td>8-bit</td>
+<td>Number of messages in packet</td>
+</tr>
+<tr>
+<td>14-15</td>
+<td>Message Number</td>
+<td>16-bit</td>
+<td>First message identifier</td>
+</tr>
+<tr>
+<td>16...</td>
+<td>Message Payload</td>
+<td>Variable</td>
+<td>Data for message</td>
+</tr>
+<tr>
+<td>...</td>
+<td>(repeat for each message)</td>
+<td></td>
+<td>Multiple messages per packet</td>
+</tr>
+<tr>
+<td>-3 to -2</td>
+<td>CRC 16</td>
+<td>16-bit</td>
+<td>Checksum</td>
+</tr>
+<tr>
+<td>-1</td>
+<td>Packet End (ETX)</td>
+<td>0x34</td>
+<td>Fixed end marker</td>
+</tr>
+</tbody>
+</table>
+<h2 id="field-descriptions">Field Descriptions<a class="headerlink" href="#field-descriptions" title="Permanent link">&para;</a></h2>
+<h3 id="packet-start-end">Packet Start &amp; End<a class="headerlink" href="#packet-start-end" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">PACKET_START</span> <span class="o">=</span> <span class="mh">0x32</span>  <span class="c1"># &#39;2&#39;</span>
+<span class="n">PACKET_END</span> <span class="o">=</span> <span class="mh">0x34</span>    <span class="c1"># &#39;4&#39;</span>
+</code></pre></div>
+<p>These are fixed markers that frame every packet.</p>
+<h3 id="packet-size">Packet Size<a class="headerlink" href="#packet-size" title="Permanent link">&para;</a></h3>
+<p>16-bit little-endian value representing total packet length including the size field itself.</p>
+<div class="highlight"><pre><span></span><code><span class="n">size</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">|</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span>  <span class="c1"># Little-endian</span>
+<span class="n">total_packet_len</span> <span class="o">=</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">2</span>
+</code></pre></div>
+<h3 id="address-fields-bytes-3-8">Address Fields (Bytes 3-8)<a class="headerlink" href="#address-fields-bytes-3-8" title="Permanent link">&para;</a></h3>
+<p>Each address has three components:</p>
+<div class="highlight"><pre><span></span><code>Address Class | Channel | Address
+  (byte 0)    | (byte 1)| (byte 2)
+</code></pre></div>
+<p><strong>Address Class</strong> values:</p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Hex</th>
+<th>Device Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Outdoor</td>
+<td>0x10</td>
+<td>Outdoor unit</td>
+</tr>
+<tr>
+<td>HTU</td>
+<td>0x11</td>
+<td>Heating/Cooling unit</td>
+</tr>
+<tr>
+<td>Indoor</td>
+<td>0x20</td>
+<td>Wall mounted unit</td>
+</tr>
+<tr>
+<td>ERV</td>
+<td>0x30</td>
+<td>Ventilation</td>
+</tr>
+<tr>
+<td>Diffuser</td>
+<td>0x35</td>
+<td>Air diffuser</td>
+</tr>
+<tr>
+<td>MCU</td>
+<td>0x38</td>
+<td>Main control unit</td>
+</tr>
+<tr>
+<td>RMC</td>
+<td>0x40</td>
+<td>Remote controller</td>
+</tr>
+<tr>
+<td>WiredRemote</td>
+<td>0x50</td>
+<td>Wired remote</td>
+</tr>
+<tr>
+<td>PIM</td>
+<td>0x58</td>
+<td>Power interface</td>
+</tr>
+</tbody>
+</table>
+<p>Example address: <code>100000</code>
+- Class: <code>0x10</code> (Outdoor)
+- Channel: <code>0x00</code>
+- Address: <code>0x00</code></p>
+<h3 id="packet-information-byte-9">Packet Information (Byte 9)<a class="headerlink" href="#packet-information-byte-9" title="Permanent link">&para;</a></h3>
+<p>This byte contains multiple fields:</p>
+<div class="highlight"><pre><span></span><code><span class="n">byte_9</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+
+<span class="c1"># Bit 7: Packet Information flag</span>
+<span class="n">packet_info</span> <span class="o">=</span> <span class="p">(</span><span class="n">byte_9</span> <span class="o">&amp;</span> <span class="mh">0x80</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">7</span>
+
+<span class="c1"># Bits 6-5: Protocol Version</span>
+<span class="n">protocol_version</span> <span class="o">=</span> <span class="p">(</span><span class="n">byte_9</span> <span class="o">&amp;</span> <span class="mh">0x60</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">5</span>
+
+<span class="c1"># Bits 4-3: Retry Count</span>
+<span class="n">retry_count</span> <span class="o">=</span> <span class="p">(</span><span class="n">byte_9</span> <span class="o">&amp;</span> <span class="mh">0x18</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">3</span>
+</code></pre></div>
+<ul>
+<li><strong>Packet Information</strong>: 1 if packet contains control information, 0 otherwise</li>
+<li><strong>Protocol Version</strong>: Version number of the NASA protocol</li>
+<li><strong>Retry Count</strong>: How many times this packet has been retried</li>
+</ul>
+<h3 id="packet-type-data-type-bytes-10-11">Packet Type &amp; Data Type (Bytes 10-11)<a class="headerlink" href="#packet-type-data-type-bytes-10-11" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">byte_10</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="n">byte_11</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+
+<span class="c1"># Byte 10, high nibble: Packet Type</span>
+<span class="n">packet_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">byte_10</span> <span class="o">&amp;</span> <span class="mh">0xF0</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span>
+
+<span class="c1"># Byte 10, low nibble: Data Type</span>
+<span class="n">data_type</span> <span class="o">=</span> <span class="n">byte_10</span> <span class="o">&amp;</span> <span class="mh">0x0F</span>
+
+<span class="c1"># Byte 11: Packet Number</span>
+<span class="n">packet_number</span> <span class="o">=</span> <span class="n">byte_11</span>
+</code></pre></div>
+<p><strong>Packet Types:</strong>
+- 0 = StandBy
+- 1 = Normal
+- 2 = Gathering
+- 3 = Install
+- 4 = Download</p>
+<p><strong>Data Types:</strong>
+- 0 = Undefined
+- 1 = Read
+- 2 = Write
+- 3 = Request
+- 4 = Notification
+- 5 = Response
+- 6 = Ack
+- 7 = Nack</p>
+<h3 id="message-capacity">Message Capacity<a class="headerlink" href="#message-capacity" title="Permanent link">&para;</a></h3>
+<p>Byte 13 indicates how many messages are included in this packet.</p>
+<div class="highlight"><pre><span></span><code><span class="n">capacity</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span>  <span class="c1"># Number of messages</span>
+</code></pre></div>
+<h3 id="message-number-bytes-14-15">Message Number (Bytes 14-15)<a class="headerlink" href="#message-number-bytes-14-15" title="Permanent link">&para;</a></h3>
+<p>The message number is a 16-bit identifier that encodes the message type and payload size:</p>
+<div class="highlight"><pre><span></span><code><span class="n">msg_num</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span> <span class="o">*</span> <span class="mi">256</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span>
+
+<span class="c1"># Extract message type from upper 2 bits</span>
+<span class="n">msg_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">msg_num</span> <span class="o">&amp;</span> <span class="mh">0x0600</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">9</span>
+
+<span class="c1"># Message types:</span>
+<span class="c1"># 0 = Enum (1 byte)</span>
+<span class="c1"># 1 = Variable (2 bytes)</span>
+<span class="c1"># 2 = LongVariable (4 bytes)</span>
+<span class="c1"># 3 = Structure (variable)</span>
+</code></pre></div>
+<h3 id="message-payloads">Message Payloads<a class="headerlink" href="#message-payloads" title="Permanent link">&para;</a></h3>
+<p>Messages are stored sequentially. The number of bytes for each message depends on its type:</p>
+<ul>
+<li><strong>Enum</strong>: 1 byte</li>
+<li><strong>Variable</strong>: 2 bytes</li>
+<li><strong>LongVariable</strong>: 4 bytes</li>
+<li><strong>Structure</strong>: All remaining bytes (until CRC)</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># Parse messages</span>
+<span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">offset</span> <span class="o">=</span> <span class="mi">16</span>  <span class="c1"># Start after header</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">capacity</span><span class="p">):</span>
+    <span class="n">msg_num</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span><span class="p">]</span> <span class="o">*</span> <span class="mi">256</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">msg_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">msg_num</span> <span class="o">&amp;</span> <span class="mh">0x0600</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">9</span>
+
+    <span class="k">if</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Enum</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="n">offset</span> <span class="o">+=</span> <span class="mi">3</span>
+    <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Variable</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">4</span><span class="p">]</span>
+        <span class="n">offset</span> <span class="o">+=</span> <span class="mi">4</span>
+    <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># LongVariable</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">6</span><span class="p">]</span>
+        <span class="n">offset</span> <span class="o">+=</span> <span class="mi">6</span>
+    <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># Structure</span>
+        <span class="c1"># Rest of data until CRC</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">3</span>
+
+    <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">msg_num</span><span class="p">,</span> <span class="n">payload</span><span class="p">))</span>
+</code></pre></div>
+<h3 id="crc-cyclic-redundancy-check">CRC (Cyclic Redundancy Check)<a class="headerlink" href="#crc-cyclic-redundancy-check" title="Permanent link">&para;</a></h3>
+<p>The last 3 bytes before end marker contain CRC and end marker:</p>
+<div class="highlight"><pre><span></span><code><span class="n">crc_high</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">crc_low</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">end_marker</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Should be 0x34</span>
+
+<span class="n">crc_16</span> <span class="o">=</span> <span class="n">crc_high</span> <span class="o">*</span> <span class="mi">256</span> <span class="o">+</span> <span class="n">crc_low</span>
+
+<span class="c1"># CRC algorithm (CRC-16-CCITT)</span>
+<span class="c1"># Implementation specific to NASA protocol</span>
+</code></pre></div>
+<h2 id="complete-parsing-example">Complete Parsing Example<a class="headerlink" href="#complete-parsing-example" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_nasa_packet</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a complete NASA packet.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mh">0x32</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid packet start&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mh">0x34</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid packet end&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Header</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">|</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span>
+    <span class="n">src_class</span><span class="p">,</span> <span class="n">src_chan</span><span class="p">,</span> <span class="n">src_addr</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+    <span class="n">dst_class</span><span class="p">,</span> <span class="n">dst_chan</span><span class="p">,</span> <span class="n">dst_addr</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+
+    <span class="c1"># Info byte</span>
+    <span class="n">packet_info</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0x80</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">7</span>
+    <span class="n">protocol_ver</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0x60</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">5</span>
+    <span class="n">retry_count</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0x18</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">3</span>
+
+    <span class="c1"># Type byte</span>
+    <span class="n">packet_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0xF0</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span>
+    <span class="n">data_type</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0x0F</span>
+    <span class="n">packet_num</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+
+    <span class="c1"># Messages</span>
+    <span class="n">capacity</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="mi">13</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">capacity</span><span class="p">):</span>
+        <span class="n">msg_num</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span><span class="p">]</span> <span class="o">*</span> <span class="mi">256</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">msg_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">msg_num</span> <span class="o">&amp;</span> <span class="mh">0x0600</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">9</span>
+
+        <span class="k">if</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span>
+            <span class="n">offset</span> <span class="o">+=</span> <span class="mi">3</span>
+        <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">4</span><span class="p">]</span>
+            <span class="n">offset</span> <span class="o">+=</span> <span class="mi">4</span>
+        <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">6</span><span class="p">]</span>
+            <span class="n">offset</span> <span class="o">+=</span> <span class="mi">6</span>
+        <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">offset</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">3</span><span class="p">]</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">3</span>
+
+        <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;number&#39;</span><span class="p">:</span> <span class="n">msg_num</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">msg_type</span><span class="p">,</span>
+            <span class="s1">&#39;payload&#39;</span><span class="p">:</span> <span class="n">payload</span>
+        <span class="p">})</span>
+
+    <span class="c1"># CRC</span>
+    <span class="n">crc</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="mi">256</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">src_class</span><span class="si">:</span><span class="s1">02X</span><span class="si">}{</span><span class="n">src_chan</span><span class="si">:</span><span class="s1">02X</span><span class="si">}{</span><span class="n">src_addr</span><span class="si">:</span><span class="s1">02X</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;destination&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dst_class</span><span class="si">:</span><span class="s1">02X</span><span class="si">}{</span><span class="n">dst_chan</span><span class="si">:</span><span class="s1">02X</span><span class="si">}{</span><span class="n">dst_addr</span><span class="si">:</span><span class="s1">02X</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;packet_type&#39;</span><span class="p">:</span> <span class="n">packet_type</span><span class="p">,</span>
+        <span class="s1">&#39;data_type&#39;</span><span class="p">:</span> <span class="n">data_type</span><span class="p">,</span>
+        <span class="s1">&#39;messages&#39;</span><span class="p">:</span> <span class="n">messages</span><span class="p">,</span>
+        <span class="s1">&#39;crc&#39;</span><span class="p">:</span> <span class="n">crc</span>
+    <span class="p">}</span>
+</code></pre></div>
+<h2 id="building-a-packet">Building a Packet<a class="headerlink" href="#building-a-packet" title="Permanent link">&para;</a></h2>
+<p>To send a packet:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_nasa_packet</span><span class="p">(</span>
+    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>          <span class="c1"># e.g., &quot;800001&quot;</span>
+    <span class="n">destination</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>     <span class="c1"># e.g., &quot;100000&quot;</span>
+    <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>       <span class="c1"># [(msg_num, payload), ...]</span>
+    <span class="n">packet_type</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># Normal</span>
+    <span class="n">data_type</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>   <span class="c1"># Request</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a NASA packet.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Parse addresses</span>
+    <span class="n">src_class</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="n">src_chan</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="n">src_addr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>
+
+    <span class="n">dst_class</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">destination</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="n">dst_chan</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">destination</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="n">dst_addr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">destination</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>
+
+    <span class="c1"># Build header</span>
+    <span class="n">packet</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x32</span><span class="p">)</span>  <span class="c1"># STX</span>
+
+    <span class="c1"># Size placeholder (will update later)</span>
+    <span class="n">size_offset</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+
+    <span class="c1"># Addresses</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">src_class</span><span class="p">)</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">src_chan</span><span class="p">)</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">src_addr</span><span class="p">)</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dst_class</span><span class="p">)</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dst_chan</span><span class="p">)</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dst_addr</span><span class="p">)</span>
+
+    <span class="c1"># Info byte</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x20</span><span class="p">)</span>  <span class="c1"># Protocol version 1</span>
+
+    <span class="c1"># Type byte</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">packet_type</span> <span class="o">&lt;&lt;</span> <span class="mi">4</span><span class="p">)</span> <span class="o">|</span> <span class="n">data_type</span><span class="p">)</span>
+
+    <span class="c1"># Packet number</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x01</span><span class="p">)</span>  <span class="c1"># Placeholder</span>
+
+    <span class="c1"># Capacity</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">messages</span><span class="p">))</span>
+
+    <span class="c1"># Messages</span>
+    <span class="k">for</span> <span class="n">msg_num</span><span class="p">,</span> <span class="n">payload</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">msg_num</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg_num</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span>
+        <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+    <span class="c1"># CRC (placeholder)</span>
+    <span class="n">crc</span> <span class="o">=</span> <span class="n">calculate_crc</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+        <span class="p">(</span><span class="n">crc</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">,</span>
+        <span class="n">crc</span> <span class="o">&amp;</span> <span class="mh">0xFF</span>
+    <span class="p">])</span>
+
+    <span class="c1"># ETX</span>
+    <span class="n">packet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mh">0x34</span><span class="p">)</span>
+
+    <span class="c1"># Update size</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span> <span class="o">-</span> <span class="mi">3</span>  <span class="c1"># Excluding STX and size field</span>
+    <span class="n">packet</span><span class="p">[</span><span class="n">size_offset</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span> <span class="o">&amp;</span> <span class="mh">0xFF</span>
+    <span class="n">packet</span><span class="p">[</span><span class="n">size_offset</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span>
+
+    <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
+<ul>
+<li>All multi-byte values are in <strong>little-endian</strong> format unless otherwise noted</li>
+<li>The CRC algorithm is <strong>CRC-16-CCITT</strong></li>
+<li>Packet numbers wrap around from 0-255</li>
+<li>Messages within a packet are processed in order</li>
+<li>Structure messages consume all remaining payload bytes</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "toc.integrate", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
