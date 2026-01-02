@@ -1571,6 +1571,9 @@ class InFlowSensorCalculationMessage(FloatMessage):
     """Parser for message 0x42E9 (Flow Sensor Calculation)."""
 
     MESSAGE_ID = 0x42E9
+    SIGNED = False
+    UNIT_OF_MEASUREMENT = "L/min"
+    ARITHMETIC = 0.1
     MESSAGE_NAME = "Flow Sensor Calculation"
 
 
