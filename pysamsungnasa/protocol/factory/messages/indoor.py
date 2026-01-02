@@ -1466,6 +1466,14 @@ class InVariableUnknown428dMessage(RawMessage):
     MESSAGE_NAME = "InVariableUnknown428dMessage"
 
 
+class InModulatingFanMessage(FloatMessage):
+    """Parser for message 0x42CC (Modulating Fan)."""
+
+    MESSAGE_ID = 0x42CC
+    MESSAGE_NAME = "Modulating Fan"
+    UNIT_OF_MEASUREMENT = "## Notes"
+
+
 class InFsv3046(FloatMessage):
     """Parser for message 0x42CE (FSV 3046 Disinfection Max Time)."""
 
