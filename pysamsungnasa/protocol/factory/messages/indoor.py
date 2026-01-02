@@ -1466,12 +1466,26 @@ class InVariableUnknown428dMessage(RawMessage):
     MESSAGE_NAME = "InVariableUnknown428dMessage"
 
 
+class InModulatingValve1Message(FloatMessage):
+    """Parser for message 0x42CA (Modulating Valve 1)."""
+
+    MESSAGE_ID = 0x42CA
+    MESSAGE_NAME = "Modulating Valve 1"
+
+
 class InModulatingValve2Message(FloatMessage):
     """Parser for message 0x42CB (Modulating Valve 2)."""
 
     MESSAGE_ID = 0x42CB
     MESSAGE_NAME = "Modulating Valve 2"
-    UNIT_OF_MEASUREMENT = "## Notes"
+
+
+class InWaterInletTemperature2Message(FloatMessage):
+    """Parser for message 0x42CD (Water Inlet Temperature 2)."""
+
+    MESSAGE_ID = 0x42CD
+    MESSAGE_NAME = "Water Inlet Temperature 2"
+    UNIT_OF_MEASUREMENT = "°C"
 
 
 class InFsv3046(FloatMessage):
