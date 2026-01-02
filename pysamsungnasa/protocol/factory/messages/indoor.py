@@ -1471,7 +1471,6 @@ class InModulatingValve1Message(FloatMessage):
 
     MESSAGE_ID = 0x42CA
     MESSAGE_NAME = "Modulating Valve 1"
-    UNIT_OF_MEASUREMENT = "## Notes"
 
 
 class InFsv3046(FloatMessage):
