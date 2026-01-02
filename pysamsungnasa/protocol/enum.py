@@ -1370,11 +1370,11 @@ class InTdmIndoorType(SamsungEnum, IntEnum):
     """Air-to-water TDM type"""
 
 
-class In3WayValve2(SamsungEnum, IntEnum):
+class In3WayValve(SamsungEnum, IntEnum):
     """
-    3-Way Valve 2 state (Message 0x4113).
-    Label (NASA.prc): ENUM_IN_3WAY_VALVE_2
-    XML ProtocolID: ENUM_IN_3WAY_VALVE_2
+    3-Way Valve state (Message 0x4067/0x4113).
+    Label (NASA.prc): ENUM_IN_3WAY_VALVE
+    XML ProtocolID: ENUM_IN_3WAY_VALVE
     """
 
     ROOM = 0
@@ -2171,18 +2171,6 @@ class InLouverVlPos(SamsungEnum, IntEnum):
     FULL_CLOSE = 0
     PARTIAL_OPEN = 1
     FULL_OPEN = 2
-
-
-class InThermostatMode(SamsungEnum, IntEnum):
-    """
-    Indoor unit thermostat mode (Message 0x4067).
-    Label (NASA.prc): ENUM_IN_THERMOSTAT_MODE
-    """
-
-    OFF = 0
-    """Thermostat mode is off"""
-    ON = 1
-    """Thermostat mode is on"""
 
 
 class InSolarPump(SamsungEnum, IntEnum):
