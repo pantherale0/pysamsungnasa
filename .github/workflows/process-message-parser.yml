@@ -137,7 +137,7 @@ jobs:
           python scripts/sort_messages.py
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Add message parser: ${{ env.message_name }} (${{ env.message_id }})"
