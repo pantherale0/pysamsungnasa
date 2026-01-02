@@ -155,7 +155,7 @@ class IntegerMessage(BaseMessage):
         # Basic integer is the hex as an int
         parsed_value: Optional[int] = None
         if payload:
-            parsed_value = int(payload.hex())
+            parsed_value = int(payload.hex(), 16)
         return cls(value=parsed_value)
 
 
