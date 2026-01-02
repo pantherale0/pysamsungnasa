@@ -1480,6 +1480,13 @@ class InModulatingValve2Message(FloatMessage):
     MESSAGE_NAME = "Modulating Valve 2"
 
 
+class InModulatingFanMessage(FloatMessage):
+    """Parser for message 0x42CC (Modulating Fan)."""
+
+    MESSAGE_ID = 0x42CC
+    MESSAGE_NAME = "Modulating Fan"
+    
+    
 class InWaterInletTemperature2Message(FloatMessage):
     """Parser for message 0x42CD (Water Inlet Temperature 2)."""
 
