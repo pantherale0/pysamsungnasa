@@ -1572,6 +1572,9 @@ class InFlowSensorCalculationMessage(FloatMessage):
 
     MESSAGE_ID = 0x42E9
     MESSAGE_NAME = "Flow Sensor Calculation"
+    SIGNED = False
+    UNIT_OF_MEASUREMENT = "L/min"
+    ARITHMETIC = 0.1
 
 
 class InOutdoorCompressorFrequencyRateControlMessage(RawMessage):
