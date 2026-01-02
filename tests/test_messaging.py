@@ -9,7 +9,8 @@ from pysamsungnasa.protocol.factory.messaging import (
     StrMessage,
     RawMessage,
     FloatMessage,
-    EnumMessage
+    EnumMessage,
+    IntegerMessage,
 )
 from pysamsungnasa.protocol.enum import SamsungEnum
 
@@ -45,9 +46,9 @@ class TestBaseMessage:
         msg.MESSAGE_ID = 0x4000
         msg.MESSAGE_NAME = "TEST_MESSAGE"
         msg.UNIT_OF_MEASUREMENT = "°C"
-        
+
         result = msg.as_dict
-        
+
         assert result["message_id"] == 0x4000
         assert result["message_name"] == "TEST_MESSAGE"
         assert result["unit_of_measurement"] == "°C"
@@ -121,53 +122,53 @@ class TestFloatMessage:
 
     def test_float_message_parse_unsigned(self):
         """Test parsing unsigned float."""
-        
+
         class TestFloatMsg(FloatMessage):
             ARITHMETIC = 0.1
             SIGNED = False
-        
+
         payload = struct.pack(">H", 123)  # 2-byte unsigned
         msg = TestFloatMsg.parse_payload(payload)
         assert msg.VALUE == 12.3
 
     def test_float_message_parse_signed(self):
         """Test parsing signed float."""
-        
+
         class TestFloatMsg(FloatMessage):
             ARITHMETIC = 0.1
             SIGNED = True
-        
+
         payload = struct.pack(">h", -123)  # 2-byte signed
         msg = TestFloatMsg.parse_payload(payload)
         assert msg.VALUE == -12.3
 
     def test_float_message_parse_empty(self):
         """Test parsing empty float payload."""
-        
+
         class TestFloatMsg(FloatMessage):
             ARITHMETIC = 10.0
-        
+
         msg = TestFloatMsg.parse_payload(b"")
         assert msg.VALUE is None
 
     def test_float_message_parse_1_byte(self):
         """Test parsing 1-byte float."""
-        
+
         class TestFloatMsg(FloatMessage):
             ARITHMETIC = 1.0
             SIGNED = False
-        
-        payload = b"\x0A"  # 1 byte
+
+        payload = b"\x0a"  # 1 byte
         msg = TestFloatMsg.parse_payload(payload)
         assert msg.VALUE == 10.0
 
     def test_float_message_parse_4_bytes(self):
         """Test parsing 4-byte float."""
-        
+
         class TestFloatMsg(FloatMessage):
             ARITHMETIC = 0.01
             SIGNED = False
-        
+
         payload = struct.pack(">I", 12345)  # 4-byte unsigned
         msg = TestFloatMsg.parse_payload(payload)
         assert msg.VALUE == 123.45
@@ -178,31 +179,52 @@ class TestEnumMessage:
 
     def test_enum_message_parse(self):
         """Test parsing enum value."""
-        
+
         # Create a test enum
         class TestEnum(SamsungEnum):
             VALUE1 = 1
             VALUE2 = 2
-        
+
         class TestEnumMsg(EnumMessage):
             MESSAGE_ENUM = TestEnum
             ENUM_DEFAULT = TestEnum.VALUE1
-        
+
         payload = b"\x02"
         msg = TestEnumMsg.parse_payload(payload)
         assert msg.VALUE == TestEnum.VALUE2
 
     def test_enum_message_parse_with_default(self):
         """Test parsing enum with default value for unknown."""
-        
+
         class TestEnum(SamsungEnum):
             VALUE1 = 1
             VALUE2 = 2
-        
+
         class TestEnumMsg(EnumMessage):
             MESSAGE_ENUM = TestEnum
             ENUM_DEFAULT = TestEnum.VALUE1
-        
-        payload = b"\xFF"  # Unknown value
+
+        payload = b"\xff"  # Unknown value
         msg = TestEnumMsg.parse_payload(payload)
         assert msg.VALUE == TestEnum.VALUE1
+
+
+class TestIntegerMessage:
+    """Tests for IntegerMessage class."""
+
+    def test_integer_message_parse(self):
+        """Test parsing integer value."""
+        payload = b"\x00\x00\x30\x39"  # Hex for 12345
+        msg = IntegerMessage.parse_payload(payload)
+        assert msg.VALUE == 12345
+
+    def test_integer_message_parse_empty(self):
+        """Test parsing empty integer payload."""
+        msg = IntegerMessage.parse_payload(b"")
+        assert msg.VALUE is None
+
+    def test_integer_message_parse_single_byte(self):
+        """Test parsing single byte integer value."""
+        payload = b"\x64"  # Hex for 100
+        msg = IntegerMessage.parse_payload(payload)
+        assert msg.VALUE == 100

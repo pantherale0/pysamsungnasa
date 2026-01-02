@@ -154,12 +154,13 @@ class NasaPacketParser:
                     str(self._config.address) == kwargs["dest"]
                     or self._config.log_all_messages
                     or kwargs["dest"] in self._config.devices_to_log
+                    or ds[0] in self._config.messages_to_log
                 ):
                     _LOGGER.debug(
                         "Parsed message %s (%s): %s",
                         formatted_msg_number,
                         description,
-                        parsed_message.as_dict,
+                        {**parsed_message.as_dict, "raw_payload": payload_bytes.hex()},
                     )
             except Exception as e:
                 _LOGGER.error("Failed to parse message %s (%s): %s", formatted_msg_number, description, e)
