@@ -1466,6 +1466,14 @@ class InVariableUnknown428dMessage(RawMessage):
     MESSAGE_NAME = "InVariableUnknown428dMessage"
 
 
+class InModulatingValve2Message(FloatMessage):
+    """Parser for message 0x42CB (Modulating Valve 2)."""
+
+    MESSAGE_ID = 0x42CB
+    MESSAGE_NAME = "Modulating Valve 2"
+    UNIT_OF_MEASUREMENT = "## Notes"
+
+
 class InFsv3046(FloatMessage):
     """Parser for message 0x42CE (FSV 3046 Disinfection Max Time)."""
 
