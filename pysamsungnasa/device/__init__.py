@@ -112,10 +112,11 @@ class NasaDevice:
             str(self.config.address) == kwargs["dest"]
             or self.config.log_all_messages
             or kwargs["dest"] in self.config.devices_to_log
+            or message_number in self.config.messages_to_log
         )
 
         if log_message:
-            _LOGGER.debug("Handing packet for device %s: %s", self.address, kwargs)
+            _LOGGER.debug("Handling packet for device %s: %s", self.address, kwargs)
         self.attributes[message_number] = packet_data
         if message_number in self._attribute_events:
             self._attribute_events[message_number].set()

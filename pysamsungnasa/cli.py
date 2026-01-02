@@ -106,7 +106,9 @@ async def interactive_cli(nasa: SamsungNasa):
                 print("  dump <device_address>")
                 print("  climate <device_address> <dhw/heat>")
                 print("  config set <key> <value>")
+                print("  config append <key> <value>")
                 print("  config read <key>")
+                print("  config dump")
                 print("  logger follow")
                 print("  quit")
                 continue
@@ -180,7 +182,7 @@ async def interactive_cli(nasa: SamsungNasa):
                     print("  With device_address, lists all attributes of the device.")
                     print("  With device_address and message_id, prints the value of the attribute.")
             elif command == "config":
-                if len(parts) == 2 and parts[1] == "set":
+                if len(parts) >= 3 and parts[1] == "set":
                     if len(parts) == 4:
                         key = parts[2]
                         value = parts[3]
@@ -188,14 +190,38 @@ async def interactive_cli(nasa: SamsungNasa):
                         print(f"Config set: {key} = {value}")
                     else:
                         print("Usage: config set <key> <value>")
-                elif len(parts) == 2 and parts[1] == "read":
+                elif len(parts) >= 3 and parts[1] == "read":
                     if len(parts) == 3:
                         key = parts[2]
                         print(f"Config read: {key} = {getattr(nasa.config, key)}")
                     else:
                         print("Usage: config read <key>")
+                elif len(parts) >= 3 and parts[1] == "append":
+                    if len(parts) == 4:
+                        key = parts[2]
+                        value = parts[3]
+                        if value.startswith("0x"):
+                            value = int(value, 16)
+                        elif value.startswith("i"):
+                            value = int(value[1:])
+                        elif value.startswith("f"):
+                            value = float(value[1:])
+                        current_value = getattr(nasa.config, key)
+                        if isinstance(current_value, list):
+                            current_value.append(value)
+                            setattr(nasa.config, key, current_value)
+                            print(f"Config append: {key} += {value}")
+                        else:
+                            print(f"Config key {key} is not a list")
+                    else:
+                        print("Usage: config append <key> <value>")
+                elif len(parts) == 2 and parts[1] == "dump":
+                    for key, value in nasa.config.__dict__.items():
+                        print(f"{key}: {value}")
                 else:
-                    print("Usage: config set <key> <value> or config read <key>")
+                    print(
+                        "Usage: config set <key> <value> or config read <key> or config append <key> <value> or config dump"
+                    )
             elif command == "logger" and len(parts) == 2 and parts[1] == "follow":
                 await follow_logs()
             elif command == "logger" and len(parts) == 2 and parts[1] == "print":

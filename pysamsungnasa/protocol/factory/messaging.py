@@ -146,6 +146,19 @@ class EnumMessage(BaseMessage):
             )
 
 
+class IntegerMessage(BaseMessage):
+    """Parser for a basic integer message."""
+
+    @classmethod
+    def parse_payload(cls, payload: bytes) -> "IntegerMessage":
+        """Parse the payload into an integer value."""
+        # Basic integer is the hex as an int
+        parsed_value: Optional[int] = None
+        if payload:
+            parsed_value = int(payload.hex())
+        return cls(value=parsed_value)
+
+
 class BasicTemperatureMessage(FloatMessage):
     """Parser for basic temperature messages."""
 

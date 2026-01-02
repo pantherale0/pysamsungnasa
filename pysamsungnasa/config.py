@@ -18,6 +18,9 @@ class NasaConfig:
     devices_to_log: list[str] = field(
         default_factory=list
     )  # Optional: add the device address here to only log messages for a specific device
+    messages_to_log: list[int] = field(
+        default_factory=list
+    )  # Optional: add message IDs here to only log specific messages
     log_buffer_messages: bool = False  # If set to true, messsages relating to the buffer are logged
     enable_read_retries: bool = True  # Enable automatic retry of read requests that don't get responses
     read_retry_max_attempts: int = 3  # Maximum number of retry attempts for read requests

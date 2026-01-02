@@ -7,6 +7,7 @@ from ..messaging import (
     BasicTemperatureMessage,
     BasicPowerMessage,
     RawMessage,
+    IntegerMessage,
 )
 
 from ...enum import (
@@ -762,7 +763,7 @@ class InVacancyControlMessage(EnumMessage):
     MESSAGE_ENUM = InVacancyControl
 
 
-class InWaterPumpPwmValueMessage(FloatMessage):
+class InWaterPumpPwmValueMessage(IntegerMessage):
     """Parser for message 0x40C4 (Water Pump PWM Value)."""
 
     MESSAGE_ID = 0x40C4
