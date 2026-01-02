@@ -1565,6 +1565,8 @@ class InFlowSensorVoltageMessage(FloatMessage):
     MESSAGE_ID = 0x42E8
     MESSAGE_NAME = "Flow Sensor Voltage"
     UNIT_OF_MEASUREMENT = "V"
+    SIGNED = False
+    ARITHMETIC = 0.1
 
 
 class InFlowSensorCalculationMessage(FloatMessage):
