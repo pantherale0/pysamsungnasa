@@ -1482,6 +1482,8 @@ class InEnthalpySensorOutputMessage(FloatMessage):
     MESSAGE_ID = 0x42CF
     MESSAGE_NAME = "Enthalpy Sensor Output"
     UNIT_OF_MEASUREMENT = "Enthalpy"
+    SIGNED = False
+    ARITHMETIC = 0.1
 
 
 class InDustSensorPM10Value(FloatMessage):
