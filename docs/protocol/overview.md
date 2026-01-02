@@ -98,7 +98,7 @@ Examples:
 Messages contain payloads of different sizes:
 
 ### Enum (1 byte)
-Represents an enumeration value (0-255). These can also be used to represent a integer such as for the PWM water pump sensor.
+Represents an enumeration value (0-255). These can also be used to represent an integer such as for the PWM water pump sensor.
 
 Example: Power state (0=Off, 1=On)
 
