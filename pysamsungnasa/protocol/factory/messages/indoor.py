@@ -1476,6 +1476,16 @@ class InFsv3046(FloatMessage):
     ARITHMETIC = 1.0
 
 
+class InEnthalpySensorOutputMessage(FloatMessage):
+    """Parser for message 0x42CF (Enthalpy Sensor Output)."""
+
+    MESSAGE_ID = 0x42CF
+    MESSAGE_NAME = "Enthalpy Sensor Output"
+    UNIT_OF_MEASUREMENT = "Enthalpy"
+    SIGNED = False
+    ARITHMETIC = 0.1
+
+
 class InDustSensorPM10Value(FloatMessage):
     """Parser for message 0x42D1 (Dust Sensor PM10.0 Value).
 
