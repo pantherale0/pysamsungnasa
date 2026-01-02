@@ -1473,6 +1473,14 @@ class InModulatingValve1Message(FloatMessage):
     MESSAGE_NAME = "Modulating Valve 1"
 
 
+class InWaterInletTemperature2Message(FloatMessage):
+    """Parser for message 0x42CD (Water Inlet Temperature 2)."""
+
+    MESSAGE_ID = 0x42CD
+    MESSAGE_NAME = "Water Inlet Temperature 2"
+    UNIT_OF_MEASUREMENT = "°C"
+
+
 class InFsv3046(FloatMessage):
     """Parser for message 0x42CE (FSV 3046 Disinfection Max Time)."""
 
