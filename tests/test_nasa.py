@@ -5,6 +5,7 @@ from unittest.mock import Mock, AsyncMock, patch
 from pysamsungnasa.nasa import SamsungNasa
 from pysamsungnasa.config import NasaConfig
 from pysamsungnasa.protocol.enum import DataType, AddressClass
+from pysamsungnasa.helpers import hex2bin
 
 
 class TestSamsungNasa:
@@ -50,6 +51,42 @@ class TestSamsungNasa:
             assert "100001" in nasa.devices
             assert device is not None
             assert device.device_type == AddressClass.OUTDOOR
+
+    @pytest.mark.asyncio
+    async def test_add_device_from_config(self):
+        """Test adding devices from config."""
+        with patch("pysamsungnasa.nasa.NasaClient"):
+            nasa = SamsungNasa(
+                host="192.168.1.100",
+                port=8888,
+                config={"device_addresses": ["200001", "100001"]},
+            )
+
+            assert "200001" in nasa.devices
+            assert "100001" in nasa.devices
+
+            indoor_device = nasa.devices["200001"]
+            outdoor_device = nasa.devices["100001"]
+            assert indoor_device.device_type == AddressClass.INDOOR
+            assert outdoor_device.device_type == AddressClass.OUTDOOR
+
+            # Test that packets from each device are processed correctly
+            # Indoor device packet: source=200001, dest=80FF01, response with message 0x4000 (power=on)
+            indoor_packet = "200001" + "80FF01" + "80" + "15" + "01" + "01" + "40000001"
+            await nasa.parser.parse_packet(hex2bin(indoor_packet))
+
+            # Verify indoor device received the packet (attribute 0x4000 should be present)
+            assert 0x4000 in indoor_device.attributes
+            assert outdoor_device.attributes == {}  # Outdoor device should not have received it
+
+            # Outdoor device packet: source=100001, dest=80FF01, response with message 0x4000 (power=on)
+            outdoor_packet = "100001" + "80FF01" + "80" + "15" + "01" + "01" + "40000001"
+            await nasa.parser.parse_packet(hex2bin(outdoor_packet))
+
+            # Verify outdoor device received the packet
+            assert 0x4000 in outdoor_device.attributes
+            # Indoor device should still only have the one attribute from before
+            assert len(indoor_device.attributes) == 1
 
     @pytest.mark.asyncio
     async def test_start(self):
