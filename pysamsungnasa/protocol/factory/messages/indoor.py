@@ -63,7 +63,6 @@ from ...enum import (
     InLouverHlDownUp,
     InLouverHlNowPos,
     InLouverVlPos,
-    InThermostatMode,
     InSolarPump,
     InThermostat0,
     InOutingMode,
@@ -95,7 +94,7 @@ from ...enum import (
     InFsv5091,
     InFsv5094,
     InZone2Power,
-    In3WayValve2,
+    In3WayValve,
     InPvContactState,
     InSgReadyModeState,
 )
@@ -434,12 +433,12 @@ class InDhwOpMode(EnumMessage):
     MESSAGE_ENUM = DhwOpMode
 
 
-class InThermostatModeMessage(EnumMessage):
-    """Parser for message 0x4067 (Indoor Thermostat Mode)."""
+class In3WayValveMessage(EnumMessage):
+    """Parser for message 0x4067 (3-Way Valve control)."""
 
     MESSAGE_ID = 0x4067
-    MESSAGE_NAME = "Indoor Thermostat Mode"
-    MESSAGE_ENUM = InThermostatMode
+    MESSAGE_NAME = "3-Way Valve control"
+    MESSAGE_ENUM = In3WayValve
 
 
 class InSolarPumpMessage(EnumMessage):
@@ -451,7 +450,7 @@ class InSolarPumpMessage(EnumMessage):
 
 
 class InThermostatZone1Status(EnumMessage):
-    """Parser for message 0x4067 (Indoor Thermostat Zone 1 Status)."""
+    """Parser for message 0x4069 (Indoor Thermostat Zone 1 Status)."""
 
     MESSAGE_ID = 0x4069
     MESSAGE_NAME = "Indoor Thermostat Zone 1 Status"
@@ -906,7 +905,7 @@ class In3WayValve2Message(EnumMessage):
 
     MESSAGE_ID = 0x4113
     MESSAGE_NAME = "3-Way Valve 2 control"
-    MESSAGE_ENUM = In3WayValve2
+    MESSAGE_ENUM = In3WayValve
 
 
 class InEnumUnknown4117Message(RawMessage):
