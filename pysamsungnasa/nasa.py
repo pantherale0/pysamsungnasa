@@ -44,8 +44,7 @@ class SamsungNasa:
         self.new_device_event_handler = new_device_event_handler
         if self.config.device_addresses is not None:
             for address in self.config.device_addresses:
-                address = Address.parse(address)
-                self._add_device(str(address))
+                self._add_device(address)
 
     def _add_device(self, address: str) -> NasaDevice:
         """Add a device to the devices list."""
