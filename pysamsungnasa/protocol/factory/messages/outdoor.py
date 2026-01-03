@@ -868,11 +868,11 @@ class OutdoorLowPressure(FloatMessage):
     MESSAGE_NAME = "Low Pressure"
 
 
-class CondensorInTemperature(BasicTemperatureMessage):
-    """Parser for message 0x820A (Condensor In Temperature)."""
+class CondenserInTemperature(BasicTemperatureMessage):
+    """Parser for message 0x820A (Condenser In Temperature)."""
 
     MESSAGE_ID = 0x820A
-    MESSAGE_NAME = "Condensor In Temperature"
+    MESSAGE_NAME = "Condenser In Temperature"
 
 
 class OutdoorCompressorDischarge2(FloatMessage):
@@ -1381,11 +1381,11 @@ class OutdoorCompressor2TargetFrequency(IntegerMessage):
     MESSAGE_NAME = "Compressor 2 target frequency"
 
 
-class OutdoorCompressor2CurrentFreqency(IntegerMessage):
-    """Parser for message 0x8276 (Compressor 2 current freqency)."""
+class OutdoorCompressor2CurrentFrequency(IntegerMessage):
+    """Parser for message 0x8276 (Compressor 2 current frequency)."""
 
     MESSAGE_ID = 0x8276
-    MESSAGE_NAME = "Compressor 2 current freqency"
+    MESSAGE_NAME = "Compressor 2 current frequency"
 
 
 class OutdoorCompressor2Current(FloatMessage):
@@ -1423,11 +1423,11 @@ class OutdoorTopSensorTemp2(BasicTemperatureMessage):
     MESSAGE_NAME = "Outdoor Top Sensor Temp 2"
 
 
-class OutdoorCondensorMidpointTemp(FloatMessage):
-    """Parser for message 0x8285 (Condensor mid-point temp)."""
+class OutdoorCondenserMidpointTemp(FloatMessage):
+    """Parser for message 0x8285 (Condenser mid-point temp)."""
 
     MESSAGE_ID = 0x8285
-    MESSAGE_NAME = "Condensor mid-point temp"
+    MESSAGE_NAME = "Condenser mid-point temp"
 
 
 class OutdoorInstalledCapacity(FloatMessage):
@@ -1500,11 +1500,11 @@ class OutdoorMessage82aa(FloatMessage):
     MESSAGE_NAME = "Message 82AA"
 
 
-class OutdoorCondensorInstalledSize(FloatMessage):
-    """Parser for message 0x82AF (Condensor installed size)."""
+class OutdoorCondenserInstalledSize(FloatMessage):
+    """Parser for message 0x82AF (Condenser installed size)."""
 
     MESSAGE_ID = 0x82AF
-    MESSAGE_NAME = "Condensor installed size"
+    MESSAGE_NAME = "Condenser installed size"
 
 
 class OutdoorMessage82b2(FloatMessage):
@@ -1670,11 +1670,11 @@ class OutdoorPhaseCurrent(FloatMessage):
     SIGNED = False
 
 
-class CondensorOutTemperature(BasicTemperatureMessage):
-    """Parser for message 0x82DE (Condensor Out Temperature)."""
+class CondenserOutTemperature(BasicTemperatureMessage):
+    """Parser for message 0x82DE (Condenser Out Temperature)."""
 
     MESSAGE_ID = 0x82DE
-    MESSAGE_NAME = "Condensor Out Temperature"
+    MESSAGE_NAME = "Condenser Out Temperature"
 
 
 class OutdoorTw1Temperature(BasicTemperatureMessage):
