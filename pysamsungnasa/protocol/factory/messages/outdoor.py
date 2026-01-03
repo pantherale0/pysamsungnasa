@@ -9,6 +9,7 @@ from ..messaging import (
     BasicEnergyMessage,
     RawMessage,
     StrMessage,
+    IntegerMessage,
 )
 from ...enum import (
     OutdoorOperationStatus,
@@ -867,11 +868,11 @@ class OutdoorLowPressure(FloatMessage):
     MESSAGE_NAME = "Low Pressure"
 
 
-class OutdoorDischarge1(FloatMessage):
-    """Parser for message 0x820A (Discharge1)."""
+class CondensorInTemperature(BasicTemperatureMessage):
+    """Parser for message 0x820A (Condensor In Temperature)."""
 
     MESSAGE_ID = 0x820A
-    MESSAGE_NAME = "Discharge1"
+    MESSAGE_NAME = "Condensor In Temperature"
 
 
 class OutdoorCompressorDischarge2(FloatMessage):
@@ -897,11 +898,11 @@ class OutdoorCurrent(BasicCurrentMessage):
     ARITHMETIC = 0.1
 
 
-class OutdoorCondoutTemp(FloatMessage):
-    """Parser for message 0x8218 (CondOut Temp)."""
+class OutdoorCondoutTemp(BasicTemperatureMessage):
+    """Parser for message 0x8218 (Evaporator In Temperature)."""
 
     MESSAGE_ID = 0x8218
-    MESSAGE_NAME = "CondOut Temp"
+    MESSAGE_NAME = "Evaporator In Temperature"
 
 
 class OutdoorSuctionSensorTemperature(BasicTemperatureMessage):
@@ -911,21 +912,21 @@ class OutdoorSuctionSensorTemperature(BasicTemperatureMessage):
     MESSAGE_NAME = "Outdoor Suction Sensor Temperature"
 
 
-class OutdoorDoubleTubeTemp(FloatMessage):
+class OutdoorDoubleTubeTemp(BasicTemperatureMessage):
     """Parser for message 0x821C (Double tube temp)."""
 
     MESSAGE_ID = 0x821C
     MESSAGE_NAME = "Double tube temp"
 
 
-class OutdoorEviIn(FloatMessage):
+class OutdoorEviIn(BasicTemperatureMessage):
     """Parser for message 0x821E (EVI IN)."""
 
     MESSAGE_ID = 0x821E
     MESSAGE_NAME = "EVI IN"
 
 
-class OutdoorEviOut(FloatMessage):
+class OutdoorEviOut(BasicTemperatureMessage):
     """Parser for message 0x8220 (EVI OUT)."""
 
     MESSAGE_ID = 0x8220
@@ -939,7 +940,7 @@ class OutdoorTargetDischargeTemperature(BasicTemperatureMessage):
     MESSAGE_NAME = "Outdoor Target Discharge Temperature"
 
 
-class OutdoorMessage8224(FloatMessage):
+class OutdoorMessage8224(BasicTemperatureMessage):
     """Parser for message 0x8224 (Message 8224)."""
 
     MESSAGE_ID = 0x8224
@@ -958,6 +959,7 @@ class OutdoorFanSpeedStepSetting(FloatMessage):
 
     MESSAGE_ID = 0x8226
     MESSAGE_NAME = "Fan speed step setting"
+    SIGNED = False
 
 
 class OutdoorMessage8227(FloatMessage):
@@ -967,39 +969,39 @@ class OutdoorMessage8227(FloatMessage):
     MESSAGE_NAME = "Message 8227"
 
 
-class OutdoorMainEev1opening(FloatMessage):
-    """Parser for message 0x8229 (Main EEV1 (opening))."""
+class OutdoorEev1opening(FloatMessage):
+    """Parser for message 0x8229 (EEV1 Position)."""
 
     MESSAGE_ID = 0x8229
-    MESSAGE_NAME = "Main EEV1 (opening)"
+    MESSAGE_NAME = "EEV1 Position"
 
 
 class OutdoorEev2Opening(FloatMessage):
-    """Parser for message 0x822A (EEV2 opening)."""
+    """Parser for message 0x822A (EEV2 Position)."""
 
     MESSAGE_ID = 0x822A
-    MESSAGE_NAME = "EEV2 opening"
+    MESSAGE_NAME = "EEV2 Position"
 
 
 class OutdoorEev3Opening(FloatMessage):
-    """Parser for message 0x822B (EEV3 opening)."""
+    """Parser for message 0x822B (EEV3 Position)."""
 
     MESSAGE_ID = 0x822B
-    MESSAGE_NAME = "EEV3 opening"
+    MESSAGE_NAME = "EEV3 Position"
 
 
 class OutdoorEev4Opening(FloatMessage):
-    """Parser for message 0x822C (EEV4 opening)."""
+    """Parser for message 0x822C (EEV4 Position)."""
 
     MESSAGE_ID = 0x822C
-    MESSAGE_NAME = "EEV4 opening"
+    MESSAGE_NAME = "EEV4 Position"
 
 
 class OutdoorEev5Opening(FloatMessage):
-    """Parser for message 0x822D (EEV5 opening)."""
+    """Parser for message 0x822D (EEV5 Position)."""
 
     MESSAGE_ID = 0x822D
-    MESSAGE_NAME = "EEV5 opening"
+    MESSAGE_NAME = "EEV5 Position"
 
 
 class OutdoorEviEev(FloatMessage):
@@ -1039,7 +1041,7 @@ class OutdoorErrorCode(FloatMessage):
     MESSAGE_NAME = "Outdoor Error Code"
 
 
-class OutdoorCompressorOrderFrequency(FloatMessage):
+class OutdoorCompressorOrderFrequency(IntegerMessage):
     """Parser for message 0x8236 (Outdoor Compressor Order Frequency)."""
 
     MESSAGE_ID = 0x8236
@@ -1047,7 +1049,7 @@ class OutdoorCompressorOrderFrequency(FloatMessage):
     UNIT_OF_MEASUREMENT = "Hz"
 
 
-class OutdoorCompressorTargetFrequency(FloatMessage):
+class OutdoorCompressorTargetFrequency(IntegerMessage):
     """Parser for message 0x8237 (Outdoor Compressor Target Frequency)."""
 
     MESSAGE_ID = 0x8237
@@ -1055,7 +1057,7 @@ class OutdoorCompressorTargetFrequency(FloatMessage):
     UNIT_OF_MEASUREMENT = "Hz"
 
 
-class OutdoorCompressorRunFrequency(FloatMessage):
+class OutdoorCompressorRunFrequency(IntegerMessage):
     """Parser for message 0x8238 (Outdoor Compressor Run Frequency)."""
 
     MESSAGE_ID = 0x8238
@@ -1365,21 +1367,21 @@ class OutdoorMcuChangeoverEev6(FloatMessage):
     MESSAGE_NAME = "MCU changeover EEV6"
 
 
-class OutdoorCompressor2OrderFreqency(FloatMessage):
+class OutdoorCompressor2OrderFreqency(IntegerMessage):
     """Parser for message 0x8274 (Compressor 2 order freqency)."""
 
     MESSAGE_ID = 0x8274
     MESSAGE_NAME = "Compressor 2 order freqency"
 
 
-class OutdoorCompressor2TargetFreqency(FloatMessage):
+class OutdoorCompressor2TargetFreqency(IntegerMessage):
     """Parser for message 0x8275 (Compressor 2 target freqency)."""
 
     MESSAGE_ID = 0x8275
     MESSAGE_NAME = "Compressor 2 target freqency"
 
 
-class OutdoorCompressor2CurrentFreqency(FloatMessage):
+class OutdoorCompressor2CurrentFreqency(IntegerMessage):
     """Parser for message 0x8276 (Compressor 2 current freqency)."""
 
     MESSAGE_ID = 0x8276
@@ -1668,11 +1670,11 @@ class OutdoorPhaseCurrent(FloatMessage):
     SIGNED = False
 
 
-class OutdoorEvaInTemperature(BasicTemperatureMessage):
-    """Parser for message 0x82DE (Outdoor Eva In Temperature)."""
+class CondensorOutTemperature(BasicTemperatureMessage):
+    """Parser for message 0x82DE (Condensor Out Temperature)."""
 
     MESSAGE_ID = 0x82DE
-    MESSAGE_NAME = "Outdoor Eva In Temperature"
+    MESSAGE_NAME = "Condensor Out Temperature"
 
 
 class OutdoorTw1Temperature(BasicTemperatureMessage):
@@ -1697,10 +1699,10 @@ class OutdoorProductCapa(BasicPowerMessage):
 
 
 class OutdoorCombinedSuctionTemp(FloatMessage):
-    """Parser for message 0x82E7 (Combined suction temp)."""
+    """Parser for message 0x82E7 (Evaporator Out Temperature)."""
 
     MESSAGE_ID = 0x82E7
-    MESSAGE_NAME = "Combined suction temp"
+    MESSAGE_NAME = "Evaporator Out Temperature"
 
 
 class OutdoorMotorControlUnitBypassEevPosition(FloatMessage):
@@ -1738,7 +1740,7 @@ class OutdoorMessage82f6(FloatMessage):
     MESSAGE_NAME = "Message 82F6"
 
 
-class OutdoorCompressorSuction3Temp(FloatMessage):
+class OutdoorCompressorSuction3Temp(BasicTemperatureMessage):
     """Parser for message 0x82F9 (Compressor suction3 temp)."""
 
     MESSAGE_ID = 0x82F9

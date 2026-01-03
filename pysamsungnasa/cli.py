@@ -3,13 +3,133 @@
 import asyncio
 import logging
 
-import aioconsole
+from prompt_toolkit import PromptSession
+from prompt_toolkit.patch_stdout import patch_stdout
+from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.shortcuts import CompleteStyle
 
 from .nasa import SamsungNasa
 from .device import NasaDevice, IndoorNasaDevice, OutdoorNasaDevice
 from .protocol.enum import DataType
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class CLICompleter(Completer):
+    """Custom completer for the CLI."""
+
+    def __init__(self, nasa: SamsungNasa):
+        """Initialize completer with NASA instance."""
+        self.nasa = nasa
+        self.commands = [
+            "read",
+            "read-range",
+            "write",
+            "device",
+            "dump",
+            "climate",
+            "config",
+            "logger",
+            "quit",
+            "help",
+        ]
+        self.config_subcommands = ["set", "read", "append", "dump"]
+        self.logger_subcommands = ["follow", "print"]
+        self.climate_modes = ["dhw", "heat"]
+        self.climate_commands = ["on", "off"]
+
+    def get_completions(self, document, complete_event):
+        """Generate completions based on input."""
+        text = document.text_before_cursor
+        parts = text.split()
+
+        # If no text, suggest all commands
+        if not parts:
+            for cmd in self.commands:
+                yield Completion(cmd)
+            return
+
+        # Single word being typed - complete commands
+        if len(parts) == 1:
+            word = parts[0].lower()
+            for cmd in self.commands:
+                if cmd.startswith(word):
+                    yield Completion(cmd, start_position=-len(word))
+            return
+
+        # If text ends with space, suggest next argument based on command
+        if text.endswith(" "):
+            command = parts[0].lower()
+
+            if command == "config":
+                # Suggest config subcommands
+                for sub in self.config_subcommands:
+                    yield Completion(sub)
+
+            elif command == "logger":
+                # Suggest logger subcommands
+                for sub in self.logger_subcommands:
+                    yield Completion(sub)
+
+            elif command == "climate" and len(parts) == 2:
+                # After "climate ", suggest device addresses
+                for addr in self.nasa.devices.keys():
+                    yield Completion(addr)
+
+            elif command == "climate" and len(parts) == 3:
+                # After "climate <device> ", suggest climate modes (dhw/heat)
+                for m in self.climate_modes:
+                    yield Completion(m)
+
+            elif command == "climate" and len(parts) == 4:
+                # After "climate <device> <mode> ", suggest on/off
+                for c in self.climate_commands:
+                    yield Completion(c)
+
+            elif command in ("device", "dump", "read", "write", "read-range"):
+                # Suggest device addresses
+                for addr in self.nasa.devices.keys():
+                    yield Completion(addr)
+        else:
+            # Partial word being typed
+            word = parts[-1].lower()
+            command = parts[0].lower()
+
+            if command == "config" and len(parts) == 2:
+                # Suggest config subcommands
+                for sub in self.config_subcommands:
+                    if sub.startswith(word):
+                        yield Completion(sub, start_position=-len(word))
+
+            elif command == "logger" and len(parts) == 2:
+                # Suggest logger subcommands
+                for sub in self.logger_subcommands:
+                    if sub.startswith(word):
+                        yield Completion(sub, start_position=-len(word))
+
+            elif command == "climate" and len(parts) == 2:
+                # Suggest device addresses
+                for addr in self.nasa.devices.keys():
+                    if addr.lower().startswith(word):
+                        yield Completion(addr, start_position=-len(word))
+
+            elif command == "climate" and len(parts) == 3:
+                # Suggest climate modes (dhw/heat)
+                for m in self.climate_modes:
+                    if m.startswith(word):
+                        yield Completion(m, start_position=-len(word))
+
+            elif command == "climate" and len(parts) == 4:
+                # Suggest on/off
+                for c in self.climate_commands:
+                    if c.startswith(word):
+                        yield Completion(c, start_position=-len(word))
+
+            elif command in ("device", "dump", "read", "write", "read-range") and len(parts) == 2:
+                # Suggest device addresses
+                for addr in self.nasa.devices.keys():
+                    if addr.lower().startswith(word):
+                        yield Completion(addr, start_position=-len(word))
 
 
 async def follow_logs():
@@ -86,9 +206,16 @@ async def print_logs():
 async def interactive_cli(nasa: SamsungNasa):
     """Interactive CLI."""
     print("Samsung NASA Interactive CLI. Type 'help' for a list of commands.")
+    completer = CLICompleter(nasa)
+    session = PromptSession(
+        completer=completer,
+        complete_style=CompleteStyle.MULTI_COLUMN,
+        complete_while_typing=False,
+    )
     while True:
         try:
-            command_str = await aioconsole.ainput("> ")
+            with patch_stdout():
+                command_str = await session.prompt_async("> ")
             if not command_str:
                 continue
 

@@ -2,6 +2,32 @@
 
 Get up and running with pysamsungnasa in 5 minutes!
 
+## CLI
+
+You can launch the interactive CLI as a main module:
+
+```bash
+python -m pysamsungnasa
+```
+
+The CLI automatically connects using environment variables (set individually or via a `.env` file):
+
+```bash
+# .env file
+SAMSUNG_HP_HOST=192.168.1.100
+SAMSUNG_HP_PORT=8000
+SAMSUNG_HP_DEVICE_PNP=true
+```
+
+Or set environment variables:
+
+```bash
+export SAMSUNG_HP_HOST=192.168.1.100
+export SAMSUNG_HP_PORT=8000
+
+python -m pysamsungnasa
+```
+
 ## Basic Setup
 
 The simplest way to connect to your Samsung HVAC unit:

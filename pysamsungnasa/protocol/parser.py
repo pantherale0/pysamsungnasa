@@ -99,6 +99,14 @@ class NasaPacketParser:
             elif payload_type == DataType.REQUEST:
                 # Incoming REQUESTs are currently ignored as per original logic's implicit filter
                 _LOGGER.debug("Ignoring incoming packet with payload type REQUEST from %s.", source_address)
+            elif payload_type == DataType.NACK:
+                # Incoming NACKs are generally errors from devices about writes, log them
+                should_process = True
+                _LOGGER.warning(
+                    "Received NACK from %s for packet number %s.",
+                    source_address,
+                    kwargs["packetNumber"],
+                )
             else:
                 _LOGGER.debug(
                     "Ignoring incoming packet with unknown payload type %s from %s.", payload_type, source_address
@@ -111,7 +119,7 @@ class NasaPacketParser:
         # ACK packets can also indicate that a read/write request was processed
         if (
             not is_outgoing_from_self
-            and payload_type in [DataType.RESPONSE, DataType.ACK]
+            and payload_type in [DataType.RESPONSE, DataType.ACK, DataType.NACK]
             and self._pending_read_handler
         ):
             # For both RESPONSE and ACK packets, extract message numbers from the datasets

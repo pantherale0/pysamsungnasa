@@ -4,34 +4,36 @@ pysamsungnasa includes an interactive command-line interface for testing and man
 
 ## Launching the CLI
 
-### Using the run.py Script
-
-The project includes a `run.py` script that launches the interactive CLI:
+The CLI is part of the module and can be launched directly, check the installation guide for information about installing required dependancies.
 
 ```bash
-python run.py
+python -m pysamsungnasa
 ```
 
-### Configuration
+## Configuration
 
 The CLI reads configuration from environment variables and a `.env` file:
 
 ```bash
 # .env file
-NASA_HOST=192.168.1.100
-NASA_PORT=8000
-NASA_CLIENT_ADDRESS=1
-NASA_DEBUG=false
+SAMSUNG_HP_HOST=192.168.1.100
+SAMSUNG_HP_PORT=8000
+SAMSUNG_HP_DEVICE_PNP=true
+SAMSUNG_HP_DEVICE_DUMP_ONLY=false
+SAMSUNG_HP_LOG_ALL_MESSAGES=false
+SAMSUNG_HP_LOG_BUFFER_MESSAGES=false
+SAMSUNG_HP_MESSAGES_TO_LOG=0x4000 # Enable enhanced logging about message code 0x4000
+SAMSUNG_HP_DEVICES_TO_LOG=200000 # Enable enhanced logging for all messages from device 200000
 ```
 
-Or set environment variables:
+Or set environment variables directly:
 
 ```bash
-export NASA_HOST=192.168.1.100
-export NASA_PORT=8000
-export NASA_CLIENT_ADDRESS=1
+export SAMSUNG_HP_HOST=192.168.1.100
+export SAMSUNG_HP_PORT=8000
+export SAMSUNG_HP_DEVICE_PNP=true
 
-python run.py
+python -m pysamsungnasa
 ```
 
 ## Commands

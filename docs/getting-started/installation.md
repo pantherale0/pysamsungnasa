@@ -81,12 +81,12 @@ print("pysamsungnasa is installed!")
 
 ## Optional Dependencies
 
-### Spark Support
+### CLI Usage
 
-For Apache Spark integration:
+The integrated CLI is available by default however additional dependancies are required for it to run, execute the below command before running:
 
 ```bash
-pip install "pysamsungnasa[spark]"
+pip install "pysamsungnasa[cli]"
 ```
 
 ## Troubleshooting

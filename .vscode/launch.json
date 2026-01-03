@@ -2,10 +2,10 @@
     "version": "0.1.0",
     "configurations": [
         {
-            "name": "Python Debugger: Current File",
+            "name": "Python Debugger: Samsung NASA CLI",
             "type": "debugpy",
             "request": "launch",
-            "program": "run.py",
+            "module": "pysamsungnasa",
             "console": "integratedTerminal",
             "justMyCode": false
         },
