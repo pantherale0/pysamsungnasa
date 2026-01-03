@@ -21,8 +21,8 @@ async def main():
         sys.exit(1)
 
     nasa = SamsungNasa(
-        host=os.getenv("SAMSUNG_HP_HOST", "unknown"),
-        port=int(os.getenv("SAMSUNG_HP_PORT", 0)),
+        host=os.getenv("SAMSUNG_HP_HOST"),
+        port=int(os.getenv("SAMSUNG_HP_PORT")),
         config={
             "device_pnp": os.getenv("SAMSUNG_HP_DEVICE_PNP", "True").lower() in ("true", "1", "yes"),
             "device_dump_only": os.getenv("SAMSUNG_HP_DEVICE_DUMP_ONLY", "False").lower() in ("true", "1", "yes"),
