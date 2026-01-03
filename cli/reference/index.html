@@ -1199,21 +1199,9 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Launching the CLI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#using-the-runpy-script" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using the run.py Script
-      
-    </span>
-  </a>
-  
 </li>
-        
-          <li class="md-nav__item">
+      
+        <li class="md-nav__item">
   <a href="#configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1221,11 +1209,6 @@
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1726,24 +1709,27 @@
 <h1 id="cli-reference">CLI Reference<a class="headerlink" href="#cli-reference" title="Permanent link">&para;</a></h1>
 <p>pysamsungnasa includes an interactive command-line interface for testing and managing your Samsung HVAC units.</p>
 <h2 id="launching-the-cli">Launching the CLI<a class="headerlink" href="#launching-the-cli" title="Permanent link">&para;</a></h2>
-<h3 id="using-the-runpy-script">Using the run.py Script<a class="headerlink" href="#using-the-runpy-script" title="Permanent link">&para;</a></h3>
-<p>The project includes a <code>run.py</code> script that launches the interactive CLI:</p>
-<div class="highlight"><pre><span></span><code>python<span class="w"> </span>run.py
+<p>The CLI is part of the module and can be launched directly, check the installation guide for information about installing required dependancies.</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>pysamsungnasa
 </code></pre></div>
-<h3 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h3>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
 <p>The CLI reads configuration from environment variables and a <code>.env</code> file:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># .env file</span>
-<span class="nv">NASA_HOST</span><span class="o">=</span><span class="m">192</span>.168.1.100
-<span class="nv">NASA_PORT</span><span class="o">=</span><span class="m">8000</span>
-<span class="nv">NASA_CLIENT_ADDRESS</span><span class="o">=</span><span class="m">1</span>
-<span class="nv">NASA_DEBUG</span><span class="o">=</span><span class="nb">false</span>
+<span class="nv">SAMSUNG_HP_HOST</span><span class="o">=</span><span class="m">192</span>.168.1.100
+<span class="nv">SAMSUNG_HP_PORT</span><span class="o">=</span><span class="m">8000</span>
+<span class="nv">SAMSUNG_HP_DEVICE_PNP</span><span class="o">=</span><span class="nb">true</span>
+<span class="nv">SAMSUNG_HP_DEVICE_DUMP_ONLY</span><span class="o">=</span><span class="nb">false</span>
+<span class="nv">SAMSUNG_HP_LOG_ALL_MESSAGES</span><span class="o">=</span><span class="nb">false</span>
+<span class="nv">SAMSUNG_HP_LOG_BUFFER_MESSAGES</span><span class="o">=</span><span class="nb">false</span>
+<span class="nv">SAMSUNG_HP_MESSAGES_TO_LOG</span><span class="o">=</span>0x4000<span class="w"> </span><span class="c1"># Enable enhanced logging about message code 0x4000</span>
+<span class="nv">SAMSUNG_HP_DEVICES_TO_LOG</span><span class="o">=</span><span class="m">200000</span><span class="w"> </span><span class="c1"># Enable enhanced logging for all messages from device 200000</span>
 </code></pre></div>
-<p>Or set environment variables:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">NASA_HOST</span><span class="o">=</span><span class="m">192</span>.168.1.100
-<span class="nb">export</span><span class="w"> </span><span class="nv">NASA_PORT</span><span class="o">=</span><span class="m">8000</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">NASA_CLIENT_ADDRESS</span><span class="o">=</span><span class="m">1</span>
+<p>Or set environment variables directly:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">SAMSUNG_HP_HOST</span><span class="o">=</span><span class="m">192</span>.168.1.100
+<span class="nb">export</span><span class="w"> </span><span class="nv">SAMSUNG_HP_PORT</span><span class="o">=</span><span class="m">8000</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">SAMSUNG_HP_DEVICE_PNP</span><span class="o">=</span><span class="nb">true</span>
 
-python<span class="w"> </span>run.py
+python<span class="w"> </span>-m<span class="w"> </span>pysamsungnasa
 </code></pre></div>
 <h2 id="commands">Commands<a class="headerlink" href="#commands" title="Permanent link">&para;</a></h2>
 <h3 id="help">Help<a class="headerlink" href="#help" title="Permanent link">&para;</a></h3>

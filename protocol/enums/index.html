@@ -1577,19 +1577,19 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pysamsungnasa.protocol.enum.In3WayValve2" class="md-nav__link">
+  <a href="#pysamsungnasa.protocol.enum.In3WayValve" class="md-nav__link">
     <span class="md-ellipsis">
       
-        In3WayValve2
+        In3WayValve
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="In3WayValve2">
+    <nav class="md-nav" aria-label="In3WayValve">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#pysamsungnasa.protocol.enum.In3WayValve2.ROOM" class="md-nav__link">
+  <a href="#pysamsungnasa.protocol.enum.In3WayValve.ROOM" class="md-nav__link">
     <span class="md-ellipsis">
       
         ROOM
@@ -1600,7 +1600,7 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pysamsungnasa.protocol.enum.In3WayValve2.TANK" class="md-nav__link">
+  <a href="#pysamsungnasa.protocol.enum.In3WayValve.TANK" class="md-nav__link">
     <span class="md-ellipsis">
       
         TANK
@@ -5412,45 +5412,6 @@
     <span class="md-ellipsis">
       
         ENABLED
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pysamsungnasa.protocol.enum.InThermostatMode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        InThermostatMode
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="InThermostatMode">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pysamsungnasa.protocol.enum.InThermostatMode.OFF" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        OFF
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pysamsungnasa.protocol.enum.InThermostatMode.ON" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ON
       
     </span>
   </a>
@@ -10433,11 +10394,11 @@ Remarks: "0 Off, 2 CV, 3 Boiler"</p>
 
 
 
-<h3 id="pysamsungnasa.protocol.enum.In3WayValve2" class="doc doc-heading">
-            <code>In3WayValve2</code>
+<h3 id="pysamsungnasa.protocol.enum.In3WayValve" class="doc doc-heading">
+            <code>In3WayValve</code>
 
 
-<a href="#pysamsungnasa.protocol.enum.In3WayValve2" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#pysamsungnasa.protocol.enum.In3WayValve" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
     <div class="doc doc-contents ">
@@ -10446,9 +10407,9 @@ Remarks: "0 Off, 2 CV, 3 Boiler"</p>
 
 
 
-        <p>3-Way Valve 2 state (Message 0x4113).
-Label (NASA.prc): ENUM_IN_3WAY_VALVE_2
-XML ProtocolID: ENUM_IN_3WAY_VALVE_2</p>
+        <p>3-Way Valve state (Message 0x4067/0x4113).
+Label (NASA.prc): ENUM_IN_3WAY_VALVE
+XML ProtocolID: ENUM_IN_3WAY_VALVE</p>
 
 
 
@@ -10469,11 +10430,11 @@ XML ProtocolID: ENUM_IN_3WAY_VALVE_2</p>
 <span class="normal">1380</span>
 <span class="normal">1381</span>
 <span class="normal">1382</span>
-<span class="normal">1383</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">In3WayValve2</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
+<span class="normal">1383</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">In3WayValve</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    3-Way Valve 2 state (Message 0x4113).</span>
-<span class="sd">    Label (NASA.prc): ENUM_IN_3WAY_VALVE_2</span>
-<span class="sd">    XML ProtocolID: ENUM_IN_3WAY_VALVE_2</span>
+<span class="sd">    3-Way Valve state (Message 0x4067/0x4113).</span>
+<span class="sd">    Label (NASA.prc): ENUM_IN_3WAY_VALVE</span>
+<span class="sd">    XML ProtocolID: ENUM_IN_3WAY_VALVE</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">ROOM</span> <span class="o">=</span> <span class="mi">0</span>
@@ -10497,7 +10458,7 @@ XML ProtocolID: ENUM_IN_3WAY_VALVE_2</p>
 
 
 
-<h4 id="pysamsungnasa.protocol.enum.In3WayValve2.ROOM" class="doc doc-heading">
+<h4 id="pysamsungnasa.protocol.enum.In3WayValve.ROOM" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">ROOM</span> <span class="o">=</span> <span class="mi">0</span></code>
 
   <span class="doc doc-labels">
@@ -10505,7 +10466,7 @@ XML ProtocolID: ENUM_IN_3WAY_VALVE_2</p>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
-<a href="#pysamsungnasa.protocol.enum.In3WayValve2.ROOM" class="headerlink" title="Permanent link">&para;</a></h4>
+<a href="#pysamsungnasa.protocol.enum.In3WayValve.ROOM" class="headerlink" title="Permanent link">&para;</a></h4>
 
 
     <div class="doc doc-contents ">
@@ -10520,7 +10481,7 @@ XML ProtocolID: ENUM_IN_3WAY_VALVE_2</p>
 
 
 
-<h4 id="pysamsungnasa.protocol.enum.In3WayValve2.TANK" class="doc doc-heading">
+<h4 id="pysamsungnasa.protocol.enum.In3WayValve.TANK" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">TANK</span> <span class="o">=</span> <span class="mi">1</span></code>
 
   <span class="doc doc-labels">
@@ -10528,7 +10489,7 @@ XML ProtocolID: ENUM_IN_3WAY_VALVE_2</p>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
-<a href="#pysamsungnasa.protocol.enum.In3WayValve2.TANK" class="headerlink" title="Permanent link">&para;</a></h4>
+<a href="#pysamsungnasa.protocol.enum.In3WayValve.TANK" class="headerlink" title="Permanent link">&para;</a></h4>
 
 
     <div class="doc doc-contents ">
@@ -12148,16 +12109,16 @@ Label (NASA.prc): ENUM_IN_DISCHARGE_TEMP_CONTROL</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>pysamsungnasa/protocol/enum.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2236</span>
-<span class="normal">2237</span>
-<span class="normal">2238</span>
-<span class="normal">2239</span>
-<span class="normal">2240</span>
-<span class="normal">2241</span>
-<span class="normal">2242</span>
-<span class="normal">2243</span>
-<span class="normal">2244</span>
-<span class="normal">2245</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InDischargeTempControl</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2224</span>
+<span class="normal">2225</span>
+<span class="normal">2226</span>
+<span class="normal">2227</span>
+<span class="normal">2228</span>
+<span class="normal">2229</span>
+<span class="normal">2230</span>
+<span class="normal">2231</span>
+<span class="normal">2232</span>
+<span class="normal">2233</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InDischargeTempControl</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Indoor unit discharge temperature control (Message 0x4070).</span>
 <span class="sd">    Label (NASA.prc): ENUM_IN_DISCHARGE_TEMP_CONTROL</span>
@@ -14103,16 +14064,16 @@ Label (NASA.prc): ENUM_IN_FSV302_LOUVER_CONTROL</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>pysamsungnasa/protocol/enum.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2284</span>
-<span class="normal">2285</span>
-<span class="normal">2286</span>
-<span class="normal">2287</span>
-<span class="normal">2288</span>
-<span class="normal">2289</span>
-<span class="normal">2290</span>
-<span class="normal">2291</span>
-<span class="normal">2292</span>
-<span class="normal">2293</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InFsv302LouverControl</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2272</span>
+<span class="normal">2273</span>
+<span class="normal">2274</span>
+<span class="normal">2275</span>
+<span class="normal">2276</span>
+<span class="normal">2277</span>
+<span class="normal">2278</span>
+<span class="normal">2279</span>
+<span class="normal">2280</span>
+<span class="normal">2281</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InFsv302LouverControl</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Indoor unit FSV 302 louver control (Message 0x407B).</span>
 <span class="sd">    Label (NASA.prc): ENUM_IN_FSV302_LOUVER_CONTROL</span>
@@ -14221,16 +14182,16 @@ Label (NASA.prc): ENUM_IN_FSV302_LOUVER_VALUE</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>pysamsungnasa/protocol/enum.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2296</span>
-<span class="normal">2297</span>
-<span class="normal">2298</span>
-<span class="normal">2299</span>
-<span class="normal">2300</span>
-<span class="normal">2301</span>
-<span class="normal">2302</span>
-<span class="normal">2303</span>
-<span class="normal">2304</span>
-<span class="normal">2305</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InFsv302LouverValue</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2284</span>
+<span class="normal">2285</span>
+<span class="normal">2286</span>
+<span class="normal">2287</span>
+<span class="normal">2288</span>
+<span class="normal">2289</span>
+<span class="normal">2290</span>
+<span class="normal">2291</span>
+<span class="normal">2292</span>
+<span class="normal">2293</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InFsv302LouverValue</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Indoor unit FSV 302 louver value (Message 0x407D).</span>
 <span class="sd">    Label (NASA.prc): ENUM_IN_FSV302_LOUVER_VALUE</span>
@@ -14339,16 +14300,16 @@ Label (NASA.prc): ENUM_IN_FSV302_TIME_SCHEDULE</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>pysamsungnasa/protocol/enum.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2308</span>
-<span class="normal">2309</span>
-<span class="normal">2310</span>
-<span class="normal">2311</span>
-<span class="normal">2312</span>
-<span class="normal">2313</span>
-<span class="normal">2314</span>
-<span class="normal">2315</span>
-<span class="normal">2316</span>
-<span class="normal">2317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InFsv302TimeSchedule</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2296</span>
+<span class="normal">2297</span>
+<span class="normal">2298</span>
+<span class="normal">2299</span>
+<span class="normal">2300</span>
+<span class="normal">2301</span>
+<span class="normal">2302</span>
+<span class="normal">2303</span>
+<span class="normal">2304</span>
+<span class="normal">2305</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InFsv302TimeSchedule</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Indoor unit FSV 302 time schedule (Message 0x4085).</span>
 <span class="sd">    Label (NASA.prc): ENUM_IN_FSV302_TIME_SCHEDULE</span>
@@ -17723,16 +17684,16 @@ Label (NASA.prc): ENUM_IN_LOUVER_HL_AUTO</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>pysamsungnasa/protocol/enum.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2248</span>
-<span class="normal">2249</span>
-<span class="normal">2250</span>
-<span class="normal">2251</span>
-<span class="normal">2252</span>
-<span class="normal">2253</span>
-<span class="normal">2254</span>
-<span class="normal">2255</span>
-<span class="normal">2256</span>
-<span class="normal">2257</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InLouverHlAuto</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2236</span>
+<span class="normal">2237</span>
+<span class="normal">2238</span>
+<span class="normal">2239</span>
+<span class="normal">2240</span>
+<span class="normal">2241</span>
+<span class="normal">2242</span>
+<span class="normal">2243</span>
+<span class="normal">2244</span>
+<span class="normal">2245</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InLouverHlAuto</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Indoor unit louver HL auto control (Message 0x4073).</span>
 <span class="sd">    Label (NASA.prc): ENUM_IN_LOUVER_HL_AUTO</span>
@@ -17841,16 +17802,16 @@ Label (NASA.prc): ENUM_IN_LOUVER_HL_AUTO_UP_DOWN</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>pysamsungnasa/protocol/enum.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2260</span>
-<span class="normal">2261</span>
-<span class="normal">2262</span>
-<span class="normal">2263</span>
-<span class="normal">2264</span>
-<span class="normal">2265</span>
-<span class="normal">2266</span>
-<span class="normal">2267</span>
-<span class="normal">2268</span>
-<span class="normal">2269</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InLouverHlAutoUpDown</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2248</span>
+<span class="normal">2249</span>
+<span class="normal">2250</span>
+<span class="normal">2251</span>
+<span class="normal">2252</span>
+<span class="normal">2253</span>
+<span class="normal">2254</span>
+<span class="normal">2255</span>
+<span class="normal">2256</span>
+<span class="normal">2257</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InLouverHlAutoUpDown</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Indoor unit louver HL auto up/down control (Message 0x4074).</span>
 <span class="sd">    Label (NASA.prc): ENUM_IN_LOUVER_HL_AUTO_UP_DOWN</span>
@@ -19026,7 +18987,19 @@ Label (NASA.ptc): VAR_in_model_information</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>pysamsungnasa/protocol/enum.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2320</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2308</span>
+<span class="normal">2309</span>
+<span class="normal">2310</span>
+<span class="normal">2311</span>
+<span class="normal">2312</span>
+<span class="normal">2313</span>
+<span class="normal">2314</span>
+<span class="normal">2315</span>
+<span class="normal">2316</span>
+<span class="normal">2317</span>
+<span class="normal">2318</span>
+<span class="normal">2319</span>
+<span class="normal">2320</span>
 <span class="normal">2321</span>
 <span class="normal">2322</span>
 <span class="normal">2323</span>
@@ -19211,19 +19184,7 @@ Label (NASA.ptc): VAR_in_model_information</p>
 <span class="normal">2502</span>
 <span class="normal">2503</span>
 <span class="normal">2504</span>
-<span class="normal">2505</span>
-<span class="normal">2506</span>
-<span class="normal">2507</span>
-<span class="normal">2508</span>
-<span class="normal">2509</span>
-<span class="normal">2510</span>
-<span class="normal">2511</span>
-<span class="normal">2512</span>
-<span class="normal">2513</span>
-<span class="normal">2514</span>
-<span class="normal">2515</span>
-<span class="normal">2516</span>
-<span class="normal">2517</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InModelInformation</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
+<span class="normal">2505</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InModelInformation</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Indoor unit model information (Message 0x4229).</span>
 <span class="sd">    Label (NASA.ptc): VAR_in_model_information</span>
@@ -21263,16 +21224,16 @@ Label (NASA.prc): ENUM_IN_OUTING_MODE</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>pysamsungnasa/protocol/enum.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2212</span>
-<span class="normal">2213</span>
-<span class="normal">2214</span>
-<span class="normal">2215</span>
-<span class="normal">2216</span>
-<span class="normal">2217</span>
-<span class="normal">2218</span>
-<span class="normal">2219</span>
-<span class="normal">2220</span>
-<span class="normal">2221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InOutingMode</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2200</span>
+<span class="normal">2201</span>
+<span class="normal">2202</span>
+<span class="normal">2203</span>
+<span class="normal">2204</span>
+<span class="normal">2205</span>
+<span class="normal">2206</span>
+<span class="normal">2207</span>
+<span class="normal">2208</span>
+<span class="normal">2209</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InOutingMode</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Indoor unit outing mode (Message 0x406D).</span>
 <span class="sd">    Label (NASA.prc): ENUM_IN_OUTING_MODE</span>
@@ -21502,16 +21463,16 @@ Label (NASA.prc): ENUM_IN_QUIET_MODE</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>pysamsungnasa/protocol/enum.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2224</span>
-<span class="normal">2225</span>
-<span class="normal">2226</span>
-<span class="normal">2227</span>
-<span class="normal">2228</span>
-<span class="normal">2229</span>
-<span class="normal">2230</span>
-<span class="normal">2231</span>
-<span class="normal">2232</span>
-<span class="normal">2233</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InQuietMode</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2212</span>
+<span class="normal">2213</span>
+<span class="normal">2214</span>
+<span class="normal">2215</span>
+<span class="normal">2216</span>
+<span class="normal">2217</span>
+<span class="normal">2218</span>
+<span class="normal">2219</span>
+<span class="normal">2220</span>
+<span class="normal">2221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InQuietMode</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Indoor unit quiet mode (Message 0x406E).</span>
 <span class="sd">    Label (NASA.prc): ENUM_IN_QUIET_MODE</span>
@@ -21920,16 +21881,16 @@ Label (NASA.prc): ENUM_IN_SOLAR_PUMP</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>pysamsungnasa/protocol/enum.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2188</span>
-<span class="normal">2189</span>
-<span class="normal">2190</span>
-<span class="normal">2191</span>
-<span class="normal">2192</span>
-<span class="normal">2193</span>
-<span class="normal">2194</span>
-<span class="normal">2195</span>
-<span class="normal">2196</span>
-<span class="normal">2197</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InSolarPump</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2176</span>
+<span class="normal">2177</span>
+<span class="normal">2178</span>
+<span class="normal">2179</span>
+<span class="normal">2180</span>
+<span class="normal">2181</span>
+<span class="normal">2182</span>
+<span class="normal">2183</span>
+<span class="normal">2184</span>
+<span class="normal">2185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InSolarPump</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Indoor unit solar pump control (Message 0x4068).</span>
 <span class="sd">    Label (NASA.prc): ENUM_IN_SOLAR_PUMP</span>
@@ -22611,16 +22572,16 @@ Label (NASA.prc): ENUM_IN_THERMOSTAT0</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>pysamsungnasa/protocol/enum.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2200</span>
-<span class="normal">2201</span>
-<span class="normal">2202</span>
-<span class="normal">2203</span>
-<span class="normal">2204</span>
-<span class="normal">2205</span>
-<span class="normal">2206</span>
-<span class="normal">2207</span>
-<span class="normal">2208</span>
-<span class="normal">2209</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InThermostat0</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2188</span>
+<span class="normal">2189</span>
+<span class="normal">2190</span>
+<span class="normal">2191</span>
+<span class="normal">2192</span>
+<span class="normal">2193</span>
+<span class="normal">2194</span>
+<span class="normal">2195</span>
+<span class="normal">2196</span>
+<span class="normal">2197</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InThermostat0</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Indoor unit thermostat 0 mode (Message 0x406B).</span>
 <span class="sd">    Label (NASA.prc): ENUM_IN_THERMOSTAT0</span>
@@ -22684,124 +22645,6 @@ Label (NASA.prc): ENUM_IN_THERMOSTAT0</p>
     <div class="doc doc-contents ">
 
         <p>Thermostat 0 is enabled</p>
-
-    </div>
-
-</div>
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="pysamsungnasa.protocol.enum.InThermostatMode" class="doc doc-heading">
-            <code>InThermostatMode</code>
-
-
-<a href="#pysamsungnasa.protocol.enum.InThermostatMode" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-    <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="SamsungEnum (pysamsungnasa.protocol.enum.SamsungEnum)" href="#pysamsungnasa.protocol.enum.SamsungEnum">SamsungEnum</a></code>, <code><span title="enum.IntEnum">IntEnum</span></code></p>
-
-
-
-        <p>Indoor unit thermostat mode (Message 0x4067).
-Label (NASA.prc): ENUM_IN_THERMOSTAT_MODE</p>
-
-
-
-
-
-
-
-
-              <details class="mkdocstrings-source">
-                <summary>Source code in <code>pysamsungnasa/protocol/enum.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2176</span>
-<span class="normal">2177</span>
-<span class="normal">2178</span>
-<span class="normal">2179</span>
-<span class="normal">2180</span>
-<span class="normal">2181</span>
-<span class="normal">2182</span>
-<span class="normal">2183</span>
-<span class="normal">2184</span>
-<span class="normal">2185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InThermostatMode</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Indoor unit thermostat mode (Message 0x4067).</span>
-<span class="sd">    Label (NASA.prc): ENUM_IN_THERMOSTAT_MODE</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">OFF</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Thermostat mode is off&quot;&quot;&quot;</span>
-    <span class="n">ON</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Thermostat mode is on&quot;&quot;&quot;</span>
-</code></pre></div></td></tr></table></div>
-              </details>
-
-
-
-<div class="doc doc-children">
-
-
-
-
-
-
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h4 id="pysamsungnasa.protocol.enum.InThermostatMode.OFF" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">OFF</span> <span class="o">=</span> <span class="mi">0</span></code>
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
-  </span>
-
-<a href="#pysamsungnasa.protocol.enum.InThermostatMode.OFF" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Thermostat mode is off</p>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h4 id="pysamsungnasa.protocol.enum.InThermostatMode.ON" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">ON</span> <span class="o">=</span> <span class="mi">1</span></code>
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
-  </span>
-
-<a href="#pysamsungnasa.protocol.enum.InThermostatMode.ON" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Thermostat mode is on</p>
 
     </div>
 
@@ -24680,16 +24523,16 @@ Label (NASA.prc): ENUM_IN_WALL_MOUNTED_REMOTE_CONTROL</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>pysamsungnasa/protocol/enum.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2272</span>
-<span class="normal">2273</span>
-<span class="normal">2274</span>
-<span class="normal">2275</span>
-<span class="normal">2276</span>
-<span class="normal">2277</span>
-<span class="normal">2278</span>
-<span class="normal">2279</span>
-<span class="normal">2280</span>
-<span class="normal">2281</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InWallMountedRemoteControl</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2260</span>
+<span class="normal">2261</span>
+<span class="normal">2262</span>
+<span class="normal">2263</span>
+<span class="normal">2264</span>
+<span class="normal">2265</span>
+<span class="normal">2266</span>
+<span class="normal">2267</span>
+<span class="normal">2268</span>
+<span class="normal">2269</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InWallMountedRemoteControl</span><span class="p">(</span><span class="n">SamsungEnum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Indoor unit wall mounted remote control (Message 0x4077).</span>
 <span class="sd">    Label (NASA.prc): ENUM_IN_WALL_MOUNTED_REMOTE_CONTROL</span>
