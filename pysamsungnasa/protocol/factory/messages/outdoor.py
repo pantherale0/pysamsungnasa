@@ -1367,11 +1367,11 @@ class OutdoorMcuChangeoverEev6(FloatMessage):
     MESSAGE_NAME = "MCU changeover EEV6"
 
 
-class OutdoorCompressor2OrderFreqency(IntegerMessage):
-    """Parser for message 0x8274 (Compressor 2 order freqency)."""
+class OutdoorCompressor2OrderFrequency(IntegerMessage):
+    """Parser for message 0x8274 (Compressor 2 order frequency)."""
 
     MESSAGE_ID = 0x8274
-    MESSAGE_NAME = "Compressor 2 order freqency"
+    MESSAGE_NAME = "Compressor 2 order frequency"
 
 
 class OutdoorCompressor2TargetFreqency(IntegerMessage):
