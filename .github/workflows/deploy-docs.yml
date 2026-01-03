@@ -6,14 +6,9 @@ on:
       - main
     paths:
       - 'docs/**'
+      - 'pysamsungnasa/protocol/factory/**'
       - 'mkdocs.yml'
       - '.github/workflows/deploy-docs.yml'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'docs/**'
-      - 'mkdocs.yml'
 
 permissions:
   contents: write

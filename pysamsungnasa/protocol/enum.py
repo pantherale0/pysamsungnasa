@@ -962,56 +962,56 @@ class InFsv4011(SamsungEnum, IntEnum):
 
 class InFsv4021(SamsungEnum, IntEnum):
     """
-    FSV #4021: Operation Mode Configuration (Message 0x409F).
+    FSV #4021: Backup Heater Application (Message 0x409F).
 
-    Sets operational mode configuration option.
-    Range: 0-2.
+    Enables electric backup heater and configures number of heating steps.
+    Default: 0 (No). Range: 0-2.
 
     Label (NASA.prc): ENUM_IN_FSV_4021
     """
 
-    VALUE_0 = 0
-    """Operation mode 0"""
-    VALUE_1 = 1
-    """Operation mode 1"""
-    VALUE_2 = 2
-    """Operation mode 2"""
+    NO = 0
+    """Backup heater disabled"""
+    BUH_TWO_STEP = 1
+    """Two-step backup heater (BUH 1 + BUH 2)"""
+    BUH_ONE_STEP = 2
+    """Single-step backup heater (BUH 1 only)"""
 
 
 class InFsv4022(SamsungEnum, IntEnum):
     """
-    FSV #4022: Backup Heater Type Selection (Message 0x40A0).
+    FSV #4022: BUH/BSH Priority (Message 0x40A0).
 
-    Selects backup heater configuration (BUH=Booster, BSH=Backup).
-    Default: Both. Range: 0-2.
+    Sets priority between Booster Heater (BSH) and Backup Heater (BUH).
+    Default: 2 (BSH). Range: 0-2.
 
     Label (NASA.prc): ENUM_IN_FSV_4022
     """
 
-    BUH_BSH_BOTH = 0
-    """Both BUH and BSH backup heaters available"""
-    BUH = 1
-    """Booster Unit Heater (BUH) only"""
-    BSH = 2
-    """Backup Supply Heater (BSH) only"""
+    BOTH = 0
+    """Both heaters can operate simultaneously"""
+    BUH_PRIORITY = 1
+    """Backup heater has priority, booster heater idle until BUH offline"""
+    BSH_PRIORITY = 2
+    """Booster heater has priority (default), backup when BSH unavailable"""
 
 
 class InFsv4041(SamsungEnum, IntEnum):
     """
-    FSV #4041: Feature Configuration (Message 0x40C0).
+    FSV #4041: Mixing Valve Application (Message 0x40C0).
 
-    Enables/disables optional feature configuration.
-    Default: No. Range: 0-2.
+    Enables mixing valve and selects control mode.
+    Default: 0 (No). Range: 0-2.
 
     Label (NASA.prc): ENUM_IN_FSV_4041
     """
 
     NO = 0
-    """Feature disabled"""
-    VALUE_1 = 1
-    """Feature mode 1"""
-    VALUE_2 = 2
-    """Feature mode 2"""
+    """Mixing valve disabled/not installed"""
+    DELTA_T_CONTROL = 1
+    """Valve modulates based on temperature difference target (FSV #4042, #4043)"""
+    WATER_LAW_CONTROL = 2
+    """Valve modulates based on Water Law (WL) value from control system"""
 
 
 class InFsv5033(SamsungEnum, IntEnum):
@@ -1033,54 +1033,49 @@ class InFsv5033(SamsungEnum, IntEnum):
 
 class InFsv5042(SamsungEnum, IntEnum):
     """
-    FSV #5042: Zone/Area Control Configuration (Message 0x40A5).
+    FSV #5042: Power Peak Control - Select Forced Off Parts (Message 0x40A5).
 
-    Controls zone or area selection for multi-zone systems.
-    Default: All. Range: 0-3.
+    Selects which system components are forced off when external power peak signal is active.
+    Default: 0 (All). Range: 0-3.
+
+    Controls load shedding during grid demand peaks:
+    - 0 (All): Backup heater forced OFF, Booster heater permitted, Compressor permitted
+    - 1 (Compressor only): Backup heater forced OFF, Booster heater forced OFF, Compressor permitted
+    - 2 (Booster only): Compressor forced OFF, Booster heater permitted, Backup heater forced OFF
+    - 3 (None): All components forced OFF
 
     Label (NASA.prc): ENUM_IN_FSV_5042
     """
 
     ALL = 0
-    """All zones"""
-    VALUE_1 = 1
-    """Zone 1"""
-    VALUE_2 = 2
-    """Zone 2"""
-    VALUE_3 = 3
-    """Zone 3"""
+    """All heaters forced off (BUH off, Booster permitted, Compressor permitted)"""
+    COMPRESSOR_ONLY = 1
+    """Compressor only permitted (BUH off, Booster off, Compressor on)"""
+    BOOSTER_ONLY = 2
+    """Booster only permitted (Compressor off, Booster on, BUH off)"""
+    NONE = 3
+    """All components forced off"""
 
 
 class InFsv5043(SamsungEnum, IntEnum):
     """
-    FSV #5043: System Capacity Configuration (Message 0x40A6).
+    FSV #5043: Power Peak Control - Using Input Voltage (Message 0x40A6).
 
-    Sets system capacity or performance mode.
-    Default: Low. Range: 0-1.
+    Selects which external signal type triggers Power Peak Control forced-off mode.
+    Default: 1 (High). Range: 0-1.
+
+    - 0 (Low): Low external voltage/signal triggers forced-off
+    - 1 (High): High external voltage/signal triggers forced-off (default)
+
+    Adapts control logic to different power company signal standards.
 
     Label (NASA.prc): ENUM_IN_FSV_5043
     """
 
     LOW = 0
-    """Low capacity/performance mode"""
+    """Low signal/voltage triggers forced-off"""
     HIGH = 1
-    """High capacity/performance mode"""
-
-
-class InFsv5051(SamsungEnum, IntEnum):
-    """
-    FSV #5051: Optional Feature Enable (Message 0x40A7).
-
-    Enables or disables an optional system feature.
-    Default: No. Range: 0-1.
-
-    Label (NASA.prc): ENUM_IN_FSV_5051
-    """
-
-    NO = 0
-    """Feature disabled"""
-    YES = 1
-    """Feature enabled"""
+    """High signal/voltage triggers forced-off (default)"""
 
 
 class InFsv5061(SamsungEnum, IntEnum):
@@ -1119,11 +1114,39 @@ class InFsv4044(SamsungEnum, IntEnum):  # 0x40C1
 
 
 class InFsv4051(SamsungEnum, IntEnum):  # 0x40C2
-    """Indoor unit enum for FSV message 0x40C2. Specifics unknown."""
+    """
+    FSV #4051: Inverter Pump Application (Message 0x40C2).
+
+    Enables variable-speed inverter pump and sets maximum PWM output level.
+    Default: 1 (Yes/100%). Range: 0-2.
+
+    Label (NASA.prc): ENUM_IN_FSV_4051
+    """
+
+    NO = 0
+    """Inverter pump disabled, fixed-speed pump operation"""
+    YES_100_PERCENT = 1
+    """Inverter pump enabled, full PWM output (0-100%)"""
+    YES_70_PERCENT = 2
+    """Inverter pump enabled, limited PWM output (0-70% max)"""
 
 
 class InFsv4053(SamsungEnum, IntEnum):  # 0x40C3
-    """Indoor unit enum for FSV message 0x40C3. Specifics unknown."""
+    """
+    FSV #4053: Inverter Pump Control Factor (Message 0x40C3).
+
+    Sets inverter pump response speed to temperature difference error.
+    Default: 2 (Medium). Range: 1-3.
+
+    Label (NASA.prc): ENUM_IN_FSV_4053
+    """
+
+    SLOW = 1
+    """Gradual pump speed adjustment, stable flow"""
+    MEDIUM = 2
+    """Balanced response (default)"""
+    FAST = 3
+    """Quick pump speed adjustment, responsive to load changes"""
 
 
 class InUnknown40C6(SamsungEnum, IntEnum):
@@ -1147,32 +1170,6 @@ class InAutoStaticPressure(SamsungEnum, IntEnum):
     """Automatic pressure control is complete"""
     RUNNING = 2
     """Automatic pressure control is running"""
-
-
-class InVacancyControl(SamsungEnum, IntEnum):
-    """
-    Vacancy control (Message 0x40BD).
-    Label (NASA.prc): ENUM_IN_EMPTY_ROOM_CONTROL_USED
-    XML ProtocolID: ENUM_IN_EMPTY_ROOM_CONTROL_USED
-    """
-
-    DISABLE = 0
-    """Vacancy control is disabled"""
-    ENABLE = 1
-    """Vacancy control is enabled"""
-
-
-class InEnterRoomControl(SamsungEnum, IntEnum):
-    """
-    Enable room entry control option (Message 0x40D5).
-    Label (NASA.prc): ENUM_IN_ENTER_ROOM_CONTROL_USED
-    XML ProtocolID: ENUM_IN_ENTER_ROOM_CONTROL_USED
-    """
-
-    DISABLE = 0
-    """Room entry control is disabled"""
-    ENABLE = 1
-    """Room entry control is enabled"""
 
 
 class InChillerWaterlawSensor(SamsungEnum, IntEnum):
@@ -1396,43 +1393,20 @@ class InFsv4061(SamsungEnum, IntEnum):
     """Setting value 1"""
 
 
-class InFsv5081(SamsungEnum, IntEnum):
-    """
-    FSV 5081 (Message 0x411B).
-    Label (NASA.prc): ENUM_IN_FSV_5081
-    XML ProtocolID: ENUM_IN_FSV_5081
-    """
-
-    VALUE_0 = 0
-    """Setting value 0"""
-    VALUE_1 = 1
-    """Setting value 1"""
-
-
-class InFsv5091(SamsungEnum, IntEnum):
-    """
-    FSV 5091 (Message 0x411C).
-    Label (NASA.prc): ENUM_IN_FSV_5091
-    XML ProtocolID: ENUM_IN_FSV_5091
-    """
-
-    VALUE_0 = 0
-    """Setting value 0"""
-    VALUE_1 = 1
-    """Setting value 1"""
-
-
 class InFsv5094(SamsungEnum, IntEnum):
     """
-    FSV 5094 (Message 0x411D).
+    FSV #5094: DHW Mode Target Tank Temperature (Message 0x411D).
+
+    Selects the target tank temperature mode for domestic hot water operation.
+    Range: 0-1.
+
     Label (NASA.prc): ENUM_IN_FSV_5094
-    XML ProtocolID: ENUM_IN_FSV_5094
     """
 
     VALUE_0 = 0
-    """Setting value 0"""
+    """Setting value 0 (primary mode)"""
     VALUE_1 = 1
-    """Setting value 1"""
+    """Setting value 1 (alternate mode)"""
 
 
 class InZone2Power(SamsungEnum, IntEnum):
@@ -1446,19 +1420,6 @@ class InZone2Power(SamsungEnum, IntEnum):
     """Zone 2 is off"""
     ON = 1
     """Zone 2 is on"""
-
-
-class InPvContactState(SamsungEnum, IntEnum):
-    """
-    PV Contact State (Message 0x4123).
-    Label (NASA.prc): ENUM_IN_PV_CONTACT_STATE
-    XML ProtocolID: ENUM_IN_PV_CONTACT_STATE
-    """
-
-    DISABLE = 0
-    """PV contact is disabled"""
-    ENABLE = 1
-    """PV contact is enabled"""
 
 
 class InSgReadyModeState(SamsungEnum, IntEnum):
