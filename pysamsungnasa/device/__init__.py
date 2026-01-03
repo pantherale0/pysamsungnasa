@@ -75,10 +75,13 @@ class NasaDevice:
         if self.device_type != AddressClass.INDOOR:
             return  # Nothing to do
         _LOGGER.debug("Requesting FSV configuration for device %s", self.address)
-        for k in self._MESSAGES_TO_LISTEN:
-            if k not in self.attributes:
+        # Batch reads in groups of 10
+        attributes_set = set(self.attributes)
+        for i in range(0, len(self._MESSAGES_TO_LISTEN), 10):
+            missing_msgs = [k for k in self._MESSAGES_TO_LISTEN[i : i + 10] if k not in attributes_set]
+            if missing_msgs:
                 await self._client.nasa_read(
-                    msgs=[k],
+                    msgs=missing_msgs,
                     destination=self.address,
                 )
 

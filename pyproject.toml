@@ -19,12 +19,14 @@ classifiers = [
 requires-python = ">=3.13.0"
 dynamic = ["version"]
 dependencies = [
-    "dotenv>=0.9.9",
-    "aiotelnet~=1.1.0",
-    "aioconsole==0.8.2"
+    "aiotelnet~=1.1.0"
 ]
 
 [project.optional-dependencies]
+cli = [
+    "prompt_toolkit>=3.0.0",
+    "python-dotenv>=0.9.9"
+]
 docs = [
     "mkdocs>=1.4.0",
     "mkdocs-material>=9.0.0",

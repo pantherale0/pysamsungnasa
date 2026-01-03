@@ -99,6 +99,28 @@ class NasaPacketParser:
             elif payload_type == DataType.REQUEST:
                 # Incoming REQUESTs are currently ignored as per original logic's implicit filter
                 _LOGGER.debug("Ignoring incoming packet with payload type REQUEST from %s.", source_address)
+            elif payload_type == DataType.NACK:
+                # Incoming NACKs are generally errors from devices about writes
+                # They should notify pending_read_handler but not be processed as normal packets
+                _LOGGER.warning(
+                    "Received NACK from %s for packet number %s.",
+                    source_address,
+                    kwargs["packetNumber"],
+                )
+                # Notify pending read handler about the NACK
+                if self._pending_read_handler:
+                    message_numbers = []
+                    for ds in kwargs.get("dataSets", []):  # type: ignore
+                        if isinstance(ds, list) and len(ds) > 0:
+                            message_numbers.append(ds[0])
+                    try:
+                        result = self._pending_read_handler(source_address, message_numbers)
+                        if iscoroutinefunction(self._pending_read_handler):
+                            await result
+                    except Exception as e:
+                        _LOGGER.error("Error in pending_read_handler: %s", e)
+                # Return early - NACKs don't have valid dataSets to process
+                return
             else:
                 _LOGGER.debug(
                     "Ignoring incoming packet with unknown payload type %s from %s.", payload_type, source_address
@@ -109,6 +131,7 @@ class NasaPacketParser:
 
         # Notify pending read handler when we receive a response or acknowledgment
         # ACK packets can also indicate that a read/write request was processed
+        # Note: NACK is handled separately above to avoid processing invalid dataSets
         if (
             not is_outgoing_from_self
             and payload_type in [DataType.RESPONSE, DataType.ACK]

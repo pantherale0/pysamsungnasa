@@ -1129,10 +1129,10 @@ class DhwTargetTemperature(BasicTemperatureMessage):
 
 
 class InTempWaterInMessage(BasicTemperatureMessage):
-    """Parser for message 0x4236 (Water In Temperature)."""
+    """Parser for message 0x4236 (Return Water Temperature)."""
 
     MESSAGE_ID = 0x4236
-    MESSAGE_NAME = "Water In Temperature"
+    MESSAGE_NAME = "Return Water Temperature"
 
 
 class DhwCurrentTemperature(BasicTemperatureMessage):
@@ -1143,10 +1143,10 @@ class DhwCurrentTemperature(BasicTemperatureMessage):
 
 
 class IndoorFlowTemperature(BasicTemperatureMessage):
-    """Parser for 0x4238 (Indoor Flow Temperature)."""
+    """Parser for 0x4238 (Leaving Water Temperature)."""
 
     MESSAGE_ID = 0x4238
-    MESSAGE_NAME = "Indoor Flow Temperature"
+    MESSAGE_NAME = "Leaving Water Temperature"
 
 
 class InTempWaterOut2Message(BasicTemperatureMessage):
@@ -1485,8 +1485,8 @@ class InModulatingFanMessage(FloatMessage):
 
     MESSAGE_ID = 0x42CC
     MESSAGE_NAME = "Modulating Fan"
-    
-    
+
+
 class InWaterInletTemperature2Message(FloatMessage):
     """Parser for message 0x42CD (Water Inlet Temperature 2)."""
 
