@@ -1281,20 +1281,6 @@ class InFreeCooling(SamsungEnum, IntEnum):
     pass
 
 
-class InZone1Power(SamsungEnum, IntEnum):
-    """
-    Zone 1 operating power (Message 0x4119).
-    Label (NASA.prc): ENUM_IN_OPERATION_POWER_ZONE1
-    XML ProtocolID: ENUM_IN_OPERATION_POWER_ZONE1
-    Range: 0-1
-    """
-
-    OFF = 0
-    """Zone 1 is off"""
-    ON = 1
-    """Zone 1 is on"""
-
-
 class InGasLevel(SamsungEnum, IntEnum):
     """
     Gas level / Refrigerant inventory (Message 0x4147).
@@ -1319,19 +1305,6 @@ class InGasLevel(SamsungEnum, IntEnum):
     """Gas level 6"""
     VALUE_7 = 7
     """Gas level 7"""
-
-
-class InDiffuserOperation(SamsungEnum, IntEnum):
-    """
-    Diffuser operation (Message 0x4149).
-    Label (NASA.prc): ENUM_IN_DIFFUSER_OPERATION_POWER
-    XML ProtocolID: ENUM_IN_DIFFUSER_OPERATION_POWER
-    """
-
-    OFF = 0
-    """Diffuser is off"""
-    ON = 1
-    """Diffuser is on"""
 
 
 class InFsv2094(SamsungEnum, IntEnum):
@@ -1407,19 +1380,6 @@ class InFsv5094(SamsungEnum, IntEnum):
     """Setting value 0 (primary mode)"""
     VALUE_1 = 1
     """Setting value 1 (alternate mode)"""
-
-
-class InZone2Power(SamsungEnum, IntEnum):
-    """
-    Zone 2 operating power (Message 0x411E).
-    Label (NASA.prc): ENUM_IN_OPERATION_POWER_ZONE2
-    XML ProtocolID: ENUM_IN_OPERATION_POWER_ZONE2
-    """
-
-    OFF = 0
-    """Zone 2 is off"""
-    ON = 1
-    """Zone 2 is on"""
 
 
 class InSgReadyModeState(SamsungEnum, IntEnum):
@@ -2156,30 +2116,6 @@ class InThermostat0(SamsungEnum, IntEnum):
     """Thermostat 0 is disabled"""
     ENABLED = 1
     """Thermostat 0 is enabled"""
-
-
-class InOutingMode(SamsungEnum, IntEnum):
-    """
-    Indoor unit outing mode (Message 0x406D).
-    Label (NASA.prc): ENUM_IN_OUTING_MODE
-    """
-
-    OFF = 0
-    """Outing mode is off"""
-    ON = 1
-    """Outing mode is on"""
-
-
-class InQuietMode(SamsungEnum, IntEnum):
-    """
-    Indoor unit quiet mode (Message 0x406E).
-    Label (NASA.prc): ENUM_IN_QUIET_MODE
-    """
-
-    OFF = 0
-    """Quiet mode is off"""
-    ON = 1
-    """Quiet mode is on"""
 
 
 class InDischargeTempControl(SamsungEnum, IntEnum):

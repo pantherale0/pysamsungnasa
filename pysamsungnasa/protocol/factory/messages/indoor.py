@@ -71,8 +71,6 @@ from ...enum import (
     InLouverVlPos,
     InSolarPump,
     InThermostat0,
-    InOutingMode,
-    InQuietMode,
     InDischargeTempControl,
     InLouverHlAuto,
     InLouverHlAutoUpDown,
@@ -90,11 +88,8 @@ from ...enum import (
     InWaterValve,
     InEnthalpyControl,
     InFreeCooling,
-    InZone1Power,
     InGasLevel,
-    InDiffuserOperation,
     InFsv5094,
-    InZone2Power,
     In3WayValve,
     InSgReadyModeState,
 )
@@ -481,20 +476,18 @@ class InBackupHeater(EnumMessage):
     MESSAGE_ENUM = InBackupHeaterEnum
 
 
-class InOutingModeMessage(EnumMessage):
+class InOutingModeMessage(BoolMessage):
     """Parser for message 0x406D (Indoor Outing Mode)."""
 
     MESSAGE_ID = 0x406D
     MESSAGE_NAME = "Indoor Outing Mode"
-    MESSAGE_ENUM = InOutingMode
 
 
-class InQuietModeMessage(EnumMessage):
+class InQuietModeMessage(BoolMessage):
     """Parser for message 0x406E (Indoor Quiet Mode)."""
 
     MESSAGE_ID = 0x406E
     MESSAGE_NAME = "Indoor Quiet Mode"
-    MESSAGE_ENUM = InQuietMode
 
 
 class DhwReferenceTemperatureMessage(EnumMessage):
@@ -1310,12 +1303,11 @@ class InEnumUnknown4117Message(RawMessage):
     MESSAGE_NAME = "InEnumUnknown4117Message"
 
 
-class InZone1PowerMessage(EnumMessage):
+class InZone1PowerMessage(BoolMessage):
     """Parser for message 0x4119 (Zone 1 operating power)."""
 
     MESSAGE_ID = 0x4119
     MESSAGE_NAME = "Zone 1 operating power"
-    MESSAGE_ENUM = InZone1Power
 
 
 class InFsv4061Message(EnumMessage):
@@ -1447,12 +1439,11 @@ class InFsv5094Message(EnumMessage):
     MESSAGE_ENUM = InFsv5094
 
 
-class InZone2PowerMessage(EnumMessage):
+class InZone2PowerMessage(BoolMessage):
     """Parser for message 0x411E (Zone 2 operating power)."""
 
     MESSAGE_ID = 0x411E
     MESSAGE_NAME = "Zone 2 operating power"
-    MESSAGE_ENUM = InZone2Power
 
 
 class InPvContactStateMessage(BoolMessage):
@@ -1541,12 +1532,11 @@ class InGasLevelMessage(EnumMessage):
     MESSAGE_ENUM = InGasLevel
 
 
-class InDiffuserOperationMessage(EnumMessage):
+class InDiffuserOperationMessage(BoolMessage):
     """Parser for message 0x4149 (Diffuser operation)."""
 
     MESSAGE_ID = 0x4149
     MESSAGE_NAME = "Diffuser operation"
-    MESSAGE_ENUM = InDiffuserOperation
 
 
 class InTargetTemperature(BasicTemperatureMessage):
