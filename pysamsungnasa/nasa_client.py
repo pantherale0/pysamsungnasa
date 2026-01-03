@@ -364,6 +364,9 @@ class NasaClient:
                         continue
                     try:
                         packet_crc_from_msg = struct.unpack_from(">H", packet, -3)[0]
+                        # Extract message data (from after STX+Size to before CRC+ETX)
+                        # Packet: [STX] [Size-H] [Size-L] [Data...] [CRC-H] [CRC-L] [ETX]
+                        # Index:  [0]   [1]      [2]      [3...]    [-3]    [-2]    [-1]
                         packet_data = packet[3:-3]
                         packet_crc = binascii.crc_hqx(packet_data, 0)
 
@@ -574,13 +577,13 @@ class NasaClient:
         """Send write requests to a device to write data."""
         dest_addr = destination if isinstance(destination, str) else destination.address
         message = SendMessage(MESSAGE_ID=msg, PAYLOAD=hex2bin(value))
-        
+
         packet_number = await self.send_message(
             destination=destination,
             request_type=data_type,
             messages=[message],
         )
-        
+
         # Track this write request for retry logic if enabled
         if self._config.enable_write_retries and packet_number is not None:
             # Use message ID and destination as the key for matching ACKs
@@ -603,21 +606,21 @@ class NasaClient:
                 dest_addr,
                 self._config.write_retry_max_attempts,
             )
-        
+
         return packet_number
 
     def _clear_pending_write(self, destination: str, message_numbers: list[int]) -> list[str]:
         """Clear pending write requests for a destination when an ACK is received.
-        
+
         Args:
             destination: The destination address
             message_numbers: List of message IDs in the ACK packet. If empty, clears all pending writes for the destination.
-        
+
         Returns the list of write keys that were cleared.
         """
         cleared_keys = []
         keys_to_delete = []
-        
+
         for write_key, write_info in self._pending_writes.items():
             if write_info["destination"] == destination:
                 # If message_numbers is provided and not empty, only clear writes for those specific messages
@@ -626,16 +629,16 @@ class NasaClient:
                     continue
                 keys_to_delete.append(write_key)
                 cleared_keys.append(write_key)
-        
+
         for key in keys_to_delete:
             del self._pending_writes[key]
             _LOGGER.debug("Cleared pending write request for key %s", key)
-        
+
         return cleared_keys
 
     async def _mark_write_received(self, destination: str, message_numbers: list[int]) -> None:
         """Mark write requests as received when an ACK is received (event callback from parser).
-        
+
         Args:
             destination: The destination address
             message_numbers: List of message IDs in the ACK packet
@@ -646,7 +649,7 @@ class NasaClient:
                 "Write ACK received from %s for messages %s, cleared %d pending write(s)",
                 destination,
                 message_numbers if message_numbers else "all",
-                len(cleared)
+                len(cleared),
             )
 
     def _clear_pending_read(self, destination: str, message_numbers: list[int]) -> bool:
@@ -661,7 +664,7 @@ class NasaClient:
 
     async def _mark_read_received(self, destination: str, message_numbers: list[int]) -> None:
         """Mark a read/write request as received (event callback from parser).
-        
+
         Args:
             destination: The destination address
             message_numbers: List of message IDs from the packet (could be from RESPONSE or ACK packets)
@@ -669,12 +672,12 @@ class NasaClient:
         # Handle pending writes - ACK packets may contain specific message IDs or be empty
         # If empty, it clears all pending writes for the destination
         await self._mark_write_received(destination, message_numbers)
-        
+
         # Handle pending reads - only for RESPONSE packets with specific message numbers
         if message_numbers:
             if self._clear_pending_read(destination, message_numbers):
                 _LOGGER.debug("Read response received for messages %s from %s", message_numbers, destination)
-        
+
         # Process any queued reads for this destination
         await self._process_queued_reads(destination)
 
@@ -706,7 +709,7 @@ class NasaClient:
                 await asyncio.sleep(1.0)  # Check every second
 
                 current_time = asyncio.get_event_loop().time()
-                
+
                 # Handle read retries
                 if self._config.enable_read_retries and self._pending_reads:
                     reads_to_retry = []
@@ -809,8 +812,7 @@ class NasaClient:
                         # Resend the write request
                         try:
                             message = SendMessage(
-                                MESSAGE_ID=write_info["message_id"],
-                                PAYLOAD=hex2bin(write_info["value"])
+                                MESSAGE_ID=write_info["message_id"], PAYLOAD=hex2bin(write_info["value"])
                             )
                             await self.send_message(
                                 destination=write_info["destination"],

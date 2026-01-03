@@ -32,6 +32,7 @@ class CLICompleter(Completer):
             "logger",
             "quit",
             "help",
+            "print packet stream",
         ]
         self.config_subcommands = ["set", "read", "append", "dump"]
         self.logger_subcommands = ["follow", "print"]
@@ -237,6 +238,7 @@ async def interactive_cli(nasa: SamsungNasa):
                 print("  config read <key>")
                 print("  config dump")
                 print("  logger follow")
+                print("  print packet stream")
                 print("  quit")
                 continue
             elif command in ("read", "write") and len(parts) >= 3:
@@ -419,6 +421,14 @@ async def interactive_cli(nasa: SamsungNasa):
                             print(f"Unknown command for Heating: {command}")
                 else:
                     print(f"Unknown climate type: {climate_type}")
+            elif command_str == "print packet stream":
+                print("Printing packet stream (press Ctrl+C to stop):")
+                try:
+                    # Inject ourselves into the packet handler
+                    async for packet_bytes in nasa.parser.get_raw_packet_stream():
+                        print(f"Packet: {packet_bytes.hex()}")
+                except (KeyboardInterrupt, asyncio.CancelledError):
+                    print("Stopped printing packet stream.")
             else:
                 print(f"Unknown command: {command_str}")
 
