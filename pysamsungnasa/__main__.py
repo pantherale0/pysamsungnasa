@@ -17,8 +17,8 @@ load_dotenv()
 async def main():
     """Main function to start the interactive CLI."""
     if os.getenv("SAMSUNG_HP_HOST") is None or os.getenv("SAMSUNG_HP_PORT") is None:
-        print("Please set the SAMSUNG_HP_HOST and SAMSUNG_HP_PORT environment variables.")
-        exit(1)
+        print("Please set the SAMSUNG_HP_HOST and SAMSUNG_HP_PORT environment variables.", file=sys.stderr)
+        sys.exit(1)
 
     nasa = SamsungNasa(
         host=os.getenv("SAMSUNG_HP_HOST", "unknown"),
