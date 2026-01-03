@@ -2127,7 +2127,7 @@ class InFsv3026(FloatMessage):
     """
 
     MESSAGE_ID = 0x4265
-    MESSAGE_NAME = "FSV 3026 DHW Operation Interval"
+    MESSAGE_NAME = "FSV 3026 Max Space Heating Operation Time"
     UNIT_OF_MEASUREMENT = "h"
     SIGNED = False
     ARITHMETIC = 1.0
