@@ -969,7 +969,7 @@ class OutdoorMessage8227(FloatMessage):
     MESSAGE_NAME = "Message 8227"
 
 
-class OutdoorEev1opening(FloatMessage):
+class OutdoorEev1Opening(FloatMessage):
     """Parser for message 0x8229 (EEV1 Position)."""
 
     MESSAGE_ID = 0x8229
