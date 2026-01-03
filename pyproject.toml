@@ -25,7 +25,7 @@ dependencies = [
 [project.optional-dependencies]
 cli = [
     "prompt_toolkit>=3.0.0",
-    "dotenv>=0.9.9"
+    "python-dotenv>=0.9.9"
 ]
 docs = [
     "mkdocs>=1.4.0",
