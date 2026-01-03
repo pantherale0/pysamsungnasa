@@ -4027,10 +4027,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#pysamsungnasa.protocol.factory.messages.outdoor.CondensorInTemperature" class="md-nav__link">
+  <a href="#pysamsungnasa.protocol.factory.messages.outdoor.CondenserInTemperature" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CondensorInTemperature
+        CondenserInTemperature
       
     </span>
   </a>
@@ -4038,10 +4038,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pysamsungnasa.protocol.factory.messages.outdoor.CondensorOutTemperature" class="md-nav__link">
+  <a href="#pysamsungnasa.protocol.factory.messages.outdoor.CondenserOutTemperature" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CondensorOutTemperature
+        CondenserOutTemperature
       
     </span>
   </a>
@@ -4297,10 +4297,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCompressor2CurrentFreqency" class="md-nav__link">
+  <a href="#pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCompressor2CurrentFrequency" class="md-nav__link">
     <span class="md-ellipsis">
       
-        OutdoorCompressor2CurrentFreqency
+        OutdoorCompressor2CurrentFrequency
       
     </span>
   </a>
@@ -4506,6 +4506,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCondenserInstalledSize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OutdoorCondenserInstalledSize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCondenserMidpointTemp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OutdoorCondenserMidpointTemp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCondenserOutletSubcool" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4521,28 +4543,6 @@
     <span class="md-ellipsis">
       
         OutdoorCondenserOutletSuperheat
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCondensorInstalledSize" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        OutdoorCondensorInstalledSize
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCondensorMidpointTemp" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        OutdoorCondensorMidpointTemp
       
     </span>
   </a>
@@ -24288,11 +24288,11 @@ May be device-specific or reserved for future use.</p>
 
 
 
-<h3 id="pysamsungnasa.protocol.factory.messages.outdoor.CondensorInTemperature" class="doc doc-heading">
-            <code>CondensorInTemperature</code>
+<h3 id="pysamsungnasa.protocol.factory.messages.outdoor.CondenserInTemperature" class="doc doc-heading">
+            <code>CondenserInTemperature</code>
 
 
-<a href="#pysamsungnasa.protocol.factory.messages.outdoor.CondensorInTemperature" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#pysamsungnasa.protocol.factory.messages.outdoor.CondenserInTemperature" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
     <div class="doc doc-contents ">
@@ -24301,7 +24301,7 @@ May be device-specific or reserved for future use.</p>
 
 
 
-        <p>Parser for message 0x820A (Condensor In Temperature).</p>
+        <p>Parser for message 0x820A (Condenser In Temperature).</p>
 
 
 
@@ -24316,11 +24316,11 @@ May be device-specific or reserved for future use.</p>
 <span class="normal">872</span>
 <span class="normal">873</span>
 <span class="normal">874</span>
-<span class="normal">875</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CondensorInTemperature</span><span class="p">(</span><span class="n">BasicTemperatureMessage</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x820A (Condensor In Temperature).&quot;&quot;&quot;</span>
+<span class="normal">875</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CondenserInTemperature</span><span class="p">(</span><span class="n">BasicTemperatureMessage</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x820A (Condenser In Temperature).&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x820A</span>
-    <span class="n">MESSAGE_NAME</span> <span class="o">=</span> <span class="s2">&quot;Condensor In Temperature&quot;</span>
+    <span class="n">MESSAGE_NAME</span> <span class="o">=</span> <span class="s2">&quot;Condenser In Temperature&quot;</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -24349,11 +24349,11 @@ May be device-specific or reserved for future use.</p>
 
 
 
-<h3 id="pysamsungnasa.protocol.factory.messages.outdoor.CondensorOutTemperature" class="doc doc-heading">
-            <code>CondensorOutTemperature</code>
+<h3 id="pysamsungnasa.protocol.factory.messages.outdoor.CondenserOutTemperature" class="doc doc-heading">
+            <code>CondenserOutTemperature</code>
 
 
-<a href="#pysamsungnasa.protocol.factory.messages.outdoor.CondensorOutTemperature" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#pysamsungnasa.protocol.factory.messages.outdoor.CondenserOutTemperature" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
     <div class="doc doc-contents ">
@@ -24362,7 +24362,7 @@ May be device-specific or reserved for future use.</p>
 
 
 
-        <p>Parser for message 0x82DE (Condensor Out Temperature).</p>
+        <p>Parser for message 0x82DE (Condenser Out Temperature).</p>
 
 
 
@@ -24377,11 +24377,11 @@ May be device-specific or reserved for future use.</p>
 <span class="normal">1674</span>
 <span class="normal">1675</span>
 <span class="normal">1676</span>
-<span class="normal">1677</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CondensorOutTemperature</span><span class="p">(</span><span class="n">BasicTemperatureMessage</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x82DE (Condensor Out Temperature).&quot;&quot;&quot;</span>
+<span class="normal">1677</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CondenserOutTemperature</span><span class="p">(</span><span class="n">BasicTemperatureMessage</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x82DE (Condenser Out Temperature).&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x82DE</span>
-    <span class="n">MESSAGE_NAME</span> <span class="o">=</span> <span class="s2">&quot;Condensor Out Temperature&quot;</span>
+    <span class="n">MESSAGE_NAME</span> <span class="o">=</span> <span class="s2">&quot;Condenser Out Temperature&quot;</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -25868,11 +25868,11 @@ Data: Configuration option bytes</p>
 
 
 
-<h3 id="pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCompressor2CurrentFreqency" class="doc doc-heading">
-            <code>OutdoorCompressor2CurrentFreqency</code>
+<h3 id="pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCompressor2CurrentFrequency" class="doc doc-heading">
+            <code>OutdoorCompressor2CurrentFrequency</code>
 
 
-<a href="#pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCompressor2CurrentFreqency" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCompressor2CurrentFrequency" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
     <div class="doc doc-contents ">
@@ -25881,7 +25881,7 @@ Data: Configuration option bytes</p>
 
 
 
-        <p>Parser for message 0x8276 (Compressor 2 current freqency).</p>
+        <p>Parser for message 0x8276 (Compressor 2 current frequency).</p>
 
 
 
@@ -25896,11 +25896,11 @@ Data: Configuration option bytes</p>
 <span class="normal">1385</span>
 <span class="normal">1386</span>
 <span class="normal">1387</span>
-<span class="normal">1388</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorCompressor2CurrentFreqency</span><span class="p">(</span><span class="n">IntegerMessage</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x8276 (Compressor 2 current freqency).&quot;&quot;&quot;</span>
+<span class="normal">1388</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorCompressor2CurrentFrequency</span><span class="p">(</span><span class="n">IntegerMessage</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x8276 (Compressor 2 current frequency).&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x8276</span>
-    <span class="n">MESSAGE_NAME</span> <span class="o">=</span> <span class="s2">&quot;Compressor 2 current freqency&quot;</span>
+    <span class="n">MESSAGE_NAME</span> <span class="o">=</span> <span class="s2">&quot;Compressor 2 current frequency&quot;</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -27071,6 +27071,128 @@ Unit: hours</p>
 
 
 
+<h3 id="pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCondenserInstalledSize" class="doc doc-heading">
+            <code>OutdoorCondenserInstalledSize</code>
+
+
+<a href="#pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCondenserInstalledSize" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="FloatMessage (pysamsungnasa.protocol.factory.messaging.FloatMessage)" href="#pysamsungnasa.protocol.factory.messaging.FloatMessage">FloatMessage</a></code></p>
+
+
+
+        <p>Parser for message 0x82AF (Condenser installed size).</p>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>pysamsungnasa/protocol/factory/messages/outdoor.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1503</span>
+<span class="normal">1504</span>
+<span class="normal">1505</span>
+<span class="normal">1506</span>
+<span class="normal">1507</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorCondenserInstalledSize</span><span class="p">(</span><span class="n">FloatMessage</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x82AF (Condenser installed size).&quot;&quot;&quot;</span>
+
+    <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x82AF</span>
+    <span class="n">MESSAGE_NAME</span> <span class="o">=</span> <span class="s2">&quot;Condenser installed size&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCondenserMidpointTemp" class="doc doc-heading">
+            <code>OutdoorCondenserMidpointTemp</code>
+
+
+<a href="#pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCondenserMidpointTemp" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="FloatMessage (pysamsungnasa.protocol.factory.messaging.FloatMessage)" href="#pysamsungnasa.protocol.factory.messaging.FloatMessage">FloatMessage</a></code></p>
+
+
+
+        <p>Parser for message 0x8285 (Condenser mid-point temp).</p>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>pysamsungnasa/protocol/factory/messages/outdoor.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1426</span>
+<span class="normal">1427</span>
+<span class="normal">1428</span>
+<span class="normal">1429</span>
+<span class="normal">1430</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorCondenserMidpointTemp</span><span class="p">(</span><span class="n">FloatMessage</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x8285 (Condenser mid-point temp).&quot;&quot;&quot;</span>
+
+    <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x8285</span>
+    <span class="n">MESSAGE_NAME</span> <span class="o">=</span> <span class="s2">&quot;Condenser mid-point temp&quot;</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
 <h3 id="pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCondenserOutletSubcool" class="doc doc-heading">
             <code>OutdoorCondenserOutletSubcool</code>
 
@@ -27165,128 +27287,6 @@ Unit: hours</p>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x82CC</span>
     <span class="n">MESSAGE_NAME</span> <span class="o">=</span> <span class="s2">&quot;Condenser outlet superheat&quot;</span>
-</code></pre></div></td></tr></table></div>
-              </details>
-
-
-
-<div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCondensorInstalledSize" class="doc doc-heading">
-            <code>OutdoorCondensorInstalledSize</code>
-
-
-<a href="#pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCondensorInstalledSize" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-    <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="FloatMessage (pysamsungnasa.protocol.factory.messaging.FloatMessage)" href="#pysamsungnasa.protocol.factory.messaging.FloatMessage">FloatMessage</a></code></p>
-
-
-
-        <p>Parser for message 0x82AF (Condensor installed size).</p>
-
-
-
-
-
-
-
-
-              <details class="mkdocstrings-source">
-                <summary>Source code in <code>pysamsungnasa/protocol/factory/messages/outdoor.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1503</span>
-<span class="normal">1504</span>
-<span class="normal">1505</span>
-<span class="normal">1506</span>
-<span class="normal">1507</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorCondensorInstalledSize</span><span class="p">(</span><span class="n">FloatMessage</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x82AF (Condensor installed size).&quot;&quot;&quot;</span>
-
-    <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x82AF</span>
-    <span class="n">MESSAGE_NAME</span> <span class="o">=</span> <span class="s2">&quot;Condensor installed size&quot;</span>
-</code></pre></div></td></tr></table></div>
-              </details>
-
-
-
-<div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h3 id="pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCondensorMidpointTemp" class="doc doc-heading">
-            <code>OutdoorCondensorMidpointTemp</code>
-
-
-<a href="#pysamsungnasa.protocol.factory.messages.outdoor.OutdoorCondensorMidpointTemp" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-    <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="FloatMessage (pysamsungnasa.protocol.factory.messaging.FloatMessage)" href="#pysamsungnasa.protocol.factory.messaging.FloatMessage">FloatMessage</a></code></p>
-
-
-
-        <p>Parser for message 0x8285 (Condensor mid-point temp).</p>
-
-
-
-
-
-
-
-
-              <details class="mkdocstrings-source">
-                <summary>Source code in <code>pysamsungnasa/protocol/factory/messages/outdoor.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1426</span>
-<span class="normal">1427</span>
-<span class="normal">1428</span>
-<span class="normal">1429</span>
-<span class="normal">1430</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorCondensorMidpointTemp</span><span class="p">(</span><span class="n">FloatMessage</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x8285 (Condensor mid-point temp).&quot;&quot;&quot;</span>
-
-    <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x8285</span>
-    <span class="n">MESSAGE_NAME</span> <span class="o">=</span> <span class="s2">&quot;Condensor mid-point temp&quot;</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
