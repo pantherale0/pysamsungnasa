@@ -1,7 +1,7 @@
 """Functionality to execute when run as a script."""
 
-## Uses cli.py to provide an interactive CLI for testing.
-## Environment variables can be used to set the host and port of the Samsung NASA device:
+# Uses cli.py to provide an interactive CLI for testing.
+# Environment variables can be used to set the host and port of the Samsung NASA device:
 
 import asyncio
 import os
