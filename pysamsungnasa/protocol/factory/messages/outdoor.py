@@ -1374,11 +1374,11 @@ class OutdoorCompressor2OrderFrequency(IntegerMessage):
     MESSAGE_NAME = "Compressor 2 order frequency"
 
 
-class OutdoorCompressor2TargetFreqency(IntegerMessage):
-    """Parser for message 0x8275 (Compressor 2 target freqency)."""
+class OutdoorCompressor2TargetFrequency(IntegerMessage):
+    """Parser for message 0x8275 (Compressor 2 target frequency)."""
 
     MESSAGE_ID = 0x8275
-    MESSAGE_NAME = "Compressor 2 target freqency"
+    MESSAGE_NAME = "Compressor 2 target frequency"
 
 
 class OutdoorCompressor2CurrentFreqency(IntegerMessage):
