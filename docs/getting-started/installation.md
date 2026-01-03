@@ -83,7 +83,7 @@ print("pysamsungnasa is installed!")
 
 ### CLI Usage
 
-The integrated CLI is available by default however additional dependancies are required for it to run, execute the below command before running:
+The integrated CLI is available by default however additional dependencies are required for it to run, execute the below command before running:
 
 ```bash
 pip install "pysamsungnasa[cli]"
