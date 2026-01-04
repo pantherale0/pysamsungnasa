@@ -22309,13 +22309,13 @@ to prevent bacterial growth and equipment damage. Does not run indefinitely cold
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>pysamsungnasa/protocol/factory/messages/indoor.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3389</span>
-<span class="normal">3390</span>
-<span class="normal">3391</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3391</span>
 <span class="normal">3392</span>
 <span class="normal">3393</span>
 <span class="normal">3394</span>
-<span class="normal">3395</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InGeneratedPowerLastMinute</span><span class="p">(</span><span class="n">BasicPowerMessage</span><span class="p">):</span>
+<span class="normal">3395</span>
+<span class="normal">3396</span>
+<span class="normal">3397</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InGeneratedPowerLastMinute</span><span class="p">(</span><span class="n">BasicPowerMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x4426 (Generated power last minute).&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x4426</span>
@@ -24528,7 +24528,7 @@ to prevent bacterial growth and equipment damage. Does not run indefinitely cold
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="FloatMessage (pysamsungnasa.protocol.factory.messaging.FloatMessage)" href="#pysamsungnasa.protocol.factory.messaging.FloatMessage">FloatMessage</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="IntegerMessage (pysamsungnasa.protocol.factory.messaging.IntegerMessage)" href="#pysamsungnasa.protocol.factory.messaging.IntegerMessage">IntegerMessage</a></code></p>
 
 
 
@@ -24543,15 +24543,17 @@ to prevent bacterial growth and equipment damage. Does not run indefinitely cold
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>pysamsungnasa/protocol/factory/messages/indoor.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3382</span>
-<span class="normal">3383</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3383</span>
 <span class="normal">3384</span>
 <span class="normal">3385</span>
-<span class="normal">3386</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InMinutesActiveMessage</span><span class="p">(</span><span class="n">FloatMessage</span><span class="p">):</span>
+<span class="normal">3386</span>
+<span class="normal">3387</span>
+<span class="normal">3388</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InMinutesActiveMessage</span><span class="p">(</span><span class="n">IntegerMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x4424 (Minutes Active).&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x4424</span>
     <span class="n">MESSAGE_NAME</span> <span class="o">=</span> <span class="s2">&quot;Minutes Active&quot;</span>
+    <span class="n">UNIT_OF_MEASUREMENT</span> <span class="o">=</span> <span class="s2">&quot;min&quot;</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -24589,7 +24591,7 @@ to prevent bacterial growth and equipment damage. Does not run indefinitely cold
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="FloatMessage (pysamsungnasa.protocol.factory.messaging.FloatMessage)" href="#pysamsungnasa.protocol.factory.messaging.FloatMessage">FloatMessage</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="IntegerMessage (pysamsungnasa.protocol.factory.messaging.IntegerMessage)" href="#pysamsungnasa.protocol.factory.messaging.IntegerMessage">IntegerMessage</a></code></p>
 
 
 
@@ -24608,11 +24610,13 @@ to prevent bacterial growth and equipment damage. Does not run indefinitely cold
 <span class="normal">3376</span>
 <span class="normal">3377</span>
 <span class="normal">3378</span>
-<span class="normal">3379</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InMinutesSinceInstallationMessage</span><span class="p">(</span><span class="n">FloatMessage</span><span class="p">):</span>
+<span class="normal">3379</span>
+<span class="normal">3380</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InMinutesSinceInstallationMessage</span><span class="p">(</span><span class="n">IntegerMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x4423 (Minutes Since Installation).&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x4423</span>
     <span class="n">MESSAGE_NAME</span> <span class="o">=</span> <span class="s2">&quot;Minutes Since Installation&quot;</span>
+    <span class="n">UNIT_OF_MEASUREMENT</span> <span class="o">=</span> <span class="s2">&quot;min&quot;</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -29952,13 +29956,13 @@ Default: 0 (Disabled), Range: 0-1</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>pysamsungnasa/protocol/factory/messages/indoor.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3398</span>
-<span class="normal">3399</span>
-<span class="normal">3400</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3400</span>
 <span class="normal">3401</span>
 <span class="normal">3402</span>
 <span class="normal">3403</span>
-<span class="normal">3404</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">TotalEnergyGenerated</span><span class="p">(</span><span class="n">BasicPowerMessage</span><span class="p">):</span>
+<span class="normal">3404</span>
+<span class="normal">3405</span>
+<span class="normal">3406</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">TotalEnergyGenerated</span><span class="p">(</span><span class="n">BasicPowerMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x4427 (Total energy generated).&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x4427</span>
@@ -33824,7 +33828,7 @@ Unit: hours</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="FloatMessage (pysamsungnasa.protocol.factory.messaging.FloatMessage)" href="#pysamsungnasa.protocol.factory.messaging.FloatMessage">FloatMessage</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="IntegerMessage (pysamsungnasa.protocol.factory.messaging.IntegerMessage)" href="#pysamsungnasa.protocol.factory.messaging.IntegerMessage">IntegerMessage</a></code></p>
 
 
 
@@ -33843,7 +33847,7 @@ Unit: hours</p>
 <span class="normal">973</span>
 <span class="normal">974</span>
 <span class="normal">975</span>
-<span class="normal">976</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorEev1Opening</span><span class="p">(</span><span class="n">FloatMessage</span><span class="p">):</span>
+<span class="normal">976</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorEev1Opening</span><span class="p">(</span><span class="n">IntegerMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x8229 (EEV1 Position).&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x8229</span>
@@ -33885,7 +33889,7 @@ Unit: hours</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="FloatMessage (pysamsungnasa.protocol.factory.messaging.FloatMessage)" href="#pysamsungnasa.protocol.factory.messaging.FloatMessage">FloatMessage</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="IntegerMessage (pysamsungnasa.protocol.factory.messaging.IntegerMessage)" href="#pysamsungnasa.protocol.factory.messaging.IntegerMessage">IntegerMessage</a></code></p>
 
 
 
@@ -33904,7 +33908,7 @@ Unit: hours</p>
 <span class="normal">980</span>
 <span class="normal">981</span>
 <span class="normal">982</span>
-<span class="normal">983</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorEev2Opening</span><span class="p">(</span><span class="n">FloatMessage</span><span class="p">):</span>
+<span class="normal">983</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorEev2Opening</span><span class="p">(</span><span class="n">IntegerMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x822A (EEV2 Position).&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x822A</span>
@@ -33946,7 +33950,7 @@ Unit: hours</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="FloatMessage (pysamsungnasa.protocol.factory.messaging.FloatMessage)" href="#pysamsungnasa.protocol.factory.messaging.FloatMessage">FloatMessage</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="IntegerMessage (pysamsungnasa.protocol.factory.messaging.IntegerMessage)" href="#pysamsungnasa.protocol.factory.messaging.IntegerMessage">IntegerMessage</a></code></p>
 
 
 
@@ -33965,7 +33969,7 @@ Unit: hours</p>
 <span class="normal">987</span>
 <span class="normal">988</span>
 <span class="normal">989</span>
-<span class="normal">990</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorEev3Opening</span><span class="p">(</span><span class="n">FloatMessage</span><span class="p">):</span>
+<span class="normal">990</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorEev3Opening</span><span class="p">(</span><span class="n">IntegerMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x822B (EEV3 Position).&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x822B</span>
@@ -34007,7 +34011,7 @@ Unit: hours</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="FloatMessage (pysamsungnasa.protocol.factory.messaging.FloatMessage)" href="#pysamsungnasa.protocol.factory.messaging.FloatMessage">FloatMessage</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="IntegerMessage (pysamsungnasa.protocol.factory.messaging.IntegerMessage)" href="#pysamsungnasa.protocol.factory.messaging.IntegerMessage">IntegerMessage</a></code></p>
 
 
 
@@ -34026,7 +34030,7 @@ Unit: hours</p>
 <span class="normal">994</span>
 <span class="normal">995</span>
 <span class="normal">996</span>
-<span class="normal">997</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorEev4Opening</span><span class="p">(</span><span class="n">FloatMessage</span><span class="p">):</span>
+<span class="normal">997</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorEev4Opening</span><span class="p">(</span><span class="n">IntegerMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x822C (EEV4 Position).&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x822C</span>
@@ -34068,7 +34072,7 @@ Unit: hours</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="FloatMessage (pysamsungnasa.protocol.factory.messaging.FloatMessage)" href="#pysamsungnasa.protocol.factory.messaging.FloatMessage">FloatMessage</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="IntegerMessage (pysamsungnasa.protocol.factory.messaging.IntegerMessage)" href="#pysamsungnasa.protocol.factory.messaging.IntegerMessage">IntegerMessage</a></code></p>
 
 
 
@@ -34087,7 +34091,7 @@ Unit: hours</p>
 <span class="normal">1001</span>
 <span class="normal">1002</span>
 <span class="normal">1003</span>
-<span class="normal">1004</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorEev5Opening</span><span class="p">(</span><span class="n">FloatMessage</span><span class="p">):</span>
+<span class="normal">1004</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorEev5Opening</span><span class="p">(</span><span class="n">IntegerMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x822D (EEV5 Position).&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x822D</span>
@@ -34251,7 +34255,7 @@ Unit: hours</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="FloatMessage (pysamsungnasa.protocol.factory.messaging.FloatMessage)" href="#pysamsungnasa.protocol.factory.messaging.FloatMessage">FloatMessage</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="IntegerMessage (pysamsungnasa.protocol.factory.messaging.IntegerMessage)" href="#pysamsungnasa.protocol.factory.messaging.IntegerMessage">IntegerMessage</a></code></p>
 
 
 
@@ -34270,7 +34274,7 @@ Unit: hours</p>
 <span class="normal">1038</span>
 <span class="normal">1039</span>
 <span class="normal">1040</span>
-<span class="normal">1041</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorErrorCode</span><span class="p">(</span><span class="n">FloatMessage</span><span class="p">):</span>
+<span class="normal">1041</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorErrorCode</span><span class="p">(</span><span class="n">IntegerMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x8235 (Duplicate of 0x0202) - Error code as numeric value.&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x8235</span>
@@ -34436,7 +34440,7 @@ Unit: hours</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="FloatMessage (pysamsungnasa.protocol.factory.messaging.FloatMessage)" href="#pysamsungnasa.protocol.factory.messaging.FloatMessage">FloatMessage</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="IntegerMessage (pysamsungnasa.protocol.factory.messaging.IntegerMessage)" href="#pysamsungnasa.protocol.factory.messaging.IntegerMessage">IntegerMessage</a></code></p>
 
 
 
@@ -34455,7 +34459,7 @@ Unit: hours</p>
 <span class="normal">1008</span>
 <span class="normal">1009</span>
 <span class="normal">1010</span>
-<span class="normal">1011</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorEviEev</span><span class="p">(</span><span class="n">FloatMessage</span><span class="p">):</span>
+<span class="normal">1011</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorEviEev</span><span class="p">(</span><span class="n">IntegerMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x822E (EVI EEV).&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x822E</span>
@@ -34680,7 +34684,7 @@ Unit: hours</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="FloatMessage (pysamsungnasa.protocol.factory.messaging.FloatMessage)" href="#pysamsungnasa.protocol.factory.messaging.FloatMessage">FloatMessage</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="IntegerMessage (pysamsungnasa.protocol.factory.messaging.IntegerMessage)" href="#pysamsungnasa.protocol.factory.messaging.IntegerMessage">IntegerMessage</a></code></p>
 
 
 
@@ -34701,7 +34705,7 @@ Unit: hours</p>
 <span class="normal">1095</span>
 <span class="normal">1096</span>
 <span class="normal">1097</span>
-<span class="normal">1098</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorFanRpm1</span><span class="p">(</span><span class="n">FloatMessage</span><span class="p">):</span>
+<span class="normal">1098</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorFanRpm1</span><span class="p">(</span><span class="n">IntegerMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x823D (Outdoor Fan RPM 1).&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x823D</span>
@@ -34745,7 +34749,7 @@ Unit: hours</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="FloatMessage (pysamsungnasa.protocol.factory.messaging.FloatMessage)" href="#pysamsungnasa.protocol.factory.messaging.FloatMessage">FloatMessage</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="IntegerMessage (pysamsungnasa.protocol.factory.messaging.IntegerMessage)" href="#pysamsungnasa.protocol.factory.messaging.IntegerMessage">IntegerMessage</a></code></p>
 
 
 
@@ -34766,7 +34770,7 @@ Unit: hours</p>
 <span class="normal">1104</span>
 <span class="normal">1105</span>
 <span class="normal">1106</span>
-<span class="normal">1107</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorFanRpm2</span><span class="p">(</span><span class="n">FloatMessage</span><span class="p">):</span>
+<span class="normal">1107</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OutdoorFanRpm2</span><span class="p">(</span><span class="n">IntegerMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parser for message 0x823E (Outdoor Fan RPM 1).&quot;&quot;&quot;</span>
 
     <span class="n">MESSAGE_ID</span> <span class="o">=</span> <span class="mh">0x823E</span>
