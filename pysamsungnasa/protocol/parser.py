@@ -1,7 +1,7 @@
 """NASA Packet Parser."""
 
 from typing import Callable
-from asyncio import iscoroutinefunction
+from asyncio import iscoroutinefunction, Event
 
 import logging
 import struct
@@ -28,6 +28,16 @@ class NasaPacketParser:
         self._packet_listeners: dict[int, list] = {}
         self._new_device_handler = _new_device_handler
         self._pending_read_handler: Callable | None = None  # Callback for handling received read responses
+        self._packet_event = Event()
+        self._latest_packet_data: bytes | None = None
+
+    async def get_raw_packet_stream(self):
+        """A generator that yields raw packet bytes as they arrive."""
+        while True:
+            await self._packet_event.wait()
+            self._packet_event.clear()
+            if self._latest_packet_data is not None:
+                yield self._latest_packet_data
 
     def set_pending_read_handler(self, handler: Callable | None) -> None:
         """Set the pending read handler callback."""
@@ -232,6 +242,10 @@ class NasaPacketParser:
                     listener(**handler_kwargs)
 
     async def parse_packet(self, packet_data: bytes):
+        """Parse a NASA packet and process its contents."""
+        self._latest_packet_data = packet_data
+        self._packet_event.set()
+
         if len(packet_data) < 3 + 3 + 1 + 1 + 1 + 1:
             return  # too short
         source_address = bin2hex(packet_data[0:3])
