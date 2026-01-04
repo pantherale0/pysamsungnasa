@@ -969,42 +969,42 @@ class OutdoorMessage8227(FloatMessage):
     MESSAGE_NAME = "Message 8227"
 
 
-class OutdoorEev1Opening(FloatMessage):
+class OutdoorEev1Opening(IntegerMessage):
     """Parser for message 0x8229 (EEV1 Position)."""
 
     MESSAGE_ID = 0x8229
     MESSAGE_NAME = "EEV1 Position"
 
 
-class OutdoorEev2Opening(FloatMessage):
+class OutdoorEev2Opening(IntegerMessage):
     """Parser for message 0x822A (EEV2 Position)."""
 
     MESSAGE_ID = 0x822A
     MESSAGE_NAME = "EEV2 Position"
 
 
-class OutdoorEev3Opening(FloatMessage):
+class OutdoorEev3Opening(IntegerMessage):
     """Parser for message 0x822B (EEV3 Position)."""
 
     MESSAGE_ID = 0x822B
     MESSAGE_NAME = "EEV3 Position"
 
 
-class OutdoorEev4Opening(FloatMessage):
+class OutdoorEev4Opening(IntegerMessage):
     """Parser for message 0x822C (EEV4 Position)."""
 
     MESSAGE_ID = 0x822C
     MESSAGE_NAME = "EEV4 Position"
 
 
-class OutdoorEev5Opening(FloatMessage):
+class OutdoorEev5Opening(IntegerMessage):
     """Parser for message 0x822D (EEV5 Position)."""
 
     MESSAGE_ID = 0x822D
     MESSAGE_NAME = "EEV5 Position"
 
 
-class OutdoorEviEev(FloatMessage):
+class OutdoorEviEev(IntegerMessage):
     """Parser for message 0x822E (EVI EEV)."""
 
     MESSAGE_ID = 0x822E
@@ -1034,7 +1034,7 @@ class OutdoorMessage8234(FloatMessage):
     MESSAGE_NAME = "Message 8234"
 
 
-class OutdoorErrorCode(FloatMessage):
+class OutdoorErrorCode(IntegerMessage):
     """Parser for message 0x8235 (Duplicate of 0x0202) - Error code as numeric value."""
 
     MESSAGE_ID = 0x8235
@@ -1089,7 +1089,7 @@ class OutdoorMessage823c(FloatMessage):
     MESSAGE_NAME = "Message 823C"
 
 
-class OutdoorFanRpm1(FloatMessage):
+class OutdoorFanRpm1(IntegerMessage):
     """Parser for message 0x823D (Outdoor Fan RPM 1)."""
 
     MESSAGE_ID = 0x823D
@@ -1098,7 +1098,7 @@ class OutdoorFanRpm1(FloatMessage):
     SIGNED = False
 
 
-class OutdoorFanRpm2(FloatMessage):
+class OutdoorFanRpm2(IntegerMessage):
     """Parser for message 0x823E (Outdoor Fan RPM 1)."""
 
     MESSAGE_ID = 0x823E

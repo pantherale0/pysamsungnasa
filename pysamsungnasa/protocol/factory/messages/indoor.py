@@ -3372,18 +3372,20 @@ class InLayerVariableUnknown441eMessage(RawMessage):
     MESSAGE_NAME = "InLayerVariableUnknown441eMessage"
 
 
-class InMinutesSinceInstallationMessage(FloatMessage):
+class InMinutesSinceInstallationMessage(IntegerMessage):
     """Parser for message 0x4423 (Minutes Since Installation)."""
 
     MESSAGE_ID = 0x4423
     MESSAGE_NAME = "Minutes Since Installation"
+    UNIT_OF_MEASUREMENT = "min"
 
 
-class InMinutesActiveMessage(FloatMessage):
+class InMinutesActiveMessage(IntegerMessage):
     """Parser for message 0x4424 (Minutes Active)."""
 
     MESSAGE_ID = 0x4424
     MESSAGE_NAME = "Minutes Active"
+    UNIT_OF_MEASUREMENT = "min"
 
 
 class InGeneratedPowerLastMinute(BasicPowerMessage):
