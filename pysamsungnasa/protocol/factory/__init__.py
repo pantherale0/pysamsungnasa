@@ -74,13 +74,20 @@ def get_nasa_message_id(message_name: str) -> int:
     raise ValueError(f"No message ID found for name: {message_name}")
 
 
-def parse_message(message_number: int, payload: bytes, description: str) -> BaseMessage:
+def parse_message(message_number: int, payload: bytes) -> BaseMessage:
+    """Parse a message from its payload."""
+
     parser_class = MESSAGE_PARSERS.get(message_number)
     if not parser_class:
         parser_class = RawMessage
     try:
         parser = parser_class.parse_payload(payload)
     except Exception as e:
-        _LOGGER.exception("Error parsing packet for %s (%s): %s", message_number, bin2hex(payload), e)
+        _LOGGER.exception(
+            "Error parsing packet for %s (%s): %s",
+            message_number,
+            bin2hex(payload) if isinstance(payload, bytes) else str(payload),
+            e,
+        )
         parser = RawMessage.parse_payload(payload)
     return parser

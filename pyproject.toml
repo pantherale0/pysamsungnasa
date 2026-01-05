@@ -126,6 +126,7 @@ pythonpath = [
 ]
 testpaths = "tests"
 junit_family = "xunit2"
+asyncio_mode = "auto"
 markers = [
     "integration: marks as integration test",
     "slow: marks tests as slow",
