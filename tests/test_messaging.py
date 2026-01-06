@@ -2,7 +2,7 @@
 
 import pytest
 import struct
-from pysamsungnasa.protocol.factory.messaging import (
+from pysamsungnasa.protocol.factory.types import (
     SendMessage,
     BaseMessage,
     BoolMessage,

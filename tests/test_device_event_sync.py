@@ -7,7 +7,7 @@ from pysamsungnasa.device import NasaDevice
 from pysamsungnasa.config import NasaConfig
 from pysamsungnasa.protocol.parser import NasaPacketParser
 from pysamsungnasa.protocol.enum import AddressClass
-from pysamsungnasa.protocol.factory.messaging import BaseMessage
+from pysamsungnasa.protocol.factory.types import BaseMessage
 
 
 @pytest.fixture

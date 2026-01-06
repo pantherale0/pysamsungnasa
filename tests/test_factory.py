@@ -7,9 +7,8 @@ from pysamsungnasa.protocol.factory import (
     get_nasa_message_id,
     parse_message,
 )
-from pysamsungnasa.protocol.factory.messaging import SendMessage, RawMessage
+from pysamsungnasa.protocol.factory.types import SendMessage, RawMessage
 from pysamsungnasa.protocol.enum import DataType
-from pysamsungnasa.helpers import hex2bin, bin2hex
 
 
 class TestBuildMessage:
@@ -105,6 +104,7 @@ class TestGetNasaMessageName:
     def test_get_message_name_unknown_message(self):
         """Test getting name of unknown message returns hex format."""
         name = get_nasa_message_name(0xFFFF)
+        assert name is not None
         assert "0xffff" in name.lower()
 
     @pytest.mark.parametrize("msg_id", [0x4000, 0x4001, 0x8000, 0x8001])
