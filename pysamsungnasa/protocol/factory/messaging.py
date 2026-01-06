@@ -282,6 +282,7 @@ class StructureMessage(BaseMessage):
                         joined_hex += s.hex()
                     elif isinstance(s, str):
                         if len(s) % 2 != 0:
+                            _LOGGER.warning("Skipping odd-length string in structure joining: %r", s)
                             continue
                         joined_hex += s
                     else:
