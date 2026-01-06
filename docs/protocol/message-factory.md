@@ -2,9 +2,9 @@
 
 Auto-generated documentation from the message factory module.
 
-## Messaging Module
+## Base Message Types
 
-::: pysamsungnasa.protocol.factory.messaging
+::: pysamsungnasa.protocol.factory.types
 
 ## Indoor Messages
 

@@ -48,6 +48,7 @@ nav:
     - Protocol Overview: protocol/overview.md
     - Packet Structure: protocol/packet-structure.md
     - Enumerations: protocol/enums.md
+    - Message Reference: protocol/messages-reference.md
     - Message Types: protocol/messages.md
     - Message Factory: protocol/message-factory.md
   - API Reference:
