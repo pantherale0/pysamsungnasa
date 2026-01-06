@@ -1,6 +1,6 @@
 """Messages from the network layer."""
 
-from ..messaging import EnumMessage, RawMessage
+from ..types import EnumMessage, RawMessage
 
 from ...enum import NmNetworkPositionLayer, NmNetworkTrackingState
 

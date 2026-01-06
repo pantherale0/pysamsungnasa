@@ -1,19 +1,30 @@
 """Protocol factory."""
 
+from __future__ import annotations
+
 import logging
 
-from .messages import load_message_classes
-from .messaging import BaseMessage, RawMessage, SendMessage
-from ...helpers import bin2hex
+from .messages import MESSAGE_PARSERS
+from .parser import parse_message
+from .types import SendMessage
 from ..enum import DataType, PacketType
+from ...helpers import bin2hex
 
 
-MESSAGE_PARSERS: dict[int, BaseMessage] = load_message_classes()
 _LOGGER = logging.getLogger(__name__)
+
+__all__ = [
+    "build_message",
+    "get_nasa_message_name",
+    "get_nasa_message_id",
+    "parse_message",
+    "SendMessage",
+]
 
 
 def build_message(source: str, destination: str, data_type: DataType, messages: list[SendMessage]) -> str:
     """Build a message to send to a device."""
+    _LOGGER.debug("Building message from %s to %s with %d sub-messages", source, destination, len(messages))
     if not messages:
         raise ValueError("At least one message is required to build.")
     msg_parts = []
@@ -57,6 +68,7 @@ def build_message(source: str, destination: str, data_type: DataType, messages: 
 
 def get_nasa_message_name(message_number: int) -> str | None:
     """Get the name of a NASA message by its number."""
+    _LOGGER.debug("Getting message name for message number: %s", hex(message_number))
     if message_number in MESSAGE_PARSERS:
         if (
             hasattr(MESSAGE_PARSERS[message_number], "MESSAGE_NAME")
@@ -68,26 +80,8 @@ def get_nasa_message_name(message_number: int) -> str | None:
 
 def get_nasa_message_id(message_name: str) -> int:
     """Get the message number by its name."""
+    _LOGGER.debug("Getting message ID for message name: %s", message_name)
     for message_id, parser in MESSAGE_PARSERS.items():
         if parser.MESSAGE_NAME == message_name:
             return message_id
     raise ValueError(f"No message ID found for name: {message_name}")
-
-
-def parse_message(message_number: int, payload: bytes) -> BaseMessage:
-    """Parse a message from its payload."""
-
-    parser_class = MESSAGE_PARSERS.get(message_number)
-    if not parser_class:
-        parser_class = RawMessage
-    try:
-        parser = parser_class.parse_payload(payload)
-    except Exception as e:
-        _LOGGER.exception(
-            "Error parsing packet for %s (%s): %s",
-            message_number,
-            bin2hex(payload) if isinstance(payload, bytes) else str(payload),
-            e,
-        )
-        parser = RawMessage.parse_payload(payload)
-    return parser

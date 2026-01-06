@@ -1,6 +1,6 @@
 """Standard parsers available to all device types."""
 
-from ..messaging import StructureMessage
+from ..types import StructureMessage
 
 
 class SerialNumber(StructureMessage):

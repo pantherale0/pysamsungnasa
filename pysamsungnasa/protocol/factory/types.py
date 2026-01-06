@@ -5,10 +5,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from typing import ClassVar, Optional, Any
+import logging
 import struct
 from abc import ABC
 
 from ..enum import SamsungEnum
+
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass
@@ -57,6 +60,17 @@ class BaseMessage(ABC):
         raise NotImplementedError("parse_payload must be implemented in subclasses.")
 
 
+class RawMessage(BaseMessage):
+    """Parser for raw messages."""
+
+    MESSAGE_NAME = "UNKNOWN"
+
+    @classmethod
+    def parse_payload(cls, payload: bytes) -> "RawMessage":
+        """Parse the payload into a raw hex string."""
+        return cls(value=payload.hex() if payload else None)
+
+
 class BoolMessage(BaseMessage):
     """Parser for boolean messages."""
 
@@ -73,17 +87,6 @@ class StrMessage(BaseMessage):
     def parse_payload(cls, payload: bytes) -> "StrMessage":
         """Parse the payload into a string value."""
         return cls(value=payload.decode("utf-8") if payload else None)
-
-
-class RawMessage(BaseMessage):
-    """Parser for raw messages."""
-
-    MESSAGE_NAME = "UNKNOWN"
-
-    @classmethod
-    def parse_payload(cls, payload: bytes) -> "RawMessage":
-        """Parse the payload into a raw hex string."""
-        return cls(value=payload.hex() if payload else None)
 
 
 class FloatMessage(BaseMessage):
@@ -134,15 +137,17 @@ class EnumMessage(BaseMessage):
             raise ValueError(f"{cls.__name__} does not have a MESSAGE_ENUM defined.")
         if not isinstance(cls.MESSAGE_ENUM, type) or not issubclass(cls.MESSAGE_ENUM, SamsungEnum):
             raise TypeError(f"{cls.__name__}.MESSAGE_ENUM must be a SamsungEnum subclass.")
-        if cls.MESSAGE_ENUM.has_value(payload[0]):
+
+        enum_cls = cls.MESSAGE_ENUM  # Type narrowing for the checker
+        if enum_cls.has_value(payload[0]):
             return cls(
-                value=cls.MESSAGE_ENUM(payload[0]),
-                options=[option.name for option in cls.MESSAGE_ENUM],
+                value=enum_cls(payload[0]),
+                options=[option.name for option in enum_cls],
             )
         else:
             return cls(
                 value=cls.ENUM_DEFAULT,
-                options=[option.name for option in cls.MESSAGE_ENUM],
+                options=[option.name for option in enum_cls],
             )
 
 
@@ -204,99 +209,6 @@ class StructureMessage(BaseMessage):
         Returns:
             StructureMessage instance with parsed VALUE
         """
-        return cls(value=cls._parse_tlv_structure(payload))
+        from .parser import parse_tlv_structure
 
-    @classmethod
-    def _parse_tlv_structure(cls, struct_payload: bytes) -> dict:
-        """Parse TLV-encoded structure data from raw bytes.
-
-        Extracts each TLV entry and attempts to parse each sub-message.
-        As a best effort, joins all sub-message values into a single string representation.
-
-        Args:
-            struct_payload: Raw bytes containing TLV-encoded sub-messages
-
-        Returns:
-            StructureMessage instance with parsed structure
-        """
-        from . import parse_message
-        import logging
-
-        _LOGGER = logging.getLogger(__name__)
-
-        submessages = {}
-        submessage_strings = []
-        struct_offset = 0
-
-        while struct_offset < len(struct_payload):
-            if struct_offset + 1 >= len(struct_payload):
-                break
-
-            # First byte contains length
-            message_length = struct_payload[struct_offset]
-            struct_offset += 1
-
-            if struct_offset + 2 > len(struct_payload):
-                break
-
-            # Next two bytes are message ID
-            try:
-                sub_message_number = struct.unpack(">H", struct_payload[struct_offset : struct_offset + 2])[0]
-            except struct.error:
-                break
-            struct_offset += 2
-
-            # Remaining bytes are the value
-            if message_length >= 2:
-                value_length = message_length - 2
-                if struct_offset + value_length > len(struct_payload):
-                    value = struct_payload[struct_offset:]
-                    struct_offset = len(struct_payload)
-                else:
-                    value = struct_payload[struct_offset : struct_offset + value_length]
-                    struct_offset += value_length
-            else:
-                value = b""
-
-            # Parse the submessage using the standard parse_message function
-            try:
-                parsed_submessage = parse_message(sub_message_number, value)
-                submessages[sub_message_number] = parsed_submessage
-                # Collect string representations for joining
-                if hasattr(parsed_submessage, "VALUE"):
-                    submessage_strings.append(str(parsed_submessage.VALUE))
-            except Exception as e:
-                _LOGGER.debug("Failed to parse submessage 0x%04x in structure: %s", sub_message_number, e)
-                # Store raw hex if parsing fails
-                submessages[sub_message_number] = value.hex() if value else ""
-                submessage_strings.append(value.hex() if value else "")
-
-        # Attempt to create a joined string representation
-        joined_value = None
-        if submessage_strings:
-            try:
-                # Try to join as a concatenated hex string first
-                joined_hex = ""
-                for s in submessage_strings:
-                    if isinstance(s, bytes):
-                        joined_hex += s.hex()
-                    elif isinstance(s, str):
-                        if len(s) % 2 != 0:
-                            _LOGGER.warning("Skipping odd-length string in structure joining: %r", s)
-                            continue
-                        joined_hex += s
-                    else:
-                        continue
-                # Try to decode as UTF-8
-                decoded = bytes.fromhex(joined_hex).decode("utf-8").rstrip("\x00")
-                if decoded and all(32 <= ord(c) <= 126 or c in "\n\r\t" for c in decoded):
-                    joined_value = decoded
-                else:
-                    joined_value = joined_hex
-            except (ValueError, UnicodeDecodeError):
-                # If joining fails, use raw hex
-                joined_value = "".join(submessage_strings)
-
-        # Return with both the detailed submessages dict and the joined string
-        value_dict = {"_submessages": submessages, "_joined": joined_value}
-        return value_dict
+        return cls(value=parse_tlv_structure(payload))

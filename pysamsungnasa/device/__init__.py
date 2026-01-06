@@ -12,7 +12,7 @@ from .controllers import DhwController, ClimateController, WaterLawMode
 from ..config import NasaConfig
 from ..protocol.enum import AddressClass, OutOutdoorCoolonlyModel, InUseThermostat
 from ..protocol.parser import NasaPacketParser
-from ..protocol.factory.messaging import BaseMessage
+from ..protocol.factory.types import BaseMessage
 
 if TYPE_CHECKING:
     from ..nasa_client import NasaClient

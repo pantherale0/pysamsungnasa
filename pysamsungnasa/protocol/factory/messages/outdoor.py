@@ -1,6 +1,6 @@
 """Outdoor unit messages."""
 
-from ..messaging import (
+from ..types import (
     EnumMessage,
     FloatMessage,
     BasicTemperatureMessage,

@@ -12,7 +12,7 @@ from aiotelnet import TelnetClient
 from .device import NasaDevice
 from .protocol.enum import DataType
 from .protocol.factory import build_message
-from .protocol.factory.messaging import SendMessage
+from .protocol.factory.types import SendMessage
 
 from .config import NasaConfig
 from .helpers import bin2hex, hex2bin
