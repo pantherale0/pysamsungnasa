@@ -31,8 +31,9 @@ class BaseMessage(ABC):
     ENUM_DEFAULT: ClassVar[Optional[Any]] = None
     UNIT_OF_MEASUREMENT: ClassVar[Optional[str]] = None
 
-    def __init__(self, value: Any, options: Optional[list[str]] = None):
+    def __init__(self, value: Any, raw_payload: bytes = b"", options: Optional[list[str]] = None):
         self.VALUE = value  # pylint: disable=invalid-name
+        self.RAW_PAYLOAD = raw_payload  # pylint: disable=invalid-name
         self.OPTIONS = options  # pylint: disable=invalid-name
 
     @property
@@ -68,7 +69,7 @@ class RawMessage(BaseMessage):
     @classmethod
     def parse_payload(cls, payload: bytes) -> "RawMessage":
         """Parse the payload into a raw hex string."""
-        return cls(value=payload.hex() if payload else None)
+        return cls(value=payload.hex() if payload else None, raw_payload=payload)
 
 
 class BoolMessage(BaseMessage):
@@ -77,7 +78,7 @@ class BoolMessage(BaseMessage):
     @classmethod
     def parse_payload(cls, payload: bytes) -> "BoolMessage":
         """Parse the payload into a boolean value."""
-        return cls(value=bool(payload[0]))
+        return cls(value=bool(payload[0]), raw_payload=payload)
 
 
 class StrMessage(BaseMessage):
@@ -86,7 +87,7 @@ class StrMessage(BaseMessage):
     @classmethod
     def parse_payload(cls, payload: bytes) -> "StrMessage":
         """Parse the payload into a string value."""
-        return cls(value=payload.decode("utf-8") if payload else None)
+        return cls(value=payload.decode("utf-8") if payload else None, raw_payload=payload)
 
 
 class FloatMessage(BaseMessage):
@@ -124,7 +125,7 @@ class FloatMessage(BaseMessage):
             except ValueError as e:
                 raise ValueError(f"Error processing payload for {cls.__name__}: {e}") from e
 
-        return cls(value=parsed_value)
+        return cls(value=parsed_value, raw_payload=payload)
 
 
 class EnumMessage(BaseMessage):
@@ -143,11 +144,13 @@ class EnumMessage(BaseMessage):
             return cls(
                 value=enum_cls._value2member_map_[payload[0]],  # type: ignore[attr-defined]
                 options=[option.name for option in enum_cls],
+                raw_payload=payload,
             )
         else:
             return cls(
                 value=cls.ENUM_DEFAULT,
                 options=[option.name for option in enum_cls],
+                raw_payload=payload,
             )
 
 
@@ -161,7 +164,7 @@ class IntegerMessage(BaseMessage):
         parsed_value: Optional[int] = None
         if payload:
             parsed_value = int(payload.hex(), 16)
-        return cls(value=parsed_value)
+        return cls(value=parsed_value, raw_payload=payload)
 
 
 class BasicTemperatureMessage(FloatMessage):
@@ -211,4 +214,4 @@ class StructureMessage(BaseMessage):
         """
         from .parser import parse_tlv_structure
 
-        return cls(value=parse_tlv_structure(payload))
+        return cls(value=parse_tlv_structure(payload), raw_payload=payload)
