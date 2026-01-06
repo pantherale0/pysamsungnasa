@@ -2,9 +2,8 @@
 
 import pytest
 from pysamsungnasa.protocol.parser import NasaPacketParser
-from pysamsungnasa.protocol.enum import PacketType, DataType, AddressClass
 from pysamsungnasa.config import NasaConfig
-from pysamsungnasa.helpers import hex2bin, bin2hex
+from pysamsungnasa.helpers import hex2bin
 import struct
 
 EHS_MONO_TYPE_09 = "09454853204d4f4e4f00"
@@ -66,9 +65,11 @@ class TestStructureMessages:
         # Check message ID and value match expected
         assert message_id == parsed_packet.MESSAGE_ID
         assert isinstance(parsed_packet.VALUE, dict)
-        assert expected["formatted"] == parsed_packet.VALUE["formatted"]
-        assert expected["type_id"] == parsed_packet.VALUE["type_id"]
-        assert expected["model_name"] == parsed_packet.VALUE["model_name"]
+        value_dict = parsed_packet.VALUE
+        assert isinstance(value_dict, dict)  # Type assertion for type checker
+        assert expected["formatted"] == value_dict["formatted"]
+        assert expected["type_id"] == value_dict["type_id"]
+        assert expected["model_name"] == value_dict["model_name"]
 
     async def test_parse_db_code_micom_main_message(self):
         """Test parsing DB Code MiCom Main Message (0x0608)."""

@@ -2,7 +2,7 @@
 
 import pytest
 import asyncio
-from unittest.mock import Mock, AsyncMock, MagicMock, patch
+from unittest.mock import Mock, AsyncMock, patch
 from pysamsungnasa.device import NasaDevice
 from pysamsungnasa.config import NasaConfig
 from pysamsungnasa.protocol.parser import NasaPacketParser

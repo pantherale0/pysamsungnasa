@@ -480,7 +480,6 @@ class TestIndoorNasaDeviceControllers:
         device = OutdoorNasaDevice(address="100001", packet_parser=parser, config=config, client=client)
 
         # dhw_controller should return None for outdoor device
-        indoor_device = IndoorNasaDevice(address="200001", packet_parser=parser, config=config, client=client)
         outdoor_check = device.__class__.__name__ == "OutdoorNasaDevice"
         assert outdoor_check is True
 
@@ -558,7 +557,6 @@ class TestNasaDeviceCallbackExceptionHandling:
         )
 
         callback1 = Mock()
-        callback2 = Mock()
         device.add_packet_callback(0x4203, callback1)
         device.remove_packet_callback(0x4203, callback1)
 

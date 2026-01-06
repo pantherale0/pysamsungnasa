@@ -75,9 +75,22 @@ fast = true
 
 [tool.coverage.run]
 branch = true
+omit = [
+    "tests/*",
+    "*/tests/*"
+]
 
 [tool.coverage.report]
 fail_under = 100
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "if typing.TYPE_CHECKING:"
+]
 
 [tool.flake8]
 max-line-length = 120

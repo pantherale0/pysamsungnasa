@@ -141,7 +141,7 @@ class EnumMessage(BaseMessage):
         enum_cls = cls.MESSAGE_ENUM  # Type narrowing for the checker
         if enum_cls.has_value(payload[0]):
             return cls(
-                value=enum_cls(payload[0]),
+                value=enum_cls._value2member_map_[payload[0]],  # type: ignore[attr-defined]
                 options=[option.name for option in enum_cls],
             )
         else:
