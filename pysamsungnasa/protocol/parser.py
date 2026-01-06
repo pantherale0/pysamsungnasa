@@ -169,34 +169,51 @@ class NasaPacketParser:
                 continue
             msg_number = ds[0]
             formatted_msg_number = f"0x{msg_number:04x}"
-            if msg_number == -1 and len(ds) >= 3 and ds[1] == "STRUCTURE":
-                # Structure message: index 2 contains the raw bytes of the structure
-                payload_bytes = ds[2]
+            # Check if this is a structure message by checking if the payload is bytes
+            if len(ds) >= 3 and isinstance(ds[2], bytes):
+                # Structure message: index 2 contains raw bytes that StructureMessage will parse
+                struct_payload = ds[2]
                 description = ds[1]
+                # Pass raw bytes to StructureMessage for parsing
+                try:
+                    parsed_message = parse_message(msg_number, struct_payload)
+                    if (
+                        str(self._config.address) == kwargs["dest"]
+                        or self._config.log_all_messages
+                        or kwargs["dest"] in self._config.devices_to_log
+                    ):
+                        _LOGGER.debug(
+                            "Parsed structure message %s (%s): %s",
+                            formatted_msg_number,
+                            description,
+                            {**parsed_message.as_dict},
+                        )
+                except Exception as e:
+                    _LOGGER.error("Failed to parse structure message %s (%s): %s", formatted_msg_number, description, e)
+                    continue
             elif len(ds) >= 4:
                 # Normal message: index 3 contains the value_bytes
                 payload_bytes = ds[3]
                 description = ds[1]
+                try:
+                    parsed_message = parse_message(ds[0], payload_bytes)
+                    if (
+                        str(self._config.address) == kwargs["dest"]
+                        or self._config.log_all_messages
+                        or kwargs["dest"] in self._config.devices_to_log
+                        or ds[0] in self._config.messages_to_log
+                    ):
+                        _LOGGER.debug(
+                            "Parsed message %s (%s): %s",
+                            formatted_msg_number,
+                            description,
+                            {**parsed_message.as_dict, "raw_payload": payload_bytes.hex()},
+                        )
+                except Exception as e:
+                    _LOGGER.error("Failed to parse message %s (%s): %s", formatted_msg_number, description, e)
+                    continue
             else:
                 _LOGGER.warning("Invalid data set: %s", ds)
-                continue
-
-            try:
-                parsed_message = parse_message(ds[0], payload_bytes, description)
-                if (
-                    str(self._config.address) == kwargs["dest"]
-                    or self._config.log_all_messages
-                    or kwargs["dest"] in self._config.devices_to_log
-                    or ds[0] in self._config.messages_to_log
-                ):
-                    _LOGGER.debug(
-                        "Parsed message %s (%s): %s",
-                        formatted_msg_number,
-                        description,
-                        {**parsed_message.as_dict, "raw_payload": payload_bytes.hex()},
-                    )
-            except Exception as e:
-                _LOGGER.error("Failed to parse message %s (%s): %s", formatted_msg_number, description, e)
                 continue
 
             # Prepare arguments for handlers
@@ -289,43 +306,17 @@ class NasaPacketParser:
             elif message_type_kind == 3:
                 if dataset_count != 1:
                     raise BaseException("Invalid encoded packet containing a struct: " + bin2hex(packet_data))
-                # Parse structure as TLV-encoded sub-messages
-                struct_payload = packet_data[offset:]
-                struct_offset = 0
-                while struct_offset < len(struct_payload):
-                    if struct_offset + 1 >= len(struct_payload):
-                        break
-                    # First byte is length
-                    message_length = struct_payload[struct_offset]
-                    struct_offset += 1
-
-                    if struct_offset + 2 > len(struct_payload):
-                        break
-                    # Next two bytes are message ID
-                    try:
-                        message_number = struct.unpack(">H", struct_payload[struct_offset : struct_offset + 2])[0]
-                    except struct.error:
-                        break
-                    struct_offset += 2
-
-                    # Remaining bytes are the value
-                    if message_length >= 2:
-                        value_length = message_length - 2
-                        if struct_offset + value_length > len(struct_payload):
-                            value = struct_payload[struct_offset:]
-                            struct_offset = len(struct_payload)
-                        else:
-                            value = struct_payload[struct_offset : struct_offset + value_length]
-                            struct_offset += value_length
-                    else:
-                        value = b""
-
-                    value_hex = bin2hex(value)
-                    try:
-                        message_description = get_nasa_message_name(message_number)
-                    except Exception:
-                        message_description = "UNSPECIFIED"
-                    datasets.append([message_number, message_description, value_hex, value])
+                # Extract message number from first two bytes
+                message_number = struct.unpack(">H", packet_data[offset : offset + 2])[0]
+                # Pass raw structure data (everything after message number) directly to StructureMessage
+                struct_payload = packet_data[offset + 2 :]
+                try:
+                    message_description = get_nasa_message_name(message_number)
+                except Exception:
+                    message_description = "STRUCTURE"
+                # Store the structure with raw bytes for StructureMessage to parse
+                datasets.append([message_number, message_description, struct_payload])
+                offset += 2 + len(struct_payload)
                 continue
             else:
                 raise BaseException("Invalid message type kind value")

@@ -7,9 +7,8 @@ from pysamsungnasa.protocol.factory import (
     get_nasa_message_id,
     parse_message,
 )
-from pysamsungnasa.protocol.factory.messaging import SendMessage, RawMessage
+from pysamsungnasa.protocol.factory.types import SendMessage, RawMessage
 from pysamsungnasa.protocol.enum import DataType
-from pysamsungnasa.helpers import hex2bin, bin2hex
 
 
 class TestBuildMessage:
@@ -105,6 +104,7 @@ class TestGetNasaMessageName:
     def test_get_message_name_unknown_message(self):
         """Test getting name of unknown message returns hex format."""
         name = get_nasa_message_name(0xFFFF)
+        assert name is not None
         assert "0xffff" in name.lower()
 
     @pytest.mark.parametrize("msg_id", [0x4000, 0x4001, 0x8000, 0x8001])
@@ -131,9 +131,8 @@ class TestParseMessage:
         """Test that parsing unknown message returns RawMessage."""
         message_number = 0xFFFF
         payload = b"\x01\x02\x03"
-        description = "Unknown"
 
-        result = parse_message(message_number, payload, description)
+        result = parse_message(message_number, payload)
 
         assert isinstance(result, RawMessage)
 
@@ -141,9 +140,8 @@ class TestParseMessage:
         """Test parsing message with empty payload."""
         message_number = 0xFFFF
         payload = b""
-        description = "Empty"
 
-        result = parse_message(message_number, payload, description)
+        result = parse_message(message_number, payload)
 
         assert isinstance(result, RawMessage)
 
@@ -152,9 +150,8 @@ class TestParseMessage:
         # 0x4000 is IN_OPERATION_POWER (1 byte enum)
         message_number = 0x4000
         payload = b"\x01"
-        description = "IN_OPERATION_POWER"
 
-        result = parse_message(message_number, payload, description)
+        result = parse_message(message_number, payload)
 
         # Should return parsed message, not RawMessage
         assert result is not None
@@ -170,7 +167,7 @@ class TestParseMessage:
     )
     def test_parse_message_various_payloads(self, message_number, payload):
         """Test parsing messages with various payload sizes."""
-        result = parse_message(message_number, payload, "Test")
+        result = parse_message(message_number, payload)
         assert result is not None
 
     def test_parse_message_invalid_payload_returns_raw(self):
@@ -178,9 +175,8 @@ class TestParseMessage:
         # Try to parse a known message with wrong payload size
         message_number = 0x4000  # Expects 1 byte
         payload = b"\x00\x00\x00\x00"  # 4 bytes
-        description = "Invalid"
 
-        result = parse_message(message_number, payload, description)
+        result = parse_message(message_number, payload)
 
         # Should fall back to RawMessage on parsing error
         assert result is not None

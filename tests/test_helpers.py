@@ -1,7 +1,7 @@
 """Tests for helper functions."""
 
 import pytest
-from pysamsungnasa.helpers import bin2hex, hex2bin, getnonce, resetnonce, Address
+from pysamsungnasa.helpers import bin2hex, hex2bin, Address
 
 
 class TestBin2Hex:
@@ -62,38 +62,6 @@ class TestRoundTrip:
         bin_value = hex2bin(original)
         result = bin2hex(bin_value)
         assert result == original
-
-
-class TestNonce:
-    """Tests for nonce functions."""
-
-    def test_getnonce_increments(self):
-        """Test getnonce increments the nonce value."""
-        resetnonce()
-        first = getnonce()
-        second = getnonce()
-        assert second == first + 1
-
-    def test_getnonce_wraps_at_256(self):
-        """Test getnonce wraps around at 256."""
-        resetnonce()
-        # After reset, _NONCE is 0
-        # Get 256 nonces: 1, 2, 3, ..., 255, 0, 1, 2, ...
-        nonce = None
-        for i in range(256):
-            nonce = getnonce()
-        # After 256 calls from 0, we should be at 0 again (wraps at 256)
-        assert nonce == 0
-
-    def test_resetnonce_resets_to_initial(self):
-        """Test resetnonce resets to initial value."""
-        resetnonce()
-        getnonce()
-        getnonce()
-        resetnonce()
-        nonce = getnonce()
-        # After reset, _NONCE is 0, first call to getnonce returns 1
-        assert nonce == 1
 
 
 class TestAddress:

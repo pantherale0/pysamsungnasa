@@ -10,21 +10,6 @@ def hex2bin(hex):
     return binascii.unhexlify(re.sub(r"\s", "", hex))
 
 
-_NONCE = 0xA4
-
-
-def getnonce():
-    global _NONCE
-    _NONCE += 1
-    _NONCE %= 256
-    return _NONCE
-
-
-def resetnonce():
-    global _NONCE
-    _NONCE = 0
-
-
 class Address:
     """Class to represent a device address."""
 

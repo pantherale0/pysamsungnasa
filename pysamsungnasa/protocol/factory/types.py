@@ -5,10 +5,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from typing import ClassVar, Optional, Any
+import logging
 import struct
 from abc import ABC
 
 from ..enum import SamsungEnum
+
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass
@@ -57,6 +60,17 @@ class BaseMessage(ABC):
         raise NotImplementedError("parse_payload must be implemented in subclasses.")
 
 
+class RawMessage(BaseMessage):
+    """Parser for raw messages."""
+
+    MESSAGE_NAME = "UNKNOWN"
+
+    @classmethod
+    def parse_payload(cls, payload: bytes) -> "RawMessage":
+        """Parse the payload into a raw hex string."""
+        return cls(value=payload.hex() if payload else None)
+
+
 class BoolMessage(BaseMessage):
     """Parser for boolean messages."""
 
@@ -73,17 +87,6 @@ class StrMessage(BaseMessage):
     def parse_payload(cls, payload: bytes) -> "StrMessage":
         """Parse the payload into a string value."""
         return cls(value=payload.decode("utf-8") if payload else None)
-
-
-class RawMessage(BaseMessage):
-    """Parser for raw messages."""
-
-    MESSAGE_NAME = "UNKNOWN"
-
-    @classmethod
-    def parse_payload(cls, payload: bytes) -> "RawMessage":
-        """Parse the payload into a raw hex string."""
-        return cls(value=payload.hex() if payload else None)
 
 
 class FloatMessage(BaseMessage):
@@ -134,15 +137,17 @@ class EnumMessage(BaseMessage):
             raise ValueError(f"{cls.__name__} does not have a MESSAGE_ENUM defined.")
         if not isinstance(cls.MESSAGE_ENUM, type) or not issubclass(cls.MESSAGE_ENUM, SamsungEnum):
             raise TypeError(f"{cls.__name__}.MESSAGE_ENUM must be a SamsungEnum subclass.")
-        if cls.MESSAGE_ENUM.has_value(payload[0]):
+
+        enum_cls = cls.MESSAGE_ENUM  # Type narrowing for the checker
+        if enum_cls.has_value(payload[0]):
             return cls(
-                value=cls.MESSAGE_ENUM(payload[0]),
-                options=[option.name for option in cls.MESSAGE_ENUM],
+                value=enum_cls._value2member_map_[payload[0]],  # type: ignore[attr-defined]
+                options=[option.name for option in enum_cls],
             )
         else:
             return cls(
                 value=cls.ENUM_DEFAULT,
-                options=[option.name for option in cls.MESSAGE_ENUM],
+                options=[option.name for option in enum_cls],
             )
 
 
@@ -185,3 +190,25 @@ class BasicCurrentMessage(FloatMessage):
 
     ARITHMETIC = 0.1
     UNIT_OF_MEASUREMENT = "A"
+
+
+class StructureMessage(BaseMessage):
+    """Parser for structure messages containing nested sub-messages."""
+
+    @classmethod
+    def parse_payload(cls, payload: bytes) -> "StructureMessage":
+        """Parse the payload into a structure message with nested sub-messages.
+
+        When payload is bytes, parse TLV-encoded sub-messages and attempt to join them
+        into a single string representation when possible. The implementor is responsible
+        for properly defining how the struct message is parsed through this method.
+
+        Args:
+            payload: Bytes (raw TLV data)
+
+        Returns:
+            StructureMessage instance with parsed VALUE
+        """
+        from .parser import parse_tlv_structure
+
+        return cls(value=parse_tlv_structure(payload))

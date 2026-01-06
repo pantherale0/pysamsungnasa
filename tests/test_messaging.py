@@ -2,7 +2,7 @@
 
 import pytest
 import struct
-from pysamsungnasa.protocol.factory.messaging import (
+from pysamsungnasa.protocol.factory.types import (
     SendMessage,
     BaseMessage,
     BoolMessage,
@@ -42,10 +42,15 @@ class TestBaseMessage:
 
     def test_base_message_as_dict(self):
         """Test as_dict property."""
-        msg = BaseMessage(value=100)
-        msg.MESSAGE_ID = 0x4000
-        msg.MESSAGE_NAME = "TEST_MESSAGE"
-        msg.UNIT_OF_MEASUREMENT = "°C"
+
+        class TestMessage(BaseMessage):
+            """Test message class."""
+
+            MESSAGE_ID = 0x4000
+            MESSAGE_NAME = "TEST_MESSAGE"
+            UNIT_OF_MEASUREMENT = "°C"
+
+        msg = TestMessage(value=100)
 
         result = msg.as_dict
 
@@ -56,14 +61,24 @@ class TestBaseMessage:
 
     def test_is_fsv_message_with_fsv_in_name(self):
         """Test is_fsv_message property when FSV in name."""
-        msg = BaseMessage(value=1)
-        msg.MESSAGE_NAME = "FSV_TEST_MESSAGE"
+
+        class TestMessage(BaseMessage):
+            """FSV test message class."""
+
+            MESSAGE_NAME = "FSV_TEST_MESSAGE"
+
+        msg = TestMessage(value=1)
         assert msg.is_fsv_message is True
 
     def test_is_fsv_message_without_fsv(self):
         """Test is_fsv_message property when FSV not in name."""
-        msg = BaseMessage(value=1)
-        msg.MESSAGE_NAME = "REGULAR_MESSAGE"
+
+        class TestMessage(BaseMessage):
+            """Regular test message class."""
+
+            MESSAGE_NAME = "REGULAR_MESSAGE"
+
+        msg = TestMessage(value=1)
         assert msg.is_fsv_message is False
 
     def test_parse_payload_not_implemented(self):
@@ -207,6 +222,16 @@ class TestEnumMessage:
         payload = b"\xff"  # Unknown value
         msg = TestEnumMsg.parse_payload(payload)
         assert msg.VALUE == TestEnum.VALUE1
+
+    def test_enum_message_parse_raises_exception_no_enum(self):
+        """Test that parse_payload raises ValueError if MESSAGE_ENUM is None."""
+
+        class TestEnumMsg(EnumMessage):
+            MESSAGE_ENUM = None
+            ENUM_DEFAULT = None
+
+        with pytest.raises(ValueError):
+            TestEnumMsg.parse_payload(b"\x01")
 
 
 class TestIntegerMessage:

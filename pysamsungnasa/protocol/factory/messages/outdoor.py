@@ -1,6 +1,6 @@
 """Outdoor unit messages."""
 
-from ..messaging import (
+from ..types import (
     EnumMessage,
     FloatMessage,
     BasicTemperatureMessage,
@@ -8,8 +8,8 @@ from ..messaging import (
     BasicPowerMessage,
     BasicEnergyMessage,
     RawMessage,
-    StrMessage,
     IntegerMessage,
+    StructureMessage,
 )
 from ...enum import (
     OutdoorOperationStatus,
@@ -53,45 +53,6 @@ class OutdoorOperationModeLimit(FloatMessage):
     MESSAGE_NAME = "Outdoor Operation Mode Limit"
 
 
-class OutdoorSerialNumber(StrMessage):
-    """Parser for message 0x0607 (Serial Number).
-
-    This is a string structure message containing the device serial number.
-    Type: STR (String structure)
-
-    IMPORTANT: This structure returns INCOMPLETE data via submessages:
-    - 0x0730: Manufacturer/model prefix (e.g., "TYXP")
-    - 0x4654: Serial number suffix (e.g., "900834F")
-
-    Known device example:
-    Physical label: "0TYXPAFT900834F"
-    Structure response:
-      - 0x0730: "TYXP"
-      - 0x4654: "900834F"
-
-    Missing from structure: "0" (prefix), "AFT" (middle section)
-
-    The complete serial number cannot be reconstructed from the structure alone.
-    Recommendation: Query other message IDs (0x861A, 0x8608, etc.) for complete model info.
-    """
-
-    MESSAGE_ID = 0x0607
-    MESSAGE_NAME = "Serial Number"
-
-
-class OutdoorSerialNumberPrefix(StrMessage):
-    """Parser for message 0x0730 (Serial Number Manufacturer/Model Prefix).
-
-    Submessage returned as part of the 0x0607 structure response.
-    Contains the manufacturer/model code portion of the serial number.
-
-    Example: "TYXP" (from serial "0TYXPAFT900834F")
-    """
-
-    MESSAGE_ID = 0x0730
-    MESSAGE_NAME = "Serial Number Prefix"
-
-
 class HeatPumpVoltage(FloatMessage):
     """Parser for message 0x24FC (Heat Pump Voltage)."""
 
@@ -100,34 +61,6 @@ class HeatPumpVoltage(FloatMessage):
     UNIT_OF_MEASUREMENT = "V"
     SIGNED = False
     ARITHMETIC = 1.0
-
-
-class OutdoorProductModelName(StrMessage):
-    """Parser for message 0x4548 (Outdoor Product Model Name - from 0x061A structure)."""
-
-    MESSAGE_ID = 0x4548
-    MESSAGE_NAME = "Outdoor Product Model Name"
-
-
-class OutdoorSerialNumberSuffix(StrMessage):
-    """Parser for message 0x4654 (Serial Number Numeric Suffix).
-
-    Submessage returned as part of the 0x0607 structure response.
-    Contains the numeric suffix portion of the serial number.
-
-    Example: "900834F" (from serial "0TYXPAFT900834F")
-    """
-
-    MESSAGE_ID = 0x4654
-    MESSAGE_NAME = "Serial Number Suffix"
-
-    @classmethod
-    def parse_payload(cls, payload: bytes) -> "OutdoorSerialNumberSuffix":
-        """Parse the payload into a string value, stripping null terminators."""
-        decoded = payload.decode("utf-8") if payload else None
-        if decoded:
-            decoded = decoded.rstrip("\x00")
-        return cls(value=decoded)
 
 
 class OutdoorOperationServiceOpMessage(EnumMessage):
@@ -1528,7 +1461,7 @@ class OutdoorCompressorInterstagePressure(FloatMessage):
     MESSAGE_NAME = "Compressor interstage pressure"
 
 
-class OutdoorProjectCode(StrMessage):
+class OutdoorProjectCode(RawMessage):
     """Parser for message 0x82BC (Outdoor Project Code)."""
 
     MESSAGE_ID = 0x82BC
@@ -1882,14 +1815,14 @@ class OutdoorMessage841f(RawMessage):
     MESSAGE_NAME = "Message 841F"
 
 
-class OutdoorInverter1Micom(StrMessage):
+class OutdoorInverter1Micom(StructureMessage):
     """Parser for message 0x8601 (Inverter1 Micom)."""
 
     MESSAGE_ID = 0x8601
     MESSAGE_NAME = "Inverter1 Micom"
 
 
-class OutdoorMessage8608(StrMessage):
+class OutdoorMessage8608(RawMessage):
     """Parser for message 0x8608 (Message 8608)."""
 
     MESSAGE_ID = 0x8608
@@ -2050,7 +1983,7 @@ class OutdoorInstalledOutdoorUnitSetupInfo(RawMessage):
         return cls(value=result)
 
 
-class OutdoorOutdoorUnitCheckInfo(StrMessage):
+class OutdoorOutdoorUnitCheckInfo(RawMessage):
     """Parser for message 0x8613 (Outdoor Unit check info)."""
 
     MESSAGE_ID = 0x8613

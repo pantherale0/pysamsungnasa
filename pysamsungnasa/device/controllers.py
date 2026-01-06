@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from typing import Optional, Callable
 from enum import Enum
 
-from ..protocol.factory.messaging import SendMessage
 from ..protocol.factory.messages.indoor import (
     InDhwWaterHeaterPower,
     InDhwOpMode,
@@ -16,6 +15,7 @@ from ..protocol.factory.messages.indoor import (
     InWaterLawTargetTemperature,
     InWaterOutletTargetTemperature,
 )
+from ..protocol.factory.types import SendMessage
 from ..protocol.enum import (
     DataType,
     DhwOpMode,

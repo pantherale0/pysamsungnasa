@@ -1,14 +1,14 @@
 """Tests for NASA device module."""
 
 import pytest
-from unittest.mock import Mock, AsyncMock, MagicMock, patch
+from unittest.mock import Mock, AsyncMock
 from datetime import datetime, timezone
 from pysamsungnasa.device import NasaDevice, IndoorNasaDevice, OutdoorNasaDevice
 from pysamsungnasa.device.controllers import DhwController, ClimateController, WaterLawMode
 from pysamsungnasa.config import NasaConfig
 from pysamsungnasa.protocol.parser import NasaPacketParser
-from pysamsungnasa.protocol.enum import AddressClass, InUseThermostat, InOperationMode, DhwOpMode
-from pysamsungnasa.protocol.factory.messaging import BaseMessage
+from pysamsungnasa.protocol.enum import AddressClass, InUseThermostat, InOperationMode
+from pysamsungnasa.protocol.factory.types import BaseMessage
 
 
 class TestNasaDevice:
@@ -422,6 +422,7 @@ class TestIndoorNasaDeviceControllers:
 
         device = IndoorNasaDevice(address="200001", packet_parser=parser, config=config, client=client)
 
+        assert device.climate_controller is not None
         assert device.climate_controller.water_law_mode == WaterLawMode.WATER_LAW_INTERNAL_THERMOSTAT
 
     def test_infer_water_law_mode_external_thermostat(self):
@@ -479,7 +480,6 @@ class TestIndoorNasaDeviceControllers:
         device = OutdoorNasaDevice(address="100001", packet_parser=parser, config=config, client=client)
 
         # dhw_controller should return None for outdoor device
-        indoor_device = IndoorNasaDevice(address="200001", packet_parser=parser, config=config, client=client)
         outdoor_check = device.__class__.__name__ == "OutdoorNasaDevice"
         assert outdoor_check is True
 
@@ -557,7 +557,6 @@ class TestNasaDeviceCallbackExceptionHandling:
         )
 
         callback1 = Mock()
-        callback2 = Mock()
         device.add_packet_callback(0x4203, callback1)
         device.remove_packet_callback(0x4203, callback1)
 

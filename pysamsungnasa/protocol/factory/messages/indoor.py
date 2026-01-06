@@ -1,6 +1,6 @@
 """Messages from the indoor unit."""
 
-from ..messaging import (
+from ..types import (
     BoolMessage,
     EnumMessage,
     FloatMessage,

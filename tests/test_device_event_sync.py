@@ -2,12 +2,12 @@
 
 import pytest
 import asyncio
-from unittest.mock import Mock, AsyncMock, MagicMock, patch
+from unittest.mock import Mock, AsyncMock, patch
 from pysamsungnasa.device import NasaDevice
 from pysamsungnasa.config import NasaConfig
 from pysamsungnasa.protocol.parser import NasaPacketParser
 from pysamsungnasa.protocol.enum import AddressClass
-from pysamsungnasa.protocol.factory.messaging import BaseMessage
+from pysamsungnasa.protocol.factory.types import BaseMessage
 
 
 @pytest.fixture
