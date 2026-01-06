@@ -25,7 +25,7 @@ class SerialNumber(StructureMessage):
         """Parse the payload into a string."""
         # Convert the payload bytes to ASCII string, stripping null bytes
         ascii_string = payload.decode("ascii").rstrip("\x00")
-        return cls(value=ascii_string)
+        return cls(value=ascii_string, raw_payload=payload)
 
 
 class DbCodeMiComMainMessage(StructureMessage):
@@ -72,9 +72,9 @@ class DbCodeMiComMainMessage(StructureMessage):
             # Time from BCD
             time_str = f"{bcd_decode(payload[7]):02d}{bcd_decode(payload[8]):02d}{bcd_decode(payload[9]):02d}"
 
-            return cls(value=f"{series_code} ({model_variant}) {date_str} {time_str}")
+            return cls(value=f"{series_code} ({model_variant}) {date_str} {time_str}", raw_payload=payload)
         except (IndexError, ValueError):
-            return cls(value=payload.hex() if payload else None)
+            return cls(value=payload.hex() if payload else None, raw_payload=payload)
 
 
 class ProductModelName(StructureMessage):
@@ -113,8 +113,9 @@ class ProductModelName(StructureMessage):
                     "type_id": type_id,
                     "model_name": model_name,
                     "formatted": f"{model_name} (type: 0x{type_id:02X})",
-                }
+                },
+                raw_payload=payload,
             )
         except (UnicodeDecodeError, IndexError):
             # Fallback to hex if decoding fails
-            return cls(value=payload.hex() if payload else None)
+            return cls(value=payload.hex() if payload else None, raw_payload=payload)

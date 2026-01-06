@@ -11,6 +11,7 @@ from prompt_toolkit.shortcuts import CompleteStyle
 from .nasa import SamsungNasa
 from .device import NasaDevice, IndoorNasaDevice, OutdoorNasaDevice
 from .protocol.enum import DataType
+from .protocol.factory import build_message, SendMessage
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -26,7 +27,6 @@ class CLICompleter(Completer):
             "read-range",
             "write",
             "device",
-            "dump",
             "climate",
             "config",
             "logger",
@@ -38,6 +38,7 @@ class CLICompleter(Completer):
         self.logger_subcommands = ["follow", "print"]
         self.climate_modes = ["dhw", "heat"]
         self.climate_commands = ["on", "off"]
+        self.device_subcommands = ["dump"]
 
     def get_completions(self, document, complete_event):
         """Generate completions based on input."""
@@ -87,7 +88,13 @@ class CLICompleter(Completer):
                 for c in self.climate_commands:
                     yield Completion(c)
 
-            elif command in ("device", "dump", "read", "write", "read-range"):
+            elif command == "device":
+                # Suggest either dump or device addresses
+                suggestions = [*self.device_subcommands, *self.nasa.devices.keys()]
+                for suggestion in suggestions:
+                    yield Completion(suggestion)
+
+            elif command in ("dump", "read", "write", "read-range"):
                 # Suggest device addresses
                 for addr in self.nasa.devices.keys():
                     yield Completion(addr)
@@ -191,6 +198,26 @@ def print_device_header(device: NasaDevice):
         print(f"  COP rating: {device.cop_rating}")
 
 
+def dump_device_data(device: NasaDevice):
+    """Dump all device data back into hex format to a file in the hex format, suitable for re-import."""
+    print(f"Device {device.address} will dump to {device.address}_dump.hex")
+    source_address = device.address
+    destination_address = "b0ffff"  # Broadcast address
+    message_type = DataType.NOTIFICATION
+    messages: list[str] = []
+    cur_pack_number = 0
+    for msg_id, value in device.attributes.items():
+        messages.append(
+            build_message(source_address, destination_address, message_type, [SendMessage(msg_id, value.RAW_PAYLOAD)])
+        )
+    with open(f"{device.address}_dump.hex", "w", encoding="utf-8") as f:
+        for msg in messages:
+            f.write(msg.format(CUR_PACK_NUM=cur_pack_number.to_bytes(2, "big").hex()) + "\n")
+            cur_pack_number += 1
+            if cur_pack_number > 255:
+                cur_pack_number = 0
+
+
 async def print_logs():
     """Print last 20 lines of logs."""
 
@@ -231,7 +258,8 @@ async def interactive_cli(nasa: SamsungNasa):
                 print("  read-range <device_address> <start_message_id_hex> <count>")
                 print("  write <device_address> <message_id_hex> <value_hex>")
                 print("  device <device_address> <message_id_hex>")
-                print("  dump <device_address>")
+                print("  device <device_address> dump")
+                print("  device dump")
                 print("  climate <device_address> <dhw/heat>")
                 print("  config set <key> <value>")
                 print("  config append <key> <value>")
@@ -285,7 +313,10 @@ async def interactive_cli(nasa: SamsungNasa):
                         print_device_header(device)
                 elif len(parts) == 2:
                     device_id = parts[1]
-                    if device_id in nasa.devices:
+                    if device_id == "dump":
+                        for device in nasa.devices.values():
+                            dump_device_data(device)
+                    elif device_id in nasa.devices:
                         device = nasa.devices[device_id]
                         print_device_header(device)
                         for k, v in device.attributes.items():
@@ -294,17 +325,25 @@ async def interactive_cli(nasa: SamsungNasa):
                         print(f"Device {device_id} not found")
                 elif len(parts) == 3:
                     device_id = parts[1]
-                    # Convert str to decimal (0x4097 -> 16503)
-                    message_id = int(parts[2], 16)
-                    if device_id in nasa.devices:
-                        device = nasa.devices[device_id]
-                        print_device_header(device)
-                        if message_id in device.attributes:
-                            print(f"  {message_id}: {device.attributes[message_id].as_dict}")
+                    sub_command = parts[2].lower()
+                    if sub_command == "dump":
+                        if device_id in nasa.devices:
+                            device = nasa.devices[device_id]
+                            dump_device_data(device)
                         else:
-                            print(f"  {message_id} not found")
+                            print(f"Device {device_id} not found")
                     else:
-                        print(f"Device {device_id} not found")
+                        # Convert str to decimal (0x4097 -> 16503)
+                        message_id = int(parts[2], 16)
+                        if device_id in nasa.devices:
+                            device = nasa.devices[device_id]
+                            print_device_header(device)
+                            if message_id in device.attributes:
+                                print(f"  {message_id}: {device.attributes[message_id].as_dict}")
+                            else:
+                                print(f"  {message_id} not found")
+                        else:
+                            print(f"Device {device_id} not found")
                 else:
                     print("Usage: device [<device_address> [<message_id_hex>]]")
                     print("  Without arguments, lists all devices.")
@@ -357,7 +396,10 @@ async def interactive_cli(nasa: SamsungNasa):
                 await print_logs()
             elif command == "dump" and len(parts) == 2:
                 device_id = parts[1]
-                if device_id in nasa.devices:
+                if device_id == "all":
+                    for device in nasa.devices.values():
+                        dump_device_data(device)
+                elif device_id in nasa.devices:
                     device = nasa.devices[device_id]
                     # Sort attributes by message ID
                     sorted_attrs = dict(sorted(device.attributes.items()))

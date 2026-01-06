@@ -1868,7 +1868,7 @@ class OutdoorBaseOptionInfo(RawMessage):
             "raw_hex": payload.hex(),
             "note": "Structure definition not yet available in NASA.ptc - fields represent outdoor unit base option configuration",
         }
-        return cls(value=result)
+        return cls(value=result, raw_payload=payload)
 
 
 class OutdoorMessage860c(RawMessage):
@@ -1901,7 +1901,7 @@ class OutdoorMessage860c(RawMessage):
             "total_length": len(payload),
             "raw_hex": payload.hex(),
         }
-        return cls(value=result)
+        return cls(value=result, raw_payload=payload)
 
 
 class OutdoorInstalledOutdoorUnitModelInfo(RawMessage):
@@ -1935,7 +1935,7 @@ class OutdoorInstalledOutdoorUnitModelInfo(RawMessage):
             "raw_hex": payload.hex(),
             "note": "Structure definition not yet available in NASA.ptc - fields represent outdoor unit model information",
         }
-        return cls(value=result)
+        return cls(value=result, raw_payload=payload)
 
 
 class OutdoorInstalledOutdoorUnitSetupInfo(RawMessage):
@@ -1980,7 +1980,7 @@ class OutdoorInstalledOutdoorUnitSetupInfo(RawMessage):
             "raw_hex": payload.hex(),
             "note": "Structure definition not yet available in NASA.ptc - fields represent outdoor unit setup configuration",
         }
-        return cls(value=result)
+        return cls(value=result, raw_payload=payload)
 
 
 class OutdoorOutdoorUnitCheckInfo(RawMessage):
