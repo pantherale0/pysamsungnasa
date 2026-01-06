@@ -208,6 +208,16 @@ class TestEnumMessage:
         msg = TestEnumMsg.parse_payload(payload)
         assert msg.VALUE == TestEnum.VALUE1
 
+    def test_enum_message_parse_raises_exception_no_enum(self):
+        """Test that parse_payload raises ValueError if MESSAGE_ENUM is None."""
+
+        class TestEnumMsg(EnumMessage):
+            MESSAGE_ENUM = None
+            ENUM_DEFAULT = None
+
+        with pytest.raises(ValueError):
+            TestEnumMsg.parse_payload(b"\x01")
+
 
 class TestIntegerMessage:
     """Tests for IntegerMessage class."""

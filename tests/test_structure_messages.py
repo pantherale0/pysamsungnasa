@@ -160,3 +160,17 @@ class TestStructureMessages:
         assert message_id == parsed_packet.MESSAGE_ID
         assert isinstance(parsed_packet.VALUE, dict)
         assert expected_contains == parsed_packet.VALUE["model_name"]
+
+    def test_parse_product_model_name_invalid_payload(self):
+        """Test parsing Product Model Name with invalid payload."""
+        from pysamsungnasa.protocol.factory.messages.basic import ProductModelName
+
+        # Invalid payload (too short)
+        payload = b"\x05"
+        msg = ProductModelName.parse_payload(payload)
+        assert msg.VALUE == payload.hex()
+
+        # Invalid ASCII string
+        payload = b"\x09\xff\xff\xff"
+        msg = ProductModelName.parse_payload(payload)
+        assert msg.VALUE == payload.hex()
