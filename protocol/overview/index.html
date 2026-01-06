@@ -857,6 +857,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#source-and-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source and References
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#architecture" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1283,6 +1294,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../messages-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Message Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../messages/" class="md-nav__link">
         
   
@@ -1624,6 +1663,15 @@
 - <strong>Bidirectional</strong> - Devices both send and receive messages
 - <strong>Message-oriented</strong> - Data organized into typed messages
 - <strong>Acknowledged</strong> - Critical operations are acknowledged</p>
+<h2 id="source-and-references">Source and References<a class="headerlink" href="#source-and-references" title="Permanent link">&para;</a></h2>
+<p>This protocol documentation is based on work from multiple sources:</p>
+<ul>
+<li>Research from the <a href="https://github.com/omerfaruk-aran/esphome_samsung_hvac_bus/issues/28">esphome_samsung_hvac_bus project</a></li>
+<li>Documentation from <a href="https://web.archive.org/web/20240330070335/https://wiki.myehs.eu/wiki/NASA_Protocol">MyEHS Wikipedia</a></li>
+<li>Samsung service software files (NASA.ptc, NasaConst.java)</li>
+<li>WiFiKit source code</li>
+</ul>
+<p><strong>Note:</strong> The pysamsungnasa library implements messages from the latest version of S-Net protocol, which may include features not yet documented in external sources.</p>
 <h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
 <h3 id="network-model">Network Model<a class="headerlink" href="#network-model" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>┌─────────────┐

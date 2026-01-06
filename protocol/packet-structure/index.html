@@ -874,10 +874,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#packet-layout" class="md-nav__link">
     <span class="md-ellipsis">
       
         Packet Layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#calculation-notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calculation Notes
       
     </span>
   </a>
@@ -931,6 +953,111 @@
         
           <li class="md-nav__item">
   <a href="#packet-information-byte-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packet Information (Byte 9)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-type-data-type-byte-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packet Type &amp; Data Type (Byte 10)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#packet-number-byte-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packet Number (Byte 11)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-capacity-byte-12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Message Capacity (Byte 12)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-number-bytes-13-14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Message Number (Bytes 13-14)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#message-payload-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Message Payload Structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#crc-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CRC Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#packet-validation-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packet Validation Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-packet-breakdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Packet Breakdown
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example Packet Breakdown">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#packet-information-byte-9_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         Packet Information (Byte 9)
@@ -1057,6 +1184,34 @@
     
   
     Enumerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../messages-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Message Reference
   
 
     
@@ -1410,6 +1565,15 @@
 
 <h1 id="packet-structure">Packet Structure<a class="headerlink" href="#packet-structure" title="Permanent link">&para;</a></h1>
 <p>Detailed specification of the NASA protocol packet format.</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>The NASA protocol uses a frame-based communication model:</p>
+<div class="highlight"><pre><span></span><code>┌─────┬────────┬────────┬─────────────┬──────┬──────┐
+│STX  │  Size  │Address │  Packet &amp;   │      │ ETX  │
+│0x32 │(2 bytes)│ (6) │ Data Type │Messages│ 0x34 │
+└─────┴────────┴────────┴─────────────┴──────┴──────┘
+       └─────────────────────────────────────┘
+                    Payload Size
+</code></pre></div>
 <h2 id="packet-layout">Packet Layout<a class="headerlink" href="#packet-layout" title="Permanent link">&para;</a></h2>
 <p>Each NASA packet follows this structure:</p>
 <table>
@@ -1426,7 +1590,7 @@
 <td>0</td>
 <td>Packet Start (STX)</td>
 <td>0x32</td>
-<td>Fixed start marker</td>
+<td>Fixed start marker ('2')</td>
 </tr>
 <tr>
 <td>1-2</td>
@@ -1474,34 +1638,34 @@
 <td>9</td>
 <td>Packet Information</td>
 <td>Flags</td>
-<td>See details below</td>
+<td>Protocol version, retry count</td>
 </tr>
 <tr>
-<td>10-11</td>
+<td>10</td>
 <td>Packet Type &amp; Data Type</td>
 <td>Nibbles</td>
-<td>Packet and message types</td>
+<td>Message type and operation</td>
 </tr>
 <tr>
-<td>12</td>
+<td>11</td>
 <td>Packet Number</td>
 <td>8-bit</td>
 <td>Increasing packet counter</td>
 </tr>
 <tr>
-<td>13</td>
+<td>12</td>
 <td>Capacity</td>
 <td>8-bit</td>
 <td>Number of messages in packet</td>
 </tr>
 <tr>
-<td>14-15</td>
+<td>13-14</td>
 <td>Message Number</td>
 <td>16-bit</td>
 <td>First message identifier</td>
 </tr>
 <tr>
-<td>16...</td>
+<td>15...</td>
 <td>Message Payload</td>
 <td>Variable</td>
 <td>Data for message</td>
@@ -1522,22 +1686,252 @@
 <td>-1</td>
 <td>Packet End (ETX)</td>
 <td>0x34</td>
-<td>Fixed end marker</td>
+<td>Fixed end marker ('4')</td>
 </tr>
 </tbody>
 </table>
+<h2 id="calculation-notes">Calculation Notes<a class="headerlink" href="#calculation-notes" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># Total packet length calculation</span>
+<span class="n">packet_size</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">|</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span>  <span class="c1"># 16-bit little-endian</span>
+<span class="n">total_length</span> <span class="o">=</span> <span class="n">packet_size</span> <span class="o">+</span> <span class="mi">2</span>  <span class="c1"># Size field is not included in size value</span>
+
+<span class="c1"># CRC validation</span>
+<span class="n">crc_bytes</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Two bytes before ETX</span>
+<span class="n">crc_value</span> <span class="o">=</span> <span class="n">crc_bytes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">|</span> <span class="p">(</span><span class="n">crc_bytes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span>
+</code></pre></div>
 <h2 id="field-descriptions">Field Descriptions<a class="headerlink" href="#field-descriptions" title="Permanent link">&para;</a></h2>
 <h3 id="packet-start-end">Packet Start &amp; End<a class="headerlink" href="#packet-start-end" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="n">PACKET_START</span> <span class="o">=</span> <span class="mh">0x32</span>  <span class="c1"># &#39;2&#39;</span>
-<span class="n">PACKET_END</span> <span class="o">=</span> <span class="mh">0x34</span>    <span class="c1"># &#39;4&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="n">PACKET_START</span> <span class="o">=</span> <span class="mh">0x32</span>  <span class="c1"># &#39;2&#39; - marks packet beginning</span>
+<span class="n">PACKET_END</span> <span class="o">=</span> <span class="mh">0x34</span>    <span class="c1"># &#39;4&#39; - marks packet end</span>
 </code></pre></div>
-<p>These are fixed markers that frame every packet.</p>
+<p>These fixed markers frame every valid NASA protocol packet. Packets without these markers should be discarded.</p>
 <h3 id="packet-size">Packet Size<a class="headerlink" href="#packet-size" title="Permanent link">&para;</a></h3>
-<p>16-bit little-endian value representing total packet length including the size field itself.</p>
-<div class="highlight"><pre><span></span><code><span class="n">size</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">|</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span>  <span class="c1"># Little-endian</span>
-<span class="n">total_packet_len</span> <span class="o">=</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">2</span>
+<p>16-bit little-endian value representing packet length starting from the size field itself.</p>
+<div class="highlight"><pre><span></span><code><span class="n">size</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">|</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span>  <span class="c1"># Little-endian decoding</span>
+<span class="n">payload_start</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">payload_length</span> <span class="o">=</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># Exclude size bytes</span>
+<span class="n">total_packet_len</span> <span class="o">=</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">2</span>  <span class="c1"># Include the 2 size bytes plus payload</span>
 </code></pre></div>
 <h3 id="address-fields-bytes-3-8">Address Fields (Bytes 3-8)<a class="headerlink" href="#address-fields-bytes-3-8" title="Permanent link">&para;</a></h3>
+<p>Device communication requires a 6-byte address structure for both source and destination:</p>
+<div class="highlight"><pre><span></span><code>[Source Address Class (1)] [Source Channel (1)] [Source Address (1)]
+[Dest Address Class (1)]   [Dest Channel (1)]   [Dest Address (1)]
+</code></pre></div>
+<p><strong>Address Class</strong> enumeration:</p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Hex</th>
+<th>Device Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Outdoor</td>
+<td>0x10</td>
+<td>Heat pump outdoor unit</td>
+<td>Primary heat source</td>
+</tr>
+<tr>
+<td>HTU</td>
+<td>0x11</td>
+<td>Heating/Cooling unit</td>
+<td>Alternative outdoor</td>
+</tr>
+<tr>
+<td>Indoor</td>
+<td>0x20</td>
+<td>Wall mounted unit</td>
+<td>Single-zone terminal</td>
+</tr>
+<tr>
+<td>ERV</td>
+<td>0x30</td>
+<td>Energy recovery ventilation</td>
+<td>Fresh air handling</td>
+</tr>
+<tr>
+<td>Diffuser</td>
+<td>0x35</td>
+<td>Air diffuser/controller</td>
+<td>Duct outlet</td>
+</tr>
+<tr>
+<td>MCU</td>
+<td>0x38</td>
+<td>Main control unit</td>
+<td>Central distribution</td>
+</tr>
+<tr>
+<td>RMC</td>
+<td>0x40</td>
+<td>Remote controller</td>
+<td>Central thermostat</td>
+</tr>
+<tr>
+<td>WiredRemote</td>
+<td>0x50</td>
+<td>Wired remote control</td>
+<td>Wall panel</td>
+</tr>
+<tr>
+<td>PIM</td>
+<td>0x58</td>
+<td>Power interface module</td>
+<td>Electrical interface</td>
+</tr>
+<tr>
+<td>SIM</td>
+<td>0x59</td>
+<td>Serial interface module</td>
+<td>Communications</td>
+</tr>
+<tr>
+<td>Peak</td>
+<td>0x5A</td>
+<td>Peak power controller</td>
+<td>Load balancing</td>
+</tr>
+<tr>
+<td>PowerDivider</td>
+<td>0x5B</td>
+<td>Power distribution</td>
+<td>Multi-unit control</td>
+</tr>
+<tr>
+<td>WiFiKit</td>
+<td>0x62</td>
+<td>WiFi interface module</td>
+<td>Network connectivity</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Channel</strong> field further specifies the subsystem (typically 0x00 for main).</p>
+<p><strong>Address</strong> field identifies the specific device on that channel.</p>
+<p>Example address in HVAC system:
+<div class="highlight"><pre><span></span><code>Address Class: 0x10 (Outdoor)
+Channel: 0x00
+Address: 0x00
+</code></pre></div></p>
+<p>This represents the primary outdoor unit.</p>
+<h3 id="packet-information-byte-9">Packet Information (Byte 9)<a class="headerlink" href="#packet-information-byte-9" title="Permanent link">&para;</a></h3>
+<p>This byte packs multiple control fields using bit masking:</p>
+<div class="highlight"><pre><span></span><code><span class="n">byte_9</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+
+<span class="c1"># Bit 7: Packet Information flag (1 = contains control info)</span>
+<span class="n">packet_info_flag</span> <span class="o">=</span> <span class="p">(</span><span class="n">byte_9</span> <span class="o">&amp;</span> <span class="mh">0x80</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">7</span>
+
+<span class="c1"># Bits 6-5: Protocol Version (0-3)</span>
+<span class="n">protocol_version</span> <span class="o">=</span> <span class="p">(</span><span class="n">byte_9</span> <span class="o">&amp;</span> <span class="mh">0x60</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">5</span>
+
+<span class="c1"># Bits 4-3: Retry Count (0-3, number of retries)</span>
+<span class="n">retry_count</span> <span class="o">=</span> <span class="p">(</span><span class="n">byte_9</span> <span class="o">&amp;</span> <span class="mh">0x18</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">3</span>
+
+<span class="c1"># Bits 2-0: Reserved (not used)</span>
+</code></pre></div>
+<ul>
+<li><strong>Packet Information</strong>: Indicates if packet is informational vs control</li>
+<li><strong>Protocol Version</strong>: NASA protocol version (allows future compatibility)</li>
+<li><strong>Retry Count</strong>: Tracks retry attempts for reliability</li>
+</ul>
+<h3 id="packet-type-data-type-byte-10">Packet Type &amp; Data Type (Byte 10)<a class="headerlink" href="#packet-type-data-type-byte-10" title="Permanent link">&para;</a></h3>
+<p>This byte contains two 4-bit fields:</p>
+<div class="highlight"><pre><span></span><code><span class="n">byte_10</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+
+<span class="c1"># High nibble (bits 7-4): Packet Type</span>
+<span class="n">packet_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">byte_10</span> <span class="o">&amp;</span> <span class="mh">0xF0</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span>
+
+<span class="c1"># Low nibble (bits 3-0): Data Type</span>
+<span class="n">data_type</span> <span class="o">=</span> <span class="n">byte_10</span> <span class="o">&amp;</span> <span class="mh">0x0F</span>
+</code></pre></div>
+<p><strong>Packet Type values:</strong>
+- 0 = <strong>StandBy</strong> - Device in standby mode
+- 1 = <strong>Normal</strong> - Normal operation
+- 2 = <strong>Gathering</strong> - Data collection mode
+- 3 = <strong>Install</strong> - Installation/setup mode
+- 4 = <strong>Download</strong> - Firmware download/configuration</p>
+<p><strong>Data Type values:</strong>
+- 0 = <strong>Undefined</strong> - Invalid or unknown type
+- 1 = <strong>Read</strong> - Request to read data
+- 2 = <strong>Write</strong> - Command to write data
+- 3 = <strong>Request</strong> - Service request
+- 4 = <strong>Notification</strong> - Status notification
+- 5 = <strong>Response</strong> - Reply to read request
+- 6 = <strong>Ack</strong> - Acknowledgment of command
+- 7 = <strong>Nack</strong> - Negative acknowledgment (error)</p>
+<h3 id="packet-number-byte-11">Packet Number (Byte 11)<a class="headerlink" href="#packet-number-byte-11" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">packet_number</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+</code></pre></div>
+<p>An incrementing counter for packet ordering and duplicate detection. Wraps from 255 back to 0.</p>
+<h3 id="message-capacity-byte-12">Message Capacity (Byte 12)<a class="headerlink" href="#message-capacity-byte-12" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">capacity</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span>
+</code></pre></div>
+<p>Specifies how many messages are encoded in this packet. Allows multiple independent messages in a single packet for efficiency.</p>
+<h3 id="message-number-bytes-13-14">Message Number (Bytes 13-14)<a class="headerlink" href="#message-number-bytes-13-14" title="Permanent link">&para;</a></h3>
+<p>The message number field encodes both the message identifier and its payload type:</p>
+<div class="highlight"><pre><span></span><code><span class="n">msg_num</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span> <span class="o">|</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span>  <span class="c1"># 16-bit little-endian</span>
+
+<span class="c1"># Extract message type from bits 10-9</span>
+<span class="n">msg_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">msg_num</span> <span class="o">&amp;</span> <span class="mh">0x0600</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">9</span>
+
+<span class="c1"># Message payload types:</span>
+<span class="c1"># 0 = Enum (1 byte payload)</span>
+<span class="c1"># 1 = Variable (2 bytes payload)</span>
+<span class="c1"># 2 = LongVariable (4 bytes payload)</span>
+<span class="c1"># 3 = Structure (remaining bytes)</span>
+</code></pre></div>
+<h2 id="message-payload-structure">Message Payload Structure<a class="headerlink" href="#message-payload-structure" title="Permanent link">&para;</a></h2>
+<p>For packets with multiple messages, each message follows this pattern:</p>
+<div class="highlight"><pre><span></span><code>Message 1:
+[Message Number (2)] [Payload (variable)]
+
+Message 2:
+[Message Number (2)] [Payload (variable)]
+
+... repeat for capacity count ...
+</code></pre></div>
+<p>The payload size is determined by the message number encoding:
+- <strong>Type 0 (Enum):</strong> 1 byte
+- <strong>Type 1 (Variable):</strong> 2 bytes
+- <strong>Type 2 (LongVariable):</strong> 4 bytes
+- <strong>Type 3 (Structure):</strong> All remaining bytes minus CRC and ETX</p>
+<h2 id="crc-validation">CRC Validation<a class="headerlink" href="#crc-validation" title="Permanent link">&para;</a></h2>
+<p>The last 3 bytes of the packet contain checksum and end marker:</p>
+<div class="highlight"><pre><span></span><code><span class="n">crc_high</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">crc_low</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">end_marker</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">crc_value</span> <span class="o">=</span> <span class="n">crc_low</span> <span class="o">|</span> <span class="p">(</span><span class="n">crc_high</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span>  <span class="c1"># Little-endian CRC16</span>
+<span class="k">assert</span> <span class="n">end_marker</span> <span class="o">==</span> <span class="mh">0x34</span>  <span class="c1"># Verify ETX</span>
+</code></pre></div>
+<p>The CRC-16 covers the entire packet from STX through the last data byte.</p>
+<h2 id="packet-validation-checklist">Packet Validation Checklist<a class="headerlink" href="#packet-validation-checklist" title="Permanent link">&para;</a></h2>
+<p>When receiving a packet:</p>
+<ol>
+<li>✓ Verify <code>data[0] == 0x32</code> (STX)</li>
+<li>✓ Check <code>data[-1] == 0x34</code> (ETX)</li>
+<li>✓ Validate packet length matches size field</li>
+<li>✓ Verify CRC-16 checksum</li>
+<li>✓ Ensure capacity count is valid</li>
+<li>✓ Parse messages according to their types</li>
+<li>✓ Handle address routing correctly</li>
+</ol>
+<h2 id="example-packet-breakdown">Example Packet Breakdown<a class="headerlink" href="#example-packet-breakdown" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>Hex: 32 0B 00 10 00 00 20 00 00 81 50 01 02 00 42
+     |  |     |        |        |  |  |  |  |     |
+     |  |     |        |        |  |  |  |  |     +-- Message payload
+     |  |     |        |        |  |  |  |  +-- Message number
+     |  |     |        |        |  |  |  +-- Capacity (2 messages)
+     |  |     |        |        |  |  +-- Packet number
+     |  |     |        |        |  +-- Data type (5=Response), Packet type (1=Normal)
+     |  |     |        |        +-- Packet info/version/retry
+     |  |     |        +-- Destination: Indoor unit, ch 0, addr 0
+     |  |     +-- Source: Outdoor unit, ch 0, addr 0
+     |  +-- Size: 11 bytes
+     +-- STX (0x32)
+</code></pre></div>
 <p>Each address has three components:</p>
 <div class="highlight"><pre><span></span><code>Address Class | Channel | Address
   (byte 0)    | (byte 1)| (byte 2)
@@ -1603,7 +1997,7 @@
 - Class: <code>0x10</code> (Outdoor)
 - Channel: <code>0x00</code>
 - Address: <code>0x00</code></p>
-<h3 id="packet-information-byte-9">Packet Information (Byte 9)<a class="headerlink" href="#packet-information-byte-9" title="Permanent link">&para;</a></h3>
+<h3 id="packet-information-byte-9_1">Packet Information (Byte 9)<a class="headerlink" href="#packet-information-byte-9_1" title="Permanent link">&para;</a></h3>
 <p>This byte contains multiple fields:</p>
 <div class="highlight"><pre><span></span><code><span class="n">byte_9</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
 
