@@ -13,6 +13,17 @@ Key characteristics:
 - **Message-oriented** - Data organized into typed messages
 - **Acknowledged** - Critical operations are acknowledged
 
+## Source and References
+
+This protocol documentation is based on work from multiple sources:
+
+- Research from the [esphome_samsung_hvac_bus project](https://github.com/omerfaruk-aran/esphome_samsung_hvac_bus/issues/28)
+- Documentation from [MyEHS Wikipedia](https://web.archive.org/web/20240330070335/https://wiki.myehs.eu/wiki/NASA_Protocol)
+- Samsung service software files (NASA.ptc, NasaConst.java)
+- WiFiKit source code
+
+**Note:** The pysamsungnasa library implements messages from the latest version of S-Net protocol, which may include features not yet documented in external sources.
+
 ## Architecture
 
 ### Network Model
