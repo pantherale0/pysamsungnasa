@@ -43,7 +43,6 @@ nav:
     - Basic Usage: user-guide/basic-usage.md
     - Configuration: user-guide/configuration.md
     - Device Management: user-guide/device-management.md
-    - Controllers: user-guide/controllers.md
   - Protocol & Messages:
     - Protocol Overview: protocol/overview.md
     - Packet Structure: protocol/packet-structure.md
