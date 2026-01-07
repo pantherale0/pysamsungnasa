@@ -500,6 +500,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Supported Units">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-device-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding device support
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -818,34 +835,6 @@
     
   
     Device Management
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="user-guide/controllers/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Controllers
   
 
     
@@ -1395,10 +1384,10 @@
 ✅ <strong>Comprehensive API</strong> - Well-documented Python API for integration</p>
 <h2 id="supported-units">Supported Units<a class="headerlink" href="#supported-units" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>EHS units</strong> (Cool + Heat) - Fully tested</li>
-<li><strong>Cool-only units</strong> - Theoretically supported (limited testing)</li>
-<li>Other Samsung HVAC units compatible with NASA protocol</li>
+<li><strong>EHS Mono</strong></li>
 </ul>
+<h3 id="adding-device-support">Adding device support<a class="headerlink" href="#adding-device-support" title="Permanent link">&para;</a></h3>
+<p>This library is compatible with all Samsung NASA heat pumps and AC units, to add specific device support install the CLI and execute <code>device dump</code> from the interactive console session. This will produce a hex file for each known device address which can be uploaded to a new issue in the repository.</p>
 <h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamsungNasa</span>
