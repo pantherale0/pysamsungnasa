@@ -241,21 +241,6 @@ class TestNasaDeviceHandlePacket:
 
         failing_callback.assert_called_once()
 
-    @pytest.mark.asyncio
-    async def test_get_configuration_non_indoor(self):
-        """Test get_configuration returns early for non-indoor devices."""
-        config = NasaConfig()
-        parser = NasaPacketParser(config=config)
-        client = Mock()
-
-        device = NasaDevice(
-            address="100001", device_type=AddressClass.OUTDOOR, packet_parser=parser, config=config, client=client
-        )
-
-        # Should return early and not call client.nasa_read
-        await device.get_configuration()
-        client.nasa_read.assert_not_called()
-
 
 class TestNasaDeviceCallbackExceptionHandling:
     """Tests for exception handling in device callbacks."""
@@ -380,31 +365,6 @@ class TestNasaDeviceFsvConfig:
 
         # FSV config should NOT be stored
         assert 0x4203 not in device.fsv_config
-
-
-class TestGetConfigurationEdgeCases:
-    """Tests for get_configuration method edge cases."""
-
-    @pytest.fixture
-    def setup_device(self):
-        """Setup common device test dependencies."""
-        config = NasaConfig()
-        parser = NasaPacketParser(config=config)
-        client = AsyncMock()
-        return config, parser, client
-
-    @pytest.mark.asyncio
-    async def test_get_configuration_outdoor_device(self, setup_device):
-        """Test get_configuration for outdoor device does nothing."""
-        config, parser, client = setup_device
-        device = NasaDevice(
-            address="100001", device_type=AddressClass.OUTDOOR, packet_parser=parser, config=config, client=client
-        )
-
-        await device.get_configuration()
-
-        # Client should not be called for outdoor devices
-        client.nasa_read.assert_not_called()
 
 
 class TestHandlePacketLogging:

@@ -22,8 +22,6 @@ _LOGGER = logging.getLogger(__name__)
 class NasaDevice:
     """NASA Device."""
 
-    _MESSAGES_TO_LISTEN: list[int] = []
-
     def __init__(
         self,
         address: str,
@@ -43,8 +41,6 @@ class NasaDevice:
         self._client = client
         self._attribute_events: dict[int, asyncio.Event] = {}
         packet_parser.add_device_handler(address, self.handle_packet)
-        for message_number in self._MESSAGES_TO_LISTEN:
-            packet_parser.add_packet_listener(message_number, self.handle_packet)
 
     def add_device_callback(self, callback: Callable):
         """Add a device callback."""
@@ -68,21 +64,6 @@ class NasaDevice:
         """Remove a device callback."""
         if callback in self._device_callbacks:
             self._device_callbacks.remove(callback)
-
-    async def get_configuration(self):
-        """Get the configuration (FSVs) of the device."""
-        if self.device_type != AddressClass.INDOOR:
-            return  # Nothing to do
-        _LOGGER.debug("Requesting FSV configuration for device %s", self.address)
-        # Batch reads in groups of 10
-        attributes_set = set(self.attributes)
-        for i in range(0, len(self._MESSAGES_TO_LISTEN), 10):
-            missing_msgs = [k for k in self._MESSAGES_TO_LISTEN[i : i + 10] if k not in attributes_set]
-            if missing_msgs:
-                await self._client.nasa_read(
-                    msgs=missing_msgs,
-                    destination=self.address,
-                )
 
     async def get_attribute(self, attribute: int, requires_read: bool = False) -> BaseMessage:
         """Get a specific attribute from the device, if it is not already known a request will be sent to the device."""
