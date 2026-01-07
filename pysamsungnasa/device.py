@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Callable
 from datetime import datetime, timezone
 
 from .config import NasaConfig
@@ -38,33 +38,33 @@ class NasaDevice:
         self.config = config
         self.last_packet_time = None
         self.fsv_config = {}
-        self._device_callbacks = []
-        self._packet_callbacks = {}
+        self._device_callbacks: list[Callable] = []
+        self._packet_callbacks: dict[int, list[Callable]] = {}
         self._client = client
         self._attribute_events: dict[int, asyncio.Event] = {}
         packet_parser.add_device_handler(address, self.handle_packet)
         for message_number in self._MESSAGES_TO_LISTEN:
             packet_parser.add_packet_listener(message_number, self.handle_packet)
 
-    def add_device_callback(self, callback):
+    def add_device_callback(self, callback: Callable):
         """Add a device callback."""
         if callback not in self._device_callbacks:
             self._device_callbacks.append(callback)
 
-    def add_packet_callback(self, message_number: int, callback):
+    def add_packet_callback(self, message_number: int, callback: Callable):
         """Add a packet callback."""
         if message_number not in self._packet_callbacks:
             self._packet_callbacks[message_number] = []
         if callback not in self._packet_callbacks[message_number]:
             self._packet_callbacks[message_number].append(callback)
 
-    def remove_packet_callback(self, message_number: int, callback):
+    def remove_packet_callback(self, message_number: int, callback: Callable):
         """Remove a packet callback."""
         if message_number in self._packet_callbacks:
             if callback in self._packet_callbacks[message_number]:
                 self._packet_callbacks[message_number].remove(callback)
 
-    def remove_device_callback(self, callback):
+    def remove_device_callback(self, callback: Callable):
         """Remove a device callback."""
         if callback in self._device_callbacks:
             self._device_callbacks.remove(callback)
@@ -106,7 +106,19 @@ class NasaDevice:
         return self.attributes[attribute]
 
     async def write_attributes(self, attributes: dict[type[BaseMessage], Any]):
-        """Write specific attributes to the device."""
+        """Write specific attributes to the device.
+
+        NASA protocol can handle up to 10 messages per packet.
+
+        Args:
+            attributes: Dictionary mapping message class to value
+
+        Raises:
+            ValueError: If more than 10 messages or message class lacks MESSAGE_ID
+        """
+        if len(attributes) > 10:
+            raise ValueError(f"Cannot write more than 10 messages in one packet, got {len(attributes)}")
+
         messages = []
         for message_class, value in attributes.items():
             if message_class.MESSAGE_ID is None:
@@ -120,7 +132,7 @@ class NasaDevice:
         )
 
     async def write_attribute(self, message_class: type[BaseMessage], value: Any):
-        """Write a specific attribute to the device."""
+        """Write a single attribute to the device, this is a convenience method of write_attributes."""
         await self.write_attributes({message_class: value})
 
     def handle_packet(self, *_nargs, **kwargs):
@@ -156,11 +168,11 @@ class NasaDevice:
         for callback in self._device_callbacks:
             try:
                 callback(self)
-            except Exception as e:
-                _LOGGER.error("Error in device %s callback: %s", self.address, e)
+            except Exception:
+                _LOGGER.exception("Error in device %s callback", self.address)
         if message_number in self._packet_callbacks:
             for callback in self._packet_callbacks[message_number]:
                 try:
                     callback(self, **kwargs)
-                except Exception as e:
-                    _LOGGER.error("Error in device %s packet callback: %s", self.address, e)
+                except Exception:
+                    _LOGGER.exception("Error in device %s packet callback", self.address)
