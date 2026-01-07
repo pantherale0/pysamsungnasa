@@ -60,6 +60,11 @@ class BaseMessage(ABC):
         """Parse the payload into a message instance."""
         raise NotImplementedError("parse_payload must be implemented in subclasses.")
 
+    @classmethod
+    def to_bytes(cls, value: Any) -> bytes:
+        """Convert a value into bytes for sending."""
+        raise NotImplementedError("to_bytes must be implemented in subclasses.")
+
 
 class RawMessage(BaseMessage):
     """Parser for raw messages."""
@@ -71,6 +76,11 @@ class RawMessage(BaseMessage):
         """Parse the payload into a raw hex string."""
         return cls(value=payload.hex() if payload else None, raw_payload=payload)
 
+    @classmethod
+    def to_bytes(cls, value: Any) -> bytes:
+        """Convert a hex string value into bytes."""
+        raise NotImplementedError("RawMessage does not support to_bytes conversion.")
+
 
 class BoolMessage(BaseMessage):
     """Parser for boolean messages."""
@@ -80,6 +90,11 @@ class BoolMessage(BaseMessage):
         """Parse the payload into a boolean value."""
         return cls(value=bool(payload[0]), raw_payload=payload)
 
+    @classmethod
+    def to_bytes(cls, value: bool) -> bytes:
+        """Convert a boolean value into bytes."""
+        return b"\x01" if value else b"\x00"
+
 
 class StrMessage(BaseMessage):
     """Parser for str messages."""
@@ -88,6 +103,11 @@ class StrMessage(BaseMessage):
     def parse_payload(cls, payload: bytes) -> "StrMessage":
         """Parse the payload into a string value."""
         return cls(value=payload.decode("utf-8") if payload else None, raw_payload=payload)
+
+    @classmethod
+    def to_bytes(cls, value: str) -> bytes:
+        """Convert a string value into bytes."""
+        raise NotImplementedError("StrMessage does not support to_bytes conversion.")
 
 
 class FloatMessage(BaseMessage):
@@ -127,6 +147,28 @@ class FloatMessage(BaseMessage):
 
         return cls(value=parsed_value, raw_payload=payload)
 
+    @classmethod
+    def to_bytes(cls, value: float) -> bytes:
+        """Convert a float value into bytes."""
+        if cls.ARITHMETIC == 0:
+            raise ValueError(f"ARITHMETIC cannot be zero for {cls.__name__}.")
+        int_value = int(value / cls.ARITHMETIC)
+        # Determine byte length based on the size of the integer
+        if -128 <= int_value <= 127 and cls.SIGNED:
+            return struct.pack(">b", int_value)
+        elif 0 <= int_value <= 255 and not cls.SIGNED:
+            return struct.pack(">B", int_value)
+        elif -32768 <= int_value <= 32767 and cls.SIGNED:
+            return struct.pack(">h", int_value)
+        elif 0 <= int_value <= 65535 and not cls.SIGNED:
+            return struct.pack(">H", int_value)
+        elif -2147483648 <= int_value <= 2147483647 and cls.SIGNED:
+            return struct.pack(">l", int_value)
+        elif 0 <= int_value <= 4294967295 and not cls.SIGNED:
+            return struct.pack(">L", int_value)
+        else:
+            raise ValueError(f"Value {value} is out of range for {cls.__name__} with SIGNED={cls.SIGNED}.")
+
 
 class EnumMessage(BaseMessage):
     """Parser for enum messages."""
@@ -153,6 +195,11 @@ class EnumMessage(BaseMessage):
                 raw_payload=payload,
             )
 
+    @classmethod
+    def to_bytes(cls, value: SamsungEnum) -> bytes:
+        """Convert an enum value into bytes."""
+        return bytes([value.value])
+
 
 class IntegerMessage(BaseMessage):
     """Parser for a basic integer message."""
@@ -165,6 +212,15 @@ class IntegerMessage(BaseMessage):
         if payload:
             parsed_value = int(payload.hex(), 16)
         return cls(value=parsed_value, raw_payload=payload)
+
+    @classmethod
+    def to_bytes(cls, value: int) -> bytes:
+        """Convert an integer value into bytes."""
+        # Determine the minimum number of bytes needed to represent the integer
+        if value < 0:
+            raise ValueError("IntegerMessage only supports non-negative integers.")
+        byte_length = (value.bit_length() + 7) // 8 or 1
+        return value.to_bytes(byte_length, byteorder="big")
 
 
 class BasicTemperatureMessage(FloatMessage):
@@ -215,3 +271,8 @@ class StructureMessage(BaseMessage):
         from .parser import parse_tlv_structure
 
         return cls(value=parse_tlv_structure(payload), raw_payload=payload)
+
+    @classmethod
+    def to_bytes(cls, value: Any) -> bytes:
+        """Convert a structure value into bytes."""
+        raise NotImplementedError("StructureMessage does not support to_bytes conversion.")

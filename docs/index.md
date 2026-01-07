@@ -28,9 +28,11 @@ Welcome to the pysamsungnasa documentation! This library provides a Python inter
 
 ## Supported Units
 
-- **EHS units** (Cool + Heat) - Fully tested
-- **Cool-only units** - Theoretically supported (limited testing)
-- Other Samsung HVAC units compatible with NASA protocol
+- **EHS Mono**
+
+### Adding device support
+
+This library is compatible with all Samsung NASA heat pumps and AC units, to add specific device support install the CLI and execute `device dump` from the interactive console session. This will produce a hex file for each known device address which can be uploaded to a new issue in the repository.
 
 ## Quick Start
 

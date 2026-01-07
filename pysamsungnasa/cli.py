@@ -9,7 +9,7 @@ from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.shortcuts import CompleteStyle
 
 from .nasa import SamsungNasa
-from .device import NasaDevice, IndoorNasaDevice, OutdoorNasaDevice
+from .device import NasaDevice
 from .protocol.enum import DataType
 from .protocol.factory import build_message, SendMessage
 
@@ -170,32 +170,6 @@ def print_device_header(device: NasaDevice):
     print(f"  Config: {device.config}")
     print(f"  Total attributes: {len(device.attributes)}")
     print(f"  FSV Config: {device.fsv_config}")
-    if isinstance(device, IndoorNasaDevice):
-        print(f"  DHW Controller: {'Yes' if device.dhw_controller else 'No'}")
-        print(f"  DHW power: {device.dhw_controller.power if device.dhw_controller else 'N/A'}")
-        print(f"  DHW target temp: {device.dhw_controller.target_temperature if device.dhw_controller else 'N/A'}")
-        print(f"  DHW operation mode: {device.dhw_controller.operation_mode if device.dhw_controller else 'N/A'}")
-        has_cc = device.climate_controller
-        print(f"  Climate Controller: {'Yes' if has_cc else 'No'}")
-        cc_power = has_cc.power if has_cc else "N/A"
-        print(f"  Climate power: {cc_power}")
-        cc_mode = has_cc.current_mode if has_cc else "N/A"
-        print(f"  Climate Controller mode: {cc_mode}")
-        cc_target_temp = has_cc.f_target_temperature if has_cc else "N/A"
-        print(f"  Climate Controller target temp: {cc_target_temp}")
-        cc_current_temp = has_cc.f_current_temperature if has_cc else "N/A"
-        print(f"  Climate Controller current temp: {cc_current_temp}")
-    if isinstance(device, OutdoorNasaDevice):
-        print(f"  Outdoor air temp: {device.outdoor_temperature}")
-        print(f"  Heatpump voltage: {device.heatpump_voltage}")
-        print(f"  Power consumption: {device.power_consumption}")
-        print(f"  Power generated (last minute): {device.power_generated_last_minute}")
-        print(f"  Power produced: {device.power_produced}")
-        print(f"  Power current: {device.power_current}")
-        print(f"  Cumulative energy: {device.cumulative_energy}")
-        print(f"  Compressor frequency: {device.compressor_frequency}")
-        print(f"  Fan speed: {device.fan_speed}")
-        print(f"  COP rating: {device.cop_rating}")
 
 
 def dump_device_data(device: NasaDevice):
@@ -410,59 +384,6 @@ async def interactive_cli(nasa: SamsungNasa):
                     print(f"Device {device_id} not found")
             elif command == "quit":
                 break
-            elif command == "climate":
-                # Show and control climate information (DHW/Heating)
-                if len(parts) < 3 or len(parts) > 4:
-                    print("Usage: climate <device_address> <dhw/heat> [<on/off>]")
-                    continue
-                device_id = parts[1]
-                climate_type = parts[2]
-                command = parts[3] if len(parts) > 3 else None
-                if device_id not in nasa.devices:
-                    print(f"Device {device_id} not found")
-                    continue
-                device = nasa.devices[device_id]
-                if not isinstance(device, IndoorNasaDevice):
-                    print("Climate control only available for indoor devices")
-                    continue
-                if climate_type == "dhw":
-                    if not device.dhw_controller:
-                        print(f"Device {device_id} has no DHW controller")
-                        continue
-                    print("DHW Climate Control:")
-                    print(f"  Current Temp: {device.dhw_controller.current_temperature}")
-                    print(f"  Target Temp: {device.dhw_controller.target_temperature}")
-                    print(f"  Mode: {device.dhw_controller.operation_mode}")
-                    print(f"  Fan Speed: {device.dhw_controller.power}")
-                    if command is not None:
-                        if command == "on":
-                            await device.dhw_controller.turn_on()
-                            print("DHW turned on")
-                        elif command == "off":
-                            await device.dhw_controller.turn_off()
-                            print("DHW turned off")
-                        else:
-                            print(f"Unknown command for DHW: {command}")
-                elif climate_type == "heat":
-                    if not device.climate_controller:
-                        print(f"Device {device_id} has no Heating controller")
-                        continue
-                    print("Heating Climate Control:")
-                    print(f"  Current Temp: {device.climate_controller.f_current_temperature}")
-                    print(f"  Target Temp: {device.climate_controller.f_target_temperature}")
-                    print(f"  Mode: {device.climate_controller.current_mode}")
-                    print(f"  Power: {device.climate_controller.power}")
-                    if command is not None:
-                        if command == "on":
-                            await device.climate_controller.turn_on()
-                            print("Heating turned on")
-                        elif command == "off":
-                            await device.climate_controller.turn_off()
-                            print("Heating turned off")
-                        else:
-                            print(f"Unknown command for Heating: {command}")
-                else:
-                    print(f"Unknown climate type: {climate_type}")
             elif command_str == "print packet stream":
                 print("Printing packet stream (press Ctrl+C to stop):")
                 try:

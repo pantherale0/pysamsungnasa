@@ -5,7 +5,7 @@ from typing import Any, Callable
 from asyncio import iscoroutinefunction
 
 from .config import NasaConfig
-from .device import NasaDevice, IndoorNasaDevice, OutdoorNasaDevice
+from .device import NasaDevice
 from .helpers import Address
 from .protocol.enum import DataType, AddressClass
 from .protocol.parser import NasaPacketParser
@@ -49,28 +49,13 @@ class SamsungNasa:
     def _add_device(self, address: str) -> NasaDevice:
         """Add a device to the devices list."""
         device_type = (Address.parse(address)).class_id
-        if device_type == AddressClass.INDOOR:
-            new_device = IndoorNasaDevice(
-                address=address,
-                packet_parser=self.parser,
-                config=self.config,
-                client=self.client,
-            )
-        elif device_type == AddressClass.OUTDOOR:
-            new_device = OutdoorNasaDevice(
-                address=address,
-                packet_parser=self.parser,
-                config=self.config,
-                client=self.client,
-            )
-        else:
-            new_device = NasaDevice(
-                address=address,
-                device_type=AddressClass(device_type),
-                packet_parser=self.parser,
-                config=self.config,
-                client=self.client,
-            )
+        new_device = NasaDevice(
+            address=address,
+            device_type=AddressClass(device_type),
+            packet_parser=self.parser,
+            config=self.config,
+            client=self.client,
+        )
         self.devices[address] = new_device
         return new_device
 
