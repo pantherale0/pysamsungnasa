@@ -101,17 +101,19 @@ device.add_device_callback(on_update)
 #### `remove_device_callback(callback: Callable)`
 Unregister a callback.
 
-#### `add_packet_callback(message_number: int, callback: Callable)`
+#### `add_packet_callback(message: type[BaseMessage], callback: Callable)`
 Register a callback for a specific message type.
 
 ```python
+from pysamsungnasa.protocol.factory.messages.indoor import IndoorCurrentTemperature
+
 def on_temp(device, **kwargs):
     print(f"Temperature: {kwargs['packet'].VALUE}")
 
-device.add_packet_callback(0x4203, on_temp)
+device.add_packet_callback(IndoorCurrentTemperature, on_temp)
 ```
 
-#### `remove_packet_callback(message_number: int, callback: Callable)`
+#### `remove_packet_callback(message: type[BaseMessage], callback: Callable)`
 Unregister a message callback.
 
 #### `async get_configuration()`

@@ -10,6 +10,31 @@ from pysamsungnasa.protocol.enum import AddressClass
 from pysamsungnasa.protocol.factory.types import BaseMessage
 
 
+# Helper message classes for testing
+class TestMessage4000(BaseMessage):
+    """Test message with ID 0x4000."""
+
+    MESSAGE_ID = 0x4000
+
+
+class TestMessage4001(BaseMessage):
+    """Test message with ID 0x4001."""
+
+    MESSAGE_ID = 0x4001
+
+
+class TestMessage4203(BaseMessage):
+    """Test message with ID 0x4203."""
+
+    MESSAGE_ID = 0x4203
+
+
+class TestMessage9999(BaseMessage):
+    """Test message with ID 0x9999."""
+
+    MESSAGE_ID = 0x9999
+
+
 @pytest.fixture
 def fast_timeout():
     """Patch asyncio.timeout to use 0.05 second timeout in tests for fast failure."""
@@ -51,7 +76,7 @@ class TestGetAttributeEventSync:
         mock_message.VALUE = 25.0
         device.attributes[0x4203] = mock_message
 
-        result = await device.get_attribute(0x4203)
+        result = await device.get_attribute(TestMessage4203)
 
         # Should not call nasa_read since attribute exists
         client.nasa_read.assert_not_called()
@@ -77,7 +102,7 @@ class TestGetAttributeEventSync:
             )
 
         # Start get_attribute and packet arrival concurrently
-        task_get = asyncio.create_task(device.get_attribute(0x4203))
+        task_get = asyncio.create_task(device.get_attribute(TestMessage4203))
         task_packet = asyncio.create_task(simulate_packet_arrival())
 
         result, _ = await asyncio.gather(task_get, task_packet)
@@ -91,7 +116,7 @@ class TestGetAttributeEventSync:
         device, client = setup_device
 
         with pytest.raises(TimeoutError):
-            await device.get_attribute(0x9999)
+            await device.get_attribute(TestMessage9999)
 
     @pytest.mark.asyncio
     async def test_get_attribute_multiple_concurrent_calls(self, setup_device):
@@ -114,9 +139,9 @@ class TestGetAttributeEventSync:
 
         # Start three concurrent get_attribute calls
         packet_task = asyncio.create_task(simulate_packet_arrival())
-        result1_task = asyncio.create_task(device.get_attribute(0x4203))
-        result2_task = asyncio.create_task(device.get_attribute(0x4203))
-        result3_task = asyncio.create_task(device.get_attribute(0x4203))
+        result1_task = asyncio.create_task(device.get_attribute(TestMessage4203))
+        result2_task = asyncio.create_task(device.get_attribute(TestMessage4203))
+        result3_task = asyncio.create_task(device.get_attribute(TestMessage4203))
 
         results = await asyncio.gather(packet_task, result1_task, result2_task, result3_task)
         _, result1, result2, result3 = results
@@ -162,8 +187,8 @@ class TestGetAttributeEventSync:
 
         # Request both attributes concurrently
         packet_task = asyncio.create_task(simulate_packets())
-        result_4203_task = asyncio.create_task(device.get_attribute(0x4203))
-        result_4001_task = asyncio.create_task(device.get_attribute(0x4001))
+        result_4203_task = asyncio.create_task(device.get_attribute(TestMessage4203))
+        result_4001_task = asyncio.create_task(device.get_attribute(TestMessage4001))
 
         await packet_task
         result_4203 = await result_4203_task
@@ -193,7 +218,7 @@ class TestGetAttributeEventSync:
 
         # Request attribute
         packet_task = asyncio.create_task(simulate_packet_arrival())
-        result = await device.get_attribute(0x4203)
+        result = await device.get_attribute(TestMessage4203)
         await packet_task
 
         assert result == mock_message
@@ -222,10 +247,10 @@ class TestGetAttributeEventSync:
         packet_task = asyncio.create_task(simulate_packet_arrival())
 
         # First call will trigger nasa_read
-        result1 = await device.get_attribute(0x4203)
+        result1 = await device.get_attribute(TestMessage4203)
 
         # Second call should return immediately (attribute already present)
-        result2 = await device.get_attribute(0x4203)
+        result2 = await device.get_attribute(TestMessage4203)
 
         await packet_task
 
@@ -249,8 +274,8 @@ class TestGetAttributeEventSync:
 
         async def request_attributes():
             """Request multiple attributes."""
-            result1 = await device.get_attribute(0x4000)
-            result2 = await device.get_attribute(0x4001)
+            result1 = await device.get_attribute(TestMessage4000)
+            result2 = await device.get_attribute(TestMessage4001)
             return result1, result2
 
         async def send_packets():
@@ -287,7 +312,7 @@ class TestGetAttributeEventSync:
         # This test verifies the timeout mechanism works
         with pytest.raises(TimeoutError):
             # Wait up to 10 seconds but attribute will never arrive
-            await device.get_attribute(0x9999)
+            await device.get_attribute(TestMessage9999)
 
     @pytest.mark.asyncio
     async def test_handle_packet_fires_events_correctly(self, setup_device):
@@ -304,7 +329,7 @@ class TestGetAttributeEventSync:
 
         async def get_and_wait():
             """Get attribute multiple times."""
-            result1 = await device.get_attribute(0x4203)
+            result1 = await device.get_attribute(TestMessage4203)
             return result1
 
         async def send_packets():
@@ -355,7 +380,7 @@ class TestGetAttributeEventSync:
 
         # Request with requires_read=True (should re-request and get fresh value)
         packet_task = asyncio.create_task(send_fresh_packet())
-        result = await device.get_attribute(0x4203, requires_read=True)
+        result = await device.get_attribute(TestMessage4203, requires_read=True)
         await packet_task
 
         # Should have called nasa_read even though attribute was cached
@@ -374,7 +399,7 @@ class TestGetAttributeEventSync:
         device.attributes[0x4203] = cached_message
 
         # Request with requires_read=False (default)
-        result = await device.get_attribute(0x4203, requires_read=False)
+        result = await device.get_attribute(TestMessage4203, requires_read=False)
 
         # Should not call nasa_read since attribute is cached and requires_read=False
         client.nasa_read.assert_not_called()
@@ -409,8 +434,8 @@ class TestGetAttributeEventSync:
 
         # One request with requires_read=True, another without
         packet_task = asyncio.create_task(send_packets())
-        result_cached = await device.get_attribute(0x4203, requires_read=False)
-        result_fresh = await device.get_attribute(0x4203, requires_read=True)
+        result_cached = await device.get_attribute(TestMessage4203, requires_read=False)
+        result_fresh = await device.get_attribute(TestMessage4203, requires_read=True)
         await packet_task
 
         # First call should return cached v1

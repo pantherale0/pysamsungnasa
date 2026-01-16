@@ -47,44 +47,60 @@ class NasaDevice:
         if callback not in self._device_callbacks:
             self._device_callbacks.append(callback)
 
-    def add_packet_callback(self, message_number: int, callback: Callable):
-        """Add a packet callback."""
-        if message_number not in self._packet_callbacks:
-            self._packet_callbacks[message_number] = []
-        if callback not in self._packet_callbacks[message_number]:
-            self._packet_callbacks[message_number].append(callback)
+    def add_packet_callback(self, message: type[BaseMessage], callback: Callable):
+        """Add a packet callback for a specific message type.
 
-    def remove_packet_callback(self, message_number: int, callback: Callable):
-        """Remove a packet callback."""
-        if message_number in self._packet_callbacks:
-            if callback in self._packet_callbacks[message_number]:
-                self._packet_callbacks[message_number].remove(callback)
+        Args:
+            message: Message class (subclass of BaseMessage) to listen for.
+            callback: Callback function to invoke when the message is received.
+        """
+        assert issubclass(message, BaseMessage)
+        assert message.MESSAGE_ID is not None
+        if message.MESSAGE_ID not in self._packet_callbacks:
+            self._packet_callbacks[message.MESSAGE_ID] = []
+        if callback not in self._packet_callbacks[message.MESSAGE_ID]:
+            self._packet_callbacks[message.MESSAGE_ID].append(callback)
+
+    def remove_packet_callback(self, message: type[BaseMessage], callback: Callable):
+        """Remove a packet callback for a specific message type.
+
+        Args:
+            message: Message class (subclass of BaseMessage) to stop listening for.
+            callback: Callback function to remove.
+        """
+        assert issubclass(message, BaseMessage)
+        assert message.MESSAGE_ID is not None
+        if message.MESSAGE_ID in self._packet_callbacks:
+            if callback in self._packet_callbacks[message.MESSAGE_ID]:
+                self._packet_callbacks[message.MESSAGE_ID].remove(callback)
 
     def remove_device_callback(self, callback: Callable):
         """Remove a device callback."""
         if callback in self._device_callbacks:
             self._device_callbacks.remove(callback)
 
-    async def get_attribute(self, attribute: int, requires_read: bool = False) -> BaseMessage:
+    async def get_attribute(self, attribute: type[BaseMessage], requires_read: bool = False) -> BaseMessage:
         """Get a specific attribute from the device, if it is not already known a request will be sent to the device."""
-        if attribute not in self.attributes or requires_read:
+        assert issubclass(attribute, BaseMessage)
+        assert attribute.MESSAGE_ID is not None
+        if attribute.MESSAGE_ID not in self.attributes or requires_read:
             await self._client.nasa_read(
-                msgs=[attribute],
+                msgs=[attribute.MESSAGE_ID],
                 destination=self.address,
             )
 
-        event = self._attribute_events.setdefault(attribute, asyncio.Event())
+        event = self._attribute_events.setdefault(attribute.MESSAGE_ID, asyncio.Event())
 
         async with asyncio.timeout(10):
-            while attribute not in self.attributes or requires_read:
+            while attribute.MESSAGE_ID not in self.attributes or requires_read:
                 event.clear()
                 await event.wait()  # Waits until handle_packet sets it
                 requires_read = False  # Only require read once
 
-        if attribute not in self.attributes:
-            raise TimeoutError(f"Timeout waiting for attribute {attribute} from device {self.address}")
+        if attribute.MESSAGE_ID not in self.attributes:
+            raise TimeoutError(f"Timeout waiting for attribute {attribute.MESSAGE_ID} from device {self.address}")
 
-        return self.attributes[attribute]
+        return self.attributes[attribute.MESSAGE_ID]
 
     async def write_attributes(self, attributes: dict[type[BaseMessage], Any]):
         """Write specific attributes to the device.
