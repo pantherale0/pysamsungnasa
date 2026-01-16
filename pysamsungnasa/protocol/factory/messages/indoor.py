@@ -3040,10 +3040,13 @@ class InOutdoorCompressorFrequencyRateControlMessage(StructureMessage):
 
     @classmethod
     def parse_payload(cls, payload: bytes) -> "InOutdoorCompressorFrequencyRateControlMessage":
-        """Parse the 2-byte payload into frequency ratio and FR control status.
+        """Parse the 2-byte payload into frequency ratio.
 
         Converts raw value to percentage using offset formula: percentage = value - 256
         Special case: raw_value of 0 indicates FRC not yet initialized (needs configuration).
+
+        Note: Whether FRC is enabled or disabled is controlled by FSV #5051, not this message.
+        This message only contains the frequency ratio setpoint.
         """
         if not payload or len(payload) < 2:
             return cls(value=payload.hex() if payload else None, raw_payload=payload)
@@ -3061,8 +3064,6 @@ class InOutdoorCompressorFrequencyRateControlMessage(StructureMessage):
                         "is_valid_increment": False,
                         "nearest_valid_value": 306,  # Suggest minimum valid value
                         "nearest_valid_percent": 50,
-                        "fr_control_enabled": False,
-                        "fr_control_status": 0,
                         "formatted": "FRC not initialized (write desired percentage to activate)",
                         "status": "NOT_INITIALIZED",
                     },
@@ -3079,10 +3080,6 @@ class InOutdoorCompressorFrequencyRateControlMessage(StructureMessage):
                 # Find nearest valid value
                 nearest_valid = min(cls.VALID_INCREMENTS, key=lambda x: abs(x - raw_value))
 
-            # FR control status is typically in byte 2 or embedded, checking both interpretations
-            # Based on manual: byte 1 is FR control status
-            fr_control_status = payload[1] if len(payload) > 1 else 0
-
             return cls(
                 value={
                     "frequency_ratio_percent": frequency_ratio_percent,
@@ -3090,9 +3087,7 @@ class InOutdoorCompressorFrequencyRateControlMessage(StructureMessage):
                     "is_valid_increment": is_valid,
                     "nearest_valid_value": nearest_valid,
                     "nearest_valid_percent": (nearest_valid - 256) if nearest_valid else None,
-                    "fr_control_enabled": bool(fr_control_status),
-                    "fr_control_status": fr_control_status,
-                    "formatted": f"{frequency_ratio_percent}% (FR control: {'enabled' if fr_control_status else 'disabled'})"
+                    "formatted": f"{frequency_ratio_percent}%"
                     + (
                         f" [WARNING: Invalid increment, will revert to {nearest_valid - 256}%]"
                         if not is_valid and nearest_valid
