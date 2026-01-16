@@ -102,13 +102,14 @@ class NasaDevice:
 
         return self.attributes[attribute.MESSAGE_ID]
 
-    async def write_attributes(self, attributes: dict[type[BaseMessage], Any]):
+    async def write_attributes(self, attributes: dict[type[BaseMessage], Any], mode=DataType.WRITE):
         """Write specific attributes to the device.
 
         NASA protocol can handle up to 10 messages per packet.
 
         Args:
             attributes: Dictionary mapping message class to value
+            mode: DataType to use for writing, default is DataType.WRITE however sometimes DataType.REQUEST may be needed
 
         Raises:
             ValueError: If more than 10 messages or message class lacks MESSAGE_ID
@@ -124,13 +125,13 @@ class NasaDevice:
             messages.append(SendMessage(MESSAGE_ID=message_class.MESSAGE_ID, PAYLOAD=message_class.to_bytes(value)))
         await self._client.send_message(
             destination=self.address,
-            request_type=DataType.WRITE,
+            request_type=mode,
             messages=messages,
         )
 
-    async def write_attribute(self, message_class: type[BaseMessage], value: Any):
+    async def write_attribute(self, message_class: type[BaseMessage], value: Any, mode=DataType.WRITE):
         """Write a single attribute to the device, this is a convenience method of write_attributes."""
-        await self.write_attributes({message_class: value})
+        await self.write_attributes({message_class: value}, mode=mode)
 
     def handle_packet(self, *_nargs, **kwargs):
         """Handle a packet sent to this device from the parser."""

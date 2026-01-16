@@ -64,8 +64,6 @@ class SamsungNasa:
         if kwargs["source"] not in self.devices:
             self.devices[kwargs["source"]] = self._add_device(kwargs["source"])
             _LOGGER.info("New %s device discovered: %s", kwargs["source_class"], kwargs["source"])
-            # Request device configuration
-            await self.devices[kwargs["source"]].get_configuration()
             # Call the user-defined new device event handler
             if callable(self.new_device_event_handler):
                 try:
