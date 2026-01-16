@@ -2996,7 +2996,7 @@ class InFsv5023(FloatMessage):
 class InOutdoorCompressorFrequencyRateControlMessage(StructureMessage):
     """Parser for message 0x42F1 (Outdoor Compressor Frequency Rate Control).
 
-    Structured message for external compressor frequency control (FRC) via Modbus.
+    Structured message for external compressor frequency control (FRC).
     Allows dynamic adjustment of compressor speed for demand limiting and optimization.
 
     Message structure (2 bytes VAR):
