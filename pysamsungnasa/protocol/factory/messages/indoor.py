@@ -8,6 +8,7 @@ from ..types import (
     BasicPowerMessage,
     RawMessage,
     IntegerMessage,
+    StructureMessage,
 )
 
 from ...enum import (
@@ -2992,11 +2993,193 @@ class InFsv5023(FloatMessage):
     ARITHMETIC = 1.0
 
 
-class InOutdoorCompressorFrequencyRateControlMessage(RawMessage):
-    """Parser for message 0x42F1 (Outdoor Compressor Frequency Rate Control)."""
+class InOutdoorCompressorFrequencyRateControlMessage(StructureMessage):
+    """Parser for message 0x42F1 (Outdoor Compressor Frequency Rate Control).
+
+    Structured message for external compressor frequency control (FRC) via Modbus.
+    Allows dynamic adjustment of compressor speed for demand limiting and optimization.
+
+    Message structure (2 bytes VAR):
+    - Byte 0-1: Frequency ratio (raw value, offset by -256 to get percentage)
+
+    Frequency ratio encoding (values must be in 10-unit increments):
+    - Raw value 306 decimal = 50% minimum frequency
+    - Raw value 316 decimal = 60%
+    - Raw value 326 decimal = 70%
+    - Raw value 336 decimal = 80%
+    - Raw value 346 decimal = 90%
+    - Raw value 356 decimal = 100% normal frequency (reference)
+    - Raw value 366 decimal = 110%
+    - Raw value 376 decimal = 120%
+    - Raw value 386 decimal = 130%
+    - Raw value 396 decimal = 140%
+    - Raw value 406 decimal = 150% maximum frequency
+    - Formula: percentage = (raw_value - 256)
+
+    CRITICAL OPERATIONAL NOTES:
+    1. **Timeout (1 hour)**: Written values are only valid for 1 hour, then revert to 0 (disabled).
+       Controllers must continuously write desired values at regular intervals (recommended every 30-60 min).
+    2. **Increment constraint**: Values MUST be in steps of 10. Valid range: [306, 316, 326, ..., 406].
+       Invalid values auto-correct: if you write 311, system reverts to nearest valid value (306 = 50%).
+    3. **Compressor step-down behavior**: Compressor will slowly step down to the maximum capacity percentage
+       set by FRC. This provides smooth deceleration rather than abrupt frequency changes.
+       Changes can take 5 to 10 monites to take affect.
+    4. **Stability use case**: Setting weather curve flat with exclusive pump/FRC control provides
+       more stable compressor operation than direct temperature targets, reducing oscillation.
+
+    Only active when FSV #5051 (Frequency Ratio Control) = 1 (enabled).
+    Used for demand limiting, load shedding, and compressor stabilization during peak grid periods.
+    Note: Only available on tank-integrated hydronic units.
+    """
 
     MESSAGE_ID = 0x42F1
     MESSAGE_NAME = "Outdoor Compressor Frequency Rate Control"
+
+    # Valid FRC values in 10-unit increments
+    VALID_INCREMENTS = [306, 316, 326, 336, 346, 356, 366, 376, 386, 396, 406]
+    PERCENTAGE_MAPPING = {
+        306: 50,
+        316: 60,
+        326: 70,
+        336: 80,
+        346: 90,
+        356: 100,
+        366: 110,
+        376: 120,
+        386: 130,
+        396: 140,
+        406: 150,
+    }
+
+    @classmethod
+    def parse_payload(cls, payload: bytes) -> "InOutdoorCompressorFrequencyRateControlMessage":
+        """Parse the 2-byte payload into frequency ratio and FR control status.
+
+        Converts raw value to percentage using offset formula: percentage = value - 256
+        Special case: raw_value of 0 indicates FRC not yet initialized (needs configuration).
+        """
+        if not payload or len(payload) < 2:
+            return cls(value=payload.hex() if payload else None, raw_payload=payload)
+
+        try:
+            # Read as 16-bit VAR (2 bytes, little-endian by default in protocol)
+            raw_value = int.from_bytes(payload[0:2], byteorder="little")
+
+            # Special case: raw_value of 0 means FRC not yet initialized
+            if raw_value == 0:
+                return cls(
+                    value={
+                        "frequency_ratio_percent": None,
+                        "raw_value": raw_value,
+                        "is_valid_increment": False,
+                        "nearest_valid_value": 306,  # Suggest minimum valid value
+                        "nearest_valid_percent": 50,
+                        "fr_control_enabled": False,
+                        "fr_control_status": 0,
+                        "formatted": "FRC not initialized (write desired percentage to activate)",
+                        "status": "NOT_INITIALIZED",
+                    },
+                    raw_payload=payload,
+                )
+
+            # Extract frequency ratio percentage using offset formula
+            frequency_ratio_percent = raw_value - 256
+
+            # Check if value is valid (in 10-unit increments)
+            is_valid = raw_value in cls.VALID_INCREMENTS
+            nearest_valid = None
+            if not is_valid:
+                # Find nearest valid value
+                nearest_valid = min(cls.VALID_INCREMENTS, key=lambda x: abs(x - raw_value))
+
+            # FR control status is typically in byte 2 or embedded, checking both interpretations
+            # Based on manual: byte 1 is FR control status
+            fr_control_status = payload[1] if len(payload) > 1 else 0
+
+            return cls(
+                value={
+                    "frequency_ratio_percent": frequency_ratio_percent,
+                    "raw_value": raw_value,
+                    "is_valid_increment": is_valid,
+                    "nearest_valid_value": nearest_valid,
+                    "nearest_valid_percent": (nearest_valid - 256) if nearest_valid else None,
+                    "fr_control_enabled": bool(fr_control_status),
+                    "fr_control_status": fr_control_status,
+                    "formatted": f"{frequency_ratio_percent}% (FR control: {'enabled' if fr_control_status else 'disabled'})"
+                    + (
+                        f" [WARNING: Invalid increment, will revert to {nearest_valid - 256}%]"
+                        if not is_valid and nearest_valid
+                        else ""
+                    ),
+                    "status": "VALID" if is_valid else "INVALID_INCREMENT",
+                },
+                raw_payload=payload,
+            )
+        except (IndexError, ValueError):
+            return cls(value=payload.hex() if payload else None, raw_payload=payload)
+
+    @classmethod
+    def to_bytes(cls, value: dict) -> bytes:
+        """Convert frequency ratio dict to 2-byte payload for writing to device.
+
+        Args:
+            value: Dictionary containing frequency control parameters. Supports:
+                - 'frequency_ratio_percent' (int): Desired frequency ratio (50-150%). Must be valid increment.
+                - 'raw_value' (int): Alternatively, specify raw value directly.
+                - Other keys are ignored.
+
+        Returns:
+            2-byte payload (little-endian VAR format) ready to write to 0x42F1.
+
+        Raises:
+            ValueError: If frequency_ratio_percent is not a valid increment (50, 60, 70, ..., 150).
+            TypeError: If value is not a dict or missing required fields.
+
+        Examples:
+            >>> payload = InOutdoorCompressorFrequencyRateControlMessage.to_bytes(
+            ...     {'frequency_ratio_percent': 100}
+            ... )
+            >>> payload.hex()
+            '6401'  # 356 in little-endian (100% FRC)
+
+            >>> payload = InOutdoorCompressorFrequencyRateControlMessage.to_bytes(
+            ...     {'frequency_ratio_percent': 50}
+            ... )
+            >>> payload.hex()
+            '2e01'  # 306 in little-endian (50% FRC)
+
+            >>> # Can also pass raw_value directly
+            >>> payload = InOutdoorCompressorFrequencyRateControlMessage.to_bytes(
+            ...     {'raw_value': 356}
+            ... )
+            >>> payload.hex()
+            '6401'
+        """
+        if not isinstance(value, dict):
+            raise TypeError(f"Expected dict, got {type(value).__name__}")
+
+        # Extract frequency ratio from dict
+        if "raw_value" in value:
+            raw_value = value["raw_value"]
+        elif "frequency_ratio_percent" in value:
+            frequency_ratio_percent = value["frequency_ratio_percent"]
+            raw_value = frequency_ratio_percent + 256
+        else:
+            raise ValueError("Dict must contain either 'frequency_ratio_percent' or 'raw_value' key")
+
+        # Validate that this is a valid increment
+        if raw_value not in cls.VALID_INCREMENTS:
+            nearest = min(cls.VALID_INCREMENTS, key=lambda x: abs(x - raw_value))
+            raise ValueError(
+                f"Invalid frequency ratio value {raw_value} (percentage: {raw_value - 256}%). "
+                f"Must be a valid increment: {cls.VALID_INCREMENTS}. "
+                f"Nearest valid value: {nearest} (percentage: {nearest - 256}%)"
+            )
+
+        # Convert to 2-byte little-endian VAR
+        payload = raw_value.to_bytes(2, byteorder="little")
+
+        return payload
 
 
 class InVariableIndoorUnknownMessage(RawMessage):
