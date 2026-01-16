@@ -186,7 +186,9 @@ class TestStructureMessages:
             ("0000", None, 0, "NOT_INITIALIZED"),  # Uninitialized
         ],
     )
-    def test_outdoor_compressor_frc_parse_valid_values(self, payload_hex: str, expected_percent, expected_raw: int, expected_status: str):
+    def test_outdoor_compressor_frc_parse_valid_values(
+        self, payload_hex: str, expected_percent, expected_raw: int, expected_status: str
+    ):
         """Test parsing valid FRC frequency ratio values."""
         from pysamsungnasa.protocol.factory.messages.indoor import InOutdoorCompressorFrequencyRateControlMessage
 
@@ -236,8 +238,8 @@ class TestStructureMessages:
         from pysamsungnasa.protocol.factory.messages.indoor import InOutdoorCompressorFrequencyRateControlMessage
 
         test_cases = [
-            (50, "3201"),   # 306 decimal
-            (60, "3c01"),   # 316 decimal
+            (50, "3201"),  # 306 decimal
+            (60, "3c01"),  # 316 decimal
             (100, "6401"),  # 356 decimal
             (150, "9601"),  # 406 decimal
         ]
@@ -251,9 +253,9 @@ class TestStructureMessages:
         from pysamsungnasa.protocol.factory.messages.indoor import InOutdoorCompressorFrequencyRateControlMessage
 
         test_cases = [
-            (306, "3201"),   # 50%
-            (356, "6401"),   # 100%
-            (406, "9601"),   # 150%
+            (306, "3201"),  # 50%
+            (356, "6401"),  # 100%
+            (406, "9601"),  # 150%
         ]
 
         for raw_value, expected_hex in test_cases:

@@ -3037,19 +3037,6 @@ class InOutdoorCompressorFrequencyRateControlMessage(StructureMessage):
 
     # Valid FRC values in 10-unit increments
     VALID_INCREMENTS = [306, 316, 326, 336, 346, 356, 366, 376, 386, 396, 406]
-    PERCENTAGE_MAPPING = {
-        306: 50,
-        316: 60,
-        326: 70,
-        336: 80,
-        346: 90,
-        356: 100,
-        366: 110,
-        376: 120,
-        386: 130,
-        396: 140,
-        406: 150,
-    }
 
     @classmethod
     def parse_payload(cls, payload: bytes) -> "InOutdoorCompressorFrequencyRateControlMessage":
@@ -3146,7 +3133,7 @@ class InOutdoorCompressorFrequencyRateControlMessage(StructureMessage):
             ...     {'frequency_ratio_percent': 50}
             ... )
             >>> payload.hex()
-            '2e01'  # 306 in little-endian (50% FRC)
+            '3201'  # 306 in little-endian (50% FRC)
 
             >>> # Can also pass raw_value directly
             >>> payload = InOutdoorCompressorFrequencyRateControlMessage.to_bytes(
