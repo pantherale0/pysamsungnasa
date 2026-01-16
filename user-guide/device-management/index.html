@@ -1819,17 +1819,19 @@
 </code></pre></div>
 <h3 id="message-specific-callbacks">Message-Specific Callbacks<a class="headerlink" href="#message-specific-callbacks" title="Permanent link">&para;</a></h3>
 <p>Listen for specific message types:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">on_temp_message</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.indoor</span><span class="w"> </span><span class="kn">import</span> <span class="n">IndoorCurrentTemperature</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">on_temp_message</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">message</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;packet&#39;</span><span class="p">]</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temperature update: </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
 
-<span class="c1"># Add callback for message 0x4203 (current temp)</span>
-<span class="n">indoor</span><span class="o">.</span><span class="n">add_packet_callback</span><span class="p">(</span><span class="mh">0x4203</span><span class="p">,</span> <span class="n">on_temp_message</span><span class="p">)</span>
+<span class="c1"># Add callback for message type (current temperature)</span>
+<span class="n">indoor</span><span class="o">.</span><span class="n">add_packet_callback</span><span class="p">(</span><span class="n">IndoorCurrentTemperature</span><span class="p">,</span> <span class="n">on_temp_message</span><span class="p">)</span>
 
 <span class="c1"># Later, remove it</span>
-<span class="n">indoor</span><span class="o">.</span><span class="n">remove_packet_callback</span><span class="p">(</span><span class="mh">0x4203</span><span class="p">,</span> <span class="n">on_temp_message</span><span class="p">)</span>
+<span class="n">indoor</span><span class="o">.</span><span class="n">remove_packet_callback</span><span class="p">(</span><span class="n">IndoorCurrentTemperature</span><span class="p">,</span> <span class="n">on_temp_message</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="multiple-device-management">Multiple Device Management<a class="headerlink" href="#multiple-device-management" title="Permanent link">&para;</a></h2>
 <h3 id="iterate-over-all-devices">Iterate Over All Devices<a class="headerlink" href="#iterate-over-all-devices" title="Permanent link">&para;</a></h3>

@@ -1304,10 +1304,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#add_packet_callbackmessage_number-int-callback-callable" class="md-nav__link">
+  <a href="#add_packet_callbackmessage-typebasemessage-callback-callable" class="md-nav__link">
     <span class="md-ellipsis">
       
-        add_packet_callback(message_number: int, callback: Callable)
+        add_packet_callback(message: type[BaseMessage], callback: Callable)
       
     </span>
   </a>
@@ -1315,10 +1315,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#remove_packet_callbackmessage_number-int-callback-callable" class="md-nav__link">
+  <a href="#remove_packet_callbackmessage-typebasemessage-callback-callable" class="md-nav__link">
     <span class="md-ellipsis">
       
-        remove_packet_callback(message_number: int, callback: Callable)
+        remove_packet_callback(message: type[BaseMessage], callback: Callable)
       
     </span>
   </a>
@@ -2222,14 +2222,16 @@
 </code></pre></div>
 <h4 id="remove_device_callbackcallback-callable"><code>remove_device_callback(callback: Callable)</code><a class="headerlink" href="#remove_device_callbackcallback-callable" title="Permanent link">&para;</a></h4>
 <p>Unregister a callback.</p>
-<h4 id="add_packet_callbackmessage_number-int-callback-callable"><code>add_packet_callback(message_number: int, callback: Callable)</code><a class="headerlink" href="#add_packet_callbackmessage_number-int-callback-callable" title="Permanent link">&para;</a></h4>
+<h4 id="add_packet_callbackmessage-typebasemessage-callback-callable"><code>add_packet_callback(message: type[BaseMessage], callback: Callable)</code><a class="headerlink" href="#add_packet_callbackmessage-typebasemessage-callback-callable" title="Permanent link">&para;</a></h4>
 <p>Register a callback for a specific message type.</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">on_temp</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.indoor</span><span class="w"> </span><span class="kn">import</span> <span class="n">IndoorCurrentTemperature</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">on_temp</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temperature: </span><span class="si">{</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;packet&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<span class="n">device</span><span class="o">.</span><span class="n">add_packet_callback</span><span class="p">(</span><span class="mh">0x4203</span><span class="p">,</span> <span class="n">on_temp</span><span class="p">)</span>
+<span class="n">device</span><span class="o">.</span><span class="n">add_packet_callback</span><span class="p">(</span><span class="n">IndoorCurrentTemperature</span><span class="p">,</span> <span class="n">on_temp</span><span class="p">)</span>
 </code></pre></div>
-<h4 id="remove_packet_callbackmessage_number-int-callback-callable"><code>remove_packet_callback(message_number: int, callback: Callable)</code><a class="headerlink" href="#remove_packet_callbackmessage_number-int-callback-callable" title="Permanent link">&para;</a></h4>
+<h4 id="remove_packet_callbackmessage-typebasemessage-callback-callable"><code>remove_packet_callback(message: type[BaseMessage], callback: Callable)</code><a class="headerlink" href="#remove_packet_callbackmessage-typebasemessage-callback-callable" title="Permanent link">&para;</a></h4>
 <p>Unregister a message callback.</p>
 <h4 id="async-get_configuration"><code>async get_configuration()</code><a class="headerlink" href="#async-get_configuration" title="Permanent link">&para;</a></h4>
 <p>Request device FSV configuration.</p>

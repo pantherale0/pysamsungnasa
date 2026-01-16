@@ -1243,10 +1243,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#add_packet_callbackmessage_number-int-callback-callable-none" class="md-nav__link">
+  <a href="#add_packet_callbackmessage-typebasemessage-callback-callable-none" class="md-nav__link">
     <span class="md-ellipsis">
       
-        add_packet_callback(message_number: int, callback: Callable) -&gt; None
+        add_packet_callback(message: type[BaseMessage], callback: Callable) -&gt; None
       
     </span>
   </a>
@@ -1254,10 +1254,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#remove_packet_callbackmessage_number-int-callback-callable-none" class="md-nav__link">
+  <a href="#remove_packet_callbackmessage-typebasemessage-callback-callable-none" class="md-nav__link">
     <span class="md-ellipsis">
       
-        remove_packet_callback(message_number: int, callback: Callable) -&gt; None
+        remove_packet_callback(message: type[BaseMessage], callback: Callable) -&gt; None
       
     </span>
   </a>
@@ -1836,22 +1836,25 @@
 <p>Unregister a device callback.</p>
 <div class="highlight"><pre><span></span><code><span class="n">device</span><span class="o">.</span><span class="n">remove_device_callback</span><span class="p">(</span><span class="n">on_update</span><span class="p">)</span>
 </code></pre></div>
-<h4 id="add_packet_callbackmessage_number-int-callback-callable-none"><code>add_packet_callback(message_number: int, callback: Callable) -&gt; None</code><a class="headerlink" href="#add_packet_callbackmessage_number-int-callback-callable-none" title="Permanent link">&para;</a></h4>
+<h4 id="add_packet_callbackmessage-typebasemessage-callback-callable-none"><code>add_packet_callback(message: type[BaseMessage], callback: Callable) -&gt; None</code><a class="headerlink" href="#add_packet_callbackmessage-typebasemessage-callback-callable-none" title="Permanent link">&para;</a></h4>
 <p>Register a callback for a specific message type.</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">on_temp_change</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">message</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;packet&#39;</span><span class="p">]</span>
-    <span class="n">message_number</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;messageNumber&#39;</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Message 0x</span><span class="si">{</span><span class="n">message_number</span><span class="si">:</span><span class="s2">04X</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.indoor</span><span class="w"> </span><span class="kn">import</span> <span class="n">IndoorCurrentTemperature</span>
 
-<span class="c1"># Listen for temperature messages (0x4203)</span>
-<span class="n">device</span><span class="o">.</span><span class="n">add_packet_callback</span><span class="p">(</span><span class="mh">0x4203</span><span class="p">,</span> <span class="n">on_temp_change</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">on_temp_change</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;packet&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temperature: </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+
+<span class="c1"># Listen for temperature messages</span>
+<span class="n">device</span><span class="o">.</span><span class="n">add_packet_callback</span><span class="p">(</span><span class="n">IndoorCurrentTemperature</span><span class="p">,</span> <span class="n">on_temp_change</span><span class="p">)</span>
 </code></pre></div>
 <p>The callback receives:
 - <code>device</code> - The device object
 - <code>**kwargs</code> - Additional data including <code>packet</code> and <code>messageNumber</code></p>
-<h4 id="remove_packet_callbackmessage_number-int-callback-callable-none"><code>remove_packet_callback(message_number: int, callback: Callable) -&gt; None</code><a class="headerlink" href="#remove_packet_callbackmessage_number-int-callback-callable-none" title="Permanent link">&para;</a></h4>
+<h4 id="remove_packet_callbackmessage-typebasemessage-callback-callable-none"><code>remove_packet_callback(message: type[BaseMessage], callback: Callable) -&gt; None</code><a class="headerlink" href="#remove_packet_callbackmessage-typebasemessage-callback-callable-none" title="Permanent link">&para;</a></h4>
 <p>Unregister a packet-specific callback.</p>
-<div class="highlight"><pre><span></span><code><span class="n">device</span><span class="o">.</span><span class="n">remove_packet_callback</span><span class="p">(</span><span class="mh">0x4203</span><span class="p">,</span> <span class="n">on_temp_change</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.indoor</span><span class="w"> </span><span class="kn">import</span> <span class="n">IndoorCurrentTemperature</span>
+
+<span class="n">device</span><span class="o">.</span><span class="n">remove_packet_callback</span><span class="p">(</span><span class="n">IndoorCurrentTemperature</span><span class="p">,</span> <span class="n">on_temp_change</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="async-get_configuration-none"><code>async get_configuration() -&gt; None</code><a class="headerlink" href="#async-get_configuration-none" title="Permanent link">&para;</a></h4>
 <p>Request device FSV configuration from the device.</p>
