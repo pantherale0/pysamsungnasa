@@ -262,17 +262,19 @@ device.remove_device_callback(on_update)
 Listen for specific message types:
 
 ```python
+from pysamsungnasa.protocol.factory.messages.indoor import IndoorCurrentTemperature
+
 def on_temp_message(device, **kwargs):
     message = kwargs['packet']
     print(f"Temperature update: {message.VALUE}")
 
 indoor = nasa.devices["200020"]
 
-# Add callback for message 0x4203 (current temp)
-indoor.add_packet_callback(0x4203, on_temp_message)
+# Add callback for message type (current temperature)
+indoor.add_packet_callback(IndoorCurrentTemperature, on_temp_message)
 
 # Later, remove it
-indoor.remove_packet_callback(0x4203, on_temp_message)
+indoor.remove_packet_callback(IndoorCurrentTemperature, on_temp_message)
 ```
 
 ## Multiple Device Management

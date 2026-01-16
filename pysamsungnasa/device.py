@@ -48,7 +48,12 @@ class NasaDevice:
             self._device_callbacks.append(callback)
 
     def add_packet_callback(self, message: type[BaseMessage], callback: Callable):
-        """Add a packet callback."""
+        """Add a packet callback for a specific message type.
+
+        Args:
+            message: Message class (subclass of BaseMessage) to listen for.
+            callback: Callback function to invoke when the message is received.
+        """
         assert issubclass(message, BaseMessage)
         assert message.MESSAGE_ID is not None
         if message.MESSAGE_ID not in self._packet_callbacks:
@@ -57,7 +62,12 @@ class NasaDevice:
             self._packet_callbacks[message.MESSAGE_ID].append(callback)
 
     def remove_packet_callback(self, message: type[BaseMessage], callback: Callable):
-        """Remove a packet callback."""
+        """Remove a packet callback for a specific message type.
+
+        Args:
+            message: Message class (subclass of BaseMessage) to stop listening for.
+            callback: Callback function to remove.
+        """
         assert issubclass(message, BaseMessage)
         assert message.MESSAGE_ID is not None
         if message.MESSAGE_ID in self._packet_callbacks:
