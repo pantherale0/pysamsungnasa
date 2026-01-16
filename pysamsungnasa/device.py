@@ -98,7 +98,7 @@ class NasaDevice:
                 requires_read = False  # Only require read once
 
         if attribute.MESSAGE_ID not in self.attributes:
-            raise TimeoutError(f"Timeout waiting for attribute {attribute} from device {self.address}")
+            raise TimeoutError(f"Timeout waiting for attribute {attribute.MESSAGE_ID} from device {self.address}")
 
         return self.attributes[attribute.MESSAGE_ID]
 
