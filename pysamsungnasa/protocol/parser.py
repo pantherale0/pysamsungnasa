@@ -74,68 +74,51 @@ class NasaPacketParser:
         dest_address = str(kwargs["dest"])
         payload_type = kwargs["payloadType"]
         packet_type = kwargs["packetType"]
-        client_address = str(self._config.address)
 
         if kwargs["packetType"] != PacketType.NORMAL:
             _LOGGER.error("Ignoring packet due to non-NORMAL packet type: %s", packet_type)
             return
 
-        # Determine if the packet is an outgoing message from this client
-        is_outgoing_from_self = source_address == client_address
-
         # Filter based on payload type and source/destination
         should_process = False
-        if is_outgoing_from_self:
-            # For outgoing messages, we process REQUESTs and WRITEs
-            if payload_type in [DataType.REQUEST, DataType.WRITE]:
-                should_process = True
-                _LOGGER.debug(
-                    "Processing outgoing packet (type=%s, payload=%s) from self to %s.",
-                    packet_type,
-                    payload_type,
-                    dest_address,
-                )
-            else:
-                _LOGGER.debug("Ignoring outgoing packet with payload type %s from self.", payload_type)
+        # For incoming messages, we process NOTIFICATIONs, WRITEs, and RESPONSEs
+        if payload_type in [DataType.NOTIFICATION, DataType.WRITE, DataType.RESPONSE, DataType.ACK]:
+            should_process = True
+            _LOGGER.debug(
+                "Processing incoming packet (type=%s, payload=%s) from %s.",
+                packet_type,
+                payload_type,
+                source_address,
+            )
+        elif payload_type == DataType.REQUEST:
+            # Incoming REQUESTs are currently ignored as per original logic's implicit filter
+            _LOGGER.debug("Ignoring incoming packet with payload type REQUEST from %s.", source_address)
+        elif payload_type == DataType.NACK:
+            # Incoming NACKs are generally errors from devices about writes
+            # They should notify pending_read_handler but not be processed as normal packets
+            _LOGGER.warning(
+                "Received NACK from %s for packet number %s.",
+                source_address,
+                kwargs["packetNumber"],
+            )
+            # Notify pending read handler about the NACK
+            if self._pending_read_handler:
+                message_numbers = []
+                for ds in kwargs.get("dataSets", []):  # type: ignore
+                    if isinstance(ds, list) and len(ds) > 0:
+                        message_numbers.append(ds[0])
+                try:
+                    result = self._pending_read_handler(source_address, message_numbers)
+                    if iscoroutinefunction(self._pending_read_handler):
+                        await result
+                except Exception as e:
+                    _LOGGER.error("Error in pending_read_handler: %s", e)
+            # Return early - NACKs don't have valid dataSets to process
+            return
         else:
-            # For incoming messages, we process NOTIFICATIONs, WRITEs, and RESPONSEs
-            if payload_type in [DataType.NOTIFICATION, DataType.WRITE, DataType.RESPONSE, DataType.ACK]:
-                should_process = True
-                _LOGGER.debug(
-                    "Processing incoming packet (type=%s, payload=%s) from %s.",
-                    packet_type,
-                    payload_type,
-                    source_address,
-                )
-            elif payload_type == DataType.REQUEST:
-                # Incoming REQUESTs are currently ignored as per original logic's implicit filter
-                _LOGGER.debug("Ignoring incoming packet with payload type REQUEST from %s.", source_address)
-            elif payload_type == DataType.NACK:
-                # Incoming NACKs are generally errors from devices about writes
-                # They should notify pending_read_handler but not be processed as normal packets
-                _LOGGER.warning(
-                    "Received NACK from %s for packet number %s.",
-                    source_address,
-                    kwargs["packetNumber"],
-                )
-                # Notify pending read handler about the NACK
-                if self._pending_read_handler:
-                    message_numbers = []
-                    for ds in kwargs.get("dataSets", []):  # type: ignore
-                        if isinstance(ds, list) and len(ds) > 0:
-                            message_numbers.append(ds[0])
-                    try:
-                        result = self._pending_read_handler(source_address, message_numbers)
-                        if iscoroutinefunction(self._pending_read_handler):
-                            await result
-                    except Exception as e:
-                        _LOGGER.error("Error in pending_read_handler: %s", e)
-                # Return early - NACKs don't have valid dataSets to process
-                return
-            else:
-                _LOGGER.debug(
-                    "Ignoring incoming packet with unknown payload type %s from %s.", payload_type, source_address
-                )
+            _LOGGER.debug(
+                "Ignoring incoming packet with unknown payload type %s from %s.", payload_type, source_address
+            )
 
         if not should_process:
             return  # Packet was filtered out by the above logic
@@ -143,11 +126,7 @@ class NasaPacketParser:
         # Notify pending read handler when we receive a response or acknowledgment
         # ACK packets can also indicate that a read/write request was processed
         # Note: NACK is handled separately above to avoid processing invalid dataSets
-        if (
-            not is_outgoing_from_self
-            and payload_type in [DataType.RESPONSE, DataType.ACK]
-            and self._pending_read_handler
-        ):
+        if payload_type in [DataType.RESPONSE, DataType.ACK] and self._pending_read_handler:
             # For both RESPONSE and ACK packets, extract message numbers from the datasets
             message_numbers = []
             for ds in kwargs.get("dataSets", []):  # type: ignore
@@ -235,7 +214,7 @@ class NasaPacketParser:
             }
 
             # Dispatch to the appropriate device handler(s)
-            target_handler_address: str = dest_address if is_outgoing_from_self else source_address
+            target_handler_address: str = source_address
 
             if target_handler_address in self._device_handlers:
                 for handler in self._device_handlers[target_handler_address]:
@@ -243,7 +222,7 @@ class NasaPacketParser:
                         handler(**handler_kwargs)
                     except Exception as e:
                         _LOGGER.error("Error in device %s handler: %s", target_handler_address, e)
-            elif not is_outgoing_from_self and self._new_device_handler is not None:
+            elif self._new_device_handler is not None:
                 # Only call new device handler for incoming packets from unknown sources
                 try:
                     if callable(self._new_device_handler) and not iscoroutinefunction(self._new_device_handler):
