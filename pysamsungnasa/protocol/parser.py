@@ -278,7 +278,6 @@ class NasaPacketParser:
         is_info = (packet_data[6] & 0x80) >> 7
         protocol_version = (packet_data[6] & 0x60) >> 5
         retry_count = (packet_data[6] & 0x18) >> 3
-        # rfu = packet_data[6] & 0x7
         try:
             packet_type = PacketType(packet_data[7] >> 4)
         except ValueError:
