@@ -2,12 +2,10 @@
 
 import pytest
 import asyncio
-from unittest.mock import AsyncMock, Mock, patch, call
-from pysamsungnasa.nasa_client import NasaClient
+from unittest.mock import AsyncMock, patch
 from pysamsungnasa.config import NasaConfig
 from pysamsungnasa.protocol.enum import DataType, AddressClass
 from pysamsungnasa.protocol.factory.types import SendMessage
-from pysamsungnasa.helpers import hex2bin
 
 
 class TestSendMessageRetryTracking:
