@@ -42,13 +42,12 @@ class TestSendMessageRetryTracking:
             )
 
             # Check that the write was tracked
-            # Note: Keys are formatted as destination_message_id (as integer, not hex)
-            write_key = "200001_16384"  # 0x4000 = 16384
+            # Note: Keys are formatted as destination_packet_number
+            write_key = "200001_1"  # packet_number=1
             assert write_key in client._pending_writes
             write_info = client._pending_writes[write_key]
             assert write_info["destination"] == "200001"
-            assert write_info["message_id"] == 0x4000
-            assert write_info["payload"] == b"\x01"
+            assert write_info["message_ids"] == [0x4000]
             assert write_info["data_type"] == DataType.WRITE
             assert write_info["attempts"] == 0
             assert write_info["packet_number"] == 1
@@ -88,7 +87,7 @@ class TestSendMessageRetryTracking:
             )
 
             # REQUEST type should be tracked as write retry
-            write_key = "100001_20480"  # 0x5000 = 20480
+            write_key = "100001_3"  # 0x5000 = 20480
             assert write_key in client._pending_writes
 
     @pytest.mark.asyncio
@@ -128,10 +127,12 @@ class TestSendMessageRetryTracking:
                 messages=messages,
             )
 
-            # Each message should have its own tracked entry
-            assert "200001_16384" in client._pending_writes  # 0x4000
-            assert "200001_16385" in client._pending_writes  # 0x4001
-            assert "200001_16386" in client._pending_writes  # 0x4002
+            # All messages in one packet should have a single entry with packet_number key
+            write_key = "200001_5"  # packet_number=5
+            assert write_key in client._pending_writes
+            write_info = client._pending_writes[write_key]
+            assert write_info["message_ids"] == [0x4000, 0x4001, 0x4002]
+            assert len(write_info["messages"]) == 3
 
 
 class TestNasaWriteRetry:
@@ -164,12 +165,14 @@ class TestNasaWriteRetry:
                 data_type=DataType.WRITE,
             )
 
-            # Check that write was tracked
-            write_key = "200001_16384"  # 0x4000 = 16384
+            # Check that write was tracked with message_ids and messages
+            write_key = "200001_1"  # packet_number=1
             assert write_key in client._pending_writes
             write_info = client._pending_writes[write_key]
-            assert write_info["payload"] == b"\x01"
+            assert write_info["message_ids"] == [0x4000]
             assert write_info["data_type"] == DataType.WRITE
+            assert len(write_info["messages"]) == 1
+            assert write_info["messages"][0].MESSAGE_ID == 0x4000
 
 
 class TestNasaReadRetry:
@@ -240,11 +243,12 @@ class TestRetryManagerRetryBehavior:
         """Test that retry manager retries failed write requests."""
         # Manually add a pending write that needs retry
         current_time = asyncio.get_running_loop().time()
-        write_key = "test_200001_0x4000"  # Use unique key to avoid conflicts
+        write_key = "test_200001_1"  # Use unique key to avoid conflicts
+        messages = [SendMessage(MESSAGE_ID=0x4000, PAYLOAD=b"\x01")]
         client._pending_writes[write_key] = {
             "destination": "200001",
-            "message_id": 0x4000,
-            "payload": b"\x01",
+            "message_ids": [0x4000],
+            "messages": messages,
             "data_type": DataType.WRITE,
             "packet_number": 1,
             "attempts": 0,
@@ -335,7 +339,7 @@ class TestRetryManagerRetryBehavior:
     async def test_retry_manager_applies_backoff_factor(self, client):
         """Test that retry manager applies backoff factor to retry interval."""
         current_time = asyncio.get_running_loop().time()
-        write_key = "test_200001_16384"  # Use unique key
+        write_key = "test_200001_1"  # Use unique key
         initial_interval = 0.1
         client._pending_writes[write_key] = {
             "destination": "200001",
@@ -380,7 +384,7 @@ class TestRetryManagerRetryBehavior:
     async def test_retry_manager_abandons_after_max_attempts(self, client):
         """Test that retry manager abandons request after max attempts."""
         current_time = asyncio.get_running_loop().time()
-        write_key = "test_200001_16384"  # Use unique key
+        write_key = "test_200001_1"  # Use unique key
 
         # Clear any existing pending entries to have a clean test
         client._pending_writes.clear()
@@ -469,13 +473,13 @@ class TestRetryStateManagement:
 
     def test_write_key_format(self):
         """Test that write keys are properly formatted."""
-        # The write key should be destination_message_id (as integer)
+        # The write key should be destination_packet_number
         dest = "200001"
-        msg_id = 0x4000  # = 16384
+        packet_number = 1
 
-        # Manually create a write entry to verify key format
-        write_key = f"{dest}_{msg_id}"
-        assert write_key == "200001_16384"
+        # Write keys now use packet_number to group all messages in a packet
+        write_key = f"{dest}_{packet_number}"
+        assert write_key == "200001_1"
 
     def test_read_key_format(self):
         """Test that read keys use sorted tuple of message IDs."""

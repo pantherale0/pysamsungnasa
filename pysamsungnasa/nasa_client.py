@@ -523,27 +523,22 @@ class NasaClient:
             # Track requests for retry logic if enabled
             if packet_number is not None:
                 current_time = asyncio.get_running_loop().time()
-                if (
-                    request_type in (DataType.WRITE, DataType.REQUEST)
-                    and self._config.enable_write_retries
-                ):
-                    for message in messages:
-                        write_key = f"{destination_address}_{message.MESSAGE_ID}"
-                        self._pending_writes[write_key] = {
-                            "destination": destination_address,
-                            "message_id": message.MESSAGE_ID,
-                            "payload": message.PAYLOAD,
-                            "data_type": request_type,
-                            "packet_number": packet_number,
-                            "attempts": 0,
-                            "last_attempt_time": current_time,
-                            "next_retry_time": current_time + self._config.write_retry_interval,
-                            "retry_interval": self._config.write_retry_interval,
-                        }
-                elif (
-                    request_type == DataType.READ
-                    and self._config.enable_read_retries
-                ):
+                if request_type in (DataType.WRITE, DataType.REQUEST) and self._config.enable_write_retries:
+                    # Track all messages in the packet together using packet_number as key
+                    message_ids = [msg.MESSAGE_ID for msg in messages]
+                    write_key = f"{destination_address}_{packet_number}"
+                    self._pending_writes[write_key] = {
+                        "destination": destination_address,
+                        "message_ids": message_ids,
+                        "messages": messages,  # Store full SendMessage objects for retry
+                        "data_type": request_type,
+                        "packet_number": packet_number,
+                        "attempts": 0,
+                        "last_attempt_time": current_time,
+                        "next_retry_time": current_time + self._config.write_retry_interval,
+                        "retry_interval": self._config.write_retry_interval,
+                    }
+                elif request_type == DataType.READ and self._config.enable_read_retries:
                     message_ids = [msg.MESSAGE_ID for msg in messages]
                     read_key = f"{destination_address}_{tuple(sorted(message_ids))}"
                     self._pending_reads[read_key] = {
@@ -612,12 +607,18 @@ class NasaClient:
 
         for write_key, write_info in self._pending_writes.items():
             if write_info["destination"] == destination:
-                # If message_numbers is provided and not empty, only clear writes for those specific messages
+                # If message_numbers is provided and not empty, only clear writes if all messages in the packet are ACKed
                 # If message_numbers is empty, clear all pending writes for this destination (ACK without specific message IDs)
-                if message_numbers and write_info["message_id"] not in message_numbers:
-                    continue
-                keys_to_delete.append(write_key)
-                cleared_keys.append(write_key)
+                if message_numbers:
+                    # Check if all message IDs in this packet were acknowledged
+                    packet_message_ids = write_info.get("message_ids", [])
+                    if all(msg_id in message_numbers for msg_id in packet_message_ids):
+                        keys_to_delete.append(write_key)
+                        cleared_keys.append(write_key)
+                else:
+                    # Empty message_numbers means ACK for all messages from this destination
+                    keys_to_delete.append(write_key)
+                    cleared_keys.append(write_key)
 
         for key in keys_to_delete:
             del self._pending_writes[key]
@@ -790,21 +791,20 @@ class NasaClient:
                         write_info["next_retry_time"] = current_time + write_info["retry_interval"]
 
                         _LOGGER.debug(
-                            "Retrying write request (message %s) to %s (attempt %d/%d, interval=%.1fs)",
-                            write_info["message_id"],
+                            "Retrying write request (messages %s) to %s (attempt %d/%d, interval=%.1fs)",
+                            write_info["message_ids"],
                             write_info["destination"],
                             write_info["attempts"],
                             self._config.write_retry_max_attempts,
                             write_info["retry_interval"],
                         )
 
-                        # Resend the write request
+                        # Resend all messages in the packet together
                         try:
-                            message = SendMessage(MESSAGE_ID=write_info["message_id"], PAYLOAD=write_info["payload"])
                             await self.send_message(
                                 destination=write_info["destination"],
                                 request_type=write_info["data_type"],
-                                messages=[message],
+                                messages=write_info["messages"],
                             )
                         except Exception as e:
                             _LOGGER.error("Error retrying write request: %s", e)
