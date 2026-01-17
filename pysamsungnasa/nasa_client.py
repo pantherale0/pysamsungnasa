@@ -61,7 +61,7 @@ class NasaClient:
         self._disconnect_event_handler = disconnect_event_handler
         self._config = config
         self._address = config.address
-        self._last_rx_time = asyncio.get_event_loop().time()
+        self._last_rx_time = asyncio.get_running_loop().time()
 
     @property
     def is_connected(self) -> bool:
@@ -99,7 +99,7 @@ class NasaClient:
     async def _handle_connection(self) -> None:
         """Handle connection."""
         _LOGGER.debug("Successfully connected to %s:%s", self.host, self.port)
-        self._last_rx_time = asyncio.get_event_loop().time()
+        self._last_rx_time = asyncio.get_running_loop().time()
         await self._start_read_queue_session()
         await self._start_writer_session()
         await self._start_retry_manager_session()
@@ -509,7 +509,7 @@ class NasaClient:
         if messages is None:
             raise ValueError("At least one message is required.")
         try:
-            return await self.send_command(
+            packet_number = await self.send_command(
                 [
                     build_message(
                         source=str(self._config.address),
@@ -519,6 +519,39 @@ class NasaClient:
                     )
                 ],
             )
+
+            # Track requests for retry logic if enabled
+            if packet_number is not None:
+                current_time = asyncio.get_running_loop().time()
+                if request_type in (DataType.WRITE, DataType.REQUEST) and self._config.enable_write_retries:
+                    # Track all messages in the packet together using packet_number as key
+                    message_ids = [msg.MESSAGE_ID for msg in messages]
+                    write_key = f"{destination_address}_{packet_number}"
+                    self._pending_writes[write_key] = {
+                        "destination": destination_address,
+                        "message_ids": message_ids,
+                        "messages": messages,  # Store full SendMessage objects for retry
+                        "data_type": request_type,
+                        "packet_number": packet_number,
+                        "attempts": 0,
+                        "last_attempt_time": current_time,
+                        "next_retry_time": current_time + self._config.write_retry_interval,
+                        "retry_interval": self._config.write_retry_interval,
+                    }
+                elif request_type == DataType.READ and self._config.enable_read_retries:
+                    message_ids = [msg.MESSAGE_ID for msg in messages]
+                    read_key = f"{destination_address}_{tuple(sorted(message_ids))}"
+                    self._pending_reads[read_key] = {
+                        "destination": destination_address,
+                        "messages": message_ids,
+                        "packet_number": packet_number,
+                        "attempts": 0,
+                        "last_attempt_time": current_time,
+                        "next_retry_time": current_time + self._config.read_retry_interval,
+                        "retry_interval": self._config.read_retry_interval,
+                    }
+
+            return packet_number
         except Exception as e:
             _LOGGER.exception("Error sending message to device %s: %s", destination_address, e)
 
@@ -542,72 +575,23 @@ class NasaClient:
                 )
                 return None
 
-        packet_number = await self.send_message(
+        return await self.send_message(
             destination=destination,
             request_type=DataType.READ,
             messages=[SendMessage(MESSAGE_ID=imn, PAYLOAD=b"\x05\xa5\xa5\xa5") for imn in msgs],
         )
 
-        # Track this read request for retry logic if enabled
-        if self._config.enable_read_retries and packet_number is not None:
-            # Use message IDs as the key for matching responses
-            read_key = f"{dest_addr}_{tuple(sorted(msgs))}"
-            current_time = asyncio.get_event_loop().time()
-            self._pending_reads[read_key] = {
-                "destination": dest_addr,
-                "messages": msgs,
-                "packet_number": packet_number,
-                "attempts": 0,
-                "last_attempt_time": current_time,
-                "next_retry_time": current_time + self._config.read_retry_interval,
-                "retry_interval": self._config.read_retry_interval,
-            }
-            _LOGGER.debug(
-                "Tracking read request for messages %s to %s for retry (max %d attempts)",
-                msgs,
-                dest_addr,
-                self._config.read_retry_max_attempts,
-            )
-
-        return packet_number
-
     async def nasa_write(
         self, msg: int, value: str, destination: NasaDevice | str, data_type: DataType
     ) -> int | bytes | None:
         """Send write requests to a device to write data."""
-        dest_addr = destination if isinstance(destination, str) else destination.address
         message = SendMessage(MESSAGE_ID=msg, PAYLOAD=hex2bin(value))
 
-        packet_number = await self.send_message(
+        return await self.send_message(
             destination=destination,
             request_type=data_type,
             messages=[message],
         )
-
-        # Track this write request for retry logic if enabled
-        if self._config.enable_write_retries and packet_number is not None:
-            # Use message ID and destination as the key for matching ACKs
-            write_key = f"{dest_addr}_{msg}"
-            current_time = asyncio.get_event_loop().time()
-            self._pending_writes[write_key] = {
-                "destination": dest_addr,
-                "message_id": msg,
-                "value": value,
-                "data_type": data_type,
-                "packet_number": packet_number,
-                "attempts": 0,
-                "last_attempt_time": current_time,
-                "next_retry_time": current_time + self._config.write_retry_interval,
-                "retry_interval": self._config.write_retry_interval,
-            }
-            _LOGGER.debug(
-                "Tracking write request for message %s to %s for retry (max %d attempts)",
-                msg,
-                dest_addr,
-                self._config.write_retry_max_attempts,
-            )
-
-        return packet_number
 
     def _clear_pending_write(self, destination: str, message_numbers: list[int]) -> list[str]:
         """Clear pending write requests for a destination when an ACK is received.
@@ -623,12 +607,18 @@ class NasaClient:
 
         for write_key, write_info in self._pending_writes.items():
             if write_info["destination"] == destination:
-                # If message_numbers is provided and not empty, only clear writes for those specific messages
+                # If message_numbers is provided and not empty, only clear writes if all messages in the packet are ACKed
                 # If message_numbers is empty, clear all pending writes for this destination (ACK without specific message IDs)
-                if message_numbers and write_info["message_id"] not in message_numbers:
-                    continue
-                keys_to_delete.append(write_key)
-                cleared_keys.append(write_key)
+                if message_numbers:
+                    # Check if all message IDs in this packet were acknowledged
+                    packet_message_ids = write_info.get("message_ids", [])
+                    if all(msg_id in message_numbers for msg_id in packet_message_ids):
+                        keys_to_delete.append(write_key)
+                        cleared_keys.append(write_key)
+                else:
+                    # Empty message_numbers means ACK for all messages from this destination
+                    keys_to_delete.append(write_key)
+                    cleared_keys.append(write_key)
 
         for key in keys_to_delete:
             del self._pending_writes[key]
@@ -708,7 +698,7 @@ class NasaClient:
             try:
                 await asyncio.sleep(1.0)  # Check every second
 
-                current_time = asyncio.get_event_loop().time()
+                current_time = asyncio.get_running_loop().time()
 
                 # Handle read retries
                 if self._config.enable_read_retries and self._pending_reads:
@@ -801,23 +791,20 @@ class NasaClient:
                         write_info["next_retry_time"] = current_time + write_info["retry_interval"]
 
                         _LOGGER.debug(
-                            "Retrying write request (message %s) to %s (attempt %d/%d, interval=%.1fs)",
-                            write_info["message_id"],
+                            "Retrying write request (messages %s) to %s (attempt %d/%d, interval=%.1fs)",
+                            write_info["message_ids"],
                             write_info["destination"],
                             write_info["attempts"],
                             self._config.write_retry_max_attempts,
                             write_info["retry_interval"],
                         )
 
-                        # Resend the write request
+                        # Resend all messages in the packet together
                         try:
-                            message = SendMessage(
-                                MESSAGE_ID=write_info["message_id"], PAYLOAD=hex2bin(write_info["value"])
-                            )
                             await self.send_message(
                                 destination=write_info["destination"],
                                 request_type=write_info["data_type"],
-                                messages=[message],
+                                messages=write_info["messages"],
                             )
                         except Exception as e:
                             _LOGGER.error("Error retrying write request: %s", e)

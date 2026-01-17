@@ -68,19 +68,18 @@ def build_message(source: str, destination: str, data_type: DataType, messages: 
 
 def get_nasa_message_name(message_number: int) -> str | None:
     """Get the name of a NASA message by its number."""
-    _LOGGER.debug("Getting message name for message number: %s", hex(message_number))
     if message_number in MESSAGE_PARSERS:
         if (
             hasattr(MESSAGE_PARSERS[message_number], "MESSAGE_NAME")
             and MESSAGE_PARSERS[message_number].MESSAGE_NAME is not None
         ):
             return MESSAGE_PARSERS[message_number].MESSAGE_NAME
+    _LOGGER.debug("No message name found for message number: %s", hex(message_number))
     return f"Message {hex(message_number)}"
 
 
 def get_nasa_message_id(message_name: str) -> int:
     """Get the message number by its name."""
-    _LOGGER.debug("Getting message ID for message name: %s", message_name)
     for message_id, parser in MESSAGE_PARSERS.items():
         if parser.MESSAGE_NAME == message_name:
             return message_id

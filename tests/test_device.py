@@ -11,25 +11,25 @@ from pysamsungnasa.protocol.factory.types import BaseMessage
 
 
 # Helper message classes for testing
-class TestMessage4000(BaseMessage):
+class Message4000(BaseMessage):
     """Test message with ID 0x4000."""
 
     MESSAGE_ID = 0x4000
 
 
-class TestMessage4001(BaseMessage):
+class Message4001(BaseMessage):
     """Test message with ID 0x4001."""
 
     MESSAGE_ID = 0x4001
 
 
-class TestMessage4203(BaseMessage):
+class Message4203(BaseMessage):
     """Test message with ID 0x4203."""
 
     MESSAGE_ID = 0x4203
 
 
-class TestMessage8000(BaseMessage):
+class Message8000(BaseMessage):
     """Test message with ID 0x8000."""
 
     MESSAGE_ID = 0x8000
@@ -85,11 +85,11 @@ class TestNasaDevice:
         )
 
         callback = Mock()
-        device.add_packet_callback(TestMessage4203, callback)
+        device.add_packet_callback(Message4203, callback)
         initial_count = len(device._packet_callbacks[0x4203])
 
         # Add the same callback again
-        device.add_packet_callback(TestMessage4203, callback)
+        device.add_packet_callback(Message4203, callback)
 
         # Should not have added duplicate
         assert len(device._packet_callbacks[0x4203]) == initial_count
@@ -121,7 +121,7 @@ class TestNasaDevice:
         assert callback not in device._device_callbacks
 
     @pytest.mark.parametrize(
-        "message_class,message_id", [(TestMessage4000, 0x4000), (TestMessage4001, 0x4001), (TestMessage8000, 0x8000)]
+        "message_class,message_id", [(Message4000, 0x4000), (Message4001, 0x4001), (Message8000, 0x8000)]
     )
     def test_add_packet_callback(self, setup_device, message_class, message_id):
         """Test adding packet callback."""
@@ -136,7 +136,7 @@ class TestNasaDevice:
         assert message_id in device._packet_callbacks
         assert callback in device._packet_callbacks[message_id]
 
-    @pytest.mark.parametrize("message_class,message_id", [(TestMessage4000, 0x4000), (TestMessage4001, 0x4001)])
+    @pytest.mark.parametrize("message_class,message_id", [(Message4000, 0x4000), (Message4001, 0x4001)])
     def test_remove_packet_callback(self, setup_device, message_class, message_id):
         """Test removing packet callback."""
         config, parser, client = setup_device
@@ -238,7 +238,7 @@ class TestNasaDeviceHandlePacket:
         )
 
         callback = Mock()
-        device.add_packet_callback(TestMessage4000, callback)
+        device.add_packet_callback(Message4000, callback)
 
         mock_message = Mock(spec=BaseMessage)
         mock_message.VALUE = 1
@@ -310,7 +310,7 @@ class TestNasaDeviceCallbackExceptionHandling:
 
         # Create a callback that raises an exception
         error_callback = Mock(side_effect=RuntimeError("Packet callback error"))
-        device.add_packet_callback(TestMessage4203, error_callback)
+        device.add_packet_callback(Message4203, error_callback)
 
         mock_message = Mock(spec=BaseMessage)
         mock_message.VALUE = 25.0
@@ -331,7 +331,7 @@ class TestNasaDeviceCallbackExceptionHandling:
 
         callback = Mock()
         # Remove callback that was never added - should not raise
-        device.remove_packet_callback(TestMessage4203, callback)
+        device.remove_packet_callback(Message4203, callback)
         assert 0x4203 not in device._packet_callbacks
 
     def test_remove_packet_callback_from_empty_list(self, setup_device):
@@ -342,8 +342,8 @@ class TestNasaDeviceCallbackExceptionHandling:
         )
 
         callback1 = Mock()
-        device.add_packet_callback(TestMessage4203, callback1)
-        device.remove_packet_callback(TestMessage4203, callback1)
+        device.add_packet_callback(Message4203, callback1)
+        device.remove_packet_callback(Message4203, callback1)
 
         # After removing the only callback, list should be empty
         assert callback1 not in device._packet_callbacks.get(0x4203, [])
