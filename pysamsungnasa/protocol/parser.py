@@ -1,7 +1,8 @@
 """NASA Packet Parser."""
 
 from typing import Callable
-from asyncio import iscoroutinefunction, Event
+from asyncio import Event
+from inspect import iscoroutinefunction
 
 import logging
 import struct

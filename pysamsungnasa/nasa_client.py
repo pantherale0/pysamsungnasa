@@ -509,7 +509,7 @@ class NasaClient:
         if messages is None:
             raise ValueError("At least one message is required.")
         try:
-            return await self.send_command(
+            packet_number = await self.send_command(
                 [
                     build_message(
                         source=str(self._config.address),
@@ -519,6 +519,44 @@ class NasaClient:
                     )
                 ],
             )
+
+            # Track write requests for retry logic if enabled
+            if (
+                request_type in (DataType.WRITE, DataType.REQUEST)
+                and self._config.enable_write_retries
+                and packet_number is not None
+            ):
+                current_time = asyncio.get_event_loop().time()
+                for message in messages:
+                    write_key = f"{destination_address}_{message.MESSAGE_ID}"
+                    self._pending_writes[write_key] = {
+                        "destination": destination_address,
+                        "message_id": message.MESSAGE_ID,
+                        "payload": message.PAYLOAD,
+                        "data_type": request_type,
+                        "packet_number": packet_number,
+                        "attempts": 0,
+                        "last_attempt_time": current_time,
+                        "next_retry_time": current_time + self._config.write_retry_interval,
+                        "retry_interval": self._config.write_retry_interval,
+                    }
+
+            # Track read requests for retry logic if enabled
+            if request_type == DataType.READ and self._config.enable_read_retries and packet_number is not None:
+                current_time = asyncio.get_event_loop().time()
+                message_ids = [msg.MESSAGE_ID for msg in messages]
+                read_key = f"{destination_address}_{tuple(sorted(message_ids))}"
+                self._pending_reads[read_key] = {
+                    "destination": destination_address,
+                    "messages": message_ids,
+                    "packet_number": packet_number,
+                    "attempts": 0,
+                    "last_attempt_time": current_time,
+                    "next_retry_time": current_time + self._config.read_retry_interval,
+                    "retry_interval": self._config.read_retry_interval,
+                }
+
+            return packet_number
         except Exception as e:
             _LOGGER.exception("Error sending message to device %s: %s", destination_address, e)
 
@@ -542,72 +580,23 @@ class NasaClient:
                 )
                 return None
 
-        packet_number = await self.send_message(
+        return await self.send_message(
             destination=destination,
             request_type=DataType.READ,
             messages=[SendMessage(MESSAGE_ID=imn, PAYLOAD=b"\x05\xa5\xa5\xa5") for imn in msgs],
         )
 
-        # Track this read request for retry logic if enabled
-        if self._config.enable_read_retries and packet_number is not None:
-            # Use message IDs as the key for matching responses
-            read_key = f"{dest_addr}_{tuple(sorted(msgs))}"
-            current_time = asyncio.get_event_loop().time()
-            self._pending_reads[read_key] = {
-                "destination": dest_addr,
-                "messages": msgs,
-                "packet_number": packet_number,
-                "attempts": 0,
-                "last_attempt_time": current_time,
-                "next_retry_time": current_time + self._config.read_retry_interval,
-                "retry_interval": self._config.read_retry_interval,
-            }
-            _LOGGER.debug(
-                "Tracking read request for messages %s to %s for retry (max %d attempts)",
-                msgs,
-                dest_addr,
-                self._config.read_retry_max_attempts,
-            )
-
-        return packet_number
-
     async def nasa_write(
         self, msg: int, value: str, destination: NasaDevice | str, data_type: DataType
     ) -> int | bytes | None:
         """Send write requests to a device to write data."""
-        dest_addr = destination if isinstance(destination, str) else destination.address
         message = SendMessage(MESSAGE_ID=msg, PAYLOAD=hex2bin(value))
 
-        packet_number = await self.send_message(
+        return await self.send_message(
             destination=destination,
             request_type=data_type,
             messages=[message],
         )
-
-        # Track this write request for retry logic if enabled
-        if self._config.enable_write_retries and packet_number is not None:
-            # Use message ID and destination as the key for matching ACKs
-            write_key = f"{dest_addr}_{msg}"
-            current_time = asyncio.get_event_loop().time()
-            self._pending_writes[write_key] = {
-                "destination": dest_addr,
-                "message_id": msg,
-                "value": value,
-                "data_type": data_type,
-                "packet_number": packet_number,
-                "attempts": 0,
-                "last_attempt_time": current_time,
-                "next_retry_time": current_time + self._config.write_retry_interval,
-                "retry_interval": self._config.write_retry_interval,
-            }
-            _LOGGER.debug(
-                "Tracking write request for message %s to %s for retry (max %d attempts)",
-                msg,
-                dest_addr,
-                self._config.write_retry_max_attempts,
-            )
-
-        return packet_number
 
     def _clear_pending_write(self, destination: str, message_numbers: list[int]) -> list[str]:
         """Clear pending write requests for a destination when an ACK is received.
@@ -811,9 +800,7 @@ class NasaClient:
 
                         # Resend the write request
                         try:
-                            message = SendMessage(
-                                MESSAGE_ID=write_info["message_id"], PAYLOAD=hex2bin(write_info["value"])
-                            )
+                            message = SendMessage(MESSAGE_ID=write_info["message_id"], PAYLOAD=write_info["payload"])
                             await self.send_message(
                                 destination=write_info["destination"],
                                 request_type=write_info["data_type"],
