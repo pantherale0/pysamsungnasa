@@ -103,10 +103,7 @@ class NasaPacketParser:
             )
             # Notify pending read handler about the NACK
             if self._pending_read_handler:
-                message_numbers = []
-                for ds in kwargs.get("dataSets", []):  # type: ignore
-                    if isinstance(ds, list) and len(ds) > 0:
-                        message_numbers.append(ds[0])
+                message_numbers = [ds[0] for ds in kwargs.get("dataSets", []) if isinstance(ds, list) and len(ds) > 0]
                 try:
                     result = self._pending_read_handler(source_address, message_numbers)
                     if iscoroutinefunction(self._pending_read_handler):
