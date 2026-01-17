@@ -61,7 +61,7 @@ class NasaClient:
         self._disconnect_event_handler = disconnect_event_handler
         self._config = config
         self._address = config.address
-        self._last_rx_time = asyncio.get_event_loop().time()
+        self._last_rx_time = asyncio.get_running_loop().time()
 
     @property
     def is_connected(self) -> bool:
@@ -99,7 +99,7 @@ class NasaClient:
     async def _handle_connection(self) -> None:
         """Handle connection."""
         _LOGGER.debug("Successfully connected to %s:%s", self.host, self.port)
-        self._last_rx_time = asyncio.get_event_loop().time()
+        self._last_rx_time = asyncio.get_running_loop().time()
         await self._start_read_queue_session()
         await self._start_writer_session()
         await self._start_retry_manager_session()
@@ -520,41 +520,41 @@ class NasaClient:
                 ],
             )
 
-            # Track write requests for retry logic if enabled
-            if (
-                request_type in (DataType.WRITE, DataType.REQUEST)
-                and self._config.enable_write_retries
-                and packet_number is not None
-            ):
-                current_time = asyncio.get_event_loop().time()
-                for message in messages:
-                    write_key = f"{destination_address}_{message.MESSAGE_ID}"
-                    self._pending_writes[write_key] = {
+            # Track requests for retry logic if enabled
+            if packet_number is not None:
+                current_time = asyncio.get_running_loop().time()
+                if (
+                    request_type in (DataType.WRITE, DataType.REQUEST)
+                    and self._config.enable_write_retries
+                ):
+                    for message in messages:
+                        write_key = f"{destination_address}_{message.MESSAGE_ID}"
+                        self._pending_writes[write_key] = {
+                            "destination": destination_address,
+                            "message_id": message.MESSAGE_ID,
+                            "payload": message.PAYLOAD,
+                            "data_type": request_type,
+                            "packet_number": packet_number,
+                            "attempts": 0,
+                            "last_attempt_time": current_time,
+                            "next_retry_time": current_time + self._config.write_retry_interval,
+                            "retry_interval": self._config.write_retry_interval,
+                        }
+                elif (
+                    request_type == DataType.READ
+                    and self._config.enable_read_retries
+                ):
+                    message_ids = [msg.MESSAGE_ID for msg in messages]
+                    read_key = f"{destination_address}_{tuple(sorted(message_ids))}"
+                    self._pending_reads[read_key] = {
                         "destination": destination_address,
-                        "message_id": message.MESSAGE_ID,
-                        "payload": message.PAYLOAD,
-                        "data_type": request_type,
+                        "messages": message_ids,
                         "packet_number": packet_number,
                         "attempts": 0,
                         "last_attempt_time": current_time,
-                        "next_retry_time": current_time + self._config.write_retry_interval,
-                        "retry_interval": self._config.write_retry_interval,
+                        "next_retry_time": current_time + self._config.read_retry_interval,
+                        "retry_interval": self._config.read_retry_interval,
                     }
-
-            # Track read requests for retry logic if enabled
-            if request_type == DataType.READ and self._config.enable_read_retries and packet_number is not None:
-                current_time = asyncio.get_event_loop().time()
-                message_ids = [msg.MESSAGE_ID for msg in messages]
-                read_key = f"{destination_address}_{tuple(sorted(message_ids))}"
-                self._pending_reads[read_key] = {
-                    "destination": destination_address,
-                    "messages": message_ids,
-                    "packet_number": packet_number,
-                    "attempts": 0,
-                    "last_attempt_time": current_time,
-                    "next_retry_time": current_time + self._config.read_retry_interval,
-                    "retry_interval": self._config.read_retry_interval,
-                }
 
             return packet_number
         except Exception as e:
@@ -697,7 +697,7 @@ class NasaClient:
             try:
                 await asyncio.sleep(1.0)  # Check every second
 
-                current_time = asyncio.get_event_loop().time()
+                current_time = asyncio.get_running_loop().time()
 
                 # Handle read retries
                 if self._config.enable_read_retries and self._pending_reads:

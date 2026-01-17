@@ -239,7 +239,7 @@ class TestRetryManagerRetryBehavior:
     async def test_retry_manager_retries_failed_write(self, client):
         """Test that retry manager retries failed write requests."""
         # Manually add a pending write that needs retry
-        current_time = asyncio.get_event_loop().time()
+        current_time = asyncio.get_running_loop().time()
         write_key = "test_200001_0x4000"  # Use unique key to avoid conflicts
         client._pending_writes[write_key] = {
             "destination": "200001",
@@ -288,7 +288,7 @@ class TestRetryManagerRetryBehavior:
     async def test_retry_manager_retries_failed_read(self, client):
         """Test that retry manager retries failed read requests."""
         # Manually add a pending read that needs retry
-        current_time = asyncio.get_event_loop().time()
+        current_time = asyncio.get_running_loop().time()
         read_key = "test_200001_(16384, 16385)"
         client._pending_reads[read_key] = {
             "destination": "200001",
@@ -334,7 +334,7 @@ class TestRetryManagerRetryBehavior:
     @pytest.mark.asyncio
     async def test_retry_manager_applies_backoff_factor(self, client):
         """Test that retry manager applies backoff factor to retry interval."""
-        current_time = asyncio.get_event_loop().time()
+        current_time = asyncio.get_running_loop().time()
         write_key = "test_200001_16384"  # Use unique key
         initial_interval = 0.1
         client._pending_writes[write_key] = {
@@ -379,7 +379,7 @@ class TestRetryManagerRetryBehavior:
     @pytest.mark.asyncio
     async def test_retry_manager_abandons_after_max_attempts(self, client):
         """Test that retry manager abandons request after max attempts."""
-        current_time = asyncio.get_event_loop().time()
+        current_time = asyncio.get_running_loop().time()
         write_key = "test_200001_16384"  # Use unique key
 
         # Clear any existing pending entries to have a clean test
