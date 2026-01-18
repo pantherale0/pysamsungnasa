@@ -1275,6 +1275,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#smart-grid-demand-response-0x40a4-0x411d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Smart Grid &amp; Demand Response (0x40A4-0x411D)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#power-consumption-monitoring-0x8411-0x8416" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2977,6 +2988,139 @@
 </tr>
 </tbody>
 </table>
+<h3 id="smart-grid-demand-response-0x40a4-0x411d">Smart Grid &amp; Demand Response (0x40A4-0x411D)<a class="headerlink" href="#smart-grid-demand-response-0x40a4-0x411d" title="Permanent link">&para;</a></h3>
+<p>Control system response to grid signals for demand response, load shifting, and renewable integration.</p>
+<table>
+<thead>
+<tr>
+<th>Hex</th>
+<th>NASA.ptc Label</th>
+<th>Description</th>
+<th>Type</th>
+<th>Range</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x40A4</td>
+<td>ENUM_IN_FSV_5041</td>
+<td>Power Peak Control Application</td>
+<td>Bool</td>
+<td>0-1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>0x40A5</td>
+<td>ENUM_IN_FSV_5042</td>
+<td>Power Peak Control Forced Off Parts</td>
+<td>Enum</td>
+<td>0-3</td>
+<td>0</td>
+</tr>
+<tr>
+<td>0x40A6</td>
+<td>ENUM_IN_FSV_5043</td>
+<td>Power Peak Control Input Voltage Type</td>
+<td>Enum</td>
+<td>0-1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>0x40A7</td>
+<td>ENUM_IN_FSV_5051</td>
+<td>Frequency Ratio Control</td>
+<td>Bool</td>
+<td>0-1</td>
+<td>0</td>
+</tr>
+<tr>
+<td><strong>0x411B</strong></td>
+<td><strong>ENUM_IN_FSV_5081</strong></td>
+<td><strong>PV Control Application</strong></td>
+<td><strong>Bool</strong></td>
+<td><strong>0-1</strong></td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td><strong>0x411C</strong></td>
+<td><strong>ENUM_IN_FSV_5091</strong></td>
+<td><strong>Smart Grid Control Application</strong></td>
+<td><strong>Bool</strong></td>
+<td><strong>0-1</strong></td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td><strong>0x411D</strong></td>
+<td><strong>ENUM_IN_FSV_5094</strong></td>
+<td><strong>Smart Grid DHW Mode Priority</strong></td>
+<td><strong>Enum</strong></td>
+<td><strong>0-1</strong></td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td><strong>0x42DD</strong></td>
+<td><strong>VAR_IN_FSV_5092</strong></td>
+<td><strong>Smart Grid Heating Temp Shift</strong></td>
+<td><strong>Float</strong></td>
+<td><strong>2-5°C</strong></td>
+<td><strong>2°C</strong></td>
+</tr>
+<tr>
+<td><strong>0x42DE</strong></td>
+<td><strong>VAR_IN_FSV_5093</strong></td>
+<td><strong>Smart Grid DHW Temp Shift</strong></td>
+<td><strong>Float</strong></td>
+<td><strong>2-5°C</strong></td>
+<td><strong>5°C</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Smart Grid Control Summary:</strong></p>
+<ul>
+<li><strong>FSV #5091 (0x411C)</strong>: Master enable for Smart Grid Control. When set to 1, system receives external signals (via 2 terminals or Modbus) and adjusts operation accordingly.</li>
+<li><strong>FSV #5092 (0x42DD)</strong>: During Mode 3/4 (load increase), heating setpoints increase by this amount to store thermal energy during off-peak/abundant renewable periods.</li>
+<li><strong>FSV #5093 (0x42DE)</strong>: During Mode 3 (load increase), DHW setpoint increases by this amount to pre-heat hot water tank during cheap/abundant power periods.</li>
+<li><strong>FSV #5094 (0x411D)</strong>: During Mode 4 (load decrease/demand response), controls whether DHW also reduces (aggressive, value=1) or continues (comfort, value=0).</li>
+</ul>
+<p><strong>Operation Modes</strong> (when FSV #5091=1):</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Terminal 1</th>
+<th>Terminal 2</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td>Short (0V)</td>
+<td>Open</td>
+<td>Forced thermostat off - all components stop (emergency load shedding)</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>Open</td>
+<td>Open</td>
+<td>Normal operation - user setpoints apply</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>Open</td>
+<td>Short (0V)</td>
+<td>Load increase - heating/DHW temps raised (off-peak, renewable abundance)</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>Short (0V)</td>
+<td>Short (0V)</td>
+<td>Load decrease - aggressive demand response, behavior controlled by FSV #5094</td>
+</tr>
+</tbody>
+</table>
+<p><strong>See Also:</strong> <a href="../../user-guide/smart-grid-control/">Smart Grid Control Guide</a> for detailed configuration and examples.</p>
 <h3 id="power-consumption-monitoring-0x8411-0x8416">Power Consumption Monitoring (0x8411-0x8416)<a class="headerlink" href="#power-consumption-monitoring-0x8411-0x8416" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
