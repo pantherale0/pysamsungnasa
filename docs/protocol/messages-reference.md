@@ -301,11 +301,11 @@ Below is a comprehensive reference of NASA message numbers extracted from NASA.p
 
 | Hex | NASA.ptc Label | Description | Type | Values |
 |-----|---|---|---|---|
-| **0x4124** | **ENUM_IN_SG_READY_MODE_STATE** | **SG Ready Mode State - Controls Smart Grid operation mode** | **Enum** | **1=Forced Off, 2=Normal, 3=Load Increase, 4=Load Decrease** |
+| **0x4124** | **ENUM_IN_SG_READY_MODE_STATE** | **Enables or disables the Smart Grid Ready feature** | **Enum** | **0=Off, 1=On** |
 
-**SG Ready Mode State Details:**
+**Smart Grid Operation Modes (Terminal Control):**
 
-This message controls which Smart Grid operation mode the system should enter when FSV #5091 is enabled (set to 1). Each value corresponds to a terminal configuration or external signal:
+When Smart Grid is enabled (via `0x4124` set to 1), the system's operation mode is determined by the state of two physical terminals, not by this message. The modes are as follows:
 
 | **Value** | **Hex** | **Mode Name** | **Terminal 1** | **Terminal 2** | **Behavior** |
 |---|---|---|---|---|---|
