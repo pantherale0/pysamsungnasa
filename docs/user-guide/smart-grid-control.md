@@ -28,7 +28,7 @@ Smart Grid Control operates through four distinct operating modes, controlled ex
 | **3: Load Increase** | Open | Short (0V) | Temperature setpoints raised (+FSV #5092, +FSV #5093) |
 | **4: Load Reduction** | Short (0V) | Short (0V) | Temperature adjusted per FSV #5094 settings |
 
-**Important**: The four modes are controlled via physical terminal connections, NOT via Modbus messages. Message 0x4124 is only used to enable/disable SG Ready mode.
+**Important**: The four modes are controlled via physical terminal connections, NOT via software messages. Message 0x4124 is only used to enable/disable SG Ready mode.
 
 ## Configuration
 
@@ -406,17 +406,10 @@ asyncio.run(monitor_smart_grid_response())
 ### Smart Grid Mode Not Triggering
 
 1. **Check FSV #5091**: Verify smart grid is enabled (value = 1)
-2. **Verify signal**: Confirm grid signal is being sent to terminals or via Modbus
+2. **Verify signal**: Confirm grid signal is being sent to terminals
 3. **Check terminal connections**: Ensure terminals are properly connected and shorts/opens match mode requirements
 4. **Review configuration**: Verify FSV #5092, #5093, #5094 are set correctly
 5. **Check logs**: Enable debug logging to see if messages are being received
-
-### System Not Responding to Mode Changes
-
-1. **Verify messaging**: Confirm Modbus commands are reaching the device
-2. **Check addressing**: Ensure target device address is correct
-3. **Review state**: Some modes may not be available depending on current operation state
-4. **Temperature constraints**: FSV values must be within allowed ranges (2-5°C)
 
 ### Unexpected Temperature Changes
 
