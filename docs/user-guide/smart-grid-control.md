@@ -102,42 +102,50 @@ await device.write_attribute(InSgReadyModeStateMessage, InSgReadyModeState.OFF)
 
 ### Scenario 1: Comfort-Focused Home
 
-Prioritize user comfort, use grid response for heating only:
+Prioritize user comfort during peak demand periods. When grid signals trigger Mode 4 (load reduction), maintain DHW availability:
 
 ```python
 # FSV #5091 = 1  (Enable smart grid)
-# FSV #5092 = 2  (Minimal heating shift)
-# FSV #5093 = 5  (Keep DHW stable)
-# FSV #5094 = 0  (Comfort mode: DHW continues regardless of grid signal)
+# FSV #5092 = 2  (Minimal heating shift during load increase periods)
+# FSV #5093 = 5  (Pre-heat DHW during off-peak)
+# FSV #5094 = 0  (Comfort mode: DHW continues during Mode 4 load reduction)
 ```
 
-**Response**: During peak demand when Mode 1 (terminal signals) is active, heating stops but DHW continues normally. Users always have hot water.
+**Response**: During peak demand when Mode 4 (load reduction) is active, space heating is deferred but DHW continues at comfort temperature (55°C per FSV #5094=0). Users always have hot water. Only the heating compressor is limited; DHW heating continues.
+
+**Note**: If the grid activates Mode 1 (forced thermostat off), all systems including DHW stop. However, this scenario assumes typical peak demand uses Mode 4, not Mode 1.
 
 ### Scenario 2: Aggressive Load Shedding
 
-Maximize grid participation, reduce all loads during peak demand:
+Maximize grid participation by reducing all loads during peak demand. When grid signals trigger Mode 4 (load reduction), stop both heating and DHW:
 
 ```python
 # FSV #5091 = 1  (Enable smart grid)
-# FSV #5092 = 5  (Maximum heating reduction)
-# FSV #5093 = 5  (Reduce DHW more aggressively)
-# FSV #5094 = 1  (Demand response mode: DHW stops when signaled)
+# FSV #5092 = 5  (Maximum heating shift during load increase)
+# FSV #5093 = 5  (Pre-heat DHW aggressively during off-peak)
+# FSV #5094 = 1  (Demand response mode: DHW stops/reduces during Mode 4)
 ```
 
-**Response**: During peak demand when Mode 1 (terminal signals) is active, both heating and DHW stop. All compressor loads shed. Best for areas with tight grid constraints.
+**Response**: During peak demand when Mode 4 (load reduction) is active, both space heating and DHW compressor are stopped. System relies on tank thermal storage; DHW target drops to 70°C per FSV #5094=1 (demand response). All active heating/cooling loads shed. Best for areas with very tight grid constraints or high peak demand charges.
+
+**Note**: System maintains minimum tank temperature (~50°C) for safety. If equipped with backup electric booster heater, it can provide emergency DHW.
 
 ### Scenario 3: Time-of-Use Optimization
 
-Shift loads to low-cost hours, pre-heat during abundance periods:
+Shift loads to low-cost hours by pre-heating during off-peak periods (Mode 3). Maintain comfort during peak demand:
 
 ```python
 # FSV #5091 = 1  (Enable smart grid)
-# FSV #5092 = 4  (Moderate heating increase during off-peak)
-# FSV #5093 = 5  (Pre-heat DHW during surplus periods)
-# FSV #5094 = 0  (Maintain comfort)
+# FSV #5092 = 4  (Moderate heating increase during Mode 3 off-peak)
+# FSV #5093 = 5  (Aggressive DHW pre-heating during Mode 3 off-peak)
+# FSV #5094 = 0  (Comfort mode: maintain DHW during peak demand Mode 4)
 ```
 
-**Response**: During off-peak periods when Mode 3 (terminal signals) is active, heating and DHW targets increase. System pre-stores thermal energy to minimize peak-hour operation.
+**Response**:
+- **During off-peak (Mode 3)**: Heating and DHW targets increase by FSV values. System aggressively pre-heats both space and tank to store thermal energy.
+- **During peak demand (Mode 4)**: Space heating defers to tank storage; DHW continues at comfort temperature (55°C). Minimizes peak-hour compressor operation.
+
+Typically saves 10-15% energy cost by shifting loads to cheaper off-peak hours.
 
 ## Message Details
 
@@ -154,10 +162,16 @@ Enables/disables the entire smart grid coordination feature.
 
 **Message ID**: `0x42DD` | **Type**: Float | **Unit**: °C | **Default**: 2°C | **Range**: 2-5°C (0.5°C steps)
 
-Temperature increase offset during Smart Grid Mode 3 and 4 (load increase):
+Temperature increase offset during Smart Grid Mode 3 (load increase / pre-heating only):
 
 - **Mode 3 (BOOST)**: All heating modes (room sensor, outlet, water law) = Current setpoint + FSV #5092
-- **Mode 4 (LOAD_REDUCTION)**: Similar to Mode 3 with additional adjustments for room sensor (+3°C more)
+  - Pre-heating phase during off-peak/abundance periods
+  - Stores thermal energy for later use during peak demand
+
+- **Mode 4 (LOAD_REDUCTION)**: Does NOT use this FSV
+  - Pure load reduction phase during peak demand
+  - Heating setpoints are reduced or deferred (not increased)
+  - DHW controlled separately by FSV #5094 only
 
 **Typical values**:
 - 2°C - Minimal load increase, less impact on comfort
@@ -168,10 +182,14 @@ Temperature increase offset during Smart Grid Mode 3 and 4 (load increase):
 
 **Message ID**: `0x42DE` | **Type**: Float | **Unit**: °C | **Default**: 5°C | **Range**: 2-5°C (0.5°C steps)
 
-Temperature increase offset for DHW during Smart Grid Mode 3 (BOOST - load increase):
+Temperature increase offset for DHW during Smart Grid Mode 3 (BOOST - load increase / pre-heating only):
 
 - **Mode 3 (BOOST)**: DHW setpoint = Current setpoint + FSV #5093
-- **Mode 4 (LOAD_REDUCTION)**: DHW controlled by FSV #5094 instead
+  - Pre-heating phase: Extra-hot water stored for later peak-demand use
+
+- **Mode 4 (LOAD_REDUCTION)**: Does NOT use FSV #5093
+  - DHW controlled exclusively by FSV #5094 instead
+  - Enables comfort-vs-demand tradeoff during peak periods
 
 **Typical values**:
 - 2°C - Minimal pre-heating, energy savings ~2-3%
@@ -195,9 +213,12 @@ Controls DHW behavior during Smart Grid Mode 4 (LOAD_REDUCTION - demand response
   - Better for grid-sensitive areas, requires backup heating
 
 **Safety Notes**:
-- Even in Mode 1 (demand response), system maintains minimum tank temperature to prevent bacterial growth
+- Even in Mode 4 (demand response), system maintains minimum tank temperature to prevent bacterial growth
+  - Heat pump only: 55°C minimum
+  - With booster heater: Can go lower with auto-reheat backup
+- Demand response events typically 2-4 hours, rarely all-day
+- After Mode 4 ends, system returns to normal setpoints
 - If equipped with backup electric booster heater, it can provide emergency DHW
-- Does not run indefinitely cold
 
 ## Code Examples
 

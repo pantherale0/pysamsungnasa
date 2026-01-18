@@ -1391,13 +1391,32 @@ class InFsv5091Message(BoolMessage):
 
     **Operation Modes (when enabled):**
 
-    The system responds to two physical terminals (Terminal 1, Terminal 2) or Modbus
-    commands by entering one of four modes:
+    The system responds to physical terminal inputs (Terminal 1, Terminal 2) by entering
+    one of four modes. The four modes are controlled exclusively via terminal configuration
+    on the device hardware:
 
     - **Mode 1 (Short, Open)**: Forced thermostat off - all heating/cooling stops
     - **Mode 2 (Open, Open)**: Normal operation - user setpoints apply
-    - **Mode 3 (Open, Short)**: Load increase - heating/DHW temps raised via FSV #5092/#5093
-    - **Mode 4 (Short, Short)**: Load decrease - behavior controlled by FSV #5094
+    - **Mode 3 (Open, Short)**: Load INCREASE - PRE-HEATING phase (abundance periods)
+    - **Mode 4 (Short, Short)**: Load DECREASE - DEMAND REDUCTION phase (peak demand)
+
+    **CRITICAL DISTINCTION:**
+
+    **Mode 3 (Abundance/Off-Peak)**: Pre-heating and load-increase phase
+    - Heating/DHW setpoints RAISED via FSV #5092 and FSV #5093
+    - System stores extra thermal energy (pre-heat mode)
+    - Typical use: Grid has excess renewable generation, cheap off-peak rates
+    - Goal: Accumulate energy before peak demand period
+
+    **Mode 4 (Peak Demand)**: Load-reduction and demand-response phase
+    - Heating/DHW loads REDUCED or deferred
+    - Does NOT use FSV #5092/#5093 (no setpoint increases)
+    - DHW controlled ONLY by FSV #5094 (comfort vs demand tradeoff)
+    - Typical use: Grid has tight demand, expensive peak rates, frequency support needed
+    - Goal: Minimize consumption during peak period
+
+    **No Pre-heating in Mode 4**: Mode 4 involves pure load reduction, not pre-heating.
+    The pre-heating happens in Mode 3, which provides thermal storage for Mode 4 use.
 
     **System Capabilities When Enabled:**
 
@@ -1407,17 +1426,13 @@ class InFsv5091Message(BoolMessage):
     - Support renewable energy integration by shifting loads to high-wind/solar periods
     - Maintain minimum tank temperatures for safety (prevents bacterial growth)
 
-    **Control Methods:**
+    **Control Method:**
 
-    1. **Physical Terminals**: Two relay contact terminals on the device:
-       - Connect to grid controller or relay outputs
-       - Short = 0V (active), Open = no signal (inactive)
-       - Switch modes by energizing different terminal combinations
-
-    2. **Modbus Communication**: Send Modbus messages specifying desired mode
-       - Recommended for smart controllers and modern systems
-       - Allows remote and programmatic control
-       - Better integration with energy management systems
+    **Physical Terminals**: Two relay contact terminals on the device:
+    - Connect terminal inputs to grid controller or relay outputs
+    - Short = 0V (active), Open = no signal (inactive)
+    - System samples terminal state to determine operating mode
+    - This is the standard method for SG Ready mode control
 
     **Energy & Cost Impact:**
 
@@ -2962,23 +2977,32 @@ class InFsv5083(FloatMessage):
 class InFsv5092(FloatMessage):
     """Parser for message 0x42DD (FSV 5092 - Smart Grid Heating Temperature Shift).
 
-    Temperature increase offset applied to heating setpoints during Smart Grid Modes 3 and 4.
+    Temperature increase offset applied to heating setpoints during Smart Grid Mode 3.
     Unit: °C | Default: 2°C | Range: 2-5°C | Step: 0.5°C
 
     **Purpose:**
 
-    During Smart Grid load-increase signals (Mode 3 or Mode 4), the system raises heating
+    During Smart Grid Mode 3 (load-increase signal), the system raises heating
     setpoints by this amount. This causes the heat pump to run more and store thermal
     energy during off-peak hours or when grid has abundant renewable capacity.
 
-    **Mode 3 Behavior (Load Increase - "Open, Short"):**
+    **Mode 3 Behavior (Load Increase / PRE-HEATING - "Open, Short"):**
 
-    When grid signals abundance (renewable surplus, low demand period), the system
-    increases all heating setpoints:
+    Grid abundance phase: System increases all heating setpoints to pre-heat during off-peak:
     - Room sensor mode: Current setpoint + FSV #5092
     - Water outlet mode: Current setpoint + FSV #5092
-    - Water law/floor mode: Current setpoint + FSV #5092 (+ additional 3°C for water law)
-    - DHW: Controlled separately by FSV #5093 (not affected by this setting)
+    - Water law/floor mode: Current setpoint + FSV #5092
+    - DHW: Controlled separately by FSV #5093 (additional pre-heating)
+    - Result: Thermal energy stored for later use during peak demand (Mode 4)
+
+    **Mode 4 Behavior (Load Decrease / DEMAND REDUCTION - "Short, Short"):**
+
+    Grid peak demand phase: This FSV does NOT apply to Mode 4.
+    Instead:
+    - Heating setpoints are reduced or deferred (opposite of Mode 3)
+    - Space heating load minimized
+    - DHW behavior controlled entirely by FSV #5094 (separate setting)
+    - Result: Pure load reduction, no pre-heating involved
 
     **Typical Values:**
 
@@ -3025,17 +3049,22 @@ class InFsv5093(FloatMessage):
 
     **Mode 3 Behavior (Load Increase - "Open, Short"):**
 
-    During grid abundance periods:
+    During grid abundance periods (Mode 3 / Pre-Heating phase):
     - DHW setpoint = Current user setpoint + FSV #5093
     - Example: User set 45°C, shift 5°C → system targets 50°C
     - System runs heat pump longer to fill tank with extra-hot water
-    - Later during peak demand, can meet DHW needs without active heating
+    - Thermal storage buffer created for later peak demand use
+    - Later during peak demand, DHW needs can be met without active heating
 
-    **Mode 4 Behavior (Load Decrease - "Short, Short"):**
+    **Mode 4 Behavior (Load Decrease / Demand Reduction - "Short, Short"):**
 
-    NOT USED in Mode 4. Instead, FSV #5094 controls DHW in Mode 4:
-    - FSV #5094 = 0: DHW maintains comfort (continues normal)
-    - FSV #5094 = 1: DHW reduces/stops (aggressive demand response)
+    NOT USED in Mode 4. This FSV applies ONLY to Mode 3 (abundance/pre-heating).
+
+    During peak demand (Mode 4):
+    - DHW is controlled EXCLUSIVELY by FSV #5094 (not this setting)
+    - FSV #5094 = 0: DHW maintains comfort (continues heating normally)
+    - FSV #5094 = 1: DHW reduces/stops (aggressive demand reduction)
+    - No pre-heating occurs in Mode 4 (opposite of Mode 3)
 
     **Typical Values:**
 
