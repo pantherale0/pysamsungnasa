@@ -1297,9 +1297,51 @@
 - Switch between modes by energizing different terminal combinations</p>
 <h4 id="modbus-control">Modbus Control<a class="headerlink" href="#modbus-control" title="Permanent link">&para;</a></h4>
 <p>Send Modbus messages to specify operation modes. This is the recommended method for smart controllers:</p>
+<p><strong>Message ID</strong>: <code>0x4124</code> (SG Ready Mode State)</p>
+<p>The SG Ready Mode State message is used to control which operation mode the system enters. Each mode is represented by a specific value:</p>
+<table>
+<thead>
+<tr>
+<th><strong>Mode</strong></th>
+<th><strong>Message Value</strong></th>
+<th><strong>Behavior</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td>1</td>
+<td>Forced thermostat off (emergency load shedding)</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>2</td>
+<td>Normal operation (user setpoints)</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>3</td>
+<td>Load increase (pre-heating mode)</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>4</td>
+<td>Load decrease (demand response mode)</td>
+</tr>
+</tbody>
+</table>
 <div class="highlight"><pre><span></span><code><span class="c1"># Example: Set to Mode 3 (Load Increase) via Modbus</span>
-<span class="c1"># The actual message encoding depends on your device&#39;s Modbus mapping</span>
+<span class="c1"># Send message 0x4124 with value 3 (1 byte payload)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.indoor</span><span class="w"> </span><span class="kn">import</span> <span class="n">InSgReadyModeStateMessage</span>
+
+<span class="c1"># To set Mode 3:</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="n">InSgReadyModeStateMessage</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="c1"># Send to device via NASA protocol or Modbus adapter</span>
+
+<span class="c1"># To set Mode 1 (emergency load shedding):</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="n">InSgReadyModeStateMessage</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </code></pre></div>
+<p><strong>Note</strong>: The actual message encoding depends on your device's Modbus mapping. For direct NASA protocol access, use the message parser above. For Modbus TCP/RTU adapters, consult your device's Modbus register map (typically registers 40001-40100 for message 0x4124).</p>
 <h2 id="operational-scenarios">Operational Scenarios<a class="headerlink" href="#operational-scenarios" title="Permanent link">&para;</a></h2>
 <h3 id="scenario-1-comfort-focused-home">Scenario 1: Comfort-Focused Home<a class="headerlink" href="#scenario-1-comfort-focused-home" title="Permanent link">&para;</a></h3>
 <p>Prioritize user comfort, use grid response for heating only:</p>

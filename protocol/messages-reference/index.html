@@ -1209,6 +1209,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#smart-grid-mode-control-0x4124" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Smart Grid Mode Control (0x4124)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#indoor-unit-messages-water-heating-0x4065-0x4070" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1221,6 +1232,17 @@
         
           <li class="md-nav__item">
   <a href="#outdoor-unit-messages-status-0x8000-0x8003" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Outdoor Unit Messages - Status (0x8000-0x8003)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outdoor-unit-messages-status-0x8000-0x8003_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         Outdoor Unit Messages - Status (0x8000-0x8003)
@@ -2575,6 +2597,82 @@
 </tr>
 </tbody>
 </table>
+<h3 id="smart-grid-mode-control-0x4124">Smart Grid Mode Control (0x4124)<a class="headerlink" href="#smart-grid-mode-control-0x4124" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Hex</th>
+<th>NASA.ptc Label</th>
+<th>Description</th>
+<th>Type</th>
+<th>Values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>0x4124</strong></td>
+<td><strong>ENUM_IN_SG_READY_MODE_STATE</strong></td>
+<td><strong>SG Ready Mode State - Controls Smart Grid operation mode</strong></td>
+<td><strong>Enum</strong></td>
+<td><strong>1=Forced Off, 2=Normal, 3=Load Increase, 4=Load Decrease</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>SG Ready Mode State Details:</strong></p>
+<p>This message controls which Smart Grid operation mode the system should enter when FSV #5091 is enabled (set to 1). Each value corresponds to a terminal configuration or external signal:</p>
+<table>
+<thead>
+<tr>
+<th><strong>Value</strong></th>
+<th><strong>Hex</strong></th>
+<th><strong>Mode Name</strong></th>
+<th><strong>Terminal 1</strong></th>
+<th><strong>Terminal 2</strong></th>
+<th><strong>Behavior</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td>0x01</td>
+<td>Forced Thermostat Off</td>
+<td>Short (0V)</td>
+<td>Open</td>
+<td>All heating/cooling stops (emergency load shedding)</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>0x02</td>
+<td>Normal Operation</td>
+<td>Open</td>
+<td>Open</td>
+<td>System operates normally with user setpoints</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>0x03</td>
+<td>Load Increase</td>
+<td>Open</td>
+<td>Short (0V)</td>
+<td>Heating/DHW temps raised for pre-heating (off-peak, abundance)</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>0x04</td>
+<td>Load Decrease</td>
+<td>Short (0V)</td>
+<td>Short (0V)</td>
+<td>Aggressive demand response (behavior per FSV #5094)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Related Settings:</strong></p>
+<p>When sending mode via 0x4124, the system's response is further configured by:
+- <strong>FSV #5091 (0x411C)</strong>: Must be 1 (enabled) for mode to take effect
+- <strong>FSV #5092 (0x42DD)</strong>: Temperature shift for heating during Mode 3/4
+- <strong>FSV #5093 (0x42DE)</strong>: Temperature shift for DHW during Mode 3
+- <strong>FSV #5094 (0x411D)</strong>: DHW behavior control during Mode 4</p>
+<p><strong>See Also:</strong> <a href="../../user-guide/smart-grid-control/">Smart Grid Control Guide</a> for detailed configuration and code examples.</p>
 <h3 id="indoor-unit-messages-water-heating-0x4065-0x4070">Indoor Unit Messages - Water Heating (0x4065-0x4070)<a class="headerlink" href="#indoor-unit-messages-water-heating-0x4065-0x4070" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -2618,6 +2716,49 @@
 </tbody>
 </table>
 <h3 id="outdoor-unit-messages-status-0x8000-0x8003">Outdoor Unit Messages - Status (0x8000-0x8003)<a class="headerlink" href="#outdoor-unit-messages-status-0x8000-0x8003" title="Permanent link">&para;</a></h3>
+<p>```</p>
+<table>
+<thead>
+<tr>
+<th>Hex</th>
+<th>NASA.ptc Label</th>
+<th>NasaConst.java Label</th>
+<th>Description</th>
+<th>Values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x4065</td>
+<td>ENUM_IN_WATER_HEATER_POWER</td>
+<td>NASA_DHW_POWER</td>
+<td>Water heater power</td>
+<td>0=Off, 1=On</td>
+</tr>
+<tr>
+<td>0x4066</td>
+<td>ENUM_IN_WATER_HEATER_MODE</td>
+<td>NASA_DHW_OPMODE</td>
+<td>Water heater mode</td>
+<td>0=Eco, 1=Standard, 2=Power, 3=Force</td>
+</tr>
+<tr>
+<td>0x4067</td>
+<td>ENUM_IN_3WAY_VALVE</td>
+<td>NASA_DHW_VALVE</td>
+<td>3-way valve</td>
+<td>0=Room, 1=Tank</td>
+</tr>
+<tr>
+<td>0x4068</td>
+<td>ENUM_IN_SOLAR_PUMP</td>
+<td>NASA_SOLAR_PUMP</td>
+<td>Solar pump control</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="outdoor-unit-messages-status-0x8000-0x8003_1">Outdoor Unit Messages - Status (0x8000-0x8003)<a class="headerlink" href="#outdoor-unit-messages-status-0x8000-0x8003_1" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
