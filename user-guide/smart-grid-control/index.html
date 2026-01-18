@@ -1218,32 +1218,37 @@
 <th><strong>Terminal 1</strong></th>
 <th><strong>Terminal 2</strong></th>
 <th><strong>Behavior</strong></th>
+<th><strong>Enum Name</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>1: Forced Off</strong></td>
+<td><strong>1: Emergency Shutdown</strong></td>
 <td>Short (0V)</td>
 <td>Open</td>
 <td>All system components stop (thermostat off)</td>
+<td><code>EMERGENCY_SHUTDOWN</code></td>
 </tr>
 <tr>
 <td><strong>2: Normal</strong></td>
 <td>Open</td>
 <td>Open</td>
 <td>System operates normally with user setpoints</td>
+<td><code>NORMAL</code></td>
 </tr>
 <tr>
 <td><strong>3: Load Increase</strong></td>
 <td>Open</td>
 <td>Short (0V)</td>
 <td>Temperature setpoints raised (+FSV #5092, +FSV #5093)</td>
+<td><code>BOOST</code></td>
 </tr>
 <tr>
-<td><strong>4: Load Decrease</strong></td>
+<td><strong>4: Load Reduction</strong></td>
 <td>Short (0V)</td>
 <td>Short (0V)</td>
 <td>Temperature adjusted per FSV #5094 settings</td>
+<td><code>LOAD_REDUCTION</code></td>
 </tr>
 </tbody>
 </table>
@@ -1295,78 +1300,94 @@
 - Relay outputs or open-collector circuits
 - Short (0V) = terminal active, Open = terminal inactive
 - Switch between modes by energizing different terminal combinations</p>
-<h4 id="modbus-control">Modbus Control<a class="headerlink" href="#modbus-control" title="Permanent link">&para;</a></h4>
-<p>Send Modbus messages to specify operation modes. This is the recommended method for smart controllers:</p>
+<h4 id="software-control">Software Control<a class="headerlink" href="#software-control" title="Permanent link">&para;</a></h4>
+<p>Send NASA messages to specify operation modes using the <code>write_attribute()</code> method (recommended).</p>
 <p><strong>Message ID</strong>: <code>0x4124</code> (SG Ready Mode State)</p>
 <p>The SG Ready Mode State message is used to control which operation mode the system enters. Each mode is represented by a specific value:</p>
 <table>
 <thead>
 <tr>
 <th><strong>Mode</strong></th>
-<th><strong>Message Value</strong></th>
+<th><strong>Value</strong></th>
+<th><strong>Enum Name</strong></th>
 <th><strong>Behavior</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>1</strong></td>
-<td>1</td>
+<td><code>1</code></td>
+<td><code>EMERGENCY_SHUTDOWN</code></td>
 <td>Forced thermostat off (emergency load shedding)</td>
 </tr>
 <tr>
 <td><strong>2</strong></td>
-<td>2</td>
+<td><code>2</code></td>
+<td><code>NORMAL</code></td>
 <td>Normal operation (user setpoints)</td>
 </tr>
 <tr>
 <td><strong>3</strong></td>
-<td>3</td>
+<td><code>3</code></td>
+<td><code>BOOST</code></td>
 <td>Load increase (pre-heating mode)</td>
 </tr>
 <tr>
 <td><strong>4</strong></td>
-<td>4</td>
+<td><code>4</code></td>
+<td><code>LOAD_REDUCTION</code></td>
 <td>Load decrease (demand response mode)</td>
 </tr>
 </tbody>
 </table>
-<div class="highlight"><pre><span></span><code><span class="c1"># Example: Set to Mode 3 (Load Increase) via Modbus</span>
-<span class="c1"># Send message 0x4124 with value 3 (1 byte payload)</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Recommended approach: Use write_attribute() method for clean, supported API</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.indoor</span><span class="w"> </span><span class="kn">import</span> <span class="n">InSgReadyModeStateMessage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">InSgReadyModeState</span>
 
-<span class="c1"># To set Mode 3:</span>
-<span class="n">payload</span> <span class="o">=</span> <span class="n">InSgReadyModeStateMessage</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-<span class="c1"># Send to device via NASA protocol or Modbus adapter</span>
+<span class="c1"># Get your device from SamsungNasa instance</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;200020&quot;</span><span class="p">)</span>  <span class="c1"># Indoor unit 1</span>
+
+<span class="c1"># To set Mode 3 (Load Increase/BOOST):</span>
+<span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span><span class="n">InSgReadyModeStateMessage</span><span class="p">,</span> <span class="n">InSgReadyModeState</span><span class="o">.</span><span class="n">BOOST</span><span class="p">)</span>
 
 <span class="c1"># To set Mode 1 (emergency load shedding):</span>
-<span class="n">payload</span> <span class="o">=</span> <span class="n">InSgReadyModeStateMessage</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span><span class="n">InSgReadyModeStateMessage</span><span class="p">,</span> <span class="n">InSgReadyModeState</span><span class="o">.</span><span class="n">EMERGENCY_SHUTDOWN</span><span class="p">)</span>
+
+<span class="c1"># Other modes:</span>
+<span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span><span class="n">InSgReadyModeStateMessage</span><span class="p">,</span> <span class="n">InSgReadyModeState</span><span class="o">.</span><span class="n">NORMAL</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span><span class="n">InSgReadyModeStateMessage</span><span class="p">,</span> <span class="n">InSgReadyModeState</span><span class="o">.</span><span class="n">LOAD_REDUCTION</span><span class="p">)</span>
 </code></pre></div>
-<p><strong>Note</strong>: The actual message encoding depends on your device's Modbus mapping. For direct NASA protocol access, use the message parser above. For Modbus TCP/RTU adapters, consult your device's Modbus register map (typically registers 40001-40100 for message 0x4124).</p>
+<p><strong>Note</strong>: The <code>write_attribute()</code> method is the recommended, supported API for all message sending. This handles message encoding, addressing, and transmission automatically. Avoid calling <code>to_bytes()</code> directly - it's internal framework code.</p>
 <h2 id="operational-scenarios">Operational Scenarios<a class="headerlink" href="#operational-scenarios" title="Permanent link">&para;</a></h2>
+<p>````</p>
+<h2 id="operational-scenarios_1">Operational Scenarios<a class="headerlink" href="#operational-scenarios_1" title="Permanent link">&para;</a></h2>
 <h3 id="scenario-1-comfort-focused-home">Scenario 1: Comfort-Focused Home<a class="headerlink" href="#scenario-1-comfort-focused-home" title="Permanent link">&para;</a></h3>
 <p>Prioritize user comfort, use grid response for heating only:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># FSV #5091 = 1  (Enable smart grid)</span>
-<span class="c1"># FSV #5092 = 2  (Minimal heating shift)</span>
-<span class="c1"># FSV #5093 = 5  (Keep DHW stable)</span>
-<span class="c1"># FSV #5094 = 0  (Comfort mode: DHW continues regardless of grid signal)</span>
-</code></pre></div>
-<p><strong>Response</strong>: During peak demand (Mode 1), heating stops but DHW continues normally. Users always have hot water.</p>
+<p>```python</p>
+<h1 id="fsv-5091-1-enable-smart-grid">FSV #5091 = 1  (Enable smart grid)<a class="headerlink" href="#fsv-5091-1-enable-smart-grid" title="Permanent link">&para;</a></h1>
+<h1 id="fsv-5092-2-minimal-heating-shift">FSV #5092 = 2  (Minimal heating shift)<a class="headerlink" href="#fsv-5092-2-minimal-heating-shift" title="Permanent link">&para;</a></h1>
+<h1 id="fsv-5093-5-keep-dhw-stable">FSV #5093 = 5  (Keep DHW stable)<a class="headerlink" href="#fsv-5093-5-keep-dhw-stable" title="Permanent link">&para;</a></h1>
+<h1 id="fsv-5094-0-comfort-mode-dhw-continues-regardless-of-grid-signal">FSV #5094 = 0  (Comfort mode: DHW continues regardless of grid signal)<a class="headerlink" href="#fsv-5094-0-comfort-mode-dhw-continues-regardless-of-grid-signal" title="Permanent link">&para;</a></h1>
+<p>```</p>
+<p><strong>Response</strong>: During peak demand (Mode 1/<code>EMERGENCY_SHUTDOWN</code>), heating stops but DHW continues normally. Users always have hot water.</p>
 <h3 id="scenario-2-aggressive-load-shedding">Scenario 2: Aggressive Load Shedding<a class="headerlink" href="#scenario-2-aggressive-load-shedding" title="Permanent link">&para;</a></h3>
 <p>Maximize grid participation, reduce all loads during peak demand:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># FSV #5091 = 1  (Enable smart grid)</span>
-<span class="c1"># FSV #5092 = 5  (Maximum heating reduction)</span>
-<span class="c1"># FSV #5093 = 5  (Reduce DHW more aggressively)</span>
-<span class="c1"># FSV #5094 = 1  (Demand response mode: DHW stops when signaled)</span>
-</code></pre></div>
-<p><strong>Response</strong>: During peak demand (Mode 1), both heating and DHW stop. All compressor loads shed. Best for areas with tight grid constraints.</p>
+<p>```python</p>
+<h1 id="fsv-5091-1-enable-smart-grid_1">FSV #5091 = 1  (Enable smart grid)<a class="headerlink" href="#fsv-5091-1-enable-smart-grid_1" title="Permanent link">&para;</a></h1>
+<h1 id="fsv-5092-5-maximum-heating-reduction">FSV #5092 = 5  (Maximum heating reduction)<a class="headerlink" href="#fsv-5092-5-maximum-heating-reduction" title="Permanent link">&para;</a></h1>
+<h1 id="fsv-5093-5-reduce-dhw-more-aggressively">FSV #5093 = 5  (Reduce DHW more aggressively)<a class="headerlink" href="#fsv-5093-5-reduce-dhw-more-aggressively" title="Permanent link">&para;</a></h1>
+<h1 id="fsv-5094-1-demand-response-mode-dhw-stops-when-signaled">FSV #5094 = 1  (Demand response mode: DHW stops when signaled)<a class="headerlink" href="#fsv-5094-1-demand-response-mode-dhw-stops-when-signaled" title="Permanent link">&para;</a></h1>
+<p>```</p>
+<p><strong>Response</strong>: During peak demand (Mode 1/<code>EMERGENCY_SHUTDOWN</code>), both heating and DHW stop. All compressor loads shed. Best for areas with tight grid constraints.</p>
 <h3 id="scenario-3-time-of-use-optimization">Scenario 3: Time-of-Use Optimization<a class="headerlink" href="#scenario-3-time-of-use-optimization" title="Permanent link">&para;</a></h3>
 <p>Shift loads to low-cost hours, pre-heat during abundance periods:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># FSV #5091 = 1  (Enable smart grid)</span>
-<span class="c1"># FSV #5092 = 4  (Moderate heating increase during off-peak)</span>
-<span class="c1"># FSV #5093 = 5  (Pre-heat DHW during surplus periods)</span>
-<span class="c1"># FSV #5094 = 0  (Maintain comfort)</span>
-</code></pre></div>
-<p><strong>Response</strong>: During off-peak (Mode 3), heating and DHW targets increase. System pre-stores thermal energy to minimize peak-hour operation.</p>
+<p>```python</p>
+<h1 id="fsv-5091-1-enable-smart-grid_2">FSV #5091 = 1  (Enable smart grid)<a class="headerlink" href="#fsv-5091-1-enable-smart-grid_2" title="Permanent link">&para;</a></h1>
+<h1 id="fsv-5092-4-moderate-heating-increase-during-off-peak">FSV #5092 = 4  (Moderate heating increase during off-peak)<a class="headerlink" href="#fsv-5092-4-moderate-heating-increase-during-off-peak" title="Permanent link">&para;</a></h1>
+<h1 id="fsv-5093-5-pre-heat-dhw-during-surplus-periods">FSV #5093 = 5  (Pre-heat DHW during surplus periods)<a class="headerlink" href="#fsv-5093-5-pre-heat-dhw-during-surplus-periods" title="Permanent link">&para;</a></h1>
+<h1 id="fsv-5094-0-maintain-comfort">FSV #5094 = 0  (Maintain comfort)<a class="headerlink" href="#fsv-5094-0-maintain-comfort" title="Permanent link">&para;</a></h1>
+<p>```</p>
+<p><strong>Response</strong>: During off-peak (Mode 3/<code>BOOST</code>), heating and DHW targets increase. System pre-stores thermal energy to minimize peak-hour operation.</p>
 <h2 id="message-details">Message Details<a class="headerlink" href="#message-details" title="Permanent link">&para;</a></h2>
 <h3 id="fsv-5091-smart-grid-control-application">FSV #5091: Smart Grid Control Application<a class="headerlink" href="#fsv-5091-smart-grid-control-application" title="Permanent link">&para;</a></h3>
 <p><strong>Message ID</strong>: <code>0x411C</code> | <strong>Type</strong>: Boolean | <strong>Default</strong>: 0 | <strong>Range</strong>: 0-1</p>
@@ -1379,8 +1400,8 @@
 <p><strong>Message ID</strong>: <code>0x42DD</code> | <strong>Type</strong>: Float | <strong>Unit</strong>: °C | <strong>Default</strong>: 2°C | <strong>Range</strong>: 2-5°C (0.5°C steps)</p>
 <p>Temperature increase offset during Smart Grid Mode 3 and 4 (load increase):</p>
 <ul>
-<li><strong>Mode 3</strong>: All heating modes (room sensor, outlet, water law) = Current setpoint + FSV #5092</li>
-<li><strong>Mode 4</strong>: Similar to Mode 3 with additional adjustments for room sensor (+3°C more)</li>
+<li><strong>Mode 3 (BOOST)</strong>: All heating modes (room sensor, outlet, water law) = Current setpoint + FSV #5092</li>
+<li><strong>Mode 4 (LOAD_REDUCTION)</strong>: Similar to Mode 3 with additional adjustments for room sensor (+3°C more)</li>
 </ul>
 <p><strong>Typical values</strong>:
 - 2°C - Minimal load increase, less impact on comfort
@@ -1388,10 +1409,10 @@
 - 4-5°C - Aggressive load increase, maximizes energy storage</p>
 <h3 id="fsv-5093-smart-grid-dhw-temperature-shift">FSV #5093: Smart Grid DHW Temperature Shift<a class="headerlink" href="#fsv-5093-smart-grid-dhw-temperature-shift" title="Permanent link">&para;</a></h3>
 <p><strong>Message ID</strong>: <code>0x42DE</code> | <strong>Type</strong>: Float | <strong>Unit</strong>: °C | <strong>Default</strong>: 5°C | <strong>Range</strong>: 2-5°C (0.5°C steps)</p>
-<p>Temperature increase offset for DHW during Smart Grid Mode 3 (load increase):</p>
+<p>Temperature increase offset for DHW during Smart Grid Mode 3 (BOOST - load increase):</p>
 <ul>
-<li><strong>Mode 3</strong>: DHW setpoint = Current setpoint + FSV #5093</li>
-<li><strong>Mode 4</strong>: DHW controlled by FSV #5094 instead</li>
+<li><strong>Mode 3 (BOOST)</strong>: DHW setpoint = Current setpoint + FSV #5093</li>
+<li><strong>Mode 4 (LOAD_REDUCTION)</strong>: DHW controlled by FSV #5094 instead</li>
 </ul>
 <p><strong>Typical values</strong>:
 - 2°C - Minimal pre-heating, energy savings ~2-3%
@@ -1399,7 +1420,7 @@
 - 5°C - Aggressive pre-heating, maximum energy storage (default)</p>
 <h3 id="fsv-5094-smart-grid-dhw-mode">FSV #5094: Smart Grid DHW Mode<a class="headerlink" href="#fsv-5094-smart-grid-dhw-mode" title="Permanent link">&para;</a></h3>
 <p><strong>Message ID</strong>: <code>0x411D</code> | <strong>Type</strong>: Enum | <strong>Default</strong>: 0 | <strong>Range</strong>: 0-1</p>
-<p>Controls DHW behavior during Smart Grid Mode 4 (demand response):</p>
+<p>Controls DHW behavior during Smart Grid Mode 4 (LOAD_REDUCTION - demand response):</p>
 <ul>
 <li><strong>0 (Comfort Mode)</strong>: DHW heating continues normally, heating may be deferred instead</li>
 <li>DHW always available at target temperature</li>
@@ -1420,111 +1441,163 @@
 - Does not run indefinitely cold</p>
 <h2 id="code-examples">Code Examples<a class="headerlink" href="#code-examples" title="Permanent link">&para;</a></h2>
 <h3 id="reading-smart-grid-settings">Reading Smart Grid Settings<a class="headerlink" href="#reading-smart-grid-settings" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamsungNasa</span>
+<p>```python
+from pysamsungnasa import SamsungNasa</p>
+<p>async def read_smart_grid_settings():
+    nasa = SamsungNasa(
+        host="192.168.1.100",
+        port=8000,
+        config={"client_address": 1}
+    )</p>
+<div class="highlight"><pre><span></span><code>await nasa.start()
 
-<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_smart_grid_settings</span><span class="p">():</span>
-    <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
-        <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
-        <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
-        <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
-    <span class="p">)</span>
+# Get indoor unit
+indoor = nasa.devices.get(&quot;200020&quot;)
+if not indoor:
+    print(&quot;No indoor unit found&quot;)
+    return
 
-    <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+# Read smart grid attributes (if available through device)
+print(f&quot;Device: {indoor.device_type}&quot;)
+print(f&quot;Attributes: {indoor.attributes}&quot;)
 
-    <span class="c1"># Get indoor unit</span>
-    <span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;200020&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">indoor</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No indoor unit found&quot;</span><span class="p">)</span>
-        <span class="k">return</span>
+# Look for FSV 5091-5094 in attributes
+for attr_name, attr_value in indoor.attributes.items():
+    if &quot;5091&quot; in attr_name or &quot;5092&quot; in attr_name or \
+       &quot;5093&quot; in attr_name or &quot;5094&quot; in attr_name:
+        print(f&quot;  {attr_name}: {attr_value}&quot;)
 
-    <span class="c1"># Read smart grid attributes (if available through device)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device: </span><span class="si">{</span><span class="n">indoor</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attributes: </span><span class="si">{</span><span class="n">indoor</span><span class="o">.</span><span class="n">attributes</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Look for FSV 5091-5094 in attributes</span>
-    <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_value</span> <span class="ow">in</span> <span class="n">indoor</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="s2">&quot;5091&quot;</span> <span class="ow">in</span> <span class="n">attr_name</span> <span class="ow">or</span> <span class="s2">&quot;5092&quot;</span> <span class="ow">in</span> <span class="n">attr_name</span> <span class="ow">or</span> \
-           <span class="s2">&quot;5093&quot;</span> <span class="ow">in</span> <span class="n">attr_name</span> <span class="ow">or</span> <span class="s2">&quot;5094&quot;</span> <span class="ow">in</span> <span class="n">attr_name</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">attr_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+await nasa.stop()
 </code></pre></div>
+<p>```</p>
 <h3 id="setting-smart-grid-mode-via-message-sending">Setting Smart Grid Mode via Message Sending<a class="headerlink" href="#setting-smart-grid-mode-via-message-sending" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamsungNasa</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">MessageFactory</span>
+<p>```python
+from pysamsungnasa import SamsungNasa
+from pysamsungnasa.protocol.factory.messages.indoor import InSgReadyModeStateMessage</p>
+<p>async def set_smart_grid_mode(nasa, target_address, mode):
+    """
+    Set Smart Grid operation mode (1-4).</p>
+<div class="highlight"><pre><span></span><code>This is the recommended approach using write_attribute, which handles
+all message encoding and transmission internally.
 
-<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_smart_grid_mode</span><span class="p">(</span><span class="n">nasa</span><span class="p">,</span> <span class="n">target_address</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set Smart Grid operation mode (1-4).</span>
+Args:
+    nasa: SamsungNasa instance
+    target_address: Device address (e.g., &quot;200020&quot; for indoor unit 1)
+    mode: Operation mode (1-4)
+        - 1: Forced thermostat off (emergency load shedding)
+        - 2: Normal operation (user setpoints)
+        - 3: Load increase (pre-heating mode)
+        - 4: Load decrease (demand response mode)
+&quot;&quot;&quot;
+device = nasa.devices.get(target_address)
+if not device:
+    print(f&quot;Device {target_address} not found&quot;)
+    return False
 
-<span class="sd">    Mode 1 (Short, Open): Forced thermostat off</span>
-<span class="sd">    Mode 2 (Open, Open): Normal operation</span>
-<span class="sd">    Mode 3 (Open, Short): Load increase</span>
-<span class="sd">    Mode 4 (Short, Short): Load decrease</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># This would typically be implemented through physical terminals</span>
-    <span class="c1"># or device-specific Modbus commands</span>
-    <span class="k">pass</span>
-
-<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">enable_smart_grid</span><span class="p">(</span><span class="n">nasa</span><span class="p">,</span> <span class="n">target_address</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enable FSV #5091 (Smart Grid Control Application)&quot;&quot;&quot;</span>
-    <span class="c1"># Message to enable smart grid feature</span>
-    <span class="c1"># Implementation depends on device&#39;s message structure</span>
-    <span class="k">pass</span>
-
-<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">configure_smart_grid_response</span><span class="p">(</span>
-    <span class="n">nasa</span><span class="p">,</span>
-    <span class="n">target_address</span><span class="p">,</span>
-    <span class="n">heating_shift</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>  <span class="c1"># FSV #5092 in °C</span>
-    <span class="n">dhw_shift</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>      <span class="c1"># FSV #5093 in °C</span>
-    <span class="n">dhw_mode</span><span class="o">=</span><span class="mi">0</span>          <span class="c1"># FSV #5094: 0=Comfort, 1=Demand Response</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Configure how system responds to grid signals.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        heating_shift: Temperature increase for heating (2-5°C)</span>
-<span class="sd">        dhw_shift: Temperature increase for DHW (2-5°C)</span>
-<span class="sd">        dhw_mode: 0=Comfort (DHW continues), 1=Demand Response (DHW stops)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Implementation would send appropriate Modbus messages</span>
-    <span class="k">pass</span>
+try:
+    # Use write_attribute for clean, supported API
+    await device.write_attribute(InSgReadyModeStateMessage, mode)
+    print(f&quot;Set device {target_address} to Mode {mode}&quot;)
+    return True
+except Exception as e:
+    print(f&quot;Failed to set mode: {e}&quot;)
+    return False
 </code></pre></div>
+<p>async def enable_smart_grid(nasa, target_address):
+    """Enable FSV #5091 (Smart Grid Control Application)"""
+    from pysamsungnasa.protocol.factory.messages.indoor import InFsv5091Message</p>
+<div class="highlight"><pre><span></span><code>device = nasa.devices.get(target_address)
+if not device:
+    return False
+
+try:
+    await device.write_attribute(InFsv5091Message, 1)  # 1 = enabled
+    print(f&quot;Enabled Smart Grid Control on {target_address}&quot;)
+    return True
+except Exception as e:
+    print(f&quot;Failed to enable smart grid: {e}&quot;)
+    return False
+</code></pre></div>
+<p>async def configure_smart_grid_response(
+    nasa,
+    target_address,
+    heating_shift=2.0,  # FSV #5092 in °C
+    dhw_shift=5.0,      # FSV #5093 in °C
+    dhw_mode=0          # FSV #5094: 0=Comfort, 1=Demand Response
+):
+    """
+    Configure how system responds to grid signals.</p>
+<div class="highlight"><pre><span></span><code>Uses write_attribute for all message sending - the recommended approach.
+
+Args:
+    nasa: SamsungNasa instance
+    target_address: Device address
+    heating_shift: Temperature increase for heating (2-5°C)
+    dhw_shift: Temperature increase for DHW (2-5°C)
+    dhw_mode: 0=Comfort (DHW continues), 1=Demand Response (DHW stops)
+&quot;&quot;&quot;
+from pysamsungnasa.protocol.factory.messages.indoor import (
+    InFsv5092,
+    InFsv5093,
+    InFsv5094Message,
+)
+
+device = nasa.devices.get(target_address)
+if not device:
+    return False
+
+try:
+    # Configure heating response
+    await device.write_attribute(InFsv5092, heating_shift)
+
+    # Configure DHW pre-heating
+    await device.write_attribute(InFsv5093, dhw_shift)
+
+    # Configure DHW mode priority
+    await device.write_attribute(InFsv5094Message, dhw_mode)
+
+    print(f&quot;Configured smart grid response on {target_address}&quot;)
+    return True
+except Exception as e:
+    print(f&quot;Failed to configure smart grid: {e}&quot;)
+    return False
+</code></pre></div>
+<p>```</p>
+<p><strong>Important</strong>: Always use <code>write_attribute()</code> method for sending messages to devices. The internal <code>to_bytes()</code> methods are for framework use only and should not be called directly.</p>
 <h3 id="monitoring-grid-response-status">Monitoring Grid Response Status<a class="headerlink" href="#monitoring-grid-response-status" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamsungNasa</span>
+<p>```python
+import asyncio
+from pysamsungnasa import SamsungNasa</p>
+<p>async def monitor_smart_grid_response():
+    """Monitor how system responds to grid signals"""</p>
+<div class="highlight"><pre><span></span><code>nasa = SamsungNasa(
+    host=&quot;192.168.1.100&quot;,
+    port=8000,
+    config={&quot;client_address&quot;: 1}
+)
 
-<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">monitor_smart_grid_response</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Monitor how system responds to grid signals&quot;&quot;&quot;</span>
+await nasa.start()
 
-    <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
-        <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
-        <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
-        <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
-    <span class="p">)</span>
+async def on_device_update(device):
+    &quot;&quot;&quot;Called whenever device updates&quot;&quot;&quot;
+    if device.address == &quot;200020&quot;:  # Indoor unit
+        print(f&quot;Smart Grid Status Update:&quot;)
+        # Check for operation mode, temperature, status
+        print(f&quot;  Power: {device.climate_controller.power if device.climate_controller else &#39;N/A&#39;}&quot;)
+        print(f&quot;  Mode: {device.climate_controller.current_mode if device.climate_controller else &#39;N/A&#39;}&quot;)
+        print(f&quot;  Temp: {device.climate_controller.f_current_temperature if device.climate_controller else &#39;N/A&#39;}°C&quot;)
 
-    <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+# Register update callback
+indoor = nasa.devices.get(&quot;200020&quot;)
+if indoor:
+    indoor.add_device_callback(on_device_update)
 
-    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_device_update</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Called whenever device updates&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">address</span> <span class="o">==</span> <span class="s2">&quot;200020&quot;</span><span class="p">:</span>  <span class="c1"># Indoor unit</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Smart Grid Status Update:&quot;</span><span class="p">)</span>
-            <span class="c1"># Check for operation mode, temperature, status</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Power: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="o">.</span><span class="n">power</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;N/A&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Mode: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="o">.</span><span class="n">current_mode</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;N/A&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Temp: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="o">.</span><span class="n">f_current_temperature</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;N/A&#39;</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Register update callback</span>
-    <span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;200020&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">indoor</span><span class="p">:</span>
-        <span class="n">indoor</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="n">on_device_update</span><span class="p">)</span>
-
-    <span class="c1"># Monitor for 1 hour</span>
-    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3600</span><span class="p">)</span>
-    <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-
-<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">monitor_smart_grid_response</span><span class="p">())</span>
+# Monitor for 1 hour
+await asyncio.sleep(3600)
+await nasa.stop()
 </code></pre></div>
+<p>asyncio.run(monitor_smart_grid_response())
+```</p>
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
 <h3 id="smart-grid-mode-not-triggering">Smart Grid Mode Not Triggering<a class="headerlink" href="#smart-grid-mode-not-triggering" title="Permanent link">&para;</a></h3>
 <ol>
