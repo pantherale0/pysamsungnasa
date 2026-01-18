@@ -19,14 +19,16 @@ This leads to:
 
 ## Architecture
 
-Smart Grid Control operates through four distinct operating modes, controlled via two physical terminals or Modbus messages:
+Smart Grid Control operates through four distinct operating modes, controlled exclusively via two physical terminals:
 
-| **Mode** | **Terminal 1** | **Terminal 2** | **Behavior** | **Enum Name** |
-|----------|---|---|---|---|
-| **1: Emergency Shutdown** | Short (0V) | Open | All system components stop (thermostat off) | `EMERGENCY_SHUTDOWN` |
-| **2: Normal** | Open | Open | System operates normally with user setpoints | `NORMAL` |
-| **3: Load Increase** | Open | Short (0V) | Temperature setpoints raised (+FSV #5092, +FSV #5093) | `BOOST` |
-| **4: Load Reduction** | Short (0V) | Short (0V) | Temperature adjusted per FSV #5094 settings | `LOAD_REDUCTION` |
+| **Mode** | **Terminal 1** | **Terminal 2** | **Behavior** |
+|----------|---|---|---|
+| **1: Forced Off** | Short (0V) | Open | All system components stop (thermostat off) |
+| **2: Normal** | Open | Open | System operates normally with user setpoints |
+| **3: Load Increase** | Open | Short (0V) | Temperature setpoints raised (+FSV #5092, +FSV #5093) |
+| **4: Load Reduction** | Short (0V) | Short (0V) | Temperature adjusted per FSV #5094 settings |
+
+**Important**: The four modes are controlled via physical terminal connections, NOT via Modbus messages. Message 0x4124 is only used to enable/disable SG Ready mode.
 
 ## Configuration
 
@@ -51,27 +53,29 @@ Once enabled, configure the system's response behavior using:
 
 ### Control Methods
 
-#### Physical Terminal Control
+#### Physical Terminal Control (Primary Method)
 
-Connect your grid signal controller to the two terminals:
-- Relay outputs or open-collector circuits
-- Short (0V) = terminal active, Open = terminal inactive
-- Switch between modes by energizing different terminal combinations
+Connect your grid signal controller to the two physical terminals for mode selection:
+- Use relay outputs or open-collector circuits
+- Short = 0V (terminal active), Open = floating (terminal inactive)
+- Switch between modes by changing terminal configurations
+- This is the standard way Samsung heat pumps control SG modes
 
-#### Software Control
+**Terminal Connection Guide** (from manufacturer):
+- Terminal 1 & 2 to Digital Input port on indoor controller
+- System samples terminal state to determine current mode
+- Changes take effect immediately upon terminal state change
 
-Send NASA messages to specify operation modes using the `write_attribute()` method (recommended).
+#### Software Enable/Disable (0x4124)
 
-**Message ID**: `0x4124` (SG Ready Mode State)
+Message 0x4124 (SG Ready Mode State) provides a software on/off switch for the SG Ready system:
 
-The SG Ready Mode State message is used to control which operation mode the system enters. Each mode is represented by a specific value:
+| **Value** | **Enum Name** | **Effect** |
+|---|---|---|
+| `0` | `OFF` | SG Ready disabled - physical terminal inputs are ignored |
+| `1` | `ON` | SG Ready enabled - physical terminal inputs are processed |
 
-| **Mode** | **Value** | **Enum Name** | **Behavior** |
-|----------|---|---|---|
-| **1** | `1` | `EMERGENCY_SHUTDOWN` | Forced thermostat off (emergency load shedding) |
-| **2** | `2` | `NORMAL` | Normal operation (user setpoints) |
-| **3** | `3` | `BOOST` | Load increase (pre-heating mode) |
-| **4** | `4` | `LOAD_REDUCTION` | Load decrease (demand response mode) |
+Use this message to globally enable or disable SG Ready responsiveness without physically disconnecting terminals:
 
 ```python
 # Recommended approach: Use write_attribute() method for clean, supported API
@@ -81,15 +85,11 @@ from pysamsungnasa.protocol.enum import InSgReadyModeState
 # Get your device from SamsungNasa instance
 device = nasa.devices.get("200020")  # Indoor unit 1
 
-# To set Mode 3 (Load Increase/BOOST):
-await device.write_attribute(InSgReadyModeStateMessage, InSgReadyModeState.BOOST)
+# Enable SG Ready mode (allows terminal inputs to control modes):
+await device.write_attribute(InSgReadyModeStateMessage, InSgReadyModeState.ON)
 
-# To set Mode 1 (emergency load shedding):
-await device.write_attribute(InSgReadyModeStateMessage, InSgReadyModeState.EMERGENCY_SHUTDOWN)
-
-# Other modes:
-await device.write_attribute(InSgReadyModeStateMessage, InSgReadyModeState.NORMAL)
-await device.write_attribute(InSgReadyModeStateMessage, InSgReadyModeState.LOAD_REDUCTION)
+# Disable SG Ready mode (ignores terminal inputs, system operates normally):
+await device.write_attribute(InSgReadyModeStateMessage, InSgReadyModeState.OFF)
 ```
 
 **Note**: The `write_attribute()` method is the recommended, supported API for all message sending. This handles message encoding, addressing, and transmission automatically. Avoid calling `to_bytes()` directly - it's internal framework code.
@@ -111,7 +111,7 @@ Prioritize user comfort, use grid response for heating only:
 # FSV #5094 = 0  (Comfort mode: DHW continues regardless of grid signal)
 ```
 
-**Response**: During peak demand (Mode 1/`EMERGENCY_SHUTDOWN`), heating stops but DHW continues normally. Users always have hot water.
+**Response**: During peak demand when Mode 1 (terminal signals) is active, heating stops but DHW continues normally. Users always have hot water.
 
 ### Scenario 2: Aggressive Load Shedding
 
@@ -124,7 +124,7 @@ Maximize grid participation, reduce all loads during peak demand:
 # FSV #5094 = 1  (Demand response mode: DHW stops when signaled)
 ```
 
-**Response**: During peak demand (Mode 1/`EMERGENCY_SHUTDOWN`), both heating and DHW stop. All compressor loads shed. Best for areas with tight grid constraints.
+**Response**: During peak demand when Mode 1 (terminal signals) is active, both heating and DHW stop. All compressor loads shed. Best for areas with tight grid constraints.
 
 ### Scenario 3: Time-of-Use Optimization
 
@@ -137,7 +137,7 @@ Shift loads to low-cost hours, pre-heat during abundance periods:
 # FSV #5094 = 0  (Maintain comfort)
 ```
 
-**Response**: During off-peak (Mode 3/`BOOST`), heating and DHW targets increase. System pre-stores thermal energy to minimize peak-hour operation.
+**Response**: During off-peak periods when Mode 3 (terminal signals) is active, heating and DHW targets increase. System pre-stores thermal energy to minimize peak-hour operation.
 
 ## Message Details
 
@@ -234,27 +234,23 @@ async def read_smart_grid_settings():
     await nasa.stop()
 ```
 
-### Setting Smart Grid Mode via Message Sending
+### Enabling/Disabling SG Ready via Software
 
 ```python
 from pysamsungnasa import SamsungNasa
 from pysamsungnasa.protocol.factory.messages.indoor import InSgReadyModeStateMessage
+from pysamsungnasa.protocol.enum import InSgReadyModeState
 
-async def set_smart_grid_mode(nasa, target_address, mode):
+async def enable_sg_ready(nasa, target_address):
     """
-    Set Smart Grid operation mode (1-4).
+    Enable SG Ready mode via software message (0x4124).
 
-    This is the recommended approach using write_attribute, which handles
-    all message encoding and transmission internally.
+    When enabled, the system will respond to physical terminal input signals to control
+    the four Smart Grid operation modes. When disabled, terminal inputs are ignored.
 
     Args:
         nasa: SamsungNasa instance
         target_address: Device address (e.g., "200020" for indoor unit 1)
-        mode: Operation mode (1-4)
-            - 1: Forced thermostat off (emergency load shedding)
-            - 2: Normal operation (user setpoints)
-            - 3: Load increase (pre-heating mode)
-            - 4: Load decrease (demand response mode)
     """
     device = nasa.devices.get(target_address)
     if not device:
@@ -262,18 +258,53 @@ async def set_smart_grid_mode(nasa, target_address, mode):
         return False
 
     try:
-        # Use write_attribute for clean, supported API
-        await device.write_attribute(InSgReadyModeStateMessage, mode)
-        print(f"Set device {target_address} to Mode {mode}")
+        # Enable SG Ready mode
+        await device.write_attribute(InSgReadyModeStateMessage, InSgReadyModeState.ON)
+        print(f"Enabled SG Ready mode on {target_address}")
         return True
     except Exception as e:
-        print(f"Failed to set mode: {e}")
+        print(f"Failed to enable SG Ready: {e}")
         return False
+
+async def disable_sg_ready(nasa, target_address):
+    """
+    Disable SG Ready mode via software message (0x4124).
+
+    When disabled, the system ignores physical terminal input signals and operates
+    normally based on user setpoints.
+
+    Args:
+        nasa: SamsungNasa instance
+        target_address: Device address (e.g., "200020" for indoor unit 1)
+    """
+    device = nasa.devices.get(target_address)
+    if not device:
+        print(f"Device {target_address} not found")
+        return False
+
+    try:
+        # Disable SG Ready mode
+        await device.write_attribute(InSgReadyModeStateMessage, InSgReadyModeState.OFF)
+        print(f"Disabled SG Ready mode on {target_address}")
+        return True
+    except Exception as e:
+        print(f"Failed to disable SG Ready: {e}")
+        return False
+```
+
+### Configuring Smart Grid Response Settings
+
+```python
+from pysamsungnasa import SamsungNasa
+from pysamsungnasa.protocol.factory.messages.indoor import (
+    InFsv5091Message,
+    InFsv5092,
+    InFsv5093,
+    InFsv5094Message,
+)
 
 async def enable_smart_grid(nasa, target_address):
     """Enable FSV #5091 (Smart Grid Control Application)"""
-    from pysamsungnasa.protocol.factory.messages.indoor import InFsv5091Message
-
     device = nasa.devices.get(target_address)
     if not device:
         return False
@@ -294,22 +325,20 @@ async def configure_smart_grid_response(
     dhw_mode=0          # FSV #5094: 0=Comfort, 1=Demand Response
 ):
     """
-    Configure how system responds to grid signals.
+    Configure how system responds to grid signals via terminal mode changes.
+
+    These settings only take effect when the system enters Mode 3 or Mode 4
+    based on physical terminal inputs.
 
     Uses write_attribute for all message sending - the recommended approach.
 
     Args:
         nasa: SamsungNasa instance
         target_address: Device address
-        heating_shift: Temperature increase for heating (2-5°C)
-        dhw_shift: Temperature increase for DHW (2-5°C)
-        dhw_mode: 0=Comfort (DHW continues), 1=Demand Response (DHW stops)
+        heating_shift: Temperature increase for heating in Mode 3/4 (2-5°C)
+        dhw_shift: Temperature increase for DHW in Mode 3 (2-5°C)
+        dhw_mode: 0=Comfort (DHW continues in Mode 4), 1=Demand Response (DHW stops)
     """
-    from pysamsungnasa.protocol.factory.messages.indoor import (
-        InFsv5092,
-        InFsv5093,
-        InFsv5094Message,
-    )
 
     device = nasa.devices.get(target_address)
     if not device:
