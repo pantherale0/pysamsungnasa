@@ -297,7 +297,45 @@ Below is a comprehensive reference of NASA message numbers extracted from NASA.p
 | 0x4238 | VAR_IN_TEMP_WATER_OUT_F | NASA_INDOOR_WATER_OUT_TEMP | Water out temperature | °C / 10 |
 | 0x4247 | VAR_IN_TEMP_WATER_OUTLET_TARGET_F | NASA_INDOOR_SETTEMP_WATEROUT | Water outlet target temperature | °C / 10 |
 
+### Smart Grid Mode Control (0x4124)
+
+| Hex | NASA.ptc Label | Description | Type | Values |
+|-----|---|---|---|---|
+| **0x4124** | **ENUM_IN_SG_READY_MODE_STATE** | **SG Ready Mode State - Controls Smart Grid operation mode** | **Enum** | **1=Forced Off, 2=Normal, 3=Load Increase, 4=Load Decrease** |
+
+**SG Ready Mode State Details:**
+
+This message controls which Smart Grid operation mode the system should enter when FSV #5091 is enabled (set to 1). Each value corresponds to a terminal configuration or external signal:
+
+| **Value** | **Hex** | **Mode Name** | **Terminal 1** | **Terminal 2** | **Behavior** |
+|---|---|---|---|---|---|
+| **1** | 0x01 | Forced Thermostat Off | Short (0V) | Open | All heating/cooling stops (emergency load shedding) |
+| **2** | 0x02 | Normal Operation | Open | Open | System operates normally with user setpoints |
+| **3** | 0x03 | Load Increase | Open | Short (0V) | Heating/DHW temps raised for pre-heating (off-peak, abundance) |
+| **4** | 0x04 | Load Decrease | Short (0V) | Short (0V) | Aggressive demand response (behavior per FSV #5094) |
+
+**Related Settings:**
+
+When sending mode via 0x4124, the system's response is further configured by:
+- **FSV #5091 (0x411C)**: Must be 1 (enabled) for mode to take effect
+- **FSV #5092 (0x42DD)**: Temperature shift for heating during Mode 3/4
+- **FSV #5093 (0x42DE)**: Temperature shift for DHW during Mode 3
+- **FSV #5094 (0x411D)**: DHW behavior control during Mode 4
+
+**See Also:** [Smart Grid Control Guide](../user-guide/smart-grid-control.md) for detailed configuration and code examples.
+
 ### Indoor Unit Messages - Water Heating (0x4065-0x4070)
+
+| Hex | NASA.ptc Label | NasaConst.java Label | Description | Values |
+|-----|---|---|---|---|
+| 0x4065 | ENUM_IN_WATER_HEATER_POWER | NASA_DHW_POWER | Water heater power | 0=Off, 1=On |
+| 0x4066 | ENUM_IN_WATER_HEATER_MODE | NASA_DHW_OPMODE | Water heater mode | 0=Eco, 1=Standard, 2=Power, 3=Force |
+| 0x4067 | ENUM_IN_3WAY_VALVE | NASA_DHW_VALVE | 3-way valve | 0=Room, 1=Tank |
+| 0x4068 | ENUM_IN_SOLAR_PUMP | NASA_SOLAR_PUMP | Solar pump control | |
+
+### Outdoor Unit Messages - Status (0x8000-0x8003)
+
+```
 
 | Hex | NASA.ptc Label | NasaConst.java Label | Description | Values |
 |-----|---|---|---|---|
@@ -373,6 +411,40 @@ Below is a comprehensive reference of NASA message numbers extracted from NASA.p
 | 0x822D | VAR_OUT_LOAD_OUTEEV5 | NASA_OUTDOOR_MAINEEV5 | Main EEV 5 opening | |
 | 0x822E | VAR_OUT_LOAD_EVIEEV | NASA_OUTDOOR_EVIEEV | EVI EEV opening | |
 | 0x82B8 | VAR_OUT_SENSOR_MIDPRESS | NASA_OUTDOOR_MID_PRESS | Medium pressure | |
+
+### Smart Grid & Demand Response (0x40A4-0x411D)
+
+Control system response to grid signals for demand response, load shifting, and renewable integration.
+
+| Hex | NASA.ptc Label | Description | Type | Range | Default |
+|-----|---|---|---|---|---|
+| 0x40A4 | ENUM_IN_FSV_5041 | Power Peak Control Application | Bool | 0-1 | 0 |
+| 0x40A5 | ENUM_IN_FSV_5042 | Power Peak Control Forced Off Parts | Enum | 0-3 | 0 |
+| 0x40A6 | ENUM_IN_FSV_5043 | Power Peak Control Input Voltage Type | Enum | 0-1 | 1 |
+| 0x40A7 | ENUM_IN_FSV_5051 | Frequency Ratio Control | Bool | 0-1 | 0 |
+| **0x411B** | **ENUM_IN_FSV_5081** | **PV Control Application** | **Bool** | **0-1** | **0** |
+| **0x411C** | **ENUM_IN_FSV_5091** | **Smart Grid Control Application** | **Bool** | **0-1** | **0** |
+| **0x411D** | **ENUM_IN_FSV_5094** | **Smart Grid DHW Mode Priority** | **Enum** | **0-1** | **0** |
+| **0x42DD** | **VAR_IN_FSV_5092** | **Smart Grid Heating Temp Shift** | **Float** | **2-5°C** | **2°C** |
+| **0x42DE** | **VAR_IN_FSV_5093** | **Smart Grid DHW Temp Shift** | **Float** | **2-5°C** | **5°C** |
+
+**Smart Grid Control Summary:**
+
+- **FSV #5091 (0x411C)**: Master enable for Smart Grid Control. When set to 1, system receives external signals (via 2 terminals or Modbus) and adjusts operation accordingly.
+- **FSV #5092 (0x42DD)**: During Mode 3/4 (load increase), heating setpoints increase by this amount to store thermal energy during off-peak/abundant renewable periods.
+- **FSV #5093 (0x42DE)**: During Mode 3 (load increase), DHW setpoint increases by this amount to pre-heat hot water tank during cheap/abundant power periods.
+- **FSV #5094 (0x411D)**: During Mode 4 (load decrease/demand response), controls whether DHW also reduces (aggressive, value=1) or continues (comfort, value=0).
+
+**Operation Modes** (when FSV #5091=1):
+
+| Mode | Terminal 1 | Terminal 2 | Behavior |
+|------|---|---|---|
+| **1** | Short (0V) | Open | Forced thermostat off - all components stop (emergency load shedding) |
+| **2** | Open | Open | Normal operation - user setpoints apply |
+| **3** | Open | Short (0V) | Load increase - heating/DHW temps raised (off-peak, renewable abundance) |
+| **4** | Short (0V) | Short (0V) | Load decrease - aggressive demand response, behavior controlled by FSV #5094 |
+
+**See Also:** [Smart Grid Control Guide](../user-guide/smart-grid-control.md) for detailed configuration and examples.
 
 ### Power Consumption Monitoring (0x8411-0x8416)
 

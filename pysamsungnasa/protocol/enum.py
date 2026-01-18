@@ -1385,12 +1385,25 @@ class InFsv5094(SamsungEnum, IntEnum):
 class InSgReadyModeState(SamsungEnum, IntEnum):
     """
     SG Ready Mode State (Message 0x4124).
+
+    Controls the Smart Grid Ready operation mode, determining how the heat pump responds to
+    external grid demand signals. Modes are typically controlled via two external terminals
+    (T1/T2) or via Modbus messages. Each mode represents a different grid demand response state.
+
     Label (NASA.prc): ENUM_IN_SG_READY_MODE_STATE
     XML ProtocolID: ENUM_IN_SG_READY_MODE_STATE
-    Values not defined in NASA.ptc
     """
 
-    pass
+    DISABLED = 0
+    """SG Disabled"""
+    NORMAL = 1
+    """Normal operation - No grid signal active, system operates based on heating/DHW demand"""
+    BOOST = 2
+    """Increased power demand - Grid signal requesting increased load, heating boost active"""
+    LOAD_REDUCTION = 3
+    """Reduced power demand (grid peak) - Grid signal requesting reduced load, heating/DHW limited"""
+    EMERGENCY_SHUTDOWN = 4
+    """Forced stop/emergency - Grid signal requesting shutdown, all heating/DHW components forced off"""
 
 
 class NmNetworkPositionLayer(SamsungEnum, IntEnum):

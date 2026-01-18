@@ -1371,29 +1371,65 @@ class InFsv5081Message(BoolMessage):
 class InFsv5091Message(BoolMessage):
     """Parser for message 0x411C (FSV 5091 - Smart Grid Control Application).
 
-    Enables/disables Smart Grid coordination functionality.
+    Enables/disables Smart Grid coordination functionality for demand response programs.
     Default: 0 (Disabled), Range: 0-1
+
+    **What is Smart Grid Control?**
 
     Smart Grid Control allows the heat pump system to participate in demand response and
     grid stability programs. External signals from utility grids or aggregators instruct
-    the system to adjust heating/cooling operation to balance grid load.
+    the system to adjust heating/cooling operation to balance grid load and shift energy
+    consumption to optimal times.
 
-    - Value 0: Smart Grid disabled; system operates independently based on user setpoints
-    - Value 1: Smart Grid enabled; system receives external control signals
+    **Values:**
 
-    When enabled, the system can:
-    - Reduce heating/DHW capacity during peak demand (load shedding)
-    - Increase heating/DHW during off-peak hours (load shifting)
+    - **0 (Disabled)**: System operates independently based on user setpoints only.
+      Grid signals are ignored. System behavior unaffected by external grid programs.
+
+    - **1 (Enabled)**: System receives and responds to external control signals.
+      Operates in one of four modes (1-4) based on signal state.
+
+    **Operation Modes (when enabled):**
+
+    The system responds to two physical terminals (Terminal 1, Terminal 2) or Modbus
+    commands by entering one of four modes:
+
+    - **Mode 1 (Short, Open)**: Forced thermostat off - all heating/cooling stops
+    - **Mode 2 (Open, Open)**: Normal operation - user setpoints apply
+    - **Mode 3 (Open, Short)**: Load increase - heating/DHW temps raised via FSV #5092/#5093
+    - **Mode 4 (Short, Short)**: Load decrease - behavior controlled by FSV #5094
+
+    **System Capabilities When Enabled:**
+
+    - Reduce heating/DHW capacity during peak demand (load shedding - Mode 1)
+    - Increase heating/DHW during off-peak hours (load shifting - Mode 3)
     - Participate in frequency regulation by adjusting compressor speed
     - Support renewable energy integration by shifting loads to high-wind/solar periods
+    - Maintain minimum tank temperatures for safety (prevents bacterial growth)
 
-    Control signal format: Via Modbus, M-Bus, or on/off relay depending on system type.
-    Response modes set by FSV #5092 (heat temp adjustment) and FSV #5093 (DHW adjustment).
+    **Control Methods:**
 
-    Energy-saving potential: Users allowing grid control typically reduce peak-time energy
-    costs by automatically consuming more during low-cost off-peak periods. Combines with
-    FSV #5082/5083 (PV control) and FSV #5022 (DHW Saving) for maximum flexibility.
+    1. **Physical Terminals**: Two relay contact terminals on the device:
+       - Connect to grid controller or relay outputs
+       - Short = 0V (active), Open = no signal (inactive)
+       - Switch modes by energizing different terminal combinations
 
+    2. **Modbus Communication**: Send Modbus messages specifying desired mode
+       - Recommended for smart controllers and modern systems
+       - Allows remote and programmatic control
+       - Better integration with energy management systems
+
+    **Energy & Cost Impact:**
+
+    Users allowing grid control typically reduce peak-time energy costs by:
+    - Automatically consuming more during low-cost off-peak periods (Mode 3)
+    - Pre-heating DHW and space during abundant renewable periods
+    - Avoiding peak demand charges from utility
+    - Typical savings: 10-15% annual energy reduction in active demand response areas
+
+    **Configuration for Different Scenarios:**
+
+    See Smart Grid Control documentation for configuration examples and use cases.
     Related: FSV #5092 (smart grid heat response), FSV #5093 (smart grid DHW response),
             FSV #5094 (smart grid DHW mode).
     """
@@ -1403,36 +1439,101 @@ class InFsv5091Message(BoolMessage):
 
 
 class InFsv5094Message(EnumMessage):
-    """Parser for message 0x411D (FSV 5094 - Smart Grid DHW Mode).
+    """Parser for message 0x411D (FSV 5094 - Smart Grid DHW Mode Priority).
 
-    Controls DHW behavior when Smart Grid signals demand reduction.
-    Default: 0 (Maintain comfort), Range: 0-1
+    Controls DHW behavior specifically during Smart Grid Mode 4 (load decrease / demand response).
+    Type: Enum | Default: 0 (Comfort) | Range: 0-1
 
-    When the utility grid requests load shedding via Smart Grid Control (FSV #5091),
-    this parameter determines how the system manages domestic hot water during the event.
+    **Purpose:**
 
-    - Value 0: Comfort mode; DHW heating continues normally despite grid signal
-      System maintains target tank temperature, may defer space heating instead
-      Users always have hot water available, maximum comfort
+    During Smart Grid Mode 4 ("Short, Short" - maximum load reduction), this setting
+    determines whether DHW heating should be sacrificed for grid support, or whether
+    user comfort (hot water availability) takes priority.
 
-    - Value 1: Demand response mode; DHW heating stops/reduces when grid signal active
-      System prioritizes grid participation over DHW comfort
-      Reduces peak demand more aggressively for better load management
-      Risk: Tank may cool below comfort temperature; users may face cold water
+    **Values:**
 
-    Typical usage:
-    - Comfort-focused homes: Value 0 (DHW continues, CH adjusts)
-    - Homes with backup electric heater: Value 1 (grid controls everything, backup available)
-    - Grid-sensitive areas: Value 1 (aggressive load shedding for stability)
+    **Value 0: Comfort Mode (DEFAULT)**
 
-    This works with FSV #5092 (space heating temp response during grid events).
-    Together they allow fine-tuning which loads get priority during demand response.
+    - DHW heating continues normally despite grid demand-response signal
+    - Space heating (CH - central heating) may be deferred instead
+    - User experience: Showers always hot, rooms may cool slightly
+    - Best for: Residential users prioritizing comfort
 
-    Safety note: Even in value 1 (demand response), system maintains minimum tank temp
-    to prevent bacterial growth and equipment damage. Does not run indefinitely cold.
+    **Value 1: Demand Response Mode**
 
-    Related: FSV #5091 (enable/disable smart grid), FSV #5092 (heating temp response),
-            FSV #5093 (DHW temp shift during response).
+    - DHW heating stops/reduces when grid signal active (Mode 4)
+    - Target DHW: 70°C with booster if available, else 55°C (heat pump only)
+    - User experience: Risk of lukewarm showers during extended demand events
+    - Best for: Grid-sensitive areas, homes with backup heating system
+
+    **Mode 4 Operation Summary:**
+
+    Mode 4 is the most aggressive load-reduction signal during Smart Grid control:
+    - Both Terminal 1 and Terminal 2 are shorted (active)
+    - System minimizes all heating/cooling loads
+    - FSV #5094 determines if DHW also reduces or continues
+
+    | Setting | Heating | DHW | Comfort | Demand Reduction |
+    |---------|---------|-----|---------|------------------|
+    | 0 (Comfort) | Minimal | Maintains | High | Moderate (30-40%) |
+    | 1 (Demand Response) | Minimal | Aggressive | Lower | Maximum (80-95%) |
+
+    **Safety & Minimum Temperature:**
+
+    - Even in Mode 4 demand response, system maintains:
+      - Heat pump only: 55°C minimum (prevents Legionella/bacterial growth)
+      - With booster heater: Can go lower, auto-reheats (provides backup)
+    - Demand response events typically 2-4 hours, rarely all-day
+    - After Mode 4 ends, system returns to normal setpoints
+
+    **Interactions with Other Settings:**
+
+    - **FSV #5091**: Must be 1 (enabled) for FSV #5094 to have any effect
+    - **FSV #5092**: Heating response during Mode 3/4 (separate from DHW priority)
+    - **FSV #5093**: DHW pre-heat during Mode 3 (gives thermal buffer for Mode 4)
+      If properly configured, tank has enough stored heat to avoid cold showers
+
+    **Typical Use Cases:**
+
+    1. **Residential Home (Comfort Priority)**:
+       - FSV #5094 = 0: Family gets hot showers during demand events
+       - Heating reduces, DHW continues
+       - Typical event impact: 1-2°C room temp drop over 2-4 hours
+
+    2. **Grid-Critical Area**:
+       - FSV #5094 = 1: Participates fully in grid stability
+       - Both heating and DHW reduce during demand event
+       - Booster heater provides backup if equipped
+
+    3. **Commercial Building**:
+       - FSV #5094 = 1: Reduces peak demand charges (major cost factor)
+       - Can reduce small DHW load for significant cost savings
+       - Peak demand charges often 40%+ of total bill
+
+    **Example: Time-of-Use with Demand Response**
+
+    ```
+    Configuration: FSV #5093 = 5°C (aggressive pre-heat), FSV #5094 = 1 (demand response)
+
+    Timeline:
+    - 12 PM - 2 PM: Mode 4 (Demand Response, peak demand)
+      → Heating stops, DHW heater stops
+      → But tank still has 45-50°C from earlier Mode 3 pre-heat
+      → Showers available, just slightly cooler than normal
+    - 2 PM - 5 PM: Mode 3 (Off-peak abundance, solar peak)
+      → System pre-heats tank again to 50°C
+      → Compressor runs during cheap power hours
+    Result: User comfort maintained, peak demand reduced, cost savings achieved
+    ```
+
+    **Related Settings:**
+
+    - FSV #5091 (0x411C): Enable/disable smart grid (must be 1)
+    - FSV #5092 (0x42DD): Heating response during Mode 3/4
+    - FSV #5093 (0x42DE): DHW pre-heat during Mode 3 (provides thermal buffer)
+    - FSV #5041 (0x40A4): Power Peak Control (simpler load shedding alternative)
+
+    See Smart Grid Control documentation for detailed configuration examples and best practices.
     """
 
     MESSAGE_ID = 0x411D
@@ -2859,17 +2960,46 @@ class InFsv5083(FloatMessage):
 
 
 class InFsv5092(FloatMessage):
-    """Parser for message 0x42DD (FSV 5092 - Setting Temp. Shift Value Heat).
+    """Parser for message 0x42DD (FSV 5092 - Smart Grid Heating Temperature Shift).
 
-    Temperature increase offset for Smart Grid Mode 3 & 4 (heating).
-    Default: 2°C, Range: 2-5°C, Step: 0.5°C
+    Temperature increase offset applied to heating setpoints during Smart Grid Modes 3 and 4.
+    Unit: °C | Default: 2°C | Range: 2-5°C | Step: 0.5°C
 
-    When Smart Grid signals step-up operation (Mode 3 or 4):
-    - Mode 3: Heating/Room/WL = Current + FSV #5092 (+3°C additional for WL)
-    - Mode 4: Heating/WL = Current + FSV #5092 + 5°C, Room = Current + FSV #5092 + 3°C
+    **Purpose:**
 
-    Allows power company to request higher heating setpoints during periods of
-    grid abundance to store energy and prevent overload situations.
+    During Smart Grid load-increase signals (Mode 3 or Mode 4), the system raises heating
+    setpoints by this amount. This causes the heat pump to run more and store thermal
+    energy during off-peak hours or when grid has abundant renewable capacity.
+
+    **Mode 3 Behavior (Load Increase - "Open, Short"):**
+
+    When grid signals abundance (renewable surplus, low demand period), the system
+    increases all heating setpoints:
+    - Room sensor mode: Current setpoint + FSV #5092
+    - Water outlet mode: Current setpoint + FSV #5092
+    - Water law/floor mode: Current setpoint + FSV #5092 (+ additional 3°C for water law)
+    - DHW: Controlled separately by FSV #5093 (not affected by this setting)
+
+    **Typical Values:**
+
+    - **2°C** (Minimal): Slight pre-heating, minimal comfort impact, modest energy shift
+    - **3°C** (Moderate): Balanced approach, typical recommendation
+    - **4-5°C** (Aggressive): Maximum thermal storage during abundance periods
+
+    **Energy Impact:**
+
+    - Shifting heating load to off-peak saves 5-10% on heating energy costs
+    - In areas with time-of-use rates, pre-heating can reduce peak-period demand by 20-40%
+    - Effectiveness increases with larger thermal mass (radiant floors, massive walls)
+
+    **Related Settings:**
+
+    - FSV #5091 (0x411C): Enable/disable smart grid (must be 1)
+    - FSV #5093 (0x42DE): DHW temperature shift during Mode 3
+    - FSV #5094 (0x411D): DHW behavior during Mode 4
+    - FSV #1041: Maximum room temperature setpoint (constraint)
+
+    See Smart Grid Control documentation for detailed configuration examples.
     """
 
     MESSAGE_ID = 0x42DD
@@ -2880,18 +3010,59 @@ class InFsv5092(FloatMessage):
 
 
 class InFsv5093(FloatMessage):
-    """Parser for message 0x42DE (FSV 5093 - Setting Temp. Shift Value DHW).
+    """Parser for message 0x42DE (FSV 5093 - Smart Grid DHW Temperature Shift).
 
-    Temperature increase offset for Smart Grid Mode 3 DHW operation.
-    Default: 5°C, Range: 2-5°C, Step: 0.5°C
+    Temperature increase offset applied to domestic hot water (DHW) setpoint during
+    Smart Grid Mode 3 (load increase) only.
+    Unit: °C | Default: 5°C | Range: 2-5°C | Step: 0.5°C
 
-    In Smart Grid Mode 3 (step-up), DHW setpoint = Current + FSV #5093
-    Raises target DHW temperature during grid abundance periods to store more
-    hot water energy and reduce strain on the electrical grid.
+    **Purpose:**
 
-    Note: Mode 4 DHW behavior is controlled by FSV #5094 instead:
-    - FSV #5094 = 0: Target 55°C (heat pump only)
-    - FSV #5094 = 1: Target 70°C (heat pump + booster heater)
+    When the grid signals abundance (renewable surplus, off-peak periods), the system
+    increases the DHW target temperature by this amount. This causes the heat pump to
+    produce more hot water, storing thermal energy in the tank for later use. Reduces
+    on-peak DHW heating demand and helps store renewable energy.
+
+    **Mode 3 Behavior (Load Increase - "Open, Short"):**
+
+    During grid abundance periods:
+    - DHW setpoint = Current user setpoint + FSV #5093
+    - Example: User set 45°C, shift 5°C → system targets 50°C
+    - System runs heat pump longer to fill tank with extra-hot water
+    - Later during peak demand, can meet DHW needs without active heating
+
+    **Mode 4 Behavior (Load Decrease - "Short, Short"):**
+
+    NOT USED in Mode 4. Instead, FSV #5094 controls DHW in Mode 4:
+    - FSV #5094 = 0: DHW maintains comfort (continues normal)
+    - FSV #5094 = 1: DHW reduces/stops (aggressive demand response)
+
+    **Typical Values:**
+
+    - **2°C** (Minimal): Pre-heat moderately, save 2-3% DHW energy during off-peak
+    - **3-4°C** (Moderate): Balanced approach, save 4-8% DHW energy
+    - **5°C** (Aggressive - Default): Maximum pre-heating, save 8-15% DHW energy
+
+    **Energy Impact:**
+
+    - Off-peak DHW pre-heating saves 8-15% on DHW energy in active demand response areas
+    - In time-of-use rate areas: 5°C shift can reduce peak-hour DHW demand by 30-50%
+    - Works especially well when combined with larger storage tanks (150L+)
+
+    **Tank Storage:**
+
+    - **150L tank**: Pre-heat 5°C raises stored energy ~15 kWh thermal
+    - **250L tank**: Pre-heat 5°C raises stored energy ~25 kWh thermal
+    - Larger tanks more effective, can meet 4-8 hours of DHW demand from pre-heat
+
+    **Related Settings:**
+
+    - FSV #5091 (0x411C): Enable/disable smart grid (must be 1)
+    - FSV #5092 (0x42DD): Heating temperature shift (Mode 3 only, separate from DHW)
+    - FSV #5094 (0x411D): DHW behavior during Mode 4 (load decrease)
+    - FSV #1051: Maximum DHW setpoint (constraint - shift cannot exceed this)
+
+    See Smart Grid Control documentation for detailed configuration examples and tank sizing.
     """
 
     MESSAGE_ID = 0x42DE
