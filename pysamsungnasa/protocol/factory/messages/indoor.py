@@ -2221,9 +2221,9 @@ class InFsv3045(FloatMessage):
     ARITHMETIC = 1.0
 
     @classmethod
+    @classmethod
     def to_bytes(cls, value: float) -> bytes:
         """Convert a float value into bytes (2-byte big-endian)."""
-        import struct
         int_value = int(value / cls.ARITHMETIC)
         return struct.pack(">H", int_value)
 
