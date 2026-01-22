@@ -1,5 +1,7 @@
 """Messages from the indoor unit."""
 
+import struct
+
 from ..types import (
     BoolMessage,
     EnumMessage,
