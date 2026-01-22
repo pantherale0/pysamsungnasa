@@ -12,6 +12,7 @@ from .nasa import SamsungNasa
 from .device import NasaDevice
 from .protocol.enum import DataType
 from .protocol.factory import build_message, SendMessage
+from .protocol.factory.messages import MESSAGE_PARSERS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -26,6 +27,7 @@ class CLICompleter(Completer):
             "read",
             "read-range",
             "write",
+            "set",
             "device",
             "climate",
             "config",
@@ -94,7 +96,7 @@ class CLICompleter(Completer):
                 for suggestion in suggestions:
                     yield Completion(suggestion)
 
-            elif command in ("dump", "read", "write", "read-range"):
+            elif command in ("dump", "read", "write", "set", "read-range"):
                 # Suggest device addresses
                 for addr in self.nasa.devices.keys():
                     yield Completion(addr)
@@ -133,7 +135,7 @@ class CLICompleter(Completer):
                     if c.startswith(word):
                         yield Completion(c, start_position=-len(word))
 
-            elif command in ("device", "dump", "read", "write", "read-range") and len(parts) == 2:
+            elif command in ("device", "dump", "read", "write", "set", "read-range") and len(parts) == 2:
                 # Suggest device addresses
                 for addr in self.nasa.devices.keys():
                     if addr.lower().startswith(word):
@@ -231,6 +233,7 @@ async def interactive_cli(nasa: SamsungNasa):
                 print("  read <device_address> <message_id_hex>")
                 print("  read-range <device_address> <start_message_id_hex> <count>")
                 print("  write <device_address> <message_id_hex> <value_hex>")
+                print("  set <device_address> <message_id_hex> <value>")
                 print("  device <device_address> <message_id_hex>")
                 print("  device <device_address> dump")
                 print("  device dump")
@@ -243,7 +246,7 @@ async def interactive_cli(nasa: SamsungNasa):
                 print("  print packet stream")
                 print("  quit")
                 continue
-            elif command in ("read", "write") and len(parts) >= 3:
+            elif command in ("read", "write", "set") and len(parts) >= 3:
                 device_id = parts[1]
                 try:
                     message_id = int(parts[2], 16)
@@ -267,6 +270,22 @@ async def interactive_cli(nasa: SamsungNasa):
                     print(f"Writing to {device_id}, message {hex(message_id)}, value {value}")
                     response = await nasa.client.nasa_write(message_id, value, device_id, DataType.WRITE)
                     print(f"Response: {response}")
+                elif command == "set":
+                    if len(parts) != 4:
+                        print("Usage: set <device_id> <message_id_hex> <value>")
+                        continue
+                    value = parts[3]
+                    print(f"Setting on {device_id}, message {hex(message_id)}, value {value}")
+                    # Get message parser to convert hex to message type
+                    message = MESSAGE_PARSERS.get(message_id)
+                    if not message:
+                        print(f"Unknown message ID: {hex(message_id)}")
+                        continue
+                    if device_id not in nasa.devices:
+                        print(f"Unknown device ID: {device_id}")
+                        continue
+                    await nasa.devices[device_id].write_attribute(message, float(value))
+                    print(f"Write attribute complete for {message.MESSAGE_NAME}")
             elif command == "read-range" and len(parts) == 4:
                 device_id = parts[1]
                 try:

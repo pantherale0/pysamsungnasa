@@ -214,9 +214,11 @@ class IntegerMessage(BaseMessage):
         return cls(value=parsed_value, raw_payload=payload)
 
     @classmethod
-    def to_bytes(cls, value: int) -> bytes:
+    def to_bytes(cls, value: int | float) -> bytes:
         """Convert an integer value into bytes."""
         # Determine the minimum number of bytes needed to represent the integer
+        if isinstance(value, float):
+            value = int(value)
         if value < 0:
             raise ValueError("IntegerMessage only supports non-negative integers.")
         byte_length = (value.bit_length() + 7) // 8 or 1
