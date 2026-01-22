@@ -1,5 +1,7 @@
 """Messages from the indoor unit."""
 
+import struct
+
 from ..types import (
     BoolMessage,
     EnumMessage,
@@ -2217,8 +2219,15 @@ class InFsv3045(FloatMessage):
     MESSAGE_ID = 0x426B
     MESSAGE_NAME = "FSV 3045 Disinfection Duration"
     UNIT_OF_MEASUREMENT = "min"
-    SIGNED = True
+    SIGNED = False
     ARITHMETIC = 1.0
+
+    @classmethod
+    @classmethod
+    def to_bytes(cls, value: float) -> bytes:
+        """Convert a float value into bytes (2-byte big-endian)."""
+        int_value = int(value / cls.ARITHMETIC)
+        return struct.pack(">H", int_value)
 
 
 class InFsv3052(FloatMessage):
