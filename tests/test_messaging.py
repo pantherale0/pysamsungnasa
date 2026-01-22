@@ -188,6 +188,83 @@ class TestFloatMessage:
         msg = TestFloatMsg.parse_payload(payload)
         assert msg.VALUE == 123.45
 
+    def test_float_message_to_bytes_auto_detect_1_byte(self):
+        """Test to_bytes auto-detects 1-byte encoding for small values."""
+
+        class TestFloatMsg(FloatMessage):
+            ARITHMETIC = 1.0
+            SIGNED = False
+
+        result = TestFloatMsg.to_bytes(10.0)
+        assert result == b"\x0a"
+
+    def test_float_message_to_bytes_auto_detect_2_byte(self):
+        """Test to_bytes auto-detects 2-byte encoding for medium values."""
+
+        class TestFloatMsg(FloatMessage):
+            ARITHMETIC = 1.0
+            SIGNED = False
+
+        result = TestFloatMsg.to_bytes(1000.0)
+        assert result == struct.pack(">H", 1000)
+
+    def test_float_message_to_bytes_force_2_byte(self):
+        """Test to_bytes respects PAYLOAD_SIZE=2 for small values."""
+
+        class TestFloatMsg(FloatMessage):
+            ARITHMETIC = 1.0
+            SIGNED = False
+            PAYLOAD_SIZE = 2
+
+        result = TestFloatMsg.to_bytes(10.0)
+        assert result == b"\x00\x0a"
+        assert len(result) == 2
+
+    def test_float_message_to_bytes_force_4_byte(self):
+        """Test to_bytes respects PAYLOAD_SIZE=4."""
+
+        class TestFloatMsg(FloatMessage):
+            ARITHMETIC = 1.0
+            SIGNED = False
+            PAYLOAD_SIZE = 4
+
+        result = TestFloatMsg.to_bytes(10.0)
+        assert result == struct.pack(">I", 10)
+        assert len(result) == 4
+
+    def test_float_message_to_bytes_with_arithmetic(self):
+        """Test to_bytes applies arithmetic correctly."""
+
+        class TestFloatMsg(FloatMessage):
+            ARITHMETIC = 0.1
+            SIGNED = False
+            PAYLOAD_SIZE = 2
+
+        result = TestFloatMsg.to_bytes(12.3)
+        # 12.3 / 0.1 = 123
+        assert result == struct.pack(">H", 123)
+
+    def test_float_message_to_bytes_signed_2_byte(self):
+        """Test to_bytes with signed 2-byte values."""
+
+        class TestFloatMsg(FloatMessage):
+            ARITHMETIC = 1.0
+            SIGNED = True
+            PAYLOAD_SIZE = 2
+
+        result = TestFloatMsg.to_bytes(-100.0)
+        assert result == struct.pack(">h", -100)
+
+    def test_float_message_to_bytes_signed_1_byte(self):
+        """Test to_bytes with signed 1-byte values."""
+
+        class TestFloatMsg(FloatMessage):
+            ARITHMETIC = 1.0
+            SIGNED = True
+
+        result = TestFloatMsg.to_bytes(-50.0)
+        assert result == b"\xce"  # -50 in signed byte
+
 
 class TestEnumMessage:
     """Tests for EnumMessage class."""

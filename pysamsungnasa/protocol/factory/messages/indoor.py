@@ -2117,6 +2117,7 @@ class InFsv3025(FloatMessage):
     UNIT_OF_MEASUREMENT = "min"
     SIGNED = False
     ARITHMETIC = 1.0
+    PAYLOAD_SIZE = 2
 
 
 class InFsv3026(FloatMessage):
@@ -2134,6 +2135,7 @@ class InFsv3026(FloatMessage):
     UNIT_OF_MEASUREMENT = "h"
     SIGNED = False
     ARITHMETIC = 1.0
+    PAYLOAD_SIZE = 2
 
 
 class InFsv3032(FloatMessage):
@@ -2153,6 +2155,7 @@ class InFsv3032(FloatMessage):
     UNIT_OF_MEASUREMENT = "min"
     SIGNED = False
     ARITHMETIC = 1.0
+    PAYLOAD_SIZE = 2
 
 
 class InFsv3033(BasicTemperatureMessage):
@@ -2188,6 +2191,7 @@ class InFsv3043(FloatMessage):
     UNIT_OF_MEASUREMENT = "h"
     SIGNED = False
     ARITHMETIC = 1.0
+    PAYLOAD_SIZE = 2
 
 
 class InFsv3044(BasicTemperatureMessage):
@@ -2221,12 +2225,7 @@ class InFsv3045(FloatMessage):
     UNIT_OF_MEASUREMENT = "min"
     SIGNED = False
     ARITHMETIC = 1.0
-
-    @classmethod
-    def to_bytes(cls, value: float) -> bytes:
-        """Convert a float value into bytes (2-byte big-endian)."""
-        int_value = int(value / cls.ARITHMETIC)
-        return struct.pack(">H", int_value)
+    PAYLOAD_SIZE = 2
 
 
 class InFsv3052(FloatMessage):
@@ -2726,6 +2725,7 @@ class InFsv3046(FloatMessage):
     UNIT_OF_MEASUREMENT = "h"
     SIGNED = False
     ARITHMETIC = 1.0
+    PAYLOAD_SIZE = 2
 
 
 class InEnthalpySensorOutputMessage(FloatMessage):
