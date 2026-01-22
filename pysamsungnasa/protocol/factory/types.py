@@ -115,6 +115,7 @@ class FloatMessage(BaseMessage):
 
     ARITHMETIC: ClassVar[float] = 0
     SIGNED: ClassVar[bool] = True
+    PAYLOAD_SIZE: ClassVar[int | None] = None  # None = auto-detect, 1/2/4 = force size
 
     @classmethod
     def parse_payload(cls, payload: bytes) -> "FloatMessage":
@@ -153,21 +154,34 @@ class FloatMessage(BaseMessage):
         if cls.ARITHMETIC == 0:
             raise ValueError(f"ARITHMETIC cannot be zero for {cls.__name__}.")
         int_value = int(value / cls.ARITHMETIC)
-        # Determine byte length based on the size of the integer
-        if -128 <= int_value <= 127 and cls.SIGNED:
-            return struct.pack(">b", int_value)
-        elif 0 <= int_value <= 255 and not cls.SIGNED:
-            return struct.pack(">B", int_value)
-        elif -32768 <= int_value <= 32767 and cls.SIGNED:
-            return struct.pack(">h", int_value)
-        elif 0 <= int_value <= 65535 and not cls.SIGNED:
-            return struct.pack(">H", int_value)
-        elif -2147483648 <= int_value <= 2147483647 and cls.SIGNED:
-            return struct.pack(">l", int_value)
-        elif 0 <= int_value <= 4294967295 and not cls.SIGNED:
-            return struct.pack(">L", int_value)
+
+        # Determine byte length: use PAYLOAD_SIZE if specified, otherwise auto-detect
+        if cls.PAYLOAD_SIZE is not None:
+            payload_size = cls.PAYLOAD_SIZE
         else:
-            raise ValueError(f"Value {value} is out of range for {cls.__name__} with SIGNED={cls.SIGNED}.")
+            # Auto-detect based on value range
+            if -128 <= int_value <= 127 and cls.SIGNED:
+                payload_size = 1
+            elif 0 <= int_value <= 255 and not cls.SIGNED:
+                payload_size = 1
+            elif -32768 <= int_value <= 32767 and cls.SIGNED:
+                payload_size = 2
+            elif 0 <= int_value <= 65535 and not cls.SIGNED:
+                payload_size = 2
+            else:
+                payload_size = 4
+
+        # Pack with determined size
+        if payload_size == 1:
+            fmt = ">b" if cls.SIGNED else ">B"
+        elif payload_size == 2:
+            fmt = ">h" if cls.SIGNED else ">H"
+        elif payload_size == 4:
+            fmt = ">l" if cls.SIGNED else ">L"
+        else:
+            raise ValueError(f"Unsupported PAYLOAD_SIZE {payload_size} for {cls.__name__}.")
+
+        return struct.pack(fmt, int_value)
 
 
 class EnumMessage(BaseMessage):
