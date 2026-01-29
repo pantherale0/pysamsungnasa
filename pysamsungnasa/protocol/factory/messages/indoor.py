@@ -1692,7 +1692,7 @@ class InWaterLawTargetTemperature(BasicTemperatureMessage):
     SIGNED = True
 
 
-class InFsv1011Message(FloatMessage):
+class InFsv1011Message(BasicTemperatureMessage):
     """Parser for message 0x424A (FSV 1011 - Water Out Temp for Cooling Max).
 
     Target water outlet temperature upper limit for cooling mode.
@@ -1702,11 +1702,10 @@ class InFsv1011Message(FloatMessage):
     """
 
     MESSAGE_ID = 0x424A
-    MESSAGE_NAME = "Cool Max Water Temperature"
-    UNIT_OF_MEASUREMENT = "°C"
+    MESSAGE_NAME = "FSV 1011 Cool Max Water Temperature"
 
 
-class InFsv1012Message(FloatMessage):
+class InFsv1012Message(BasicTemperatureMessage):
     """Parser for message 0x424B (FSV 1012 - Water Out Temp for Cooling Min).
 
     Target water outlet temperature lower limit for cooling mode.
@@ -1716,11 +1715,10 @@ class InFsv1012Message(FloatMessage):
     """
 
     MESSAGE_ID = 0x424B
-    MESSAGE_NAME = "Cool Min Water Temperature"
-    UNIT_OF_MEASUREMENT = "°C"
+    MESSAGE_NAME = "FSV 1012 Cool Min Water Temperature"
 
 
-class InFsv1021Message(FloatMessage):
+class InFsv1021Message(BasicTemperatureMessage):
     """Parser for message 0x424C (FSV 1021 - Room Temp for Cooling Max).
 
     Target room temperature upper limit for cooling mode.
@@ -1731,11 +1729,10 @@ class InFsv1021Message(FloatMessage):
     """
 
     MESSAGE_ID = 0x424C
-    MESSAGE_NAME = "Cool Max Room Temperature"
-    UNIT_OF_MEASUREMENT = "°C"
+    MESSAGE_NAME = "FSV 1021 Cool Max Room Temperature"
 
 
-class InFsv1022Message(FloatMessage):
+class InFsv1022Message(BasicTemperatureMessage):
     """Parser for message 0x424D (FSV 1022 - Room Temp for Cooling Min).
 
     Target room temperature lower limit for cooling mode.
@@ -1745,11 +1742,10 @@ class InFsv1022Message(FloatMessage):
     """
 
     MESSAGE_ID = 0x424D
-    MESSAGE_NAME = "Cool Min Room Temperature"
-    UNIT_OF_MEASUREMENT = "°C"
+    MESSAGE_NAME = "FSV 1022 Cool Min Room Temperature"
 
 
-class InFsv1031Message(FloatMessage):
+class InFsv1031Message(BasicTemperatureMessage):
     """Parser for message 0x424E (FSV 1031 - Water Out Temp for Heating Max).
 
     Target water outlet temperature upper limit for heating mode.
@@ -1759,11 +1755,10 @@ class InFsv1031Message(FloatMessage):
     """
 
     MESSAGE_ID = 0x424E
-    MESSAGE_NAME = "Heat Max Water Temperature"
-    UNIT_OF_MEASUREMENT = "°C"
+    MESSAGE_NAME = "FSV 1031 Heat Max Water Temperature"
 
 
-class InFsv1032Message(FloatMessage):
+class InFsv1032Message(BasicTemperatureMessage):
     """Parser for message 0x424F (FSV 1032 - Water Out Temp for Heating Min).
 
     Target water outlet temperature lower limit for heating mode.
@@ -1773,11 +1768,10 @@ class InFsv1032Message(FloatMessage):
     """
 
     MESSAGE_ID = 0x424F
-    MESSAGE_NAME = "Heat Min Water Temperature"
-    UNIT_OF_MEASUREMENT = "°C"
+    MESSAGE_NAME = "FSV 1032 Heat Min Water Temperature"
 
 
-class InFsv1041Message(FloatMessage):
+class InFsv1041Message(BasicTemperatureMessage):
     """Parser for message 0x4250 (FSV 1041 - Room Temp for Heating Max).
 
     Target room temperature upper limit for heating mode.
@@ -1787,11 +1781,10 @@ class InFsv1041Message(FloatMessage):
     """
 
     MESSAGE_ID = 0x4250
-    MESSAGE_NAME = "Heat Max Room Temperature"
-    UNIT_OF_MEASUREMENT = "°C"
+    MESSAGE_NAME = "FSV 1041 Heat Max Room Temperature"
 
 
-class InFsv1042Message(FloatMessage):
+class InFsv1042Message(BasicTemperatureMessage):
     """Parser for message 0x4251 (FSV 1042 - Room Temp for Heating Min).
 
     Target room temperature lower limit for heating mode.
@@ -1802,11 +1795,10 @@ class InFsv1042Message(FloatMessage):
     """
 
     MESSAGE_ID = 0x4251
-    MESSAGE_NAME = "Heat Min Room Temperature"
-    UNIT_OF_MEASUREMENT = "°C"
+    MESSAGE_NAME = "FSV 1042 Heat Min Room Temperature"
 
 
-class InFsv1051Message(FloatMessage):
+class InFsv1051Message(BasicTemperatureMessage):
     """Parser for message 0x4252 (FSV 1051 - DHW tank Temp Max).
 
     Target domestic hot water tank temperature upper limit.
@@ -1817,11 +1809,10 @@ class InFsv1051Message(FloatMessage):
     """
 
     MESSAGE_ID = 0x4252
-    MESSAGE_NAME = "DHW Max Temperature"
-    UNIT_OF_MEASUREMENT = "°C"
+    MESSAGE_NAME = "FSV 1051 DHW Max Temperature"
 
 
-class InFsv1052Message(FloatMessage):
+class InFsv1052Message(BasicTemperatureMessage):
     """Parser for message 0x4253 (FSV 1052 - DHW tank Temp Min).
 
     Target domestic hot water tank temperature lower limit.
@@ -1832,11 +1823,10 @@ class InFsv1052Message(FloatMessage):
     """
 
     MESSAGE_ID = 0x4253
-    MESSAGE_NAME = "DHW Min Temperature"
-    UNIT_OF_MEASUREMENT = "°C"
+    MESSAGE_NAME = "FSV 1052 DHW Min Temperature"
 
 
-class InFsv2011OutdoorTempHeatingMax(FloatMessage):
+class InFsv2011OutdoorTempHeatingMax(BasicTemperatureMessage):
     """Parser for message 0x4254 (FSV 2011 - Outdoor Temp for Water Law Heating Max).
 
     Outdoor air temperature upper limit (Point ①) for water law heating control.
@@ -1850,11 +1840,9 @@ class InFsv2011OutdoorTempHeatingMax(FloatMessage):
 
     MESSAGE_ID = 0x4254
     MESSAGE_NAME = "FSV 2011 Outdoor Temp for Heating Max"
-    UNIT_OF_MEASUREMENT = "°C"
-    SIGNED = True
 
 
-class InFsv2012OutdoorTempHeatingMin(FloatMessage):
+class InFsv2012OutdoorTempHeatingMin(BasicTemperatureMessage):
     """Parser for message 0x4255 (FSV 2012 - Outdoor Temp for Water Law Heating Min).
 
     Outdoor air temperature lower limit (Point ②) for water law heating control.
@@ -1866,11 +1854,9 @@ class InFsv2012OutdoorTempHeatingMin(FloatMessage):
 
     MESSAGE_ID = 0x4255
     MESSAGE_NAME = "FSV 2012 Outdoor Temp for Heating Min"
-    UNIT_OF_MEASUREMENT = "°C"
-    SIGNED = True
 
 
-class InFsv2021WaterOutTempWL1HeatingMax(FloatMessage):
+class InFsv2021WaterOutTempWL1HeatingMax(BasicTemperatureMessage):
     """Parser for message 0x4256 (FSV 2021 - Water Out Temp for WL1 Heat Max).
 
     Maximum water outlet temperature for WL1 (floor/UFH) heating operation.
@@ -1883,11 +1869,9 @@ class InFsv2021WaterOutTempWL1HeatingMax(FloatMessage):
 
     MESSAGE_ID = 0x4256
     MESSAGE_NAME = "FSV 2021 Water Out Temp WL1 Heating Max"
-    UNIT_OF_MEASUREMENT = "°C"
-    SIGNED = True
 
 
-class InFsv2022WaterOutTempWL1HeatingMin(FloatMessage):
+class InFsv2022WaterOutTempWL1HeatingMin(BasicTemperatureMessage):
     """Parser for message 0x4257 (FSV 2022 - Water Out Temp for WL1 Heat Min).
 
     Minimum water outlet temperature for WL1 (floor/UFH) heating operation.
@@ -1899,11 +1883,9 @@ class InFsv2022WaterOutTempWL1HeatingMin(FloatMessage):
 
     MESSAGE_ID = 0x4257
     MESSAGE_NAME = "FSV 2022 Water Out Temp WL1 Heating Min"
-    UNIT_OF_MEASUREMENT = "°C"
-    SIGNED = True
 
 
-class InFsv2031WaterOutTempWL2HeatingMax(FloatMessage):
+class InFsv2031WaterOutTempWL2HeatingMax(BasicTemperatureMessage):
     """Parser for message 0x4258 (FSV 2031 - Water Out Temp for WL2 Heat Max).
 
     Maximum water outlet temperature for WL2 (FCU/radiator) heating operation.
@@ -1916,11 +1898,9 @@ class InFsv2031WaterOutTempWL2HeatingMax(FloatMessage):
 
     MESSAGE_ID = 0x4258
     MESSAGE_NAME = "FSV 2031 Water Out Temp WL2 Heating Max"
-    UNIT_OF_MEASUREMENT = "°C"
-    SIGNED = True
 
 
-class InFsv2032WaterOutTempWL2HeatingMin(FloatMessage):
+class InFsv2032WaterOutTempWL2HeatingMin(BasicTemperatureMessage):
     """Parser for message 0x4259 (FSV 2032 - Water Out Temp for WL2 Heat Min).
 
     Minimum water outlet temperature for WL2 (FCU/radiator) heating operation.
@@ -1932,11 +1912,9 @@ class InFsv2032WaterOutTempWL2HeatingMin(FloatMessage):
 
     MESSAGE_ID = 0x4259
     MESSAGE_NAME = "FSV 2032 Water Out Temp WL2 Heating Min"
-    UNIT_OF_MEASUREMENT = "°C"
-    SIGNED = True
 
 
-class InFsv2051OutdoorTempCoolingMax(FloatMessage):
+class InFsv2051OutdoorTempCoolingMax(BasicTemperatureMessage):
     """Parser for message 0x425A (FSV 2051 - Outdoor Temp for Water Law Cooling Max).
 
     Outdoor air temperature upper limit (Point ①) for water law cooling control.
@@ -1950,11 +1928,9 @@ class InFsv2051OutdoorTempCoolingMax(FloatMessage):
 
     MESSAGE_ID = 0x425A
     MESSAGE_NAME = "FSV 2051 Outdoor Temp for Cooling Max"
-    UNIT_OF_MEASUREMENT = "°C"
-    SIGNED = True
 
 
-class InFsv2052OutdoorTempCoolingMin(FloatMessage):
+class InFsv2052OutdoorTempCoolingMin(BasicTemperatureMessage):
     """Parser for message 0x425B (FSV 2052 - Outdoor Temp for Water Law Cooling Min).
 
     Outdoor air temperature lower limit (Point ②) for water law cooling control.
@@ -1966,11 +1942,9 @@ class InFsv2052OutdoorTempCoolingMin(FloatMessage):
 
     MESSAGE_ID = 0x425B
     MESSAGE_NAME = "FSV 2052 Outdoor Temp for Cooling Min"
-    UNIT_OF_MEASUREMENT = "°C"
-    SIGNED = True
 
 
-class InFsv2061WaterOutTempWL1CoolingMax(FloatMessage):
+class InFsv2061WaterOutTempWL1CoolingMax(BasicTemperatureMessage):
     """Parser for message 0x425C (FSV 2061 - Water Out Temp for WL1 Cool Max).
 
     Maximum water outlet temperature for WL1 (floor/UFH) cooling operation.
@@ -1984,11 +1958,9 @@ class InFsv2061WaterOutTempWL1CoolingMax(FloatMessage):
 
     MESSAGE_ID = 0x425C
     MESSAGE_NAME = "FSV 2061 Water Out Temp WL1 Cooling Max"
-    UNIT_OF_MEASUREMENT = "°C"
-    SIGNED = True
 
 
-class InFsv2062WaterOutTempWL1CoolingMin(FloatMessage):
+class InFsv2062WaterOutTempWL1CoolingMin(BasicTemperatureMessage):
     """Parser for message 0x425D (FSV 2062 - Water Out Temp for WL1 Cool Min).
 
     Minimum water outlet temperature for WL1 (floor/UFH) cooling operation.
@@ -2000,11 +1972,9 @@ class InFsv2062WaterOutTempWL1CoolingMin(FloatMessage):
 
     MESSAGE_ID = 0x425D
     MESSAGE_NAME = "FSV 2062 Water Out Temp WL1 Cooling Min"
-    UNIT_OF_MEASUREMENT = "°C"
-    SIGNED = True
 
 
-class InFsv2071WaterOutTempWL2CoolingMax(FloatMessage):
+class InFsv2071WaterOutTempWL2CoolingMax(BasicTemperatureMessage):
     """Parser for message 0x425E (FSV 2071 - Water Out Temp for WL2 Cool Max).
 
     Maximum water outlet temperature for WL2 (FCU/radiator) cooling operation.
@@ -2017,11 +1987,9 @@ class InFsv2071WaterOutTempWL2CoolingMax(FloatMessage):
 
     MESSAGE_ID = 0x425E
     MESSAGE_NAME = "FSV 2071 Water Out Temp WL2 Cooling Max"
-    UNIT_OF_MEASUREMENT = "°C"
-    SIGNED = True
 
 
-class InFsv2072WaterOutTempWL2CoolingMin(FloatMessage):
+class InFsv2072WaterOutTempWL2CoolingMin(BasicTemperatureMessage):
     """Parser for message 0x425F (FSV 2072 - Water Out Temp for WL2 Cool Min).
 
     Minimum water outlet temperature for WL2 (FCU/radiator) cooling operation.
@@ -2033,8 +2001,6 @@ class InFsv2072WaterOutTempWL2CoolingMin(FloatMessage):
 
     MESSAGE_ID = 0x425F
     MESSAGE_NAME = "FSV 2072 Water Out Temp WL2 Cooling Min"
-    UNIT_OF_MEASUREMENT = "°C"
-    SIGNED = True
 
 
 class InFsv3021(BasicTemperatureMessage):
@@ -2050,7 +2016,6 @@ class InFsv3021(BasicTemperatureMessage):
 
     MESSAGE_ID = 0x4260
     MESSAGE_NAME = "FSV 3021 DHW Heating Mode Max"
-    SIGNED = True
 
 
 class InFsv3022(BasicTemperatureMessage):
@@ -2064,8 +2029,7 @@ class InFsv3022(BasicTemperatureMessage):
     """
 
     MESSAGE_ID = 0x4261
-    MESSAGE_NAME = "FSV 3022"
-    SIGNED = True
+    MESSAGE_NAME = "FSV 3022 DHW Heat Pump Stop Temperature Difference"
 
 
 class InFsv3023(BasicTemperatureMessage):
@@ -2081,7 +2045,6 @@ class InFsv3023(BasicTemperatureMessage):
 
     MESSAGE_ID = 0x4262
     MESSAGE_NAME = "FSV 3023 DHW Heat Pump Start"
-    SIGNED = True
 
 
 class InFsv3024(FloatMessage):
