@@ -1133,7 +1133,34 @@ class InFsv4053(IntegerMessage):
 
 
 class InWaterPumpPwmValueMessage(IntegerMessage):
-    """Parser for message 0x40C4 (Water Pump PWM Value)."""
+    """Parser for message 0x40C4 (Water Pump PWM Value).
+
+    Controls the PWM (Pulse Width Modulation) output for the integrated inverter pump
+    that manages main water flow rate in R290 heat pump systems.
+
+    Value Range and Behavior:
+    - 25-100: Fixed PWM value (percentage). The pump operates at this exact speed
+             regardless of the controller's computed optimal value. This forces
+             a specific flow rate and persists after power cycles.
+    - 255 (0xFF): Automatic mode. The pump returns to dynamic PWM adjustment,
+                  allowing the controller to compute and apply the optimal value
+                  based on system conditions.
+
+    Important Distinction from FSV#4054:
+    - FSV#4054: Sets a minimum PWM value but still allows dynamic adjustment
+               within the allowed interval based on system demand.
+    - 0x40C4: Sets a FIXED PWM value when 25-100, overriding all controller
+              optimization. Only returns to automatic when set to 0xFF (255).
+
+    Example Use Cases:
+    - Force full speed: Set to 100 (100% PWM)
+    - Force half speed: Set to 50 (50% PWM)
+    - Return to automatic: Set to 255 (0xFF)
+
+    Note: After a power outage, if the pump operates at unexpectedly low flow rate,
+          check if this value was previously set to force a specific speed. It will
+          be retained in the controller's memory.
+    """
 
     MESSAGE_ID = 0x40C4
     MESSAGE_NAME = "Water Pump Speed"
