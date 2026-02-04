@@ -1,7 +1,7 @@
 """Standard parsers available to all device types."""
 
 from ..errors import get_error_code
-from ..types import StructureMessage, IntegerMessage, FloatMessage, StrMessage
+from ..types import StructureMessage, FloatMessage, StrMessage
 
 
 class CurrentErrorCode(StrMessage):
