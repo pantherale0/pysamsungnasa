@@ -1,10 +1,10 @@
 """Standard parsers available to all device types."""
 
 from ..errors import get_error_code
-from ..types import StructureMessage, IntegerMessage, FloatMessage
+from ..types import StructureMessage, IntegerMessage, FloatMessage, StrMessage
 
 
-class CurrentErrorCode(IntegerMessage):
+class CurrentErrorCode(StrMessage):
     """Parser for message 0x0202 (Current Error Code)."""
 
     MESSAGE_ID = 0x0202
