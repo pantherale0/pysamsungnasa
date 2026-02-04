@@ -32,27 +32,6 @@ from ...enum import (
 )
 
 
-class OutdoorErrorCode1(RawMessage):
-    """Parser for message 0x0202 (Outdoor Error Code 1)."""
-
-    MESSAGE_ID = 0x0202
-    MESSAGE_NAME = "Outdoor Error Code 1"
-
-
-class OutdoorLinkedIndoorUnits(FloatMessage):
-    """Parser for message 0x0207 (Outdoor Linked Indoor Units)."""
-
-    MESSAGE_ID = 0x0207
-    MESSAGE_NAME = "Outdoor Linked Indoor Units"
-
-
-class OutdoorOperationModeLimit(FloatMessage):
-    """Parser for message 0x0410 (Outdoor Operation Mode Limit)."""
-
-    MESSAGE_ID = 0x0410
-    MESSAGE_NAME = "Outdoor Operation Mode Limit"
-
-
 class HeatPumpVoltage(FloatMessage):
     """Parser for message 0x24FC (Heat Pump Voltage)."""
 

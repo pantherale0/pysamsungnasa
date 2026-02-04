@@ -1,6 +1,42 @@
 """Standard parsers available to all device types."""
 
-from ..types import StructureMessage
+from ..errors import get_error_code
+from ..types import StructureMessage, FloatMessage, StrMessage
+
+
+class CurrentErrorCode(StrMessage):
+    """Parser for message 0x0202 (Current Error Code)."""
+
+    MESSAGE_ID = 0x0202
+    MESSAGE_NAME = "Current Error Code"
+
+    @classmethod
+    def parse_payload(cls, payload: bytes) -> "CurrentErrorCode":
+        """Parse the payload into an error code description."""
+        if len(payload) < 2:
+            return cls(value=None, raw_payload=payload)
+
+        # Extract the error code as an integer
+        error_code = int.from_bytes(payload[0:2], byteorder="big")
+
+        # Get the error description using the error mapping
+        error_description = get_error_code(error_code)
+
+        return cls(value=error_description, raw_payload=payload)
+
+
+class LinkedIndoorUnits(FloatMessage):
+    """Parser for message 0x0207 (Linked Indoor Units)."""
+
+    MESSAGE_ID = 0x0207
+    MESSAGE_NAME = "Linked Indoor Units"
+
+
+class OperationModeLimit(FloatMessage):
+    """Parser for message 0x0410 (Operation Mode Limit)."""
+
+    MESSAGE_ID = 0x0410
+    MESSAGE_NAME = "Operation Mode Limit"
 
 
 class SerialNumber(StructureMessage):
