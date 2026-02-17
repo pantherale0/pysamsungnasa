@@ -787,10 +787,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#outdoor-unit-attributes" class="md-nav__link">
+  <a href="#reading-outdoor-unit-attributes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Outdoor Unit Attributes
+        Reading Outdoor Unit Attributes
       
     </span>
   </a>
@@ -798,10 +798,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#indoor-unit-attributes" class="md-nav__link">
+  <a href="#reading-indoor-unit-attributes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Indoor Unit Attributes
+        Reading Indoor Unit Attributes
       
     </span>
   </a>
@@ -887,10 +887,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#using-controllers" class="md-nav__link">
+  <a href="#writing-single-attributes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Using Controllers
+        Writing Single Attributes
       
     </span>
   </a>
@@ -898,10 +898,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#direct-message-sending" class="md-nav__link">
+  <a href="#writing-multiple-attributes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Direct Message Sending
+        Writing Multiple Attributes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-controllers-alternative" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using Controllers (Alternative)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-different-write-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using Different Write Modes
       
     </span>
   </a>
@@ -941,6 +963,17 @@
     <span class="md-ellipsis">
       
         Monitor Device Changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-and-display-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read and Display Data
       
     </span>
   </a>
@@ -1630,54 +1663,80 @@
 <span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>           <span class="c1"># All attributes dict</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>               <span class="c1"># Configuration object</span>
 </code></pre></div>
-<h3 id="outdoor-unit-attributes">Outdoor Unit Attributes<a class="headerlink" href="#outdoor-unit-attributes" title="Permanent link">&para;</a></h3>
-<p>Access data from outdoor units:</p>
-<div class="highlight"><pre><span></span><code><span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+<h3 id="reading-outdoor-unit-attributes">Reading Outdoor Unit Attributes<a class="headerlink" href="#reading-outdoor-unit-attributes" title="Permanent link">&para;</a></h3>
+<p>Use <code>get_attribute()</code> to read specific data from outdoor units:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.outdoor</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">OutdoorAirTemperature</span><span class="p">,</span>
+    <span class="n">HeatPumpVoltage</span><span class="p">,</span>
+    <span class="n">OutdoorCompressorFrequency</span><span class="p">,</span>
+    <span class="n">OutdoorPowerConsumption</span><span class="p">,</span>
+    <span class="n">OutdoorPowerCurrent</span>
+<span class="p">)</span>
 
-<span class="c1"># Temperature</span>
-<span class="n">outdoor_temp</span> <span class="o">=</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">outdoor_temperature</span>  <span class="c1"># °C</span>
-<span class="n">water_outlet_temp</span> <span class="o">=</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">water_outlet_temperature</span>  <span class="c1"># °C</span>
+<span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
 
-<span class="c1"># Power</span>
-<span class="n">power</span> <span class="o">=</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">power_consumption</span>  <span class="c1"># W</span>
-<span class="n">power_current</span> <span class="o">=</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">power_current</span>  <span class="c1"># A</span>
+<span class="c1"># Read temperature (automatically fetches if not cached)</span>
+<span class="n">temp_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorAirTemperature</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Outdoor temperature: </span><span class="si">{</span><span class="n">temp_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
 
-<span class="c1"># Performance</span>
-<span class="n">cop</span> <span class="o">=</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">cop_rating</span>  <span class="c1"># Coefficient of Performance</span>
-<span class="n">frequency</span> <span class="o">=</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">compressor_frequency</span>  <span class="c1"># Hz</span>
-<span class="n">fan_speed</span> <span class="o">=</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">fan_speed</span>  <span class="c1"># RPM</span>
+<span class="c1"># Read power consumption</span>
+<span class="n">power_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorPowerConsumption</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Power: </span><span class="si">{</span><span class="n">power_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">W&quot;</span><span class="p">)</span>
 
-<span class="c1"># Energy</span>
-<span class="n">cumulative</span> <span class="o">=</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">cumulative_energy</span>  <span class="c1"># kWh</span>
-<span class="n">produced</span> <span class="o">=</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">power_produced</span>  <span class="c1"># W</span>
-<span class="n">generated</span> <span class="o">=</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">power_generated_last_minute</span>  <span class="c1"># W</span>
+<span class="c1"># Read current draw</span>
+<span class="n">current_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorPowerCurrent</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current: </span><span class="si">{</span><span class="n">current_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">A&quot;</span><span class="p">)</span>
 
-<span class="c1"># Status</span>
-<span class="n">voltage</span> <span class="o">=</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">heatpump_voltage</span>  <span class="c1"># V</span>
+<span class="c1"># Read compressor frequency</span>
+<span class="n">freq_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorCompressorFrequency</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Compressor: </span><span class="si">{</span><span class="n">freq_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">Hz&quot;</span><span class="p">)</span>
+
+<span class="c1"># Read voltage</span>
+<span class="n">voltage_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">HeatPumpVoltage</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Voltage: </span><span class="si">{</span><span class="n">voltage_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">V&quot;</span><span class="p">)</span>
 </code></pre></div>
-<h3 id="indoor-unit-attributes">Indoor Unit Attributes<a class="headerlink" href="#indoor-unit-attributes" title="Permanent link">&para;</a></h3>
-<p>Work with indoor (climate) units:</p>
-<div class="highlight"><pre><span></span><code><span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+<h3 id="reading-indoor-unit-attributes">Reading Indoor Unit Attributes<a class="headerlink" href="#reading-indoor-unit-attributes" title="Permanent link">&para;</a></h3>
+<p>Read data from indoor (climate) units:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.indoor</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InCurrentTemperature</span><span class="p">,</span>
+    <span class="n">InTargetTemperature</span><span class="p">,</span>
+    <span class="n">InOperationPowerMessage</span><span class="p">,</span>
+    <span class="n">InOperationModeMessage</span><span class="p">,</span>
+    <span class="n">InFanSpeedMessage</span>
+<span class="p">)</span>
 
-<span class="c1"># Check what controllers are available</span>
-<span class="n">has_climate</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-<span class="n">has_dhw</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">dhw_controller</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
 
-<span class="k">if</span> <span class="n">has_climate</span><span class="p">:</span>
-    <span class="c1"># Access climate attributes</span>
-    <span class="n">power</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span><span class="o">.</span><span class="n">power</span>  <span class="c1"># bool</span>
-    <span class="n">mode</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span><span class="o">.</span><span class="n">current_mode</span>  <span class="c1"># str</span>
-    <span class="n">temp</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span><span class="o">.</span><span class="n">f_current_temperature</span>  <span class="c1"># °C</span>
-    <span class="n">target_temp</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span><span class="o">.</span><span class="n">f_target_temperature</span>  <span class="c1"># °C</span>
-    <span class="n">humidity</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span><span class="o">.</span><span class="n">current_humidity</span>  <span class="c1"># %</span>
-    <span class="n">fan_mode</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span><span class="o">.</span><span class="n">current_fan_mode</span>  <span class="c1"># str</span>
+<span class="c1"># Read current temperature</span>
+<span class="n">current_temp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">InCurrentTemperature</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current: </span><span class="si">{</span><span class="n">current_temp</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+
+<span class="c1"># Read target temperature  </span>
+<span class="n">target_temp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">InTargetTemperature</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target: </span><span class="si">{</span><span class="n">target_temp</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+
+<span class="c1"># Read power state</span>
+<span class="n">power</span> <span class="o">=</span> <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">InOperationPowerMessage</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Power: </span><span class="si">{</span><span class="n">power</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Read operation mode</span>
+<span class="n">mode</span> <span class="o">=</span> <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">InOperationModeMessage</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mode: </span><span class="si">{</span><span class="n">mode</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Force a fresh read (bypass cache)</span>
+<span class="n">fresh_temp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span>
+    <span class="n">InCurrentTemperature</span><span class="p">,</span>
+    <span class="n">requires_read</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fresh temperature: </span><span class="si">{</span><span class="n">fresh_temp</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="callbacks-and-events">Callbacks and Events<a class="headerlink" href="#callbacks-and-events" title="Permanent link">&para;</a></h2>
 <h3 id="device-callbacks">Device Callbacks<a class="headerlink" href="#device-callbacks" title="Permanent link">&para;</a></h3>
-<p>Get notified when a device is updated:</p>
+<p>Get notified whenever any packet is received for a device:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">on_device_changed</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2"> was updated!&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Last update: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">last_packet_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Total attributes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
 <span class="n">device</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="n">on_device_changed</span><span class="p">)</span>
@@ -1687,16 +1746,28 @@
 </code></pre></div>
 <h3 id="packet-callbacks">Packet Callbacks<a class="headerlink" href="#packet-callbacks" title="Permanent link">&para;</a></h3>
 <p>Listen for specific message types:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.indoor</span><span class="w"> </span><span class="kn">import</span> <span class="n">IndoorCurrentTemperature</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.indoor</span><span class="w"> </span><span class="kn">import</span> <span class="n">InCurrentTemperature</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.outdoor</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutdoorAirTemperature</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">on_indoor_temp_changed</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;packet&#39;</span><span class="p">]</span>
+    <span class="n">msg_number</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;messageNumber&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Indoor temp: </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C (msg </span><span class="si">{</span><span class="n">msg_number</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">on_outdoor_temp_changed</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Message received: </span><span class="si">{</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;packet&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;packet&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Outdoor temp: </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
 
 <span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
-<span class="n">indoor</span><span class="o">.</span><span class="n">add_packet_callback</span><span class="p">(</span><span class="n">IndoorCurrentTemperature</span><span class="p">,</span> <span class="n">on_outdoor_temp_changed</span><span class="p">)</span>
+<span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
 
-<span class="c1"># Later, remove it</span>
-<span class="n">indoor</span><span class="o">.</span><span class="n">remove_packet_callback</span><span class="p">(</span><span class="n">IndoorCurrentTemperature</span><span class="p">,</span> <span class="n">on_outdoor_temp_changed</span><span class="p">)</span>
+<span class="c1"># Add callbacks for specific message types</span>
+<span class="n">indoor</span><span class="o">.</span><span class="n">add_packet_callback</span><span class="p">(</span><span class="n">InCurrentTemperature</span><span class="p">,</span> <span class="n">on_indoor_temp_changed</span><span class="p">)</span>
+<span class="n">outdoor</span><span class="o">.</span><span class="n">add_packet_callback</span><span class="p">(</span><span class="n">OutdoorAirTemperature</span><span class="p">,</span> <span class="n">on_outdoor_temp_changed</span><span class="p">)</span>
+
+<span class="c1"># Later, remove them</span>
+<span class="n">indoor</span><span class="o">.</span><span class="n">remove_packet_callback</span><span class="p">(</span><span class="n">InCurrentTemperature</span><span class="p">,</span> <span class="n">on_indoor_temp_changed</span><span class="p">)</span>
+<span class="n">outdoor</span><span class="o">.</span><span class="n">remove_packet_callback</span><span class="p">(</span><span class="n">OutdoorAirTemperature</span><span class="p">,</span> <span class="n">on_outdoor_temp_changed</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="new-device-handler">New Device Handler<a class="headerlink" href="#new-device-handler" title="Permanent link">&para;</a></h3>
 <p>Handle newly discovered devices:</p>
@@ -1724,11 +1795,55 @@
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="sending-commands">Sending Commands<a class="headerlink" href="#sending-commands" title="Permanent link">&para;</a></h2>
-<h3 id="using-controllers">Using Controllers<a class="headerlink" href="#using-controllers" title="Permanent link">&para;</a></h3>
-<p>The easiest way to send commands is through device controllers:</p>
+<h3 id="writing-single-attributes">Writing Single Attributes<a class="headerlink" href="#writing-single-attributes" title="Permanent link">&para;</a></h3>
+<p>Use <code>write_attribute()</code> to write a single value to a device:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.indoor</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InTargetTemperature</span><span class="p">,</span>
+    <span class="n">InOperationPowerMessage</span><span class="p">,</span>
+    <span class="n">InOperationModeMessage</span><span class="p">,</span>
+    <span class="n">InFanSpeedMessage</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">InOperationMode</span>
+
+<span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+
+<span class="c1"># Set target temperature</span>
+<span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span><span class="n">InTargetTemperature</span><span class="p">,</span> <span class="mf">22.0</span><span class="p">)</span>
+
+<span class="c1"># Turn on the device</span>
+<span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span><span class="n">InOperationPowerMessage</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># 1=On, 0=Off</span>
+
+<span class="c1"># Set cooling mode</span>
+<span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span><span class="n">InOperationModeMessage</span><span class="p">,</span> <span class="n">InOperationMode</span><span class="o">.</span><span class="n">COOL</span><span class="p">)</span>
+
+<span class="c1"># Set fan speed (1-4)</span>
+<span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span><span class="n">InFanSpeedMessage</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="writing-multiple-attributes">Writing Multiple Attributes<a class="headerlink" href="#writing-multiple-attributes" title="Permanent link">&para;</a></h3>
+<p>Use <code>write_attributes()</code> to write multiple values in a single packet (up to 10):</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.indoor</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InTargetTemperature</span><span class="p">,</span>
+    <span class="n">InOperationPowerMessage</span><span class="p">,</span>
+    <span class="n">InOperationModeMessage</span><span class="p">,</span>
+    <span class="n">InFanSpeedMessage</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">InOperationMode</span>
+
+<span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+
+<span class="c1"># Set multiple attributes at once</span>
+<span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attributes</span><span class="p">({</span>
+    <span class="n">InOperationPowerMessage</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># Turn on</span>
+    <span class="n">InOperationModeMessage</span><span class="p">:</span> <span class="n">InOperationMode</span><span class="o">.</span><span class="n">COOL</span><span class="p">,</span>  <span class="c1"># Cooling</span>
+    <span class="n">InTargetTemperature</span><span class="p">:</span> <span class="mf">22.0</span><span class="p">,</span>  <span class="c1"># Temperature</span>
+    <span class="n">InFanSpeedMessage</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>  <span class="c1"># Fan speed</span>
+<span class="p">})</span>
+</code></pre></div>
+<h3 id="using-controllers-alternative">Using Controllers (Alternative)<a class="headerlink" href="#using-controllers-alternative" title="Permanent link">&para;</a></h3>
+<p>For convenience, you can also use device controllers if available:</p>
 <div class="highlight"><pre><span></span><code><span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
 
-<span class="c1"># Climate control</span>
+<span class="c1"># Climate control (if controller exists)</span>
 <span class="k">if</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span><span class="p">:</span>
     <span class="n">cc</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span>
 
@@ -1745,7 +1860,7 @@
     <span class="c1"># Fan</span>
     <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_fan_speed</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 
-<span class="c1"># DHW control</span>
+<span class="c1"># DHW control (if controller exists)</span>
 <span class="k">if</span> <span class="n">indoor</span><span class="o">.</span><span class="n">dhw_controller</span><span class="p">:</span>
     <span class="n">dhw</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">dhw_controller</span>
 
@@ -1753,18 +1868,19 @@
     <span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">turn_off</span><span class="p">()</span>
     <span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="mf">45.0</span><span class="p">)</span>
 </code></pre></div>
-<h3 id="direct-message-sending">Direct Message Sending<a class="headerlink" href="#direct-message-sending" title="Permanent link">&para;</a></h3>
-<p>For advanced usage, send raw messages:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">SendMessage</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataType</span>
+<h3 id="using-different-write-modes">Using Different Write Modes<a class="headerlink" href="#using-different-write-modes" title="Permanent link">&para;</a></h3>
+<p>Some operations may require <code>DataType.REQUEST</code> instead of the default <code>DataType.WRITE</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataType</span>
 
-<span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span>
-    <span class="n">destination</span><span class="o">=</span><span class="s2">&quot;200020&quot;</span><span class="p">,</span>
-    <span class="n">request_type</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">REQUEST</span><span class="p">,</span>
-    <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
-        <span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4000</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span><span class="p">),</span>  <span class="c1"># Turn on</span>
-    <span class="p">]</span>
+<span class="c1"># Use REQUEST mode</span>
+<span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span>
+    <span class="n">InTargetTemperature</span><span class="p">,</span>
+    <span class="mf">22.0</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">REQUEST</span>
 <span class="p">)</span>
+
+<span class="c1"># Default is WRITE mode</span>
+<span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span><span class="n">InTargetTemperature</span><span class="p">,</span> <span class="mf">22.0</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
 <p>Always handle potential errors:</p>
@@ -1779,9 +1895,13 @@
 </code></pre></div>
 <h2 id="common-patterns">Common Patterns<a class="headerlink" href="#common-patterns" title="Permanent link">&para;</a></h2>
 <h3 id="monitor-device-changes">Monitor Device Changes<a class="headerlink" href="#monitor-device-changes" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">monitor</span><span class="p">():</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamsungNasa</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">monitor</span><span class="p">():</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_changes</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">last_packet_time</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2"> updated&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Attributes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
@@ -1790,6 +1910,7 @@
     <span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Wait for devices</span>
 
     <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="n">device</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="n">log_changes</span><span class="p">)</span>
@@ -1798,8 +1919,16 @@
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 </code></pre></div>
-<h3 id="polling-for-data">Polling for Data<a class="headerlink" href="#polling-for-data" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">poll_every_30_seconds</span><span class="p">():</span>
+<h3 id="read-and-display-data">Read and Display Data<a class="headerlink" href="#read-and-display-data" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamsungNasa</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.outdoor</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">OutdoorAirTemperature</span><span class="p">,</span>
+    <span class="n">OutdoorPowerConsumption</span><span class="p">,</span>
+    <span class="n">OutdoorCompressorFrequency</span>
+<span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_outdoor_data</span><span class="p">():</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
         <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
@@ -1807,13 +1936,46 @@
     <span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Wait for devices</span>
+
+    <span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Read multiple attributes</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorAirTemperature</span><span class="p">)</span>
+    <span class="n">power</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorPowerConsumption</span><span class="p">)</span>
+    <span class="n">freq</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorCompressorFrequency</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temperature: </span><span class="si">{</span><span class="n">temp</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Power: </span><span class="si">{</span><span class="n">power</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">W&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Compressor: </span><span class="si">{</span><span class="n">freq</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">Hz&quot;</span><span class="p">)</span>
+
+    <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="polling-for-data">Polling for Data<a class="headerlink" href="#polling-for-data" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamsungNasa</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.outdoor</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutdoorAirTemperature</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">poll_every_30_seconds</span><span class="p">():</span>
+    <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Wait for devices</span>
 
     <span class="k">try</span><span class="p">:</span>
+        <span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Current Status ===&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">address</span><span class="p">,</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s1">&#39;outdoor_temperature&#39;</span><span class="p">):</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">outdoor_temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+            <span class="c1"># Force fresh read</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span>
+                <span class="n">OutdoorAirTemperature</span><span class="p">,</span>
+                <span class="n">requires_read</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Current Status ===&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temperature: </span><span class="si">{</span><span class="n">temp</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
             <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
