@@ -39,7 +39,12 @@ Monitor temperatures from all devices:
 ```python
 import asyncio
 from pysamsungnasa import SamsungNasa
-from pysamsungnasa.device import OutdoorNasaDevice, IndoorNasaDevice
+from pysamsungnasa.protocol.factory.messages.outdoor import OutdoorAirTemperature
+from pysamsungnasa.protocol.factory.messages.indoor import (
+    InCurrentTemperature,
+    InTargetTemperature,
+    InOperationModeMessage
+)
 
 async def main():
     nasa = SamsungNasa(
@@ -47,28 +52,36 @@ async def main():
         port=8000,
         config={
             "client_address": 1,
-            "device_addresses": ["200000", "200020"]
+            "device_addresses": ["100000", "200020"]
         }
     )
 
     await nasa.start()
+    await asyncio.sleep(2)  # Wait for devices
 
     print("Temperature Monitoring")
     print("-" * 40)
 
     for address, device in nasa.devices.items():
-        if isinstance(device, OutdoorNasaDevice):
-            print(f"\nOutdoor Unit ({address}):")
-            print(f"  Temperature: {device.outdoor_temperature}°C")
-
-        elif isinstance(device, IndoorNasaDevice):
-            print(f"\nIndoor Unit ({address}):")
-            if device.climate_controller:
-                cc = device.climate_controller
-                print(f"  Current: {cc.f_current_temperature}°C")
-                print(f"  Target: {cc.f_target_temperature}°C")
-                print(f"  Mode: {cc.current_mode}")
-                print(f"  Humidity: {cc.current_humidity}%")
+        print(f"\nDevice ({address}):")
+        
+        # Try reading outdoor temperature
+        try:
+            outdoor_temp = await device.get_attribute(OutdoorAirTemperature)
+            print(f"  Outdoor Temperature: {outdoor_temp.VALUE}°C")
+        except (TimeoutError, KeyError):
+            pass
+        
+        # Try reading indoor temperature
+        try:
+            current_temp = await device.get_attribute(InCurrentTemperature)
+            target_temp = await device.get_attribute(InTargetTemperature)
+            mode = await device.get_attribute(InOperationModeMessage)
+            print(f"  Current: {current_temp.VALUE}°C")
+            print(f"  Target: {target_temp.VALUE}°C")
+            print(f"  Mode: {mode.VALUE}")
+        except (TimeoutError, KeyError):
+            pass
 
     await nasa.stop()
 
@@ -82,7 +95,11 @@ Maintain automatic temperature control:
 ```python
 import asyncio
 from pysamsungnasa import SamsungNasa
-from pysamsungnasa.device import IndoorNasaDevice
+from pysamsungnasa.protocol.factory.messages.indoor import (
+    InCurrentTemperature,
+    InOperationModeMessage
+)
+from pysamsungnasa.protocol.enum import InOperationMode
 
 async def smart_thermostat(target_temp=22, hysteresis=0.5):
     """
@@ -103,35 +120,44 @@ async def smart_thermostat(target_temp=22, hysteresis=0.5):
     )
 
     await nasa.start()
+    await asyncio.sleep(2)  # Wait for device
 
     indoor = nasa.devices["200020"]
-    if not isinstance(indoor, IndoorNasaDevice):
-        print("No indoor unit found!")
-        return
-
-    cc = indoor.climate_controller
 
     async def control_temperature(device):
-        if not cc.f_current_temperature:
-            return
+        try:
+            # Get current temperature
+            temp_msg = await device.get_attribute(InCurrentTemperature)
+            current = temp_msg.VALUE
+            
+            # Get current mode
+            mode_msg = await device.get_attribute(InOperationModeMessage)
+            current_mode = mode_msg.VALUE
 
-        current = cc.f_current_temperature
+            # Heating needed
+            if current < target_temp - hysteresis:
+                if current_mode != InOperationMode.HEAT:
+                    await device.write_attribute(
+                        InOperationModeMessage,
+                        InOperationMode.HEAT
+                    )
+                print(f"Heating: {current:.1f}°C → {target_temp}°C")
 
-        # Heating needed
-        if current < target_temp - hysteresis:
-            if cc.current_mode != "heat":
-                await cc.set_operation_mode("heat")
-            print(f"Heating: {current:.1f}°C → {target_temp}°C")
+            # Cooling needed
+            elif current > target_temp + hysteresis:
+                if current_mode != InOperationMode.COOL:
+                    await device.write_attribute(
+                        InOperationModeMessage,
+                        InOperationMode.COOL
+                    )
+                print(f"Cooling: {current:.1f}°C → {target_temp}°C")
 
-        # Cooling needed
-        elif current > target_temp + hysteresis:
-            if cc.current_mode != "cool":
-                await cc.set_operation_mode("cool")
-            print(f"Cooling: {current:.1f}°C → {target_temp}°C")
-
-        # In range
-        else:
-            print(f"OK: {current:.1f}°C (target {target_temp}°C)")
+            # In range
+            else:
+                print(f"OK: {current:.1f}°C (target {target_temp}°C)")
+        
+        except TimeoutError:
+            print("Timeout reading temperature")
 
     # Register callback
     indoor.add_device_callback(control_temperature)
@@ -153,7 +179,11 @@ Track power consumption:
 import asyncio
 from datetime import datetime
 from pysamsungnasa import SamsungNasa
-from pysamsungnasa.device import OutdoorNasaDevice
+from pysamsungnasa.protocol.factory.messages.outdoor import (
+    OutdoorPowerConsumption,
+    OutdoorCumulativeEnergy,
+    OutdoorCopRating
+)
 
 async def energy_monitoring():
     """Monitor and log power consumption."""
@@ -168,26 +198,29 @@ async def energy_monitoring():
     )
 
     await nasa.start()
+    await asyncio.sleep(2)  # Wait for device
 
     outdoor = nasa.devices["100000"]
-    if not isinstance(outdoor, OutdoorNasaDevice):
-        print("No outdoor unit found!")
-        return
 
-    total_energy = 0
+    async def log_power(device):
+        try:
+            timestamp = datetime.now().strftime("%H:%M:%S")
+            
+            power_msg = await device.get_attribute(OutdoorPowerConsumption)
+            power = power_msg.VALUE
+            
+            cumulative_msg = await device.get_attribute(OutdoorCumulativeEnergy)
+            cumulative = cumulative_msg.VALUE
+            
+            cop_msg = await device.get_attribute(OutdoorCopRating)
+            cop = cop_msg.VALUE
 
-    def log_power(device):
-        nonlocal total_energy
-
-        timestamp = datetime.now().strftime("%H:%M:%S")
-        power = outdoor.power_consumption or 0
-        cumulative = outdoor.cumulative_energy or 0
-        cop = outdoor.cop_rating or 0
-
-        print(f"{timestamp} | "
-              f"Power: {power:6.0f}W | "
-              f"Energy: {cumulative:7.1f}kWh | "
-              f"COP: {cop:.1f}")
+            print(f"{timestamp} | "
+                  f"Power: {power:6.0f}W | "
+                  f"Energy: {cumulative:7.1f}kWh | "
+                  f"COP: {cop:.1f}")
+        except TimeoutError:
+            print("Timeout reading energy data")
 
     outdoor.add_device_callback(log_power)
 
@@ -211,6 +244,14 @@ Control multiple zones independently:
 ```python
 import asyncio
 from pysamsungnasa import SamsungNasa
+from pysamsungnasa.protocol.factory.messages.indoor import (
+    InOperationPowerMessage,
+    InOperationModeMessage,
+    InTargetTemperature,
+    InFanSpeedMessage,
+    InCurrentTemperature
+)
+from pysamsungnasa.protocol.enum import InOperationMode
 
 async def multi_zone_control():
     """Control climate in multiple zones."""
@@ -225,6 +266,7 @@ async def multi_zone_control():
     )
 
     await nasa.start()
+    await asyncio.sleep(2)  # Wait for devices
 
     zones = {
         "200020": {"name": "Living Room", "target": 22},
@@ -235,29 +277,37 @@ async def multi_zone_control():
     # Apply settings to each zone
     for address, zone_config in zones.items():
         device = nasa.devices.get(address)
-        if not device or not device.climate_controller:
+        if not device:
             continue
 
-        cc = device.climate_controller
         print(f"Setting {zone_config['name']} to {zone_config['target']}°C")
 
-        await cc.turn_on()
-        await cc.set_operation_mode("auto")
-        await cc.set_target_temperature(zone_config['target'])
-        await cc.set_fan_speed(2)
+        # Set multiple attributes at once
+        await device.write_attributes({
+            InOperationPowerMessage: 1,  # Turn on
+            InOperationModeMessage: InOperationMode.AUTO,  # Auto mode
+            InTargetTemperature: zone_config['target'],  # Temperature
+            InFanSpeedMessage: 2,  # Fan speed
+        })
 
     # Monitor all zones
     async def monitor():
+        print("\n=== Zone Status ===")
         for address, zone_config in zones.items():
             device = nasa.devices.get(address)
-            if not device or not device.climate_controller:
+            if not device:
                 continue
 
-            cc = device.climate_controller
-            print(f"{zone_config['name']}: "
-                  f"{cc.f_current_temperature}°C "
-                  f"(target {cc.f_target_temperature}°C) "
-                  f"mode={cc.current_mode}")
+            try:
+                current = await device.get_attribute(InCurrentTemperature)
+                target = await device.get_attribute(InTargetTemperature)
+                mode = await device.get_attribute(InOperationModeMessage)
+                print(f"{zone_config['name']}: "
+                      f"{current.VALUE}°C "
+                      f"(target {target.VALUE}°C) "
+                      f"mode={mode.VALUE}")
+            except TimeoutError:
+                print(f"{zone_config['name']}: Timeout")
 
     # Monitor for 30 minutes
     for i in range(30):
