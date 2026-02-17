@@ -131,58 +131,150 @@ device.config           # NasaConfig object
 device.fsv_config       # FSV configuration dict
 ```
 
-### Outdoor Unit Attributes
+## Reading Device Attributes
+
+### Using get_attribute()
+
+Read specific attributes from a device. If the attribute isn't cached, it will be automatically requested:
 
 ```python
+from pysamsungnasa.protocol.factory.messages.outdoor import (
+    OutdoorAirTemperature,
+    HeatPumpVoltage,
+    OutdoorCompressorFrequency
+)
+from pysamsungnasa.protocol.factory.messages.indoor import (
+    InTargetTemperature,
+    InCurrentTemperature,
+    InOperationPowerMessage
+)
+
 outdoor = nasa.devices["100000"]
 
-# Temperature
-outdoor.outdoor_temperature         # Outdoor air temperature (°C)
-outdoor.water_outlet_temperature    # Water outlet temp (°C)
+# Read outdoor temperature (will fetch if not cached)
+temp_msg = await outdoor.get_attribute(OutdoorAirTemperature)
+print(f"Outdoor temperature: {temp_msg.VALUE}°C")
 
-# Power
-outdoor.power_consumption           # Instantaneous power (W)
-outdoor.power_current               # Current draw (A)
-outdoor.power_produced              # Power produced (W)
-outdoor.power_generated_last_minute # Power in last minute (W)
-outdoor.cumulative_energy           # Total energy (kWh)
+# Read voltage
+voltage_msg = await outdoor.get_attribute(HeatPumpVoltage)
+print(f"Voltage: {voltage_msg.VALUE}V")
 
-# Performance
-outdoor.cop_rating                  # Efficiency rating
-outdoor.compressor_frequency        # Compressor speed (Hz)
-outdoor.fan_speed                   # Fan speed (RPM)
-
-# Status
-outdoor.heatpump_voltage           # Operating voltage (V)
+# Force a fresh read even if cached
+freq_msg = await outdoor.get_attribute(
+    OutdoorCompressorFrequency,
+    requires_read=True
+)
+print(f"Compressor frequency: {freq_msg.VALUE}Hz")
 ```
 
-### Indoor Unit Attributes
+### Reading Indoor Unit Attributes
 
 ```python
 indoor = nasa.devices["200020"]
 
-# Check if controllers are available
-has_climate = indoor.climate_controller is not None
-has_dhw = indoor.dhw_controller is not None
+# Get current temperature
+current_temp = await indoor.get_attribute(InCurrentTemperature)
+print(f"Current temperature: {current_temp.VALUE}°C")
 
-# Climate control
-if has_climate:
-    cc = indoor.climate_controller
-    cc.power                       # On/off status
-    cc.current_mode                # Current mode (cool, heat, etc)
-    cc.f_current_temperature       # Current room temp (°C)
-    cc.f_target_temperature        # Target temp (°C)
-    cc.current_humidity            # Humidity (%)
-    cc.current_fan_mode            # Fan mode
-    cc.current_fan_speed           # Fan speed (1-4)
+# Get target temperature
+target_temp = await indoor.get_attribute(InTargetTemperature)
+print(f"Target temperature: {target_temp.VALUE}°C")
 
-# DHW control
-if has_dhw:
-    dhw = indoor.dhw_controller
-    dhw.power                      # On/off status
-    dhw.target_temperature         # Target temp (°C)
-    dhw.current_temperature        # Current temp (°C)
-    dhw.operation_mode             # Operating mode
+# Get power state
+power = await indoor.get_attribute(InOperationPowerMessage)
+print(f"Power: {power.VALUE}")
+```
+
+### Accessing Cached Attributes
+
+Access previously received attributes directly from the cache:
+
+```python
+device = nasa.devices["100000"]
+
+# Check if attribute exists in cache
+if OutdoorAirTemperature.MESSAGE_ID in device.attributes:
+    cached_msg = device.attributes[OutdoorAirTemperature.MESSAGE_ID]
+    print(f"Cached temperature: {cached_msg.VALUE}°C")
+else:
+    print("Temperature not yet received")
+
+# Or use get_attribute which handles this automatically
+temp_msg = await device.get_attribute(OutdoorAirTemperature)
+print(f"Temperature: {temp_msg.VALUE}°C")
+```
+
+## Writing Device Attributes
+
+### Using write_attribute()
+
+Write a single attribute to a device:
+
+```python
+from pysamsungnasa.protocol.factory.messages.indoor import (
+    InTargetTemperature,
+    InOperationPowerMessage,
+    InOperationModeMessage,
+    InFanSpeedMessage
+)
+from pysamsungnasa.protocol.enum import DataType
+
+indoor = nasa.devices["200020"]
+
+# Set target temperature to 22°C
+await indoor.write_attribute(InTargetTemperature, 22.0)
+
+# Turn on the device
+await indoor.write_attribute(InOperationPowerMessage, 1)  # 1 = On, 0 = Off
+
+# Set operation mode
+from pysamsungnasa.protocol.enum import InOperationMode
+await indoor.write_attribute(InOperationModeMessage, InOperationMode.COOL)
+
+# Set fan speed (1-4)
+await indoor.write_attribute(InFanSpeedMessage, 3)
+```
+
+### Using write_attributes()
+
+Write multiple attributes in a single packet (up to 10 messages):
+
+```python
+from pysamsungnasa.protocol.factory.messages.indoor import (
+    InTargetTemperature,
+    InOperationPowerMessage,
+    InOperationModeMessage,
+    InFanSpeedMessage
+)
+from pysamsungnasa.protocol.enum import InOperationMode
+
+indoor = nasa.devices["200020"]
+
+# Set multiple attributes at once
+await indoor.write_attributes({
+    InOperationPowerMessage: 1,  # Turn on
+    InOperationModeMessage: InOperationMode.COOL,  # Set to cooling mode
+    InTargetTemperature: 22.0,  # Set temperature
+    InFanSpeedMessage: 3,  # Set fan speed
+})
+```
+
+### Using Different Write Modes
+
+Some attributes require a REQUEST mode instead of WRITE:
+
+```python
+from pysamsungnasa.protocol.enum import DataType
+
+# Some messages may require DataType.REQUEST
+await indoor.write_attribute(
+    InTargetTemperature,
+    22.0,
+    mode=DataType.REQUEST
+)
+
+# Default is DataType.WRITE
+await indoor.write_attribute(InTargetTemperature, 22.0)  # Uses WRITE mode
 ```
 
 ## Accessing Device Configuration
@@ -198,9 +290,6 @@ fsv_config = device.fsv_config
 # FSV is a dictionary of message ID to values
 for msg_id, value in fsv_config.items():
     print(f"Message 0x{msg_id:04X}: {value}")
-
-# Request configuration
-await device.get_configuration()
 ```
 
 ## Device State Management
@@ -244,11 +333,12 @@ else:
 
 ### Device Update Callbacks
 
-Register functions to be called when device data changes:
+Register functions to be called whenever any packet is received for a device:
 
 ```python
 def on_update(device):
     print(f"Device {device.address} updated at {device.last_packet_time}")
+    print(f"Total attributes: {len(device.attributes)}")
 
 device = nasa.devices["100000"]
 device.add_device_callback(on_update)
@@ -259,22 +349,72 @@ device.remove_device_callback(on_update)
 
 ### Message-Specific Callbacks
 
-Listen for specific message types:
+Listen for specific message types using packet callbacks:
 
 ```python
-from pysamsungnasa.protocol.factory.messages.indoor import IndoorCurrentTemperature
+from pysamsungnasa.protocol.factory.messages.indoor import InCurrentTemperature
+from pysamsungnasa.protocol.factory.messages.outdoor import OutdoorAirTemperature
 
-def on_temp_message(device, **kwargs):
+def on_indoor_temp(device, **kwargs):
+    """Called when indoor temperature message is received."""
     message = kwargs['packet']
-    print(f"Temperature update: {message.VALUE}")
+    msg_number = kwargs['messageNumber']
+    print(f"Indoor temp update: {message.VALUE}°C (msg {msg_number})")
+
+def on_outdoor_temp(device, **kwargs):
+    """Called when outdoor temperature message is received."""
+    message = kwargs['packet']
+    print(f"Outdoor temp: {message.VALUE}°C")
 
 indoor = nasa.devices["200020"]
+outdoor = nasa.devices["100000"]
 
-# Add callback for message type (current temperature)
-indoor.add_packet_callback(IndoorCurrentTemperature, on_temp_message)
+# Add callback for specific message type
+indoor.add_packet_callback(InCurrentTemperature, on_indoor_temp)
+outdoor.add_packet_callback(OutdoorAirTemperature, on_outdoor_temp)
 
-# Later, remove it
-indoor.remove_packet_callback(IndoorCurrentTemperature, on_temp_message)
+# Later, remove them
+indoor.remove_packet_callback(InCurrentTemperature, on_indoor_temp)
+outdoor.remove_packet_callback(OutdoorAirTemperature, on_outdoor_temp)
+```
+
+### Complete Example with Callbacks
+
+```python
+import asyncio
+from pysamsungnasa import SamsungNasa
+from pysamsungnasa.protocol.factory.messages.indoor import (
+    InCurrentTemperature,
+    InTargetTemperature
+)
+
+async def main():
+    nasa = SamsungNasa(
+        host="192.168.1.100",
+        port=8000,
+        config={"client_address": 1}
+    )
+
+    def on_temp_change(device, **kwargs):
+        message = kwargs['packet']
+        print(f"Temperature changed to {message.VALUE}°C")
+
+    await nasa.start()
+    await asyncio.sleep(2)  # Wait for devices
+
+    indoor = nasa.devices["200020"]
+    
+    # Listen for temperature changes
+    indoor.add_packet_callback(InCurrentTemperature, on_temp_change)
+
+    # Set new target temperature
+    await indoor.write_attribute(InTargetTemperature, 23.0)
+
+    # Keep running to receive updates
+    await asyncio.sleep(60)
+    await nasa.stop()
+
+asyncio.run(main())
 ```
 
 ## Multiple Device Management
@@ -368,20 +508,29 @@ for device in nasa.devices.values():
 ### Missing Attributes
 
 ```python
-def check_attributes(device):
-    """Verify expected attributes exist."""
-    expected = {0x4203: "Current Temperature", 0x4201: "Target Temperature"}
+from pysamsungnasa.protocol.factory.messages.indoor import (
+    InCurrentTemperature,
+    InTargetTemperature
+)
 
-    for msg_id, name in expected.items():
-        if msg_id in device.attributes:
-            print(f"✓ {name} present")
-        else:
-            print(f"✗ {name} MISSING")
+async def check_attributes(device):
+    """Verify expected attributes exist and request if missing."""
+    try:
+        # Try to get current temperature (will fetch if not cached)
+        current = await device.get_attribute(InCurrentTemperature)
+        print(f"✓ Current Temperature: {current.VALUE}°C")
+    except TimeoutError:
+        print("✗ Current Temperature: TIMEOUT")
 
-    # Request configuration to fill missing values
-    if len(device.attributes) < len(expected):
-        print("Requesting configuration...")
-        await device.get_configuration()
+    try:
+        # Try to get target temperature
+        target = await device.get_attribute(InTargetTemperature)
+        print(f"✓ Target Temperature: {target.VALUE}°C")
+    except TimeoutError:
+        print("✗ Target Temperature: TIMEOUT")
+
+    # Check cached attributes
+    print(f"\nTotal cached attributes: {len(device.attributes)}")
 
 await check_attributes(indoor)
 ```

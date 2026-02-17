@@ -102,9 +102,17 @@ nasa = SamsungNasa(
 
 ## Reading Device Data
 
-Once connected, access device information:
+Once connected, use `get_attribute()` to read device information:
 
 ```python
+import asyncio
+from pysamsungnasa import SamsungNasa
+from pysamsungnasa.protocol.factory.messages.outdoor import (
+    OutdoorAirTemperature,
+    OutdoorPowerConsumption,
+    OutdoorCompressorFrequency
+)
+
 async def main():
     nasa = SamsungNasa(
         host="192.168.1.100",
@@ -116,14 +124,20 @@ async def main():
     )
 
     await nasa.start()
+    await asyncio.sleep(2)  # Wait for device discovery
 
     # Get the outdoor unit
     outdoor = nasa.devices["100000"]
 
-    # Read attributes
-    print(f"Outdoor temperature: {outdoor.outdoor_temperature}°C")
-    print(f"Power consumption: {outdoor.power_consumption}W")
-    print(f"Compressor frequency: {outdoor.compressor_frequency}Hz")
+    # Read attributes using get_attribute()
+    temp_msg = await outdoor.get_attribute(OutdoorAirTemperature)
+    print(f"Outdoor temperature: {temp_msg.VALUE}°C")
+
+    power_msg = await outdoor.get_attribute(OutdoorPowerConsumption)
+    print(f"Power consumption: {power_msg.VALUE}W")
+
+    freq_msg = await outdoor.get_attribute(OutdoorCompressorFrequency)
+    print(f"Compressor frequency: {freq_msg.VALUE}Hz")
 
     await nasa.stop()
 
@@ -132,9 +146,19 @@ asyncio.run(main())
 
 ## Controlling Devices (Indoor Unit)
 
-Control climate and DHW systems:
+Control climate and DHW systems using `write_attribute()` or `write_attributes()`:
 
 ```python
+import asyncio
+from pysamsungnasa import SamsungNasa
+from pysamsungnasa.protocol.factory.messages.indoor import (
+    InOperationPowerMessage,
+    InOperationModeMessage,
+    InTargetTemperature,
+    InFanSpeedMessage
+)
+from pysamsungnasa.protocol.enum import InOperationMode
+
 async def main():
     nasa = SamsungNasa(
         host="192.168.1.100",
@@ -146,21 +170,29 @@ async def main():
     )
 
     await nasa.start()
+    await asyncio.sleep(2)  # Wait for device discovery
 
     indoor = nasa.devices["200020"]
 
-    # Control climate
+    # Write single attributes
+    await indoor.write_attribute(InOperationPowerMessage, 1)  # Turn on
+    await indoor.write_attribute(InOperationModeMessage, InOperationMode.COOL)
+    await indoor.write_attribute(InTargetTemperature, 22.0)
+    await indoor.write_attribute(InFanSpeedMessage, 3)
+
+    # Or write multiple attributes at once (more efficient)
+    await indoor.write_attributes({
+        InOperationPowerMessage: 1,  # Turn on
+        InOperationModeMessage: InOperationMode.COOL,  # Cooling mode
+        InTargetTemperature: 22.0,  # Temperature
+        InFanSpeedMessage: 3,  # Fan speed
+    })
+
+    # Alternative: Use controllers if available
     if indoor.climate_controller:
-        # Turn on
         await indoor.climate_controller.turn_on()
-
-        # Set mode (auto, cool, heat, dry, fan)
         await indoor.climate_controller.set_operation_mode("cool")
-
-        # Set target temperature
         await indoor.climate_controller.set_target_temperature(22)
-
-        # Set fan speed
         await indoor.climate_controller.set_fan_speed(1)
 
     # Control DHW (if available)
@@ -178,26 +210,57 @@ asyncio.run(main())
 Register callbacks to be notified of changes:
 
 ```python
+import asyncio
+from pysamsungnasa import SamsungNasa
+from pysamsungnasa.protocol.factory.messages.outdoor import OutdoorAirTemperature
+from pysamsungnasa.protocol.factory.messages.indoor import InCurrentTemperature
+
 async def main():
     nasa = SamsungNasa(
         host="192.168.1.100",
         port=8000,
         config={
             "client_address": 1,
-            "device_addresses": ["100000"]
+            "device_addresses": ["100000", "200020"]
         }
     )
 
+    # Callback for any device update
     def device_updated(device):
         print(f"Device {device.address} updated!")
-        print(f"  Outdoor temp: {device.outdoor_temperature}°C")
+        print(f"  Time: {device.last_packet_time}")
+        print(f"  Attributes: {len(device.attributes)}")
+
+    # Callback for specific message type
+    def on_outdoor_temp(device, **kwargs):
+        message = kwargs['packet']
+        print(f"Outdoor temperature: {message.VALUE}°C")
+
+    def on_indoor_temp(device, **kwargs):
+        message = kwargs['packet']
+        print(f"Indoor temperature: {message.VALUE}°C")
 
     await nasa.start()
+    await asyncio.sleep(2)  # Wait for devices
 
     outdoor = nasa.devices["100000"]
+    indoor = nasa.devices["200020"]
+
+    # Register device callback (called for any update)
     outdoor.add_device_callback(device_updated)
 
-    # Device callback will be triggered whenever data is received
+    # Register packet callbacks (called for specific messages)
+    outdoor.add_packet_callback(OutdoorAirTemperature, on_outdoor_temp)
+    indoor.add_packet_callback(InCurrentTemperature, on_indoor_temp)
+
+    # Device callbacks will be triggered whenever data is received
+    print("Listening for updates...")
+    await asyncio.sleep(60)  # Monitor for 1 minute
+
+    await nasa.stop()
+
+asyncio.run(main())
+```
     await asyncio.sleep(60)
 
     await nasa.stop()
