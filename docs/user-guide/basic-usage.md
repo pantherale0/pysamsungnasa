@@ -58,7 +58,7 @@ await nasa.stop()
 ```python
 # Get all devices
 devices = nasa.devices
-# Output: {"200000": NasaDevice, "200000": NasaDevice, ...}
+# Output: {"100000": NasaDevice, "200000": NasaDevice, ...}
 
 # Get a specific device
 outdoor = nasa.devices["100000"]
