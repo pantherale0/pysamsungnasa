@@ -125,7 +125,7 @@ async def main():
     outdoor = nasa.devices["100000"]
 
     # Read attributes using get_attribute()
-    temp_msg = await outdoor.get_attribute(OutdoorAirTemperature, true)
+    temp_msg = await outdoor.get_attribute(OutdoorAirTemperature, True)
     print(f"Outdoor temperature: {temp_msg.VALUE}°C")
 
     power_msg = await outdoor.get_attribute(OutdoorPowerConsumption)
