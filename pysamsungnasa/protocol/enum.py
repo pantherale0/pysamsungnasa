@@ -734,8 +734,8 @@ class InFsv2093(SamsungEnum, IntEnum):
     """
     FSV #2093: Remote Controller Room Temperature Control (Message 0x4127).
 
-    Sets remote controller room temperature control mode/sensitivity.
-    Range: 1-4 (sensitivity levels).
+    Selects the remote controller room temperature control mode or water law interlink pump mode.
+    Values correspond to specific control strategies for room temperature or pump operation.
 
     Label (NASA.prc): ENUM_IN_FSV_2093
     """
@@ -752,7 +752,7 @@ class InFsv2093(SamsungEnum, IntEnum):
 
 class InFsv5022(SamsungEnum, IntEnum):
     """
-    FSV setting (Message 0x4128).
+    FSV #5022: DHW Saving Mode (Message 0x4128).
     Label (NASA.prc): ENUM_IN_FSV_5022
     Remarks: "Min = 0 Max = 1"
     """
