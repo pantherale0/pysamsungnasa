@@ -97,7 +97,7 @@ nasa = SamsungNasa(
 
 ## Reading Device Data
 
-Once connected, use `get_attribute()` to read device information, this function accepts an optional `read` parameter to send a read request to the device rather than using the internal cache:
+Once connected, use get_attribute() to read device information. This function accepts an optional requires_read parameter to send a read request to the device rather than using the internal cache:
 
 ```python
 import asyncio
