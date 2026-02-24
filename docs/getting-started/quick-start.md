@@ -269,7 +269,7 @@ async def main():
         print(f"Failed to connect: {e}")
     except Exception as e:
         print(f"Error: {e}")
-    else:
+    finally:
         await nasa.stop()
 
 asyncio.run(main())
