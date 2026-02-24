@@ -57,8 +57,7 @@ When you start the connection, devices advertise themselves:
 ```python
 nasa = SamsungNasa(
     host="192.168.1.100",
-    port=8000,
-    config={"client_address": 1}
+    port=8000
 )
 
 await nasa.start()
@@ -80,7 +79,6 @@ nasa = SamsungNasa(
     host="192.168.1.100",
     port=8000,
     config={
-        "client_address": 1,
         "device_addresses": ["200000", "200020"]
     }
 )
@@ -107,7 +105,6 @@ async def on_new_device(device):
 nasa = SamsungNasa(
     host="192.168.1.100",
     port=8000,
-    config={"client_address": 1},
     new_device_event_handler=on_new_device
 )
 
@@ -215,7 +212,6 @@ from pysamsungnasa.protocol.factory.messages.indoor import (
     InTargetTemperature,
     InOperationPowerMessage,
     InOperationModeMessage,
-    InFanSpeedMessage
 )
 from pysamsungnasa.protocol.enum import DataType
 
@@ -230,9 +226,6 @@ await indoor.write_attribute(InOperationPowerMessage, 1)  # 1 = On, 0 = Off
 # Set operation mode
 from pysamsungnasa.protocol.enum import InOperationMode
 await indoor.write_attribute(InOperationModeMessage, InOperationMode.COOL)
-
-# Set fan speed (1-4)
-await indoor.write_attribute(InFanSpeedMessage, 3)
 ```
 
 ### Using write_attributes()
@@ -244,7 +237,6 @@ from pysamsungnasa.protocol.factory.messages.indoor import (
     InTargetTemperature,
     InOperationPowerMessage,
     InOperationModeMessage,
-    InFanSpeedMessage
 )
 from pysamsungnasa.protocol.enum import InOperationMode
 
@@ -255,7 +247,6 @@ await indoor.write_attributes({
     InOperationPowerMessage: 1,  # Turn on
     InOperationModeMessage: InOperationMode.COOL,  # Set to cooling mode
     InTargetTemperature: 22.0,  # Set temperature
-    InFanSpeedMessage: 3,  # Set fan speed
 })
 ```
 
@@ -391,8 +382,7 @@ from pysamsungnasa.protocol.factory.messages.indoor import (
 async def main():
     nasa = SamsungNasa(
         host="192.168.1.100",
-        port=8000,
-        config={"client_address": 1}
+        port=8000
     )
 
     def on_temp_change(device, **kwargs):
@@ -403,7 +393,7 @@ async def main():
     await asyncio.sleep(2)  # Wait for devices
 
     indoor = nasa.devices["200020"]
-    
+
     # Listen for temperature changes
     indoor.add_packet_callback(InCurrentTemperature, on_temp_change)
 

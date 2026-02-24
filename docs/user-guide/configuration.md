@@ -20,7 +20,7 @@ nasa = SamsungNasa(
 
 ### Client Address
 
-Your device's address on the NASA network:
+Your device's address on the NASA network, you generally should not need to set this:
 
 ```python
 config = {
@@ -36,11 +36,10 @@ Specify devices you want to monitor:
 
 ```python
 config = {
-    "client_address": 1,
     "device_addresses": [
         "100000  # Outdoor unit (standard format)
-        "200020",    # Indoor unit 1
-        "200021",    # Indoor unit 2
+        "200000",    # Indoor unit 1
+        "200001",    # Indoor unit 2
     ]
 }
 ```
@@ -49,8 +48,8 @@ config = {
 
 Common addresses:
 - `100000  # Outdoor unit (standard)
-- `200020` - Indoor unit 1
-- `200021` - Indoor unit 2
+- `200000` - Indoor unit 1
+- `200001` - Indoor unit 2
 - See your unit's documentation for specific addresses
 
 ## Buffer Management
@@ -101,7 +100,7 @@ Log messages only from specific devices:
 config = {
     "devices_to_log": [
         "100000",  # Only log outdoor unit
-        "200020",  # And indoor unit 1
+        "200000",  # And indoor unit 1
     ]
 }
 ```
@@ -181,8 +180,7 @@ Here's a realistic configuration:
 ```python
 config = {
     # Network
-    "client_address": 1,
-    "device_addresses": ["200000", "200020"],
+    "device_addresses": ["100000", "200000"],
 
     # Buffer
     "max_buffer_size": 262144,
@@ -223,8 +221,7 @@ Load configuration from environment variables:
 import os
 
 config = {
-    "client_address": int(os.getenv("NASA_CLIENT_ADDRESS", "1")),
-    "device_addresses": os.getenv("NASA_DEVICES", "200000,200020").split(","),
+    "device_addresses": os.getenv("NASA_DEVICES", "100000,200000").split(","),
     "log_all_messages": os.getenv("NASA_DEBUG", "false").lower() == "true",
 }
 
@@ -239,8 +236,7 @@ Usage:
 ```bash
 export NASA_HOST=192.168.1.100
 export NASA_PORT=8000
-export NASA_CLIENT_ADDRESS=1
-export NASA_DEVICES=200000,200020
+export NASA_DEVICES=100000,200000
 export NASA_DEBUG=false
 
 python your_script.py
@@ -252,7 +248,6 @@ python your_script.py
 
 ```python
 config = {
-    "client_address": 1,
     "device_addresses": ["100000"],
 }
 ```
@@ -261,12 +256,11 @@ config = {
 
 ```python
 config = {
-    "client_address": 1,
     "device_addresses": [
-        "100000  # Outdoor
-        "200020",  # Indoor 1
-        "200021",  # Indoor 2
-        "200022",  # Indoor 3
+        "100000",  # Outdoor
+        "200000",  # Indoor 1
+        "200001",  # Indoor 2
+        "200002",  # Indoor 3
     ],
 }
 ```
@@ -275,7 +269,6 @@ config = {
 
 ```python
 config = {
-    "client_address": 1,
     "device_addresses": ["100000"],
     "log_all_messages": True,
     "devices_to_log": ["100000"],
@@ -287,8 +280,7 @@ config = {
 
 ```python
 config = {
-    "client_address": 1,
-    "device_addresses": ["200000", "200020"],
+    "device_addresses": ["100000", "200000"],
     "enable_read_retries": True,
     "enable_write_retries": True,
     "read_retry_max_attempts": 5,
