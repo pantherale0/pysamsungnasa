@@ -323,7 +323,8 @@ async def main():
         print("Monitoring for 30 seconds...")
         await asyncio.sleep(30)
 
-        temp_msg = await outdoor.get_attribute(OutdoorAirTemperature, true)
+        outdoor = nasa.devices["100000"]
+        temp_msg = await outdoor.get_attribute(OutdoorAirTemperature, True)
         print(f"Outdoor temperature: {temp_msg.VALUE}°C")
 
         power_msg = await outdoor.get_attribute(OutdoorPowerConsumption)
