@@ -1576,34 +1576,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/controllers/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Controllers
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../api/configuration/" class="md-nav__link">
         
   
@@ -1746,8 +1718,7 @@
 <p>When you start the connection, devices advertise themselves:</p>
 <div class="highlight"><pre><span></span><code><span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
     <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
-    <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+    <span class="n">port</span><span class="o">=</span><span class="mi">8000</span>
 <span class="p">)</span>
 
 <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -1765,7 +1736,6 @@
     <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
     <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
     <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">,</span> <span class="s2">&quot;200020&quot;</span><span class="p">]</span>
     <span class="p">}</span>
 <span class="p">)</span>
@@ -1788,7 +1758,6 @@
 <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
     <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
     <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
-    <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
     <span class="n">new_device_event_handler</span><span class="o">=</span><span class="n">on_new_device</span>
 <span class="p">)</span>
 
@@ -1874,7 +1843,6 @@
     <span class="n">InTargetTemperature</span><span class="p">,</span>
     <span class="n">InOperationPowerMessage</span><span class="p">,</span>
     <span class="n">InOperationModeMessage</span><span class="p">,</span>
-    <span class="n">InFanSpeedMessage</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataType</span>
 
@@ -1889,9 +1857,6 @@
 <span class="c1"># Set operation mode</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">InOperationMode</span>
 <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span><span class="n">InOperationModeMessage</span><span class="p">,</span> <span class="n">InOperationMode</span><span class="o">.</span><span class="n">COOL</span><span class="p">)</span>
-
-<span class="c1"># Set fan speed (1-4)</span>
-<span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span><span class="n">InFanSpeedMessage</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="using-write_attributes">Using write_attributes()<a class="headerlink" href="#using-write_attributes" title="Permanent link">&para;</a></h3>
 <p>Write multiple attributes in a single packet (up to 10 messages):</p>
@@ -1899,7 +1864,6 @@
     <span class="n">InTargetTemperature</span><span class="p">,</span>
     <span class="n">InOperationPowerMessage</span><span class="p">,</span>
     <span class="n">InOperationModeMessage</span><span class="p">,</span>
-    <span class="n">InFanSpeedMessage</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">InOperationMode</span>
 
@@ -1910,7 +1874,6 @@
     <span class="n">InOperationPowerMessage</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># Turn on</span>
     <span class="n">InOperationModeMessage</span><span class="p">:</span> <span class="n">InOperationMode</span><span class="o">.</span><span class="n">COOL</span><span class="p">,</span>  <span class="c1"># Set to cooling mode</span>
     <span class="n">InTargetTemperature</span><span class="p">:</span> <span class="mf">22.0</span><span class="p">,</span>  <span class="c1"># Set temperature</span>
-    <span class="n">InFanSpeedMessage</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>  <span class="c1"># Set fan speed</span>
 <span class="p">})</span>
 </code></pre></div>
 <h3 id="using-different-write-modes">Using Different Write Modes<a class="headerlink" href="#using-different-write-modes" title="Permanent link">&para;</a></h3>
@@ -2017,8 +1980,7 @@
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
-        <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
-        <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+        <span class="n">port</span><span class="o">=</span><span class="mi">8000</span>
     <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_temp_change</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>

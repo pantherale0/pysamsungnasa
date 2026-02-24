@@ -1459,34 +1459,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/controllers/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Controllers
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../api/configuration/" class="md-nav__link">
         
   
@@ -1603,7 +1575,7 @@
 </code></pre></div>
 <h2 id="basic-configuration">Basic Configuration<a class="headerlink" href="#basic-configuration" title="Permanent link">&para;</a></h2>
 <h3 id="client-address">Client Address<a class="headerlink" href="#client-address" title="Permanent link">&para;</a></h3>
-<p>Your device's address on the NASA network:</p>
+<p>Your device's address on the NASA network, you generally should not need to set this:</p>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># Default: 1</span>
 <span class="p">}</span>
@@ -1612,19 +1584,18 @@
 <h3 id="device-addresses">Device Addresses<a class="headerlink" href="#device-addresses" title="Permanent link">&para;</a></h3>
 <p>Specify devices you want to monitor:</p>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;100000  # Outdoor unit (standard format)</span>
-        <span class="s2">&quot;200020&quot;</span><span class="p">,</span>    <span class="c1"># Indoor unit 1</span>
-        <span class="s2">&quot;200021&quot;</span><span class="p">,</span>    <span class="c1"># Indoor unit 2</span>
+        <span class="s2">&quot;200000&quot;</span><span class="p">,</span>    <span class="c1"># Indoor unit 1</span>
+        <span class="s2">&quot;200001&quot;</span><span class="p">,</span>    <span class="c1"># Indoor unit 2</span>
     <span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div>
 <p><strong>Address Format</strong>: Addresses are strings representing the device's network address.</p>
 <p>Common addresses:
 - <code>100000  # Outdoor unit (standard)
--</code>200020<code>- Indoor unit 1
--</code>200021` - Indoor unit 2
+-</code>200000<code>- Indoor unit 1
+-</code>200001` - Indoor unit 2
 - See your unit's documentation for specific addresses</p>
 <h2 id="buffer-management">Buffer Management<a class="headerlink" href="#buffer-management" title="Permanent link">&para;</a></h2>
 <h3 id="max-buffer-size">Max Buffer Size<a class="headerlink" href="#max-buffer-size" title="Permanent link">&para;</a></h3>
@@ -1654,7 +1625,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;devices_to_log&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="s2">&quot;100000&quot;</span><span class="p">,</span>  <span class="c1"># Only log outdoor unit</span>
-        <span class="s2">&quot;200020&quot;</span><span class="p">,</span>  <span class="c1"># And indoor unit 1</span>
+        <span class="s2">&quot;200000&quot;</span><span class="p">,</span>  <span class="c1"># And indoor unit 1</span>
     <span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div>
@@ -1708,8 +1679,7 @@
 <p>Here's a realistic configuration:</p>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
     <span class="c1"># Network</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">,</span> <span class="s2">&quot;200020&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">,</span> <span class="s2">&quot;200000&quot;</span><span class="p">],</span>
 
     <span class="c1"># Buffer</span>
     <span class="s2">&quot;max_buffer_size&quot;</span><span class="p">:</span> <span class="mi">262144</span><span class="p">,</span>
@@ -1746,8 +1716,7 @@
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;NASA_CLIENT_ADDRESS&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)),</span>
-    <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;NASA_DEVICES&quot;</span><span class="p">,</span> <span class="s2">&quot;200000,200020&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;NASA_DEVICES&quot;</span><span class="p">,</span> <span class="s2">&quot;100000,200000&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">),</span>
     <span class="s2">&quot;log_all_messages&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;NASA_DEBUG&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
@@ -1760,8 +1729,7 @@
 <p>Usage:
 <div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">NASA_HOST</span><span class="o">=</span><span class="m">192</span>.168.1.100
 <span class="nb">export</span><span class="w"> </span><span class="nv">NASA_PORT</span><span class="o">=</span><span class="m">8000</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">NASA_CLIENT_ADDRESS</span><span class="o">=</span><span class="m">1</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">NASA_DEVICES</span><span class="o">=</span><span class="m">200000</span>,200020
+<span class="nb">export</span><span class="w"> </span><span class="nv">NASA_DEVICES</span><span class="o">=</span><span class="m">100000</span>,200000
 <span class="nb">export</span><span class="w"> </span><span class="nv">NASA_DEBUG</span><span class="o">=</span><span class="nb">false</span>
 
 python<span class="w"> </span>your_script.py
@@ -1769,24 +1737,21 @@ python<span class="w"> </span>your_script.py
 <h2 id="configuration-for-different-setups">Configuration for Different Setups<a class="headerlink" href="#configuration-for-different-setups" title="Permanent link">&para;</a></h2>
 <h3 id="single-outdoor-unit">Single Outdoor Unit<a class="headerlink" href="#single-outdoor-unit" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">],</span>
 <span class="p">}</span>
 </code></pre></div>
 <h3 id="multiple-indoor-units">Multiple Indoor Units<a class="headerlink" href="#multiple-indoor-units" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;100000  # Outdoor</span>
-        <span class="s2">&quot;200020&quot;</span><span class="p">,</span>  <span class="c1"># Indoor 1</span>
-        <span class="s2">&quot;200021&quot;</span><span class="p">,</span>  <span class="c1"># Indoor 2</span>
-        <span class="s2">&quot;200022&quot;</span><span class="p">,</span>  <span class="c1"># Indoor 3</span>
+        <span class="s2">&quot;100000&quot;</span><span class="p">,</span>  <span class="c1"># Outdoor</span>
+        <span class="s2">&quot;200000&quot;</span><span class="p">,</span>  <span class="c1"># Indoor 1</span>
+        <span class="s2">&quot;200001&quot;</span><span class="p">,</span>  <span class="c1"># Indoor 2</span>
+        <span class="s2">&quot;200002&quot;</span><span class="p">,</span>  <span class="c1"># Indoor 3</span>
     <span class="p">],</span>
 <span class="p">}</span>
 </code></pre></div>
 <h3 id="debug-mode">Debug Mode<a class="headerlink" href="#debug-mode" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">],</span>
     <span class="s2">&quot;log_all_messages&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="s2">&quot;devices_to_log&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">],</span>
@@ -1795,8 +1760,7 @@ python<span class="w"> </span>your_script.py
 </code></pre></div>
 <h3 id="production-mode">Production Mode<a class="headerlink" href="#production-mode" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">,</span> <span class="s2">&quot;200020&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">,</span> <span class="s2">&quot;200000&quot;</span><span class="p">],</span>
     <span class="s2">&quot;enable_read_retries&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="s2">&quot;enable_write_retries&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="s2">&quot;read_retry_max_attempts&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>

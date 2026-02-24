@@ -1068,34 +1068,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../api/controllers/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Controllers
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../api/configuration/" class="md-nav__link">
         
   
@@ -1595,7 +1567,6 @@
     <span class="n">InOperationPowerMessage</span><span class="p">,</span>
     <span class="n">InOperationModeMessage</span><span class="p">,</span>
     <span class="n">InTargetTemperature</span><span class="p">,</span>
-    <span class="n">InFanSpeedMessage</span><span class="p">,</span>
     <span class="n">InCurrentTemperature</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">InOperationMode</span>
@@ -1634,7 +1605,6 @@
             <span class="n">InOperationPowerMessage</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># Turn on</span>
             <span class="n">InOperationModeMessage</span><span class="p">:</span> <span class="n">InOperationMode</span><span class="o">.</span><span class="n">AUTO</span><span class="p">,</span>  <span class="c1"># Auto mode</span>
             <span class="n">InTargetTemperature</span><span class="p">:</span> <span class="n">zone_config</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span>  <span class="c1"># Temperature</span>
-            <span class="n">InFanSpeedMessage</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1"># Fan speed</span>
         <span class="p">})</span>
 
     <span class="c1"># Monitor all zones</span>
