@@ -621,18 +621,18 @@ class InFsv2081WaterLawTypeCooling(SamsungEnum, IntEnum):
 
 
 class InUseThermostat(SamsungEnum, IntEnum):
-    """FSV Use Thermostat setting (FSV 209*)."""
+    """FSV Use Thermostat setting (FSV 2091/2092)."""
 
-    NO = 0
-    """Thermostat is not used"""
-    VALUE_1 = 1
-    """Setting option 1"""
-    VALUE_2 = 2
-    """Setting option 2"""
-    VALUE_3 = 3
-    """Setting option 3"""
-    VALUE_4 = 4
-    """Setting option 4"""
+    NOT_USED = 0
+    """Not Used"""
+    THERMOSTAT_ONLY = 1
+    """On/Off by Thermostat Only"""
+    WATER_PUMP_1 = 2
+    """Water Pump 1 (Off when compressor off)"""
+    WATER_PUMP_2 = 3
+    """Water Pump 2 (On while thermostat active)"""
+    WATER_PUMP_3 = 4
+    """Water Pump 3 (7min off/3min on cycle)"""
 
 
 class InFsv3011EnableDhw(SamsungEnum, IntEnum):
@@ -689,14 +689,14 @@ class InFsv3061UseDhwThermostat(SamsungEnum, IntEnum):
     XML ProtocolID: ENUM_IN_FSV_3061
     """
 
-    NO = 0
-    """DHW thermostat is not used"""
-    VALUE_1 = 1
-    """Setting option 1"""
-    VALUE_2 = 2
-    """Setting option 2"""
-    VALUE_3 = 3
-    """Setting option 3"""
+    HYDRO_ALWAYS = 0
+    """Hydro unit operates regardless of solar pump activation"""
+    HYDRO_STOP_ON_SOLAR = 1
+    """Hydro unit stops when solar pump is operating"""
+    DISABLED = 2
+    """Disabled"""
+    DEFROST_SIGNAL = 3
+    """Defrost signal output when entering defrost mode"""
 
 
 class InFsv3071(SamsungEnum, IntEnum):
@@ -734,33 +734,33 @@ class InFsv2093(SamsungEnum, IntEnum):
     """
     FSV #2093: Remote Controller Room Temperature Control (Message 0x4127).
 
-    Sets remote controller room temperature control mode/sensitivity.
-    Range: 1-4 (sensitivity levels).
+    Selects the remote controller room temperature control mode or water law interlink pump mode.
+    Values correspond to specific control strategies for room temperature or pump operation.
 
     Label (NASA.prc): ENUM_IN_FSV_2093
     """
 
-    VALUE_1 = 1
-    """Sensitivity level 1 (lowest)"""
-    VALUE_2 = 2
-    """Sensitivity level 2"""
-    VALUE_3 = 3
-    """Sensitivity level 3"""
-    VALUE_4 = 4
-    """Sensitivity level 4 (highest)"""
+    ROOM_TEMP_ONLY = 1
+    """Room Temp Only (On/Off)"""
+    WL_INTERLINK_PUMP1 = 2
+    """Room Temp ON/OFF or WL Interlink ON/OFF (Pump1)"""
+    WL_INTERLINK_PUMP2 = 3
+    """Room Temp ON/OFF or WL Interlink ON/OFF (Pump2)"""
+    WL_INTERLINK_PUMP3 = 4
+    """Room Temp ON/OFF or WL Interlink ON/OFF (Pump3)"""
 
 
 class InFsv5022(SamsungEnum, IntEnum):
     """
-    FSV setting (Message 0x4128).
+    FSV #5022: DHW Saving Mode (Message 0x4128).
     Label (NASA.prc): ENUM_IN_FSV_5022
     Remarks: "Min = 0 Max = 1"
     """
 
-    VALUE_0 = 0
-    """Setting option 0"""
-    VALUE_1 = 1
-    """Setting option 1"""
+    STANDARD = 0
+    """Standard: DHW Saving Temp offset (FSV #5021) active, thermostat off until offset (default)"""
+    ADVANCED = 1
+    """Advanced: Custom thermo on temperature (FSV #5023) enables earlier heating restart"""
 
 
 class OutOperationServiceOp(SamsungEnum, IntEnum):
@@ -1353,19 +1353,6 @@ class In3WayValve(SamsungEnum, IntEnum):
     """Valve is set to tank mode"""
 
 
-class InFsv4061(SamsungEnum, IntEnum):
-    """
-    FSV 4061 (Message 0x411A).
-    Label (NASA.prc): ENUM_IN_FSV_4061
-    XML ProtocolID: ENUM_IN_FSV_4061
-    """
-
-    VALUE_0 = 0
-    """Setting value 0"""
-    VALUE_1 = 1
-    """Setting value 1"""
-
-
 class InFsv5094(SamsungEnum, IntEnum):
     """
     FSV #5094: DHW Mode Target Tank Temperature (Message 0x411D).
@@ -1376,10 +1363,10 @@ class InFsv5094(SamsungEnum, IntEnum):
     Label (NASA.prc): ENUM_IN_FSV_5094
     """
 
-    VALUE_0 = 0
-    """Setting value 0 (primary mode)"""
-    VALUE_1 = 1
-    """Setting value 1 (alternate mode)"""
+    HEAT_PUMP_LIMIT = 0
+    """Target tank temp is 55/63/70°C (FSV #3021, max DHW tank temp with heat pump)"""
+    BOOSTER_70C = 1
+    """Target tank temp is 70°C (booster heater operates immediately with heat pump)"""
 
 
 class InSgReadyModeState(SamsungEnum, IntEnum):

@@ -42,7 +42,6 @@ from ...enum import (
     InFsv4022 as InFsv4022Enum,
     InFsv4041 as InFsv4041Enum,
     InFsv4051 as InFsv4051Enum,
-    InFsv4061 as InFsv4061Enum,
     InFsv5022 as InFsv5022Enum,
     InFsv5033,
     InFsv5061,
@@ -1340,7 +1339,7 @@ class InZone1PowerMessage(BoolMessage):
     MESSAGE_NAME = "Zone 1 operating power"
 
 
-class InFsv4061Message(EnumMessage):
+class InFsv4061Message(BoolMessage):
     """Parser for message 0x411A (FSV 4061 - Zone Control Application).
 
     Enables two-zone heating/cooling control via wired remote controller.
@@ -1360,7 +1359,6 @@ class InFsv4061Message(EnumMessage):
 
     MESSAGE_ID = 0x411A
     MESSAGE_NAME = "FSV 4061 Zone Control Application"
-    MESSAGE_ENUM = InFsv4061Enum
 
 
 class InFsv5081Message(BoolMessage):
