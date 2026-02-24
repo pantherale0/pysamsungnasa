@@ -34,7 +34,6 @@ nasa = SamsungNasa(
     host="192.168.1.100",           # IP address of NASA adapter
     port=8000,                       # NASA protocol port
     config={
-        "client_address": 1,         # Your address on network
         "device_addresses": [],      # Known devices (optional)
     },
     new_device_event_handler=None,   # Callback for new devices (optional)
@@ -59,11 +58,11 @@ await nasa.stop()
 ```python
 # Get all devices
 devices = nasa.devices
-# Output: {"200000": NasaDevice, "200020": NasaDevice, ...}
+# Output: {"200000": NasaDevice, "200000": NasaDevice, ...}
 
 # Get a specific device
 outdoor = nasa.devices["100000"]
-indoor = nasa.devices["200020"]
+indoor = nasa.devices["200000"]
 
 # List all device addresses
 for address in nasa.devices:
@@ -87,9 +86,9 @@ print(device.attributes)           # All attributes dict
 print(device.config)               # Configuration object
 ```
 
-### Reading Outdoor Unit Attributes
+### Reading Device Attributes
 
-Use `get_attribute()` to read specific data from outdoor units:
+Use `get_attribute()` to read specific data different devices, in this example we look at the outdoor unit:
 
 ```python
 from pysamsungnasa.protocol.factory.messages.outdoor import (
@@ -121,45 +120,6 @@ print(f"Compressor: {freq_msg.VALUE}Hz")
 # Read voltage
 voltage_msg = await outdoor.get_attribute(HeatPumpVoltage)
 print(f"Voltage: {voltage_msg.VALUE}V")
-```
-
-### Reading Indoor Unit Attributes
-
-Read data from indoor (climate) units:
-
-```python
-from pysamsungnasa.protocol.factory.messages.indoor import (
-    InCurrentTemperature,
-    InTargetTemperature,
-    InOperationPowerMessage,
-    InOperationModeMessage,
-    InFanSpeedMessage
-)
-
-indoor = nasa.devices["200020"]
-
-# Read current temperature
-current_temp = await indoor.get_attribute(InCurrentTemperature)
-print(f"Current: {current_temp.VALUE}°C")
-
-# Read target temperature  
-target_temp = await indoor.get_attribute(InTargetTemperature)
-print(f"Target: {target_temp.VALUE}°C")
-
-# Read power state
-power = await indoor.get_attribute(InOperationPowerMessage)
-print(f"Power: {power.VALUE}")
-
-# Read operation mode
-mode = await indoor.get_attribute(InOperationModeMessage)
-print(f"Mode: {mode.VALUE}")
-
-# Force a fresh read (bypass cache)
-fresh_temp = await indoor.get_attribute(
-    InCurrentTemperature,
-    requires_read=True
-)
-print(f"Fresh temperature: {fresh_temp.VALUE}°C")
 ```
 
 ## Callbacks and Events
@@ -198,7 +158,7 @@ def on_outdoor_temp_changed(device, **kwargs):
     message = kwargs['packet']
     print(f"Outdoor temp: {message.VALUE}°C")
 
-indoor = nasa.devices["200020"]
+indoor = nasa.devices["200000"]
 outdoor = nasa.devices["100000"]
 
 # Add callbacks for specific message types
@@ -222,7 +182,6 @@ async def on_new_device(device):
 nasa = SamsungNasa(
     host="192.168.1.100",
     port=8000,
-    config={"client_address": 1},
     new_device_event_handler=on_new_device
 )
 ```
@@ -238,7 +197,6 @@ async def on_disconnect():
 nasa = SamsungNasa(
     host="192.168.1.100",
     port=8000,
-    config={"client_address": 1},
     disconnect_event_handler=on_disconnect
 )
 ```
@@ -253,24 +211,20 @@ Use `write_attribute()` to write a single value to a device:
 from pysamsungnasa.protocol.factory.messages.indoor import (
     InTargetTemperature,
     InOperationPowerMessage,
-    InOperationModeMessage,
-    InFanSpeedMessage
+    InOperationModeMessage
 )
-from pysamsungnasa.protocol.enum import InOperationMode
+from pysamsungnasa.protocol.enum import InOperationMode, InOperationPower
 
-indoor = nasa.devices["200020"]
+indoor = nasa.devices["200000"]
 
 # Set target temperature
 await indoor.write_attribute(InTargetTemperature, 22.0)
 
 # Turn on the device
-await indoor.write_attribute(InOperationPowerMessage, 1)  # 1=On, 0=Off
+await indoor.write_attribute(InOperationPowerMessage, InOperationPower.ON_STATE_1)
 
 # Set cooling mode
 await indoor.write_attribute(InOperationModeMessage, InOperationMode.COOL)
-
-# Set fan speed (1-4)
-await indoor.write_attribute(InFanSpeedMessage, 3)
 ```
 
 ### Writing Multiple Attributes
@@ -282,52 +236,17 @@ from pysamsungnasa.protocol.factory.messages.indoor import (
     InTargetTemperature,
     InOperationPowerMessage,
     InOperationModeMessage,
-    InFanSpeedMessage
 )
-from pysamsungnasa.protocol.enum import InOperationMode
+from pysamsungnasa.protocol.enum import InOperationMode, InOperationPower
 
-indoor = nasa.devices["200020"]
+indoor = nasa.devices["200000"]
 
 # Set multiple attributes at once
 await indoor.write_attributes({
-    InOperationPowerMessage: 1,  # Turn on
+    InOperationPowerMessage: InOperationPower.ON_STATE_1,  # Turn on
     InOperationModeMessage: InOperationMode.COOL,  # Cooling
     InTargetTemperature: 22.0,  # Temperature
-    InFanSpeedMessage: 3,  # Fan speed
 })
-```
-
-### Using Controllers (Alternative)
-
-For convenience, you can also use device controllers if available:
-
-```python
-indoor = nasa.devices["200020"]
-
-# Climate control (if controller exists)
-if indoor.climate_controller:
-    cc = indoor.climate_controller
-    
-    # Power commands
-    await cc.turn_on()
-    await cc.turn_off()
-    
-    # Mode (auto, cool, heat, dry, fan)
-    await cc.set_operation_mode("cool")
-    
-    # Temperature
-    await cc.set_target_temperature(22.0)
-    
-    # Fan
-    await cc.set_fan_speed(3)
-
-# DHW control (if controller exists)
-if indoor.dhw_controller:
-    dhw = indoor.dhw_controller
-    
-    await dhw.turn_on()
-    await dhw.turn_off()
-    await dhw.set_target_temperature(45.0)
 ```
 
 ### Using Different Write Modes
@@ -355,7 +274,7 @@ Always handle potential errors:
 ```python
 async def safe_control():
     try:
-        indoor = nasa.devices["200020"]
+        indoor = nasa.devices["200000"]
         await indoor.climate_controller.set_target_temperature(22)
     except KeyError:
         print("Device not found!")
@@ -379,7 +298,6 @@ async def monitor():
     nasa = SamsungNasa(
         host="192.168.1.100",
         port=8000,
-        config={"client_address": 1}
     )
 
     await nasa.start()
@@ -408,7 +326,6 @@ async def read_outdoor_data():
     nasa = SamsungNasa(
         host="192.168.1.100",
         port=8000,
-        config={"client_address": 1}
     )
 
     await nasa.start()
@@ -430,6 +347,8 @@ async def read_outdoor_data():
 
 ### Polling for Data
 
+Some attributes require you to read manually and are not sent automatically by the Samsung controllers. Set `requires_read` to `True` in this instance.
+
 ```python
 import asyncio
 from pysamsungnasa import SamsungNasa
@@ -439,7 +358,6 @@ async def poll_every_30_seconds():
     nasa = SamsungNasa(
         host="192.168.1.100",
         port=8000,
-        config={"client_address": 1}
     )
 
     await nasa.start()

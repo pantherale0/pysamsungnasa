@@ -41,9 +41,6 @@ async def main():
     nasa = SamsungNasa(
         host="192.168.1.100",      # IP of your NASA network adapter
         port=8000,                  # NASA protocol port
-        config={
-            "client_address": 1,    # Your client address on the network
-        }
     )
 
     # Connect to the unit
@@ -65,8 +62,7 @@ By default, pysamsungnasa discovers devices automatically. Once connected, new d
 async def main():
     nasa = SamsungNasa(
         host="192.168.1.100",
-        port=8000,
-        config={"client_address": 1}
+        port=8000
     )
 
     await nasa.start()
@@ -91,10 +87,9 @@ nasa = SamsungNasa(
     host="192.168.1.100",
     port=8000,
     config={
-        "client_address": 1,
         "device_addresses": [
             "100000",    # Outdoor unit
-            "200020",    # Indoor unit 1
+            "200000",    # Indoor unit 1
         ]
     }
 )
@@ -102,7 +97,7 @@ nasa = SamsungNasa(
 
 ## Reading Device Data
 
-Once connected, use `get_attribute()` to read device information:
+Once connected, use `get_attribute()` to read device information, this function accepts an optional `read` parameter to send a read request to the device rather than using the internal cache:
 
 ```python
 import asyncio
@@ -130,7 +125,7 @@ async def main():
     outdoor = nasa.devices["100000"]
 
     # Read attributes using get_attribute()
-    temp_msg = await outdoor.get_attribute(OutdoorAirTemperature)
+    temp_msg = await outdoor.get_attribute(OutdoorAirTemperature, true)
     print(f"Outdoor temperature: {temp_msg.VALUE}°C")
 
     power_msg = await outdoor.get_attribute(OutdoorPowerConsumption)
@@ -154,8 +149,7 @@ from pysamsungnasa import SamsungNasa
 from pysamsungnasa.protocol.factory.messages.indoor import (
     InOperationPowerMessage,
     InOperationModeMessage,
-    InTargetTemperature,
-    InFanSpeedMessage
+    InTargetTemperature
 )
 from pysamsungnasa.protocol.enum import InOperationMode
 
@@ -165,40 +159,26 @@ async def main():
         port=8000,
         config={
             "client_address": 1,
-            "device_addresses": ["200020"]  # Indoor unit
+            "device_addresses": ["200000"]  # Indoor unit
         }
     )
 
     await nasa.start()
     await asyncio.sleep(2)  # Wait for device discovery
 
-    indoor = nasa.devices["200020"]
+    indoor = nasa.devices["200000"]
 
     # Write single attributes
     await indoor.write_attribute(InOperationPowerMessage, 1)  # Turn on
     await indoor.write_attribute(InOperationModeMessage, InOperationMode.COOL)
     await indoor.write_attribute(InTargetTemperature, 22.0)
-    await indoor.write_attribute(InFanSpeedMessage, 3)
 
     # Or write multiple attributes at once (more efficient)
     await indoor.write_attributes({
         InOperationPowerMessage: 1,  # Turn on
         InOperationModeMessage: InOperationMode.COOL,  # Cooling mode
         InTargetTemperature: 22.0,  # Temperature
-        InFanSpeedMessage: 3,  # Fan speed
     })
-
-    # Alternative: Use controllers if available
-    if indoor.climate_controller:
-        await indoor.climate_controller.turn_on()
-        await indoor.climate_controller.set_operation_mode("cool")
-        await indoor.climate_controller.set_target_temperature(22)
-        await indoor.climate_controller.set_fan_speed(1)
-
-    # Control DHW (if available)
-    if indoor.dhw_controller:
-        await indoor.dhw_controller.turn_on()
-        await indoor.dhw_controller.set_target_temperature(45)
 
     await nasa.stop()
 
@@ -221,7 +201,7 @@ async def main():
         port=8000,
         config={
             "client_address": 1,
-            "device_addresses": ["100000", "200020"]
+            "device_addresses": ["100000", "200000"]
         }
     )
 
@@ -244,7 +224,7 @@ async def main():
     await asyncio.sleep(2)  # Wait for devices
 
     outdoor = nasa.devices["100000"]
-    indoor = nasa.devices["200020"]
+    indoor = nasa.devices["200000"]
 
     # Register device callback (called for any update)
     outdoor.add_device_callback(device_updated)
@@ -289,7 +269,7 @@ async def main():
         print(f"Failed to connect: {e}")
     except Exception as e:
         print(f"Error: {e}")
-    finally:
+    else:
         await nasa.stop()
 
 asyncio.run(main())
@@ -303,6 +283,11 @@ Here's a complete example that brings it all together:
 import asyncio
 import logging
 from pysamsungnasa import SamsungNasa
+from pysamsungnasa.protocol.factory.messages.outdoor import (
+    OutdoorAirTemperature,
+    OutdoorPowerConsumption,
+    OutdoorCompressorFrequency
+)
 
 # Enable logging to see what's happening
 logging.basicConfig(level=logging.DEBUG)
@@ -313,7 +298,7 @@ async def main():
         port=8000,
         config={
             "client_address": 1,
-            "device_addresses": ["100000", "200020"]
+            "device_addresses": ["100000", "200000"]
         }
     )
 
@@ -338,13 +323,14 @@ async def main():
         print("Monitoring for 30 seconds...")
         await asyncio.sleep(30)
 
-        # Display data
-        for address, device in nasa.devices.items():
-            print(f"\n{address}:")
-            if hasattr(device, 'outdoor_temperature'):
-                print(f"  Outdoor temp: {device.outdoor_temperature}°C")
-            if hasattr(device, 'power_consumption'):
-                print(f"  Power: {device.power_consumption}W")
+        temp_msg = await outdoor.get_attribute(OutdoorAirTemperature, true)
+        print(f"Outdoor temperature: {temp_msg.VALUE}°C")
+
+        power_msg = await outdoor.get_attribute(OutdoorPowerConsumption)
+        print(f"Power consumption: {power_msg.VALUE}W")
+
+        freq_msg = await outdoor.get_attribute(OutdoorCompressorFrequency)
+        print(f"Compressor frequency: {freq_msg.VALUE}Hz")
 
     finally:
         print("Disconnecting...")
@@ -360,3 +346,4 @@ asyncio.run(main())
 - Read the [User Guide](../user-guide/basic-usage.md) for more detailed usage
 - Check the [API Reference](../api/samsung-nasa.md) for all available methods
 - Explore [Examples](../examples.md) for more use cases
+- Find more messages to read from the [message factory](../protocol/message-factory.md)

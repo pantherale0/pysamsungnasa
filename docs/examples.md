@@ -64,14 +64,14 @@ async def main():
 
     for address, device in nasa.devices.items():
         print(f"\nDevice ({address}):")
-        
+
         # Try reading outdoor temperature
         try:
             outdoor_temp = await device.get_attribute(OutdoorAirTemperature)
             print(f"  Outdoor Temperature: {outdoor_temp.VALUE}°C")
         except (TimeoutError, KeyError):
             pass
-        
+
         # Try reading indoor temperature
         try:
             current_temp = await device.get_attribute(InCurrentTemperature)
@@ -129,7 +129,7 @@ async def smart_thermostat(target_temp=22, hysteresis=0.5):
             # Get current temperature
             temp_msg = await device.get_attribute(InCurrentTemperature)
             current = temp_msg.VALUE
-            
+
             # Get current mode
             mode_msg = await device.get_attribute(InOperationModeMessage)
             current_mode = mode_msg.VALUE
@@ -155,7 +155,7 @@ async def smart_thermostat(target_temp=22, hysteresis=0.5):
             # In range
             else:
                 print(f"OK: {current:.1f}°C (target {target_temp}°C)")
-        
+
         except TimeoutError:
             print("Timeout reading temperature")
 
@@ -205,13 +205,13 @@ async def energy_monitoring():
     async def log_power(device):
         try:
             timestamp = datetime.now().strftime("%H:%M:%S")
-            
+
             power_msg = await device.get_attribute(OutdoorPowerConsumption)
             power = power_msg.VALUE
-            
+
             cumulative_msg = await device.get_attribute(OutdoorCumulativeEnergy)
             cumulative = cumulative_msg.VALUE
-            
+
             cop_msg = await device.get_attribute(OutdoorCopRating)
             cop = cop_msg.VALUE
 
@@ -248,7 +248,6 @@ from pysamsungnasa.protocol.factory.messages.indoor import (
     InOperationPowerMessage,
     InOperationModeMessage,
     InTargetTemperature,
-    InFanSpeedMessage,
     InCurrentTemperature
 )
 from pysamsungnasa.protocol.enum import InOperationMode
@@ -287,7 +286,6 @@ async def multi_zone_control():
             InOperationPowerMessage: 1,  # Turn on
             InOperationModeMessage: InOperationMode.AUTO,  # Auto mode
             InTargetTemperature: zone_config['target'],  # Temperature
-            InFanSpeedMessage: 2,  # Fan speed
         })
 
     # Monitor all zones

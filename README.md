@@ -11,7 +11,7 @@ A Python library to communicate with Samsung heat pumps, in theory both cool onl
 - Discover new devices on the NASA network and manage known devices (SamsungNasa).
 - Send commands to devices and handle responses (SamsungNasa, NasaClient).
 - Parse incoming data packets from devices (NasaPacketParser, various message classes).
-- Represent devices with attributes and control their functions (NasaDevice, DhwController, ClimateController).
+- Represent devices with attributes and control their functions (NasaDevice).
 - Control DHW (Domestic Hot Water) settings like power, operation mode, and target temperature (DhwController).
 - Control climate settings like power, mode, target temperature, fan speed, and more (ClimateController).
 - Provide a mechanism for callbacks to be notified of device and packet updates (NasaDevice).

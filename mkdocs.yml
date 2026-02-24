@@ -57,7 +57,6 @@ nav:
       - SamsungNasa: api/samsung-nasa.md
       - NasaClient: api/nasa-client.md
       - NasaDevice: api/nasa-device.md
-      - Controllers: api/controllers.md
       - Configuration: api/configuration.md
   - CLI Reference: cli/reference.md
   - Examples: examples.md
