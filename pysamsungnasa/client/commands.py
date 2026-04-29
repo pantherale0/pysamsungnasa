@@ -41,10 +41,6 @@ async def send_command(client: "NasaClient", message: list[str]) -> int | bytes 
             client._packet_number_counter = (client._packet_number_counter - 1) % 256
             client._logger.error("Error encoding command %s: %s", msg, ex)
             return None
-        except asyncio.QueueFull:
-            client._packet_number_counter = (client._packet_number_counter - 1) % 256
-            client._logger.error("TX queue is full, cannot send command: %s", msg)
-            return None
         except Exception as ex:
             client._packet_number_counter = (client._packet_number_counter - 1) % 256
             client._logger.error("Unexpected error sending command %s: %s", msg, ex)
