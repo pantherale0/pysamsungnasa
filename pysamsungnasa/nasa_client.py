@@ -81,7 +81,6 @@ class NasaClient:
         self._reader: asyncio.StreamReader | None = None
         self._read_task: asyncio.Task | None = None
         self._writer: serialx.SerialStreamWriter | None = None
-        self._write_lock = asyncio.Lock()
         self._pending_reads = self._retry_state.pending_reads
         self._queued_reads = self._retry_state.queued_reads
         self._pending_writes = self._retry_state.pending_writes
@@ -89,12 +88,11 @@ class NasaClient:
         self._address = config.address
         self._last_rx_time = asyncio.get_running_loop().time()
         self._connected = False
-        self._connection_status = False
 
     @property
     def is_connected(self) -> bool:
         """Return connection status."""
-        return self._connected or self._connection_status
+        return self._connected
 
     @property
     def logger(self):

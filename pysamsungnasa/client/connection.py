@@ -20,7 +20,6 @@ async def handle_disconnection(client: "NasaClient", ex: Exception | None = None
         client._logger.info("NasaClient disconnecting.")
 
     client._connected = False
-    client._connection_status = False
     await end_writer_session(client)
     await end_read_queue_session(client)
     await end_retry_manager_session(client)
@@ -57,7 +56,6 @@ async def connect(client: "NasaClient") -> bool:
     try:
         client._reader, client._writer = await serialx.open_serial_connection(client.url, baudrate=9600)
         client._connected = True
-        client._connection_status = True
         await handle_connection(client)
         return True
     except ConnectionError as ex:
