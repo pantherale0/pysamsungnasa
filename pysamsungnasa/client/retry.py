@@ -132,9 +132,9 @@ async def retry_manager_loop(client: "NasaClient") -> None:
                             writes_to_retry.append((write_key, write_info))
                         else:
                             client._logger.warning(
-                                "Abandoning write request %s (messages %s) to %s after %d attempts",
+                                "Abandoning write request %s (message %s) to %s after %d attempts",
                                 write_info["packet_number"],
-                                write_info["message_ids"],
+                                write_info["message_id"],
                                 write_info["destination"],
                                 write_info["attempts"],
                             )
