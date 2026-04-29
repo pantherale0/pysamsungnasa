@@ -6,6 +6,7 @@
 import asyncio
 import os
 import logging
+import sys
 from dotenv import load_dotenv
 
 from .nasa import SamsungNasa
@@ -16,13 +17,12 @@ load_dotenv()
 
 async def main():
     """Main function to start the interactive CLI."""
-    if os.getenv("SAMSUNG_HP_HOST") is None or os.getenv("SAMSUNG_HP_PORT") is None:
-        print("Please set the SAMSUNG_HP_HOST and SAMSUNG_HP_PORT environment variables.", file=sys.stderr)
+    if os.getenv("SAMSUNG_HP_URI") is None:
+        print("Please set the SAMSUNG_HP_URI environment variable.", file=sys.stderr)
         sys.exit(1)
 
     nasa = SamsungNasa(
-        host=os.getenv("SAMSUNG_HP_HOST"),
-        port=int(os.getenv("SAMSUNG_HP_PORT")),
+        url=os.getenv("SAMSUNG_HP_URI", ""),
         config={
             "device_pnp": os.getenv("SAMSUNG_HP_DEVICE_PNP", "True").lower() in ("true", "1", "yes"),
             "device_dump_only": os.getenv("SAMSUNG_HP_DEVICE_DUMP_ONLY", "False").lower() in ("true", "1", "yes"),
