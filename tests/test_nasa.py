@@ -11,11 +11,16 @@ from pysamsungnasa.helpers import hex2bin
 class TestSamsungNasa:
     """Tests for SamsungNasa class."""
 
+    NASA_URL = "socket://192.168.1.100:8888"
+
     def test_samsung_nasa_initialization(self):
         """Test SamsungNasa initialization."""
         with patch("pysamsungnasa.nasa.NasaClient"):
             nasa = SamsungNasa(
-                host="192.168.1.100", port=8888, config={}, new_device_event_handler=None, disconnect_event_handler=None
+                url=self.NASA_URL,
+                config={},
+                new_device_event_handler=None,
+                disconnect_event_handler=None,
             )
 
             assert nasa.config is not None
@@ -26,8 +31,7 @@ class TestSamsungNasa:
         """Test adding an indoor device."""
         with patch("pysamsungnasa.nasa.NasaClient"):
             nasa = SamsungNasa(
-                host="192.168.1.100",
-                port=8888,
+                url=self.NASA_URL,
                 config={},
             )
 
@@ -41,8 +45,7 @@ class TestSamsungNasa:
         """Test adding an outdoor device."""
         with patch("pysamsungnasa.nasa.NasaClient"):
             nasa = SamsungNasa(
-                host="192.168.1.100",
-                port=8888,
+                url=self.NASA_URL,
                 config={},
             )
 
@@ -57,8 +60,7 @@ class TestSamsungNasa:
         """Test adding devices from config."""
         with patch("pysamsungnasa.nasa.NasaClient"):
             nasa = SamsungNasa(
-                host="192.168.1.100",
-                port=8888,
+                url=self.NASA_URL,
                 config={"device_addresses": ["200001", "100001"]},
             )
 
@@ -102,8 +104,7 @@ class TestSamsungNasa:
             mock_client_class.return_value = mock_client_instance
 
             nasa = SamsungNasa(
-                host="192.168.1.100",
-                port=8888,
+                url=self.NASA_URL,
                 config={},
             )
 
@@ -124,8 +125,7 @@ class TestSamsungNasa:
             mock_client_class.return_value = mock_client_instance
 
             nasa = SamsungNasa(
-                host="192.168.1.100",
-                port=8888,
+                url=self.NASA_URL,
                 config={},
             )
 
