@@ -19,7 +19,7 @@ classifiers = [
 requires-python = ">=3.13.0"
 dynamic = ["version"]
 dependencies = [
-    "aiotelnet~=1.1.0"
+    "serialx~=1.1.0"
 ]
 
 [project.optional-dependencies]
@@ -115,12 +115,13 @@ ignore = [
 ]
 
 [tool.pyright]
-include = ["src/pysamsungnasa"]
+include = ["pysamsungnasa", "tests"]
 exclude = [
     "**/node_modules",
     "**/__pycache__",
 ]
-venv = "env37"
+venvPath = "."
+venv = ".venv"
 
 reportMissingImports = true
 reportMissingTypeStubs = false
@@ -129,7 +130,7 @@ pythonVersion = "3.13"
 pythonPlatform = "Linux"
 
 executionEnvironments = [
-  { root = "src/pysamsungnasa" }
+    { root = "." }
 ]
 
 [tool.pytest.ini_options]
@@ -182,7 +183,6 @@ init-hook='import sys; sys.setrecursionlimit(8 * sys.getrecursionlimit())'
 jobs=0
 limit-inference-results=100
 persistent="yes"
-suggestion-mode="yes"
 unsafe-load-any-extension="no"
 
 [tool.pylint.'MESSAGES CONTROL']
