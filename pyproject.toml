@@ -115,13 +115,12 @@ ignore = [
 ]
 
 [tool.pyright]
-include = ["pysamsungnasa", "tests"]
+include = ["src/pysamsungnasa"]
 exclude = [
     "**/node_modules",
     "**/__pycache__",
 ]
-venvPath = "."
-venv = ".venv"
+venv = "env37"
 
 reportMissingImports = true
 reportMissingTypeStubs = false
@@ -130,7 +129,7 @@ pythonVersion = "3.13"
 pythonPlatform = "Linux"
 
 executionEnvironments = [
-    { root = "." }
+  { root = "src/pysamsungnasa" }
 ]
 
 [tool.pytest.ini_options]
@@ -183,6 +182,7 @@ init-hook='import sys; sys.setrecursionlimit(8 * sys.getrecursionlimit())'
 jobs=0
 limit-inference-results=100
 persistent="yes"
+suggestion-mode="yes"
 unsafe-load-any-extension="no"
 
 [tool.pylint.'MESSAGES CONTROL']

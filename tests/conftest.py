@@ -27,7 +27,7 @@ async def nasa_client():
         port=8000,
         config=config,
     )
-    client._connected = True
+    client._connection_status = True
     client._client = Mock()
     client._client.writer = AsyncMock()
     client._tx_queue = asyncio.Queue()
@@ -53,7 +53,7 @@ async def nasa_client_with_full_retry_config():
         port=8000,
         config=config,
     )
-    client._connected = True
+    client._connection_status = True
     client._client = Mock()
     client._client.writer = AsyncMock()
     client._tx_queue = asyncio.Queue()
@@ -70,7 +70,7 @@ async def nasa_client_write_only():
         port=8000,
         config=config,
     )
-    client._connected = True
+    client._connection_status = True
     client._client = Mock()
     client._client.writer = AsyncMock()
     client._tx_queue = asyncio.Queue()
@@ -87,7 +87,7 @@ async def nasa_client_read_only():
         port=8000,
         config=config,
     )
-    client._connected = True
+    client._connection_status = True
     client._client = Mock()
     client._client.writer = AsyncMock()
     client._tx_queue = asyncio.Queue()
