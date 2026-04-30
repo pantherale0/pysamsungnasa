@@ -120,6 +120,77 @@ class TestSendMessageRetryTracking:
             assert write_info["message_ids"] == [0x4000, 0x4001, 0x4002]
             assert len(write_info["messages"]) == 3
 
+    @pytest.mark.asyncio
+    async def test_send_message_read_resend_preserves_retry_state(self, nasa_client):
+        """Test that re-sending an already tracked read does not reset retry state."""
+        client = nasa_client
+        messages = [
+            SendMessage(MESSAGE_ID=0x4000, PAYLOAD=b"\x05\xa5\xa5\xa5"),
+            SendMessage(MESSAGE_ID=0x4001, PAYLOAD=b"\x05\xa5\xa5\xa5"),
+        ]
+        read_key = "200001_(16384, 16385)"
+
+        # Initial send creates tracked read
+        with patch.object(client, "send_command", new_callable=AsyncMock, return_value=2):
+            await client.send_message(
+                destination="200001",
+                request_type=DataType.READ,
+                messages=messages,
+            )
+
+        # Simulate retry manager state before resend
+        client._pending_reads[read_key]["attempts"] = 2
+        client._pending_reads[read_key]["retry_interval"] = 1.21
+        old_next_retry_time = client._pending_reads[read_key]["next_retry_time"]
+
+        # Resend should update packet number only, not reset attempts/backoff
+        with patch.object(client, "send_command", new_callable=AsyncMock, return_value=3):
+            await client.send_message(
+                destination="200001",
+                request_type=DataType.READ,
+                messages=messages,
+            )
+
+        read_info = client._pending_reads[read_key]
+        assert read_info["attempts"] == 2
+        assert read_info["retry_interval"] == 1.21
+        assert read_info["next_retry_time"] == old_next_retry_time
+        assert read_info["packet_number"] == 3
+
+    @pytest.mark.asyncio
+    async def test_send_message_write_resend_preserves_retry_state(self, nasa_client):
+        """Test that re-sending an already tracked write does not reset retry state."""
+        client = nasa_client
+        messages = [SendMessage(MESSAGE_ID=0x4000, PAYLOAD=b"\x01")]
+        write_key = "200001_7"
+
+        # Use same packet number to hit existing write entry
+        with patch.object(client, "send_command", new_callable=AsyncMock, return_value=7):
+            await client.send_message(
+                destination="200001",
+                request_type=DataType.WRITE,
+                messages=messages,
+            )
+
+        # Simulate retry manager state before resend
+        client._pending_writes[write_key]["attempts"] = 1
+        client._pending_writes[write_key]["retry_interval"] = 1.1
+        old_next_retry_time = client._pending_writes[write_key]["next_retry_time"]
+
+        # Resend should refresh metadata but not reset attempts/backoff
+        with patch.object(client, "send_command", new_callable=AsyncMock, return_value=7):
+            await client.send_message(
+                destination="200001",
+                request_type=DataType.WRITE,
+                messages=messages,
+            )
+
+        write_info = client._pending_writes[write_key]
+        assert write_info["attempts"] == 1
+        assert write_info["retry_interval"] == 1.1
+        assert write_info["next_retry_time"] == old_next_retry_time
+        assert write_info["packet_number"] == 7
+
 
 class TestNasaWriteRetry:
     """Tests for nasa_write using centralized retry logic."""

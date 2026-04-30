@@ -7,7 +7,7 @@
             "request": "launch",
             "module": "pysamsungnasa",
             "console": "integratedTerminal",
-            "justMyCode": false
+            "justMyCode": true
         },
         {
             "name": "Python: Debug Tests",
