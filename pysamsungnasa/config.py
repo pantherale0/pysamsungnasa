@@ -30,6 +30,8 @@ class NasaConfig:
     write_retry_max_attempts: int = 3  # Maximum number of retry attempts for write requests
     write_retry_interval: float = 1.0  # Interval in seconds between retry attempts
     write_retry_backoff_factor: float = 1.1  # Multiply retry interval by this factor after each attempt
+    client_baudrate: int = 9600  # Baudrate for SerialX client
+    device_path: str | None = None  # Path to the device (e.g. /dev/ttyUSB0)
 
     @property
     def address(self) -> Address:

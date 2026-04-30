@@ -7,13 +7,11 @@ import struct
 
 from asyncio import iscoroutinefunction
 
-from aiotelnet import TelnetClient
-
 from .device import NasaDevice
 from .protocol.enum import DataType
 from .protocol.factory import build_message
 from .protocol.factory.types import SendMessage
-
+from .serial_client import SerialClient
 from .config import NasaConfig
 from .helpers import bin2hex, hex2bin
 
@@ -38,23 +36,19 @@ class NasaClient:
 
     def __init__(
         self,
-        host: str,
-        port: int,
         config: NasaConfig,
         recv_event_handler=None,
         send_event_handler=None,
         disconnect_event_handler=None,
     ) -> None:
         """Init a NASA Client."""
-        self.host = host
-        self.port = port
-        self._client = TelnetClient(
-            host=host,
-            port=port,
+        assert isinstance(config.device_path, str)
+        self._client = SerialClient(
+            url=config.device_path,
+            baudrate=config.client_baudrate,
             message_handler=self._read_buffer_handler,
-            break_line=0x34.to_bytes(),
-            disconnect_callback=self._handle_disconnection,
             connect_callback=self._handle_connection,
+            disconnect_callback=self._handle_disconnection,
         )
         self._rx_event_handler = recv_event_handler
         self._tx_event_handler = send_event_handler
@@ -66,7 +60,7 @@ class NasaClient:
     @property
     def is_connected(self) -> bool:
         """Return connection status."""
-        return self._client.is_connected()
+        return self._client.is_connected
 
     def set_receive_event_handler(self, handler) -> None:
         """Set the receive event handler."""
@@ -98,7 +92,7 @@ class NasaClient:
 
     async def _handle_connection(self) -> None:
         """Handle connection."""
-        _LOGGER.debug("Successfully connected to %s:%s", self.host, self.port)
+        _LOGGER.debug("Successfully connected to %s", self._client.url)
         self._last_rx_time = asyncio.get_running_loop().time()
         await self._start_read_queue_session()
         await self._start_writer_session()
@@ -106,8 +100,8 @@ class NasaClient:
 
     async def connect(self) -> bool:
         """Connect to the server and start background tasks."""
-        if not (self.host and self.port):
-            _LOGGER.error("Host and port must be set before connecting.")
+        if not self._client.url:
+            _LOGGER.error("URL must be set before connecting.")
             return False
         if self.is_connected:
             _LOGGER.error("Already connected. To reconnect, disconnect first or use reconnect method.")
@@ -127,7 +121,7 @@ class NasaClient:
 
     async def disconnect(self) -> None:
         """Disconnect from the server."""
-        await self._client.close()
+        await self._client.disconnect()
 
     async def _read_buffer_handler(self, message: bytes):
         """Read buffer handler."""
@@ -520,36 +514,56 @@ class NasaClient:
                 ],
             )
 
-            # Track requests for retry logic if enabled
+            # Track requests for retry logic if enabled.
+            # If an entry already exists (e.g. resend from retry manager),
+            # preserve attempt/backoff state instead of resetting to zero.
             if packet_number is not None:
                 current_time = asyncio.get_running_loop().time()
                 if request_type in (DataType.WRITE, DataType.REQUEST) and self._config.enable_write_retries:
                     # Track all messages in the packet together using packet_number as key
                     message_ids = [msg.MESSAGE_ID for msg in messages]
                     write_key = f"{destination_address}_{packet_number}"
-                    self._pending_writes[write_key] = {
-                        "destination": destination_address,
-                        "message_ids": message_ids,
-                        "messages": messages,  # Store full SendMessage objects for retry
-                        "data_type": request_type,
-                        "packet_number": packet_number,
-                        "attempts": 0,
-                        "last_attempt_time": current_time,
-                        "next_retry_time": current_time + self._config.write_retry_interval,
-                        "retry_interval": self._config.write_retry_interval,
-                    }
+                    existing_write = self._pending_writes.get(write_key)
+                    if existing_write is None:
+                        self._pending_writes[write_key] = {
+                            "destination": destination_address,
+                            "message_ids": message_ids,
+                            "messages": messages,  # Store full SendMessage objects for retry
+                            "data_type": request_type,
+                            "packet_number": packet_number,
+                            "attempts": 0,
+                            "last_attempt_time": current_time,
+                            "next_retry_time": current_time + self._config.write_retry_interval,
+                            "retry_interval": self._config.write_retry_interval,
+                        }
+                    else:
+                        # Keep retry counters/backoff, only refresh payload metadata and packet number.
+                        existing_write["destination"] = destination_address
+                        existing_write["message_ids"] = message_ids
+                        existing_write["messages"] = messages
+                        existing_write["data_type"] = request_type
+                        existing_write["packet_number"] = packet_number
+                        existing_write["last_attempt_time"] = current_time
                 elif request_type == DataType.READ and self._config.enable_read_retries:
                     message_ids = [msg.MESSAGE_ID for msg in messages]
                     read_key = f"{destination_address}_{tuple(sorted(message_ids))}"
-                    self._pending_reads[read_key] = {
-                        "destination": destination_address,
-                        "messages": message_ids,
-                        "packet_number": packet_number,
-                        "attempts": 0,
-                        "last_attempt_time": current_time,
-                        "next_retry_time": current_time + self._config.read_retry_interval,
-                        "retry_interval": self._config.read_retry_interval,
-                    }
+                    existing_read = self._pending_reads.get(read_key)
+                    if existing_read is None:
+                        self._pending_reads[read_key] = {
+                            "destination": destination_address,
+                            "messages": message_ids,
+                            "packet_number": packet_number,
+                            "attempts": 0,
+                            "last_attempt_time": current_time,
+                            "next_retry_time": current_time + self._config.read_retry_interval,
+                            "retry_interval": self._config.read_retry_interval,
+                        }
+                    else:
+                        # Keep retry counters/backoff, only refresh packet number and timing metadata.
+                        existing_read["destination"] = destination_address
+                        existing_read["messages"] = message_ids
+                        existing_read["packet_number"] = packet_number
+                        existing_read["last_attempt_time"] = current_time
 
             return packet_number
         except Exception as e:

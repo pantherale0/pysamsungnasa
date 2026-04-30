@@ -15,7 +15,9 @@ class TestSamsungNasa:
         """Test SamsungNasa initialization."""
         with patch("pysamsungnasa.nasa.NasaClient"):
             nasa = SamsungNasa(
-                host="192.168.1.100", port=8888, config={}, new_device_event_handler=None, disconnect_event_handler=None
+                config={"device_path": "socket://localhost:8000"},
+                new_device_event_handler=None,
+                disconnect_event_handler=None,
             )
 
             assert nasa.config is not None
@@ -26,9 +28,7 @@ class TestSamsungNasa:
         """Test adding an indoor device."""
         with patch("pysamsungnasa.nasa.NasaClient"):
             nasa = SamsungNasa(
-                host="192.168.1.100",
-                port=8888,
-                config={},
+                config={"device_path": "socket://localhost:8000"},
             )
 
             device = nasa._add_device("200001")
@@ -41,9 +41,7 @@ class TestSamsungNasa:
         """Test adding an outdoor device."""
         with patch("pysamsungnasa.nasa.NasaClient"):
             nasa = SamsungNasa(
-                host="192.168.1.100",
-                port=8888,
-                config={},
+                config={"device_path": "socket://localhost:8000"},
             )
 
             device = nasa._add_device("100001")
@@ -57,9 +55,7 @@ class TestSamsungNasa:
         """Test adding devices from config."""
         with patch("pysamsungnasa.nasa.NasaClient"):
             nasa = SamsungNasa(
-                host="192.168.1.100",
-                port=8888,
-                config={"device_addresses": ["200001", "100001"]},
+                config={"device_path": "socket://localhost:8000", "device_addresses": ["200001", "100001"]},
             )
 
             assert "200001" in nasa.devices
@@ -102,9 +98,7 @@ class TestSamsungNasa:
             mock_client_class.return_value = mock_client_instance
 
             nasa = SamsungNasa(
-                host="192.168.1.100",
-                port=8888,
-                config={},
+                config={"device_path": "socket://localhost:8000"},
             )
 
             await nasa.start()
@@ -124,9 +118,7 @@ class TestSamsungNasa:
             mock_client_class.return_value = mock_client_instance
 
             nasa = SamsungNasa(
-                host="192.168.1.100",
-                port=8888,
-                config={},
+                config={"device_path": "socket://localhost:8000"},
             )
 
             await nasa.stop()

@@ -21,14 +21,12 @@ def reset_parser_state():
 @pytest.fixture
 async def nasa_client():
     """Create a basic test NasaClient with retry enabled."""
-    config = NasaConfig(enable_write_retries=True, enable_read_retries=True)
+    config = NasaConfig(enable_write_retries=True, enable_read_retries=True, device_path="socket://localhost:8000")
     client = NasaClient(
-        host="localhost",
-        port=8000,
         config=config,
     )
-    client._connection_status = True
     client._client = Mock()
+    client._client._is_connected = True
     client._client.writer = AsyncMock()
     client._tx_queue = asyncio.Queue()
     client._rx_queue = asyncio.Queue()
@@ -47,13 +45,12 @@ async def nasa_client_with_full_retry_config():
         read_retry_max_attempts=3,
         write_retry_backoff_factor=1.5,
         read_retry_backoff_factor=1.5,
+        device_path="socket://localhost:8000",
     )
     client = NasaClient(
-        host="localhost",
-        port=8000,
         config=config,
     )
-    client._connection_status = True
+    client._client._is_connected = True
     client._client = Mock()
     client._client.writer = AsyncMock()
     client._tx_queue = asyncio.Queue()
@@ -64,13 +61,11 @@ async def nasa_client_with_full_retry_config():
 @pytest.fixture
 async def nasa_client_write_only():
     """Create a NasaClient with only write retries enabled."""
-    config = NasaConfig(enable_write_retries=True, enable_read_retries=False)
+    config = NasaConfig(enable_write_retries=True, enable_read_retries=False, device_path="socket://localhost:8000")
     client = NasaClient(
-        host="localhost",
-        port=8000,
         config=config,
     )
-    client._connection_status = True
+    client._client._is_connected = True
     client._client = Mock()
     client._client.writer = AsyncMock()
     client._tx_queue = asyncio.Queue()
@@ -81,13 +76,11 @@ async def nasa_client_write_only():
 @pytest.fixture
 async def nasa_client_read_only():
     """Create a NasaClient with only read retries enabled."""
-    config = NasaConfig(enable_write_retries=False, enable_read_retries=True)
+    config = NasaConfig(enable_write_retries=False, enable_read_retries=True, device_path="socket://localhost:8000")
     client = NasaClient(
-        host="localhost",
-        port=8000,
         config=config,
     )
-    client._connection_status = True
+    client._client._is_connected = True
     client._client = Mock()
     client._client.writer = AsyncMock()
     client._tx_queue = asyncio.Queue()

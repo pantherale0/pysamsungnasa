@@ -23,8 +23,6 @@ class SamsungNasa:
 
     def __init__(
         self,
-        host: str,
-        port: int,
         config: dict[str, Any],
         new_device_event_handler: Callable | None = None,
         disconnect_event_handler: Callable | None = None,
@@ -32,8 +30,6 @@ class SamsungNasa:
         """Initialize the NASA protocol."""
         self.config = NasaConfig(**config)
         self.client = NasaClient(
-            host=host,
-            port=port,
             config=self.config,
             recv_event_handler=None,
             disconnect_event_handler=disconnect_event_handler,
