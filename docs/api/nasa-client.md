@@ -1,10 +1,10 @@
 # NASA Client API
 
-Low-level TCP client for NASA protocol communication.
+Low-level SerialX client for NASA protocol communication.
 
 ## Overview
 
-The `NasaClient` handles all TCP communication with the NASA device. Most users won't interact with this directly - the `SamsungNasa` class provides a higher-level interface.
+The `NasaClient` handles all SerialX communication with the NASA device. Most users won't interact with this directly - the `SamsungNasa` class provides a higher-level interface.
 
 ## Class Definition
 
@@ -13,8 +13,6 @@ from pysamsungnasa.nasa_client import NasaClient
 from pysamsungnasa.config import NasaConfig
 
 client = NasaClient(
-    host: str,
-    port: int,
     config: NasaConfig,
     recv_event_handler: Callable | None = None,
     send_event_handler: Callable | None = None,
@@ -39,7 +37,7 @@ if client.is_connected:
 
 #### `async connect() -> bool`
 
-Establish TCP connection to the NASA device.
+Establish SerialX connection to the NASA device.
 
 ```python
 success = await client.connect()
@@ -58,7 +56,7 @@ else:
 
 #### `async disconnect()`
 
-Close the TCP connection gracefully.
+Close the SerialX connection gracefully.
 
 ```python
 await client.disconnect()
@@ -138,6 +136,9 @@ The client respects these configuration options:
 
 ```python
 config = {
+    "device_path": "socket://192.168.1.100:8000",
+    "client_baudrate": 9600,
+
     # Retries
     "enable_read_retries": True,
     "read_retry_max_attempts": 3,
@@ -155,8 +156,6 @@ config = {
 }
 
 client = NasaClient(
-    host="192.168.1.100",
-    port=8000,
     config=NasaConfig(**config)
 )
 ```
@@ -174,13 +173,13 @@ from pysamsungnasa.protocol.enum import DataType
 
 async def main():
     config = NasaConfig(
+        device_path="socket://192.168.1.100:8000",
+        client_baudrate=9600,
         client_address=1,
         enable_read_retries=True
     )
 
     client = NasaClient(
-        host="192.168.1.100",
-        port=8000,
         config=config
     )
 

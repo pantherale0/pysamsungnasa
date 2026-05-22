@@ -12,9 +12,11 @@ from pysamsungnasa import SamsungNasa
 
 async def main():
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
-        config={"client_address": 1}
+        config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
+            "client_address": 1,
+        }
     )
 
     await nasa.start()
@@ -48,11 +50,11 @@ from pysamsungnasa.protocol.factory.messages.indoor import (
 
 async def main():
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
         config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
             "client_address": 1,
-            "device_addresses": ["100000", "200020"]
+            "device_addresses": ["100000", "200020"],
         }
     )
 
@@ -111,11 +113,11 @@ async def smart_thermostat(target_temp=22, hysteresis=0.5):
     """
 
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
         config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
             "client_address": 1,
-            "device_addresses": ["200020"]
+            "device_addresses": ["200020"],
         }
     )
 
@@ -189,11 +191,11 @@ async def energy_monitoring():
     """Monitor and log power consumption."""
 
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
         config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
             "client_address": 1,
-            "device_addresses": ["100000"]
+            "device_addresses": ["100000"],
         }
     )
 
@@ -256,11 +258,11 @@ async def multi_zone_control():
     """Control climate in multiple zones."""
 
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
         config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
             "client_address": 1,
-            "device_addresses": ["200020", "200021", "200022"]
+            "device_addresses": ["200020", "200021", "200022"],
         }
     )
 
@@ -330,11 +332,11 @@ async def scheduled_dhw():
     """Turn DHW on/off on a schedule."""
 
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
         config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
             "client_address": 1,
-            "device_addresses": ["200020"]
+            "device_addresses": ["200020"],
         }
     )
 
@@ -393,11 +395,11 @@ from pysamsungnasa import SamsungNasa
 class SmartHomeIntegration:
     """Example home automation integration."""
 
-    def __init__(self, host, port):
+    def __init__(self, device_path, client_baudrate=9600):
         self.nasa = SamsungNasa(
-            host=host,
-            port=port,
             config={
+                "device_path": device_path,
+                "client_baudrate": client_baudrate,
                 "client_address": 1,
                 "device_addresses": ["200000", "200020"]
             }
@@ -437,7 +439,7 @@ class SmartHomeIntegration:
 
 # Usage
 async def main():
-    home = SmartHomeIntegration("192.168.1.100", 8000)
+    home = SmartHomeIntegration("socket://192.168.1.100:8000")
 
     @home.on_device_update("100000")
     def on_outdoor_update(device):
@@ -489,11 +491,11 @@ async def continuous_monitoring():
     """Continuous monitoring with full logging."""
 
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
         config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
             "client_address": 1,
-            "device_addresses": ["200000", "200020"]
+            "device_addresses": ["200000", "200020"],
         }
     )
 
@@ -550,9 +552,11 @@ async def resilient_connection():
     for attempt in range(max_retries):
         try:
             nasa = SamsungNasa(
-                host="192.168.1.100",
-                port=8000,
-                config={"client_address": 1}
+                config={
+                    "device_path": "socket://192.168.1.100:8000",
+                    "client_baudrate": 9600,
+                    "client_address": 1,
+                }
             )
 
             await nasa.start()

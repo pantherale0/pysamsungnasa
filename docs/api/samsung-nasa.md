@@ -10,8 +10,6 @@ Main entry point for the NASA protocol.
 from pysamsungnasa import SamsungNasa
 
 nasa = SamsungNasa(
-    host: str,
-    port: int,
     config: dict,
     new_device_event_handler: Callable | None = None,
     disconnect_event_handler: Callable | None = None,
@@ -24,7 +22,7 @@ nasa = SamsungNasa(
 The active configuration object.
 
 #### `client: NasaClient`
-Low-level TCP client.
+Low-level SerialX client.
 
 #### `devices: dict[str, NasaDevice]`
 Dictionary of all devices by address.
@@ -274,11 +272,13 @@ class NasaConfig:
     write_retry_max_attempts: int = 3
     write_retry_interval: float = 1.0
     write_retry_backoff_factor: float = 1.1
+    client_baudrate: int = 9600
+    device_path: str | None = None
 ```
 
 ## NasaClient
 
-Low-level TCP client (rarely used directly).
+Low-level SerialX client (rarely used directly).
 
 ### Properties
 
@@ -288,10 +288,10 @@ Connection status.
 ### Methods
 
 #### `async connect()`
-Establish TCP connection.
+Establish SerialX connection.
 
 #### `async disconnect()`
-Close TCP connection.
+Close SerialX connection.
 
 ## Enumerations
 

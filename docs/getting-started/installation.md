@@ -3,8 +3,8 @@
 ## Requirements
 
 - **Python 3.13+** - pysamsungnasa requires Python 3.13 or higher
-- **Network access** - TCP connection to your Samsung HVAC unit's NASA network interface
-- **RS485 interface** - F1/F2 connectors with appropriate network adapter
+- **Serial connection** - Connection to your Samsung HVAC unit's NASA RS485 bus via serial port or network serial bridge using SerialX
+- **RS485 interface** - Connection to F1/F2 connectors using an RS485 adapter (USB, serial, or TCP/socket bridge)
 
 ## Installation Methods
 
@@ -48,20 +48,16 @@ This includes testing frameworks and linting tools.
 
 ### Hardware Setup
 
-1. **F1/F2 Connectors** - Your Samsung unit has F1/F2 connectors for the NASA network
-2. **RS485 Adapter** - Use an RS485 to Ethernet/TCP adapter (e.g., Tibbo or similar)
-3. **Network Cable** - Connect the adapter to your network
+1. **F1/F2 Connectors** - Your Samsung unit has F1/F2 connectors for the NASA network.
+2. **RS485 Adapter** - Use an RS485 adapter (USB serial dongle or TCP/socket serial bridge) to connect your computer or server to the F1/F2 RS485 bus.
 
 ### Configuration
 
-1. **IP Address & Port** - Configure your RS485 adapter's network settings
-   - Default port for NASA protocol is usually 8000
-   - Note the IP address and port
-
-2. **Network Access** - Ensure the device is on the same network as your Python application
-   - Or that the device has network routes to reach it
-
-3. **Firewall** - Allow TCP traffic on the configured port
+1. **Connection URL / Device Path** - Note the path to the RS485 interface:
+   - For direct USB adapters, this might be `/dev/ttyUSB0` (Linux) or `COM3` (Windows).
+   - For network serial bridges, this can be a socket URL supported by SerialX, e.g. `socket://192.168.1.100:8000`.
+2. **Baudrate** - The standard baudrate for Samsung NASA communication is `9600`.
+3. **Encryption Key** - If using an adapter that requires a secure key (e.g., some hardware bridges), set it via the `SAMSUNG_HP_DEVICE_KEY` environment variable.
 
 ## Verifying Installation
 
@@ -96,11 +92,10 @@ pip install "pysamsungnasa[cli]"
 **Problem**: Cannot connect to the NASA device
 
 **Solutions**:
-1. Verify the host and port are correct
-2. Check network connectivity: `ping <host>`
-3. Verify TCP connection: `telnet <host> <port>`
-4. Check firewall rules
-5. Ensure the RS485 adapter is powered and configured
+1. Verify the device path (`device_path`) and baudrate (`client_baudrate`) are correct in your configuration.
+2. If using a network socket URL (e.g., `socket://192.168.1.100:8000`), check network connectivity (`ping <host>`) and TCP connection (`telnet <host> <port>`).
+3. If using a local serial port (e.g. `/dev/ttyUSB0`), ensure your user has appropriate permissions to read/write the serial device (e.g. `sudo usermod -a -G dialout $USER`).
+4. Ensure the RS485 adapter is powered and correctly wired to the F1/F2 bus.
 
 ### Import Errors
 

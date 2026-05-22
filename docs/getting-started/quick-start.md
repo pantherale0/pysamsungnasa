@@ -14,16 +14,16 @@ The CLI automatically connects using environment variables (set individually or 
 
 ```bash
 # .env file
-SAMSUNG_HP_HOST=192.168.1.100
-SAMSUNG_HP_PORT=8000
+SAMSUNG_HP_DEVICE_PATH=socket://192.168.1.100:8000
+SAMSUNG_HP_CLIENT_BAUDRATE=9600
 SAMSUNG_HP_DEVICE_PNP=true
 ```
 
 Or set environment variables:
 
 ```bash
-export SAMSUNG_HP_HOST=192.168.1.100
-export SAMSUNG_HP_PORT=8000
+export SAMSUNG_HP_DEVICE_PATH=socket://192.168.1.100:8000
+export SAMSUNG_HP_CLIENT_BAUDRATE=9600
 
 python -m pysamsungnasa
 ```
@@ -39,8 +39,10 @@ from pysamsungnasa import SamsungNasa
 async def main():
     # Create a NASA protocol instance
     nasa = SamsungNasa(
-        host="192.168.1.100",      # IP of your NASA network adapter
-        port=8000,                  # NASA protocol port
+        config={
+            "device_path": "socket://192.168.1.100:8000",  # Or local serial port like "/dev/ttyUSB0"
+            "client_baudrate": 9600,
+        }
     )
 
     # Connect to the unit
@@ -61,8 +63,10 @@ By default, pysamsungnasa discovers devices automatically. Once connected, new d
 ```python
 async def main():
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000
+        config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
+        }
     )
 
     await nasa.start()
@@ -84,9 +88,9 @@ If you know your device addresses, add them to the configuration:
 
 ```python
 nasa = SamsungNasa(
-    host="192.168.1.100",
-    port=8000,
     config={
+        "device_path": "socket://192.168.1.100:8000",
+        "client_baudrate": 9600,
         "device_addresses": [
             "100000",    # Outdoor unit
             "200000",    # Indoor unit 1
@@ -110,9 +114,9 @@ from pysamsungnasa.protocol.factory.messages.outdoor import (
 
 async def main():
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
         config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
             "client_address": 1,
             "device_addresses": ["100000"]
         }
@@ -155,9 +159,9 @@ from pysamsungnasa.protocol.enum import InOperationMode
 
 async def main():
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
         config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
             "client_address": 1,
             "device_addresses": ["200000"]  # Indoor unit
         }
@@ -197,9 +201,9 @@ from pysamsungnasa.protocol.factory.messages.indoor import InCurrentTemperature
 
 async def main():
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
         config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
             "client_address": 1,
             "device_addresses": ["100000", "200000"]
         }
@@ -255,9 +259,11 @@ Always wrap your code in proper error handling:
 ```python
 async def main():
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
-        config={"client_address": 1}
+        config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
+            "client_address": 1,
+        }
     )
 
     try:
@@ -294,9 +300,9 @@ logging.basicConfig(level=logging.DEBUG)
 
 async def main():
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
         config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
             "client_address": 1,
             "device_addresses": ["100000", "200000"]
         }

@@ -7,7 +7,7 @@ A Python library to communicate with Samsung heat pumps, in theory both cool onl
 
 ## Features
 
-- Connect and disconnect from Samsung HVAC/EHS units via a TCP socket over the F1/F2 connectors (NasaClient).
+- Connect and disconnect from Samsung HVAC/EHS units via a serial connection over the F1/F2 connectors using SerialX (NasaClient).
 - Discover new devices on the NASA network and manage known devices (SamsungNasa).
 - Send commands to devices and handle responses (SamsungNasa, NasaClient).
 - Parse incoming data packets from devices (NasaPacketParser, various message classes).
