@@ -42,6 +42,7 @@ from ...enum import (
     InFsv4022 as InFsv4022Enum,
     InFsv4041 as InFsv4041Enum,
     InFsv4051 as InFsv4051Enum,
+    InFsv4053 as InFsv4053Enum,
     InFsv5022 as InFsv5022Enum,
     InFsv5033,
     InFsv5061,
@@ -1112,7 +1113,7 @@ class InFsv4051(EnumMessage):
     MESSAGE_ENUM = InFsv4051Enum
 
 
-class InFsv4053(IntegerMessage):
+class InFsv4053(EnumMessage):
     """Parser for message 0x40C3 (FSV 4053 - Control Factor).
 
     Inverter pump response speed to temperature difference error.
@@ -1129,6 +1130,7 @@ class InFsv4053(IntegerMessage):
 
     MESSAGE_ID = 0x40C3
     MESSAGE_NAME = "FSV 4053 Inverter Pump Control Factor"
+    MESSAGE_ENUM = InFsv4053Enum
 
 
 class InWaterPumpPwmValueMessage(IntegerMessage):
