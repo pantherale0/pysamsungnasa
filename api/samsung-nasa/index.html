@@ -2135,8 +2135,6 @@
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamsungNasa</span>
 
 <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
-    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="n">new_device_event_handler</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">disconnect_event_handler</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2146,7 +2144,7 @@
 <h4 id="config-nasaconfig"><code>config: NasaConfig</code><a class="headerlink" href="#config-nasaconfig" title="Permanent link">&para;</a></h4>
 <p>The active configuration object.</p>
 <h4 id="client-nasaclient"><code>client: NasaClient</code><a class="headerlink" href="#client-nasaclient" title="Permanent link">&para;</a></h4>
-<p>Low-level TCP client.</p>
+<p>Low-level SerialX client.</p>
 <h4 id="devices-dictstr-nasadevice"><code>devices: dict[str, NasaDevice]</code><a class="headerlink" href="#devices-dictstr-nasadevice" title="Permanent link">&para;</a></h4>
 <p>Dictionary of all devices by address.</p>
 <h4 id="parser-nasapacketparser"><code>parser: NasaPacketParser</code><a class="headerlink" href="#parser-nasapacketparser" title="Permanent link">&para;</a></h4>
@@ -2319,17 +2317,19 @@
     <span class="n">write_retry_max_attempts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
     <span class="n">write_retry_interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
     <span class="n">write_retry_backoff_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.1</span>
+    <span class="n">client_baudrate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">9600</span>
+    <span class="n">device_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
 <h2 id="nasaclient">NasaClient<a class="headerlink" href="#nasaclient" title="Permanent link">&para;</a></h2>
-<p>Low-level TCP client (rarely used directly).</p>
+<p>Low-level SerialX client (rarely used directly).</p>
 <h3 id="properties_2">Properties<a class="headerlink" href="#properties_2" title="Permanent link">&para;</a></h3>
 <h4 id="is_connected-bool"><code>is_connected: bool</code><a class="headerlink" href="#is_connected-bool" title="Permanent link">&para;</a></h4>
 <p>Connection status.</p>
 <h3 id="methods_4">Methods<a class="headerlink" href="#methods_4" title="Permanent link">&para;</a></h3>
 <h4 id="async-connect"><code>async connect()</code><a class="headerlink" href="#async-connect" title="Permanent link">&para;</a></h4>
-<p>Establish TCP connection.</p>
+<p>Establish SerialX connection.</p>
 <h4 id="async-disconnect"><code>async disconnect()</code><a class="headerlink" href="#async-disconnect" title="Permanent link">&para;</a></h4>
-<p>Close TCP connection.</p>
+<p>Close SerialX connection.</p>
 <h2 id="enumerations">Enumerations<a class="headerlink" href="#enumerations" title="Permanent link">&para;</a></h2>
 <h3 id="addressclass">AddressClass<a class="headerlink" href="#addressclass" title="Permanent link">&para;</a></h3>
 <p>Device type enumeration:</p>

@@ -1689,8 +1689,8 @@
 <h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
 <p>The CLI reads configuration from environment variables and a <code>.env</code> file:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># .env file</span>
-<span class="nv">SAMSUNG_HP_HOST</span><span class="o">=</span><span class="m">192</span>.168.1.100
-<span class="nv">SAMSUNG_HP_PORT</span><span class="o">=</span><span class="m">8000</span>
+<span class="nv">SAMSUNG_HP_DEVICE_PATH</span><span class="o">=</span>socket://192.168.1.100:8000
+<span class="nv">SAMSUNG_HP_CLIENT_BAUDRATE</span><span class="o">=</span><span class="m">9600</span>
 <span class="nv">SAMSUNG_HP_DEVICE_PNP</span><span class="o">=</span><span class="nb">true</span>
 <span class="nv">SAMSUNG_HP_DEVICE_DUMP_ONLY</span><span class="o">=</span><span class="nb">false</span>
 <span class="nv">SAMSUNG_HP_LOG_ALL_MESSAGES</span><span class="o">=</span><span class="nb">false</span>
@@ -1699,8 +1699,8 @@
 <span class="nv">SAMSUNG_HP_DEVICES_TO_LOG</span><span class="o">=</span><span class="m">200000</span><span class="w"> </span><span class="c1"># Enable enhanced logging for all messages from device 200000</span>
 </code></pre></div>
 <p>Or set environment variables directly:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">SAMSUNG_HP_HOST</span><span class="o">=</span><span class="m">192</span>.168.1.100
-<span class="nb">export</span><span class="w"> </span><span class="nv">SAMSUNG_HP_PORT</span><span class="o">=</span><span class="m">8000</span>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">SAMSUNG_HP_DEVICE_PATH</span><span class="o">=</span>socket://192.168.1.100:8000
+<span class="nb">export</span><span class="w"> </span><span class="nv">SAMSUNG_HP_CLIENT_BAUDRATE</span><span class="o">=</span><span class="m">9600</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">SAMSUNG_HP_DEVICE_PNP</span><span class="o">=</span><span class="nb">true</span>
 
 python<span class="w"> </span>-m<span class="w"> </span>pysamsungnasa
@@ -1815,8 +1815,8 @@ Device 200020 (Indoor):
 </code></pre></div>
 <p>Output:
 <div class="highlight"><pre><span></span><code>Connection: Connected
-Host: 192.168.1.100
-Port: 8000
+Device Path: socket://192.168.1.100:8000
+Baudrate: 9600
 Devices: 2
 </code></pre></div></p>
 <h4 id="reconnect">reconnect<a class="headerlink" href="#reconnect" title="Permanent link">&para;</a></h4>
@@ -1908,9 +1908,9 @@ DHW target temperature: 45°C
 <h3 id="connection-problems">Connection Problems<a class="headerlink" href="#connection-problems" title="Permanent link">&para;</a></h3>
 <p><strong>Error: "Connection refused"</strong></p>
 <ol>
-<li>Check host and port in environment variables</li>
+<li>Check the device path in environment variables (e.g. <code>SAMSUNG_HP_DEVICE_PATH</code>)</li>
 <li>Verify the NASA adapter is powered and connected</li>
-<li>Test network connectivity: <code>ping &lt;host&gt;</code></li>
+<li>Test network connectivity: <code>ping &lt;host&gt;</code> (if using a socket bridge)</li>
 </ol>
 <p><strong>Error: "No devices found"</strong></p>
 <ol>

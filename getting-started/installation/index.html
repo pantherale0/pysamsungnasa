@@ -1437,8 +1437,8 @@
 <h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Python 3.13+</strong> - pysamsungnasa requires Python 3.13 or higher</li>
-<li><strong>Network access</strong> - TCP connection to your Samsung HVAC unit's NASA network interface</li>
-<li><strong>RS485 interface</strong> - F1/F2 connectors with appropriate network adapter</li>
+<li><strong>Serial connection</strong> - Connection to your Samsung HVAC unit's NASA RS485 bus via serial port or network serial bridge using SerialX</li>
+<li><strong>RS485 interface</strong> - Connection to F1/F2 connectors using an RS485 adapter (USB, serial, or TCP/socket bridge)</li>
 </ul>
 <h2 id="installation-methods">Installation Methods<a class="headerlink" href="#installation-methods" title="Permanent link">&para;</a></h2>
 <h3 id="from-pypi-recommended">From PyPI (Recommended)<a class="headerlink" href="#from-pypi-recommended" title="Permanent link">&para;</a></h3>
@@ -1463,26 +1463,16 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <h2 id="network-requirements">Network Requirements<a class="headerlink" href="#network-requirements" title="Permanent link">&para;</a></h2>
 <h3 id="hardware-setup">Hardware Setup<a class="headerlink" href="#hardware-setup" title="Permanent link">&para;</a></h3>
 <ol>
-<li><strong>F1/F2 Connectors</strong> - Your Samsung unit has F1/F2 connectors for the NASA network</li>
-<li><strong>RS485 Adapter</strong> - Use an RS485 to Ethernet/TCP adapter (e.g., Tibbo or similar)</li>
-<li><strong>Network Cable</strong> - Connect the adapter to your network</li>
+<li><strong>F1/F2 Connectors</strong> - Your Samsung unit has F1/F2 connectors for the NASA network.</li>
+<li><strong>RS485 Adapter</strong> - Use an RS485 adapter (USB serial dongle or TCP/socket serial bridge) to connect your computer or server to the F1/F2 RS485 bus.</li>
 </ol>
 <h3 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h3>
 <ol>
-<li><strong>IP Address &amp; Port</strong> - Configure your RS485 adapter's network settings</li>
-<li>Default port for NASA protocol is usually 8000</li>
-<li>
-<p>Note the IP address and port</p>
-</li>
-<li>
-<p><strong>Network Access</strong> - Ensure the device is on the same network as your Python application</p>
-</li>
-<li>
-<p>Or that the device has network routes to reach it</p>
-</li>
-<li>
-<p><strong>Firewall</strong> - Allow TCP traffic on the configured port</p>
-</li>
+<li><strong>Connection URL / Device Path</strong> - Note the path to the RS485 interface:</li>
+<li>For direct USB adapters, this might be <code>/dev/ttyUSB0</code> (Linux) or <code>COM3</code> (Windows).</li>
+<li>For network serial bridges, this can be a socket URL supported by SerialX, e.g. <code>socket://192.168.1.100:8000</code>.</li>
+<li><strong>Baudrate</strong> - The standard baudrate for Samsung NASA communication is <code>9600</code>.</li>
+<li><strong>Encryption Key</strong> - If using an adapter that requires a secure key (e.g., some hardware bridges), set it via the <code>SAMSUNG_HP_DEVICE_KEY</code> environment variable.</li>
 </ol>
 <h2 id="verifying-installation">Verifying Installation<a class="headerlink" href="#verifying-installation" title="Permanent link">&para;</a></h2>
 <p>Test that pysamsungnasa is correctly installed:</p>
@@ -1502,11 +1492,10 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <h3 id="connection-issues">Connection Issues<a class="headerlink" href="#connection-issues" title="Permanent link">&para;</a></h3>
 <p><strong>Problem</strong>: Cannot connect to the NASA device</p>
 <p><strong>Solutions</strong>:
-1. Verify the host and port are correct
-2. Check network connectivity: <code>ping &lt;host&gt;</code>
-3. Verify TCP connection: <code>telnet &lt;host&gt; &lt;port&gt;</code>
-4. Check firewall rules
-5. Ensure the RS485 adapter is powered and configured</p>
+1. Verify the device path (<code>device_path</code>) and baudrate (<code>client_baudrate</code>) are correct in your configuration.
+2. If using a network socket URL (e.g., <code>socket://192.168.1.100:8000</code>), check network connectivity (<code>ping &lt;host&gt;</code>) and TCP connection (<code>telnet &lt;host&gt; &lt;port&gt;</code>).
+3. If using a local serial port (e.g. <code>/dev/ttyUSB0</code>), ensure your user has appropriate permissions to read/write the serial device (e.g. <code>sudo usermod -a -G dialout $USER</code>).
+4. Ensure the RS485 adapter is powered and correctly wired to the F1/F2 bus.</p>
 <h3 id="import-errors">Import Errors<a class="headerlink" href="#import-errors" title="Permanent link">&para;</a></h3>
 <p><strong>Problem</strong>: ModuleNotFoundError when importing pysamsungnasa</p>
 <p><strong>Solutions</strong>:

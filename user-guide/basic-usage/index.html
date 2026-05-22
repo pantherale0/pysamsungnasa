@@ -1558,7 +1558,7 @@
 <h3 id="components">Components<a class="headerlink" href="#components" title="Permanent link">&para;</a></h3>
 <ol>
 <li><strong>SamsungNasa</strong> - Main entry point, manages connections and devices</li>
-<li><strong>NasaClient</strong> - Low-level TCP client for protocol communication</li>
+<li><strong>NasaClient</strong> - Low-level SerialX client for protocol communication</li>
 <li><strong>NasaDevice</strong> - Represents a single device and its attributes</li>
 <li><strong>Controllers</strong> - Control specific functions (Climate, DHW)</li>
 <li><strong>NasaPacketParser</strong> - Parses incoming NASA protocol packets</li>
@@ -1569,10 +1569,10 @@
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamsungNasa</span>
 
 <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>           <span class="c1"># IP address of NASA adapter</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>                       <span class="c1"># NASA protocol port</span>
     <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[],</span>      <span class="c1"># Known devices (optional)</span>
+        <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>   <span class="c1"># Or local serial port like &quot;/dev/ttyUSB0&quot;</span>
+        <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+        <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[],</span>                          <span class="c1"># Known devices (optional)</span>
     <span class="p">},</span>
     <span class="n">new_device_event_handler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="c1"># Callback for new devices (optional)</span>
     <span class="n">disconnect_event_handler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="c1"># Callback on disconnect (optional)</span>
@@ -1690,8 +1690,10 @@
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Type: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+    <span class="p">},</span>
     <span class="n">new_device_event_handler</span><span class="o">=</span><span class="n">on_new_device</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -1701,8 +1703,10 @@
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Connection lost! Attempting to reconnect...&quot;</span><span class="p">)</span>
 
 <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+    <span class="p">},</span>
     <span class="n">disconnect_event_handler</span><span class="o">=</span><span class="n">on_disconnect</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -1781,8 +1785,10 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Attributes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
-        <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
-        <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+        <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -1806,8 +1812,10 @@
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_outdoor_data</span><span class="p">():</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
-        <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
-        <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+        <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -1834,8 +1842,10 @@
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">poll_every_30_seconds</span><span class="p">():</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
-        <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
-        <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+        <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>

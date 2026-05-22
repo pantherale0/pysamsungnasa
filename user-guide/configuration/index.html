@@ -726,6 +726,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#connection-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connection Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#client-address" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1566,14 +1577,25 @@
 <h2 id="nasaconfig-object">NasaConfig Object<a class="headerlink" href="#nasaconfig-object" title="Permanent link">&para;</a></h2>
 <p>All configuration is managed through the <code>NasaConfig</code> class, passed as a dictionary to <code>SamsungNasa</code>:</p>
 <div class="highlight"><pre><span></span><code><span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
     <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-        <span class="c1"># Configuration options here</span>
+        <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>   <span class="c1"># Or local serial port like &quot;/dev/ttyUSB0&quot;</span>
+        <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+        <span class="c1"># Other configuration options here</span>
     <span class="p">}</span>
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="basic-configuration">Basic Configuration<a class="headerlink" href="#basic-configuration" title="Permanent link">&para;</a></h2>
+<h3 id="connection-settings">Connection Settings<a class="headerlink" href="#connection-settings" title="Permanent link">&para;</a></h3>
+<p>Specify the connection parameters to your serial interface or Serial-over-IP/RFC2217 bridge:</p>
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>  <span class="c1"># E.g. local &quot;/dev/ttyUSB0&quot; or remote bridge</span>
+    <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>                         <span class="c1"># Default: 9600</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li><strong>device_path</strong>: Path to your SerialX device. Can be a local device path or a remote RFC2217 bridge address using the <code>socket://</code> protocol.</li>
+<li><strong>client_baudrate</strong>: The baud rate of your SerialX hardware connection.</li>
+</ul>
 <h3 id="client-address">Client Address<a class="headerlink" href="#client-address" title="Permanent link">&para;</a></h3>
 <p>Your device's address on the NASA network, you generally should not need to set this:</p>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
@@ -1678,7 +1700,11 @@
 <h2 id="complete-configuration-example">Complete Configuration Example<a class="headerlink" href="#complete-configuration-example" title="Permanent link">&para;</a></h2>
 <p>Here's a realistic configuration:</p>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="c1"># Network</span>
+    <span class="c1"># Connection</span>
+    <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+
+    <span class="c1"># Devices</span>
     <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">,</span> <span class="s2">&quot;200000&quot;</span><span class="p">],</span>
 
     <span class="c1"># Buffer</span>
@@ -1706,8 +1732,6 @@
 <span class="p">}</span>
 
 <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
     <span class="n">config</span><span class="o">=</span><span class="n">config</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -1716,19 +1740,19 @@
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SAMSUNG_HP_DEVICE_PATH&quot;</span><span class="p">,</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SAMSUNG_HP_CLIENT_BAUDRATE&quot;</span><span class="p">,</span> <span class="s2">&quot;9600&quot;</span><span class="p">)),</span>
     <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;NASA_DEVICES&quot;</span><span class="p">,</span> <span class="s2">&quot;100000,200000&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">),</span>
     <span class="s2">&quot;log_all_messages&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;NASA_DEBUG&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;NASA_HOST&quot;</span><span class="p">,</span> <span class="s2">&quot;192.168.1.100&quot;</span><span class="p">),</span>
-    <span class="n">port</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;NASA_PORT&quot;</span><span class="p">,</span> <span class="s2">&quot;8000&quot;</span><span class="p">)),</span>
     <span class="n">config</span><span class="o">=</span><span class="n">config</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Usage:
-<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">NASA_HOST</span><span class="o">=</span><span class="m">192</span>.168.1.100
-<span class="nb">export</span><span class="w"> </span><span class="nv">NASA_PORT</span><span class="o">=</span><span class="m">8000</span>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">SAMSUNG_HP_DEVICE_PATH</span><span class="o">=</span>socket://192.168.1.100:8000
+<span class="nb">export</span><span class="w"> </span><span class="nv">SAMSUNG_HP_CLIENT_BAUDRATE</span><span class="o">=</span><span class="m">9600</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">NASA_DEVICES</span><span class="o">=</span><span class="m">100000</span>,200000
 <span class="nb">export</span><span class="w"> </span><span class="nv">NASA_DEBUG</span><span class="o">=</span><span class="nb">false</span>
 
@@ -1782,9 +1806,8 @@ python<span class="w"> </span>your_script.py
 <p>The <code>NasaConfig</code> class validates configuration on creation:</p>
 <div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
-        <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
-        <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
             <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="s2">&quot;invalid_option&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># Will raise an error</span>
         <span class="p">}</span>

@@ -1534,16 +1534,14 @@
 
 
 <h1 id="nasa-client-api">NASA Client API<a class="headerlink" href="#nasa-client-api" title="Permanent link">&para;</a></h1>
-<p>Low-level TCP client for NASA protocol communication.</p>
+<p>Low-level SerialX client for NASA protocol communication.</p>
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>The <code>NasaClient</code> handles all TCP communication with the NASA device. Most users won't interact with this directly - the <code>SamsungNasa</code> class provides a higher-level interface.</p>
+<p>The <code>NasaClient</code> handles all SerialX communication with the NASA device. Most users won't interact with this directly - the <code>SamsungNasa</code> class provides a higher-level interface.</p>
 <h2 id="class-definition">Class Definition<a class="headerlink" href="#class-definition" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.nasa_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">NasaClient</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">NasaConfig</span>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">NasaClient</span><span class="p">(</span>
-    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">NasaConfig</span><span class="p">,</span>
     <span class="n">recv_event_handler</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">send_event_handler</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1559,7 +1557,7 @@
 <h2 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">&para;</a></h2>
 <h3 id="connection-management">Connection Management<a class="headerlink" href="#connection-management" title="Permanent link">&para;</a></h3>
 <h4 id="async-connect-bool"><code>async connect() -&gt; bool</code><a class="headerlink" href="#async-connect-bool" title="Permanent link">&para;</a></h4>
-<p>Establish TCP connection to the NASA device.</p>
+<p>Establish SerialX connection to the NASA device.</p>
 <div class="highlight"><pre><span></span><code><span class="n">success</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
 <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Connected successfully&quot;</span><span class="p">)</span>
@@ -1572,7 +1570,7 @@
 <p><strong>Raises:</strong>
 - <code>ConnectionError</code> if unable to connect</p>
 <h4 id="async-disconnect"><code>async disconnect()</code><a class="headerlink" href="#async-disconnect" title="Permanent link">&para;</a></h4>
-<p>Close the TCP connection gracefully.</p>
+<p>Close the SerialX connection gracefully.</p>
 <div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="message-sending">Message Sending<a class="headerlink" href="#message-sending" title="Permanent link">&para;</a></h3>
@@ -1622,6 +1620,9 @@
 <h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
 <p>The client respects these configuration options:</p>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+
     <span class="c1"># Retries</span>
     <span class="s2">&quot;enable_read_retries&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="s2">&quot;read_retry_max_attempts&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
@@ -1639,8 +1640,6 @@
 <span class="p">}</span>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">NasaClient</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
-    <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
     <span class="n">config</span><span class="o">=</span><span class="n">NasaConfig</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -1654,13 +1653,13 @@
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">NasaConfig</span><span class="p">(</span>
+        <span class="n">device_path</span><span class="o">=</span><span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
+        <span class="n">client_baudrate</span><span class="o">=</span><span class="mi">9600</span><span class="p">,</span>
         <span class="n">client_address</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">enable_read_retries</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
 
     <span class="n">client</span> <span class="o">=</span> <span class="n">NasaClient</span><span class="p">(</span>
-        <span class="n">host</span><span class="o">=</span><span class="s2">&quot;192.168.1.100&quot;</span><span class="p">,</span>
-        <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
         <span class="n">config</span><span class="o">=</span><span class="n">config</span>
     <span class="p">)</span>
 
