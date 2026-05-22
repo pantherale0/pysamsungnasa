@@ -6,7 +6,7 @@ Welcome to the pysamsungnasa documentation! This library provides a Python inter
 
 **pysamsungnasa** is a Python library that enables you to:
 
-- **Connect** to Samsung heat pumps and air conditioning units via TCP socket over F1/F2 connectors using the NASA protocol
+- **Connect** to Samsung heat pumps and air conditioning units via a serial connection over F1/F2 connectors using SerialX and the NASA protocol
 - **Discover** new devices on the NASA network and manage known devices
 - **Send commands** to devices and handle their responses
 - **Parse** incoming data packets from devices in real-time
@@ -43,9 +43,9 @@ from pysamsungnasa import SamsungNasa
 async def main():
     # Initialize the NASA protocol
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
         config={
+            "device_path": "socket://192.168.1.100:8000",  # Or a local serial port like "/dev/ttyUSB0"
+            "client_baudrate": 9600,
             "client_address": 1,
             "device_addresses": ["100000"]  # Outdoor unit
         }

@@ -16,7 +16,7 @@ The NASA protocol is Samsung's proprietary protocol for HVAC communication:
 ### Components
 
 1. **SamsungNasa** - Main entry point, manages connections and devices
-2. **NasaClient** - Low-level TCP client for protocol communication
+2. **NasaClient** - Low-level SerialX client for protocol communication
 3. **NasaDevice** - Represents a single device and its attributes
 4. **Controllers** - Control specific functions (Climate, DHW)
 5. **NasaPacketParser** - Parses incoming NASA protocol packets
@@ -31,10 +31,10 @@ Create a SamsungNasa instance:
 from pysamsungnasa import SamsungNasa
 
 nasa = SamsungNasa(
-    host="192.168.1.100",           # IP address of NASA adapter
-    port=8000,                       # NASA protocol port
     config={
-        "device_addresses": [],      # Known devices (optional)
+        "device_path": "socket://192.168.1.100:8000",   # Or local serial port like "/dev/ttyUSB0"
+        "client_baudrate": 9600,
+        "device_addresses": [],                          # Known devices (optional)
     },
     new_device_event_handler=None,   # Callback for new devices (optional)
     disconnect_event_handler=None,   # Callback on disconnect (optional)
@@ -180,8 +180,10 @@ async def on_new_device(device):
     print(f"Type: {device.device_type}")
 
 nasa = SamsungNasa(
-    host="192.168.1.100",
-    port=8000,
+    config={
+        "device_path": "socket://192.168.1.100:8000",
+        "client_baudrate": 9600,
+    },
     new_device_event_handler=on_new_device
 )
 ```
@@ -195,8 +197,10 @@ async def on_disconnect():
     print("Connection lost! Attempting to reconnect...")
 
 nasa = SamsungNasa(
-    host="192.168.1.100",
-    port=8000,
+    config={
+        "device_path": "socket://192.168.1.100:8000",
+        "client_baudrate": 9600,
+    },
     disconnect_event_handler=on_disconnect
 )
 ```
@@ -296,8 +300,10 @@ async def monitor():
         print(f"  Attributes: {len(device.attributes)}")
 
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
+        config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
+        }
     )
 
     await nasa.start()
@@ -324,8 +330,10 @@ from pysamsungnasa.protocol.factory.messages.outdoor import (
 
 async def read_outdoor_data():
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
+        config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
+        }
     )
 
     await nasa.start()
@@ -356,8 +364,10 @@ from pysamsungnasa.protocol.factory.messages.outdoor import OutdoorAirTemperatur
 
 async def poll_every_30_seconds():
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
+        config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
+        }
     )
 
     await nasa.start()

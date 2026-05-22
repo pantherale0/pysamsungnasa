@@ -32,9 +32,32 @@ class NasaConfig:
     write_retry_max_attempts: int = 3
     write_retry_interval: float = 1.0
     write_retry_backoff_factor: float = 1.1
+    client_baudrate: int = 9600
+    device_path: str | None = None
 ```
 
 ## Configuration Properties
+
+### Connection Configuration
+
+#### `device_path: str | None = None`
+The path to the serial device (e.g. `/dev/ttyUSB0`) or an RFC2217 network bridge URL (e.g. `socket://192.168.1.100:8000`).
+
+**Default:** None
+**Note:** Required for the SerialX client to connect.
+
+```python
+config = {"device_path": "socket://192.168.1.100:8000"}
+```
+
+#### `client_baudrate: int = 9600`
+The baud rate for the SerialX serial interface connection.
+
+**Default:** 9600
+
+```python
+config = {"client_baudrate": 9600}
+```
 
 ### Network Configuration
 
@@ -215,9 +238,9 @@ The most common way - pass a dictionary to SamsungNasa:
 
 ```python
 nasa = SamsungNasa(
-    host="192.168.1.100",
-    port=8000,
     config={
+        "device_path": "socket://192.168.1.100:8000",
+        "client_baudrate": 9600,
         "client_address": 1,
         "device_addresses": ["200000", "200020"],
         "enable_read_retries": True,
@@ -231,17 +254,18 @@ Create a NasaConfig object first:
 
 ```python
 from pysamsungnasa.config import NasaConfig
+from dataclasses import asdict
 
 config = NasaConfig(
+    device_path="socket://192.168.1.100:8000",
+    client_baudrate=9600,
     client_address=1,
     device_addresses=["200000", "200020"],
     log_all_messages=False
 )
 
 nasa = SamsungNasa(
-    host="192.168.1.100",
-    port=8000,
-    config=config.dict()  # Convert to dict
+    config=asdict(config)
 )
 ```
 
@@ -252,13 +276,15 @@ import os
 from pysamsungnasa.config import NasaConfig
 
 config_dict = {
+    "device_path": os.getenv("SAMSUNG_HP_DEVICE_PATH", "socket://192.168.1.100:8000"),
+    "client_baudrate": int(os.getenv("SAMSUNG_HP_CLIENT_BAUDRATE", "9600")),
     "client_address": int(os.getenv("NASA_CLIENT_ADDR", "1")),
     "device_addresses": os.getenv("NASA_DEVICES", "100000").split(","),
     "log_all_messages": os.getenv("NASA_LOG_ALL", "false").lower() == "true",
     "enable_read_retries": os.getenv("NASA_RETRIES", "true").lower() == "true",
 }
 
-nasa = SamsungNasa(..., config=config_dict)
+nasa = SamsungNasa(config=config_dict)
 ```
 
 ### From File
@@ -271,12 +297,14 @@ from pysamsungnasa import SamsungNasa
 with open("nasa_config.json") as f:
     config = json.load(f)
 
-nasa = SamsungNasa(..., config=config)
+nasa = SamsungNasa(config=config)
 ```
 
 Example `nasa_config.json`:
 ```json
 {
+    "device_path": "socket://192.168.1.100:8000",
+    "client_baudrate": 9600,
     "client_address": 1,
     "device_addresses": ["200000", "200020"],
     "log_all_messages": false,
@@ -293,6 +321,8 @@ Example `nasa_config.json`:
 
 ```python
 debug_config = {
+    "device_path": "socket://192.168.1.100:8000",
+    "client_baudrate": 9600,
     "client_address": 1,
     "device_addresses": ["200000", "200020"],
     "log_all_messages": True,
@@ -308,6 +338,8 @@ debug_config = {
 
 ```python
 prod_config = {
+    "device_path": "socket://192.168.1.100:8000",
+    "client_baudrate": 9600,
     "client_address": 1,
     "device_addresses": ["200000", "200020"],
     "log_all_messages": False,
@@ -323,6 +355,8 @@ prod_config = {
 
 ```python
 minimal_config = {
+    "device_path": "socket://192.168.1.100:8000",
+    "client_baudrate": 9600,
     "client_address": 1,
 }
 ```
@@ -331,6 +365,8 @@ minimal_config = {
 
 ```python
 reliable_config = {
+    "device_path": "socket://192.168.1.100:8000",
+    "client_baudrate": 9600,
     "client_address": 1,
     "device_addresses": ["200000", "200020"],
     "enable_read_retries": True,
@@ -350,9 +386,10 @@ After creating SamsungNasa, access the config:
 
 ```python
 nasa = SamsungNasa(
-    host="192.168.1.100",
-    port=8000,
-    config={"client_address": 1}
+    config={
+        "device_path": "socket://192.168.1.100:8000",
+        "client_address": 1,
+    }
 )
 
 # Read configuration
@@ -371,8 +408,10 @@ Configuration is validated when passed to SamsungNasa:
 ```python
 try:
     nasa = SamsungNasa(
-        ...,
-        config={"invalid_key": "value"}  # Will raise error
+        config={
+            "device_path": "socket://192.168.1.100:8000",
+            "invalid_key": "value",  # Will raise error
+        }
     )
 except TypeError as e:
     print(f"Configuration error: {e}")

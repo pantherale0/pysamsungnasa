@@ -56,8 +56,10 @@ When you start the connection, devices advertise themselves:
 
 ```python
 nasa = SamsungNasa(
-    host="192.168.1.100",
-    port=8000
+    config={
+        "device_path": "socket://192.168.1.100:8000",
+        "client_baudrate": 9600,
+    }
 )
 
 await nasa.start()
@@ -76,10 +78,10 @@ Pre-configure devices you want to monitor:
 
 ```python
 nasa = SamsungNasa(
-    host="192.168.1.100",
-    port=8000,
     config={
-        "device_addresses": ["200000", "200020"]
+        "device_path": "socket://192.168.1.100:8000",
+        "client_baudrate": 9600,
+        "device_addresses": ["200000", "200020"],
     }
 )
 
@@ -103,9 +105,11 @@ async def on_new_device(device):
     await device.get_configuration()
 
 nasa = SamsungNasa(
-    host="192.168.1.100",
-    port=8000,
-    new_device_event_handler=on_new_device
+    config={
+        "device_path": "socket://192.168.1.100:8000",
+        "client_baudrate": 9600,
+    },
+    new_device_event_handler=on_new_device,
 )
 
 await nasa.start()
@@ -381,8 +385,10 @@ from pysamsungnasa.protocol.factory.messages.indoor import (
 
 async def main():
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000
+        config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
+        }
     )
 
     def on_temp_change(device, **kwargs):

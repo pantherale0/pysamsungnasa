@@ -16,8 +16,8 @@ The CLI reads configuration from environment variables and a `.env` file:
 
 ```bash
 # .env file
-SAMSUNG_HP_HOST=192.168.1.100
-SAMSUNG_HP_PORT=8000
+SAMSUNG_HP_DEVICE_PATH=socket://192.168.1.100:8000
+SAMSUNG_HP_CLIENT_BAUDRATE=9600
 SAMSUNG_HP_DEVICE_PNP=true
 SAMSUNG_HP_DEVICE_DUMP_ONLY=false
 SAMSUNG_HP_LOG_ALL_MESSAGES=false
@@ -29,8 +29,8 @@ SAMSUNG_HP_DEVICES_TO_LOG=200000 # Enable enhanced logging for all messages from
 Or set environment variables directly:
 
 ```bash
-export SAMSUNG_HP_HOST=192.168.1.100
-export SAMSUNG_HP_PORT=8000
+export SAMSUNG_HP_DEVICE_PATH=socket://192.168.1.100:8000
+export SAMSUNG_HP_CLIENT_BAUDRATE=9600
 export SAMSUNG_HP_DEVICE_PNP=true
 
 python -m pysamsungnasa
@@ -203,8 +203,8 @@ Show connection status.
 Output:
 ```
 Connection: Connected
-Host: 192.168.1.100
-Port: 8000
+Device Path: socket://192.168.1.100:8000
+Baudrate: 9600
 Devices: 2
 ```
 
@@ -323,9 +323,9 @@ DHW target temperature: 45°C
 
 **Error: "Connection refused"**
 
-1. Check host and port in environment variables
+1. Check the device path in environment variables (e.g. `SAMSUNG_HP_DEVICE_PATH`)
 2. Verify the NASA adapter is powered and connected
-3. Test network connectivity: `ping <host>`
+3. Test network connectivity: `ping <host>` (if using a socket bridge)
 
 **Error: "No devices found"**
 

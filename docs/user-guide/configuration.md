@@ -8,15 +8,30 @@ All configuration is managed through the `NasaConfig` class, passed as a diction
 
 ```python
 nasa = SamsungNasa(
-    host="192.168.1.100",
-    port=8000,
     config={
-        # Configuration options here
+        "device_path": "socket://192.168.1.100:8000",   # Or local serial port like "/dev/ttyUSB0"
+        "client_baudrate": 9600,
+        # Other configuration options here
     }
 )
 ```
 
 ## Basic Configuration
+
+### Connection Settings
+
+Specify the connection parameters to your serial interface or Serial-over-IP/RFC2217 bridge:
+
+```python
+config = {
+    "device_path": "socket://192.168.1.100:8000",  # E.g. local "/dev/ttyUSB0" or remote bridge
+    "client_baudrate": 9600,                         # Default: 9600
+}
+```
+
+- **device_path**: Path to your SerialX device. Can be a local device path or a remote RFC2217 bridge address using the `socket://` protocol.
+- **client_baudrate**: The baud rate of your SerialX hardware connection.
+
 
 ### Client Address
 
@@ -179,7 +194,11 @@ Here's a realistic configuration:
 
 ```python
 config = {
-    # Network
+    # Connection
+    "device_path": "socket://192.168.1.100:8000",
+    "client_baudrate": 9600,
+
+    # Devices
     "device_addresses": ["100000", "200000"],
 
     # Buffer
@@ -207,8 +226,6 @@ config = {
 }
 
 nasa = SamsungNasa(
-    host="192.168.1.100",
-    port=8000,
     config=config
 )
 ```
@@ -221,21 +238,21 @@ Load configuration from environment variables:
 import os
 
 config = {
+    "device_path": os.getenv("SAMSUNG_HP_DEVICE_PATH", "socket://192.168.1.100:8000"),
+    "client_baudrate": int(os.getenv("SAMSUNG_HP_CLIENT_BAUDRATE", "9600")),
     "device_addresses": os.getenv("NASA_DEVICES", "100000,200000").split(","),
     "log_all_messages": os.getenv("NASA_DEBUG", "false").lower() == "true",
 }
 
 nasa = SamsungNasa(
-    host=os.getenv("NASA_HOST", "192.168.1.100"),
-    port=int(os.getenv("NASA_PORT", "8000")),
     config=config
 )
 ```
 
 Usage:
 ```bash
-export NASA_HOST=192.168.1.100
-export NASA_PORT=8000
+export SAMSUNG_HP_DEVICE_PATH=socket://192.168.1.100:8000
+export SAMSUNG_HP_CLIENT_BAUDRATE=9600
 export NASA_DEVICES=100000,200000
 export NASA_DEBUG=false
 
@@ -310,9 +327,8 @@ The `NasaConfig` class validates configuration on creation:
 ```python
 try:
     nasa = SamsungNasa(
-        host="192.168.1.100",
-        port=8000,
         config={
+            "device_path": "socket://192.168.1.100:8000",
             "client_address": 1,
             "invalid_option": True,  # Will raise an error
         }
