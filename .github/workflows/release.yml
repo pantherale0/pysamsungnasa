@@ -21,7 +21,7 @@ jobs:
           filepath="pysamsungnasa/__init__.py"
           new_version_string="__version__ = \"${{ github.event.release.tag_name }}\""
           sed -i "s/^__version__ = .*$/$new_version_string/" "$filepath"
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
       - name: Build package
