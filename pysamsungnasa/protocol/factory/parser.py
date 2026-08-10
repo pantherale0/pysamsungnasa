@@ -2,15 +2,16 @@
 
 import logging
 import struct
+
+from ...helpers import bin2hex
 from . import MESSAGE_PARSERS
 from .types import BaseMessage, RawMessage
-from ...helpers import bin2hex
 
 _LOGGER = logging.getLogger(__name__)
 
 
 def parse_message(
-    message_number: int, payload: bytes, message_parsers: dict[int, BaseMessage] | None = None
+    message_number: int, payload: bytes, message_parsers: dict[int, type[BaseMessage]] | None = None
 ) -> BaseMessage:
     """Parse a message from its payload.
 
@@ -31,12 +32,11 @@ def parse_message(
         parser_class = RawMessage
     try:
         parser = parser_class.parse_payload(payload)
-    except Exception as e:
+    except Exception:
         _LOGGER.exception(
-            "Error parsing packet for %s (%s): %s",
+            "Error parsing packet for %s (%s)",
             message_number,
             bin2hex(payload) if isinstance(payload, bytes) else str(payload),
-            e,
         )
         parser = RawMessage.parse_payload(payload)
     return parser
@@ -95,8 +95,8 @@ def parse_tlv_structure(struct_payload: bytes) -> dict:
             # Collect string representations for joining
             if hasattr(parsed_submessage, "VALUE"):
                 submessage_strings.append(str(parsed_submessage.VALUE))
-        except Exception as e:
-            _LOGGER.debug("Failed to parse submessage 0x%04x in structure: %s", sub_message_number, e)
+        except Exception:
+            _LOGGER.exception("Failed to parse submessage 0x%04x in structure", sub_message_number)
             # Store raw hex if parsing fails
             submessages[sub_message_number] = value.hex() if value else ""
             submessage_strings.append(value.hex() if value else "")

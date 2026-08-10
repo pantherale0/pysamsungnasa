@@ -19,6 +19,10 @@ class CurrentErrorCode(StrMessage):
         # Extract the error code as an integer
         error_code = int.from_bytes(payload[0:2], byteorder="big")
 
+        # 0xFFFF is the NASA "no error / unavailable" sentinel (not E65535)
+        if error_code == 0xFFFF:
+            return cls(value=None, raw_payload=payload)
+
         # Get the error description using the error mapping
         error_description = get_error_code(error_code)
 
@@ -64,6 +68,36 @@ class SerialNumber(StructureMessage):
         return cls(value=ascii_string, raw_payload=payload)
 
 
+def format_db_code(payload: bytes) -> str | None:
+    """Format the common 10-byte Samsung MICOM DB code structure.
+
+    Structure:
+    - Bytes 0-1: Series and variant code (e.g., 0x91 0x02 = DB91-02)
+    - Bytes 2-3: Model code variant (e.g., 0x09 0x1b)
+    - Bytes 4-6: Date fields (year BCD + packed month/day nibbles)
+    - Bytes 7-9: Additional identifier (time or build number, BCD)
+
+    Returns:
+        Formatted string like ``DB91-02 (091B) 2022.02.08 000000``, or None if too short.
+    """
+    if len(payload) < 10:
+        return None
+
+    def bcd_decode(byte_val: int) -> int:
+        return (byte_val >> 4) * 10 + (byte_val & 0x0F)
+
+    series_code = f"DB{payload[0]:02X}-{payload[1]:02X}"
+    model_variant = f"{payload[2]:02X}{payload[3]:02X}"
+
+    year = 2000 + bcd_decode(payload[4])
+    month = (payload[6] & 0x0F) + ((payload[6] >> 4) & 0x0F)
+    day = ((payload[6] & 0xF0) >> 4) * 10 + (payload[5] & 0x0F)
+    date_str = f"{year:04d}.{month:02d}.{day:02d}"
+
+    time_str = f"{bcd_decode(payload[7]):02d}{bcd_decode(payload[8]):02d}{bcd_decode(payload[9]):02d}"
+    return f"{series_code} ({model_variant}) {date_str} {time_str}"
+
+
 class DbCodeMiComMainMessage(StructureMessage):
     """Parser for message 0x0608 (DB Code MiCom Main Message).
 
@@ -87,28 +121,11 @@ class DbCodeMiComMainMessage(StructureMessage):
     @classmethod
     def parse_payload(cls, payload: bytes) -> "DbCodeMiComMainMessage":
         """Parse the payload into structured DB code information."""
-        if len(payload) < 10:
-            return cls(value=payload.hex() if payload else None)
-
         try:
-            # Helper to decode BCD (Binary Coded Decimal)
-            def bcd_decode(byte_val):
-                return (byte_val >> 4) * 10 + (byte_val & 0x0F)
-
-            # Series and variant code
-            series_code = f"DB{payload[0]:02X}-{payload[1]:02X}"
-            model_variant = f"{payload[2]:02X}{payload[3]:02X}"
-
-            # Date from nibbles: year (BCD) + month (nibble sum) + day (cross-byte)
-            year = 2000 + bcd_decode(payload[4])
-            month = (payload[6] & 0x0F) + ((payload[6] >> 4) & 0x0F)
-            day = ((payload[6] & 0xF0) >> 4) * 10 + (payload[5] & 0x0F)
-            date_str = f"{year:04d}.{month:02d}.{day:02d}"
-
-            # Time from BCD
-            time_str = f"{bcd_decode(payload[7]):02d}{bcd_decode(payload[8]):02d}{bcd_decode(payload[9]):02d}"
-
-            return cls(value=f"{series_code} ({model_variant}) {date_str} {time_str}", raw_payload=payload)
+            formatted = format_db_code(payload)
+            if formatted is None:
+                return cls(value=payload.hex() if payload else None, raw_payload=payload)
+            return cls(value=formatted, raw_payload=payload)
         except (IndexError, ValueError):
             return cls(value=payload.hex() if payload else None, raw_payload=payload)
 

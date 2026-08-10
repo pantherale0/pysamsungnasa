@@ -1,35 +1,38 @@
 """Outdoor unit messages."""
 
+from __future__ import annotations
+
+from ...enum import (
+    Outdoor4WayLoad,
+    OutdoorCchLoad,
+    OutdoorCompressorLoad,
+    OutdoorEviBypassLoad,
+    OutdoorEviSolenoid,
+    OutdoorGasChargeLoad,
+    OutdoorHotGasLoad,
+    OutdoorIndoorDefrostStep,
+    OutdoorLiquidLoad,
+    OutdoorMainCoolLoad,
+    OutdoorOperationHeatCool,
+    OutdoorOperationServiceOp,
+    OutdoorOperationStatus,
+    OutdoorOutEevLoad,
+    OutdoorPumpOutLoad,
+    OutdoorWaterValveLoad,
+    OutOutdoorCoolonlyModel,
+)
 from ..types import (
+    BasicCurrentMessage,
+    BasicEnergyMessage,
+    BasicPowerMessage,
+    BasicTemperatureMessage,
     EnumMessage,
     FloatMessage,
-    BasicTemperatureMessage,
-    BasicCurrentMessage,
-    BasicPowerMessage,
-    BasicEnergyMessage,
-    RawMessage,
     IntegerMessage,
+    RawMessage,
     StructureMessage,
 )
-from ...enum import (
-    OutdoorOperationStatus,
-    OutdoorIndoorDefrostStep,
-    OutOutdoorCoolonlyModel,
-    OutdoorEviSolenoid,
-    OutdoorOperationServiceOp,
-    OutdoorOperationHeatCool,
-    OutdoorOutEevLoad,
-    OutdoorCompressorLoad,
-    OutdoorCchLoad,
-    OutdoorHotGasLoad,
-    OutdoorLiquidLoad,
-    Outdoor4WayLoad,
-    OutdoorMainCoolLoad,
-    OutdoorEviBypassLoad,
-    OutdoorGasChargeLoad,
-    OutdoorWaterValveLoad,
-    OutdoorPumpOutLoad,
-)
+from .basic import format_db_code
 
 
 class HeatPumpVoltage(FloatMessage):
@@ -1343,10 +1346,17 @@ class OutdoorCondenserMidpointTemp(FloatMessage):
 
 
 class OutdoorInstalledCapacity(FloatMessage):
-    """Parser for message 0x8287 (Installed capacity)."""
+    """Parser for message 0x8287 (Installed capacity / outdoor HP).
+
+    NASA.ptc: VAR_out_install_capa (unit HP). Often unset (0) on EHS Mono;
+    for product capacity in kW use 0x82E3 (Outdoor Product Capacity) instead.
+    """
 
     MESSAGE_ID = 0x8287
-    MESSAGE_NAME = "Installed capacity"
+    MESSAGE_NAME = "Installed capacity (HP)"
+    UNIT_OF_MEASUREMENT = "HP"
+    ARITHMETIC = 1.0
+    SIGNED = False
 
 
 class OutdoorMessage8298(FloatMessage):
@@ -1604,7 +1614,13 @@ class OutdoorTw2Temperature(BasicTemperatureMessage):
 
 
 class OutdoorProductCapa(BasicPowerMessage):
-    """Parser for message 0x82e3 (Outdoor Product Capacity)."""
+    """Parser for message 0x82E3 (Outdoor Product Capacity).
+
+    NASA.ptc: VAR_OUT_PRODUCT_OPTION_CAPA — outdoor product option capacity in
+    0.1 kW units (inherited ARITHMETIC=0.1). On EHS Mono this is the rated
+    capacity source of truth (e.g. raw 0x0032 → 5.0 kW for a 5 kW Gen6 unit).
+    Prefer this over 0x8287 for kW capacity.
+    """
 
     MESSAGE_ID = 0x82E3
     MESSAGE_NAME = "Outdoor Product Capacity"
@@ -1795,10 +1811,49 @@ class OutdoorMessage841f(RawMessage):
 
 
 class OutdoorInverter1Micom(StructureMessage):
-    """Parser for message 0x8601 (Inverter1 Micom)."""
+    """Parser for message 0x8601 (Inverter1 Micom).
+
+    NASA.ptc: STR_out_install_inverter_and_bootloader_info
+    SNET: Inverter1DBCodeVersion / NASA_OUTDOOR_SUBMICOM
+
+    This is installation identity for the outdoor inverter MICOM (and trailing
+    bootloader bytes), not live inverter telemetry. Layout matches the common
+    10-byte MICOM DB code used by 0x0608, followed by optional bootloader data:
+
+    - Bytes 0-9: Inverter MICOM DB code (same format as STR_ad_dbcode_micom_main)
+    - Bytes 10+: Bootloader / residual install info (opaque; often mostly zeros)
+
+    Example:
+    ``9102381A000000001000010000...`` → DB91-02 (381A) with bootloader ``01`` + padding
+    """
 
     MESSAGE_ID = 0x8601
     MESSAGE_NAME = "Inverter1 Micom"
+
+    @classmethod
+    def parse_payload(cls, payload: bytes) -> OutdoorInverter1Micom:
+        """Parse inverter MICOM DB code and trailing bootloader bytes."""
+        if not payload:
+            return cls(value=None, raw_payload=payload)
+
+        try:
+            formatted = format_db_code(payload)
+        except (IndexError, ValueError):
+            return cls(value=payload.hex(), raw_payload=payload)
+
+        if formatted is None:
+            return cls(value=payload.hex(), raw_payload=payload)
+
+        bootloader = payload[10:]
+        result = {
+            "formatted": formatted,
+            "series_code": f"DB{payload[0]:02X}-{payload[1]:02X}",
+            "model_variant": f"{payload[2]:02X}{payload[3]:02X}",
+            "bootloader_hex": bootloader.hex() if bootloader else "",
+            "bootloader_length": len(bootloader),
+            "raw_hex": payload.hex(),
+        }
+        return cls(value=result, raw_payload=payload)
 
 
 class OutdoorMessage8608(RawMessage):
@@ -1825,7 +1880,7 @@ class OutdoorBaseOptionInfo(RawMessage):
     MESSAGE_NAME = "Base option info"
 
     @classmethod
-    def parse_payload(cls, payload: bytes) -> "OutdoorBaseOptionInfo":
+    def parse_payload(cls, payload: bytes) -> OutdoorBaseOptionInfo:
         """Parse the payload into a structured representation."""
         if not payload or len(payload) < 4:
             return cls(value=payload.hex() if payload else None)
@@ -1863,7 +1918,7 @@ class OutdoorMessage860c(RawMessage):
     MESSAGE_NAME = "Message 860C"
 
     @classmethod
-    def parse_payload(cls, payload: bytes) -> "OutdoorMessage860c":
+    def parse_payload(cls, payload: bytes) -> OutdoorMessage860c:
         """Parse the payload into a structured representation."""
         if not payload or len(payload) < 4:
             return cls(value=payload.hex() if payload else None)
@@ -1883,38 +1938,60 @@ class OutdoorMessage860c(RawMessage):
         return cls(value=result, raw_payload=payload)
 
 
-class OutdoorInstalledOutdoorUnitModelInfo(RawMessage):
+class OutdoorInstalledOutdoorUnitModelInfo(StructureMessage):
     """Parser for message 0x860D (Installed Outdoor Unit model info).
 
-    This is a binary structure message containing model information for the
-    outdoor unit. The structure format is:
-    - Bytes 0-3: Header (reserved/metadata)
-    - Bytes 4+: Variable-length configuration fields
+    NASA.ptc: STR_OUT_INSTALL_MODEL_INFO / NASA_OUTDOOR_MODELINF
+
+    Opaque outdoor install/model fingerprint. NASA.ptc has no field map; observed
+    EHS Mono traffic uses a fixed 5-byte layout that unpacks cleanly as:
+
+    - Bytes 0-1: unsigned big-endian word (field_a)
+    - Bytes 2-3: unsigned big-endian word (field_b)
+    - Byte 4:    unsigned byte (field_c)
+
+    Example (5 kW Gen6 / AE050-class Mono): ``0008000efe`` → (8, 14, 0xFE).
+    Rated capacity in kW comes from 0x82E3, not from these fields.
     """
 
     MESSAGE_ID = 0x860D
     MESSAGE_NAME = "Installed Outdoor Unit model info"
 
     @classmethod
-    def parse_payload(cls, payload: bytes) -> "OutdoorInstalledOutdoorUnitModelInfo":
-        """Parse the payload into a structured representation."""
-        if not payload or len(payload) < 4:
-            return cls(value=payload.hex() if payload else None)
+    def parse_payload(cls, payload: bytes) -> OutdoorInstalledOutdoorUnitModelInfo:
+        """Parse the outdoor install model fingerprint into structured fields."""
+        if not payload:
+            return cls(value=None, raw_payload=payload)
 
-        header_bytes = payload[0:4]
-        header_int = int.from_bytes(header_bytes, byteorder="big")
-        data_portion = payload[4:]
+        raw_hex = payload.hex()
 
-        result = {
-            "header_hex": header_bytes.hex(),
-            "header_value": header_int,
-            "data_hex": data_portion.hex() if data_portion else "",
-            "data_length": len(data_portion),
-            "total_length": len(payload),
-            "raw_hex": payload.hex(),
-            "note": "Structure definition not yet available in NASA.ptc - fields represent outdoor unit model information",
-        }
-        return cls(value=result, raw_payload=payload)
+        # Canonical observed layout: 2 + 2 + 1 bytes
+        if len(payload) >= 5:
+            field_a = int.from_bytes(payload[0:2], byteorder="big")
+            field_b = int.from_bytes(payload[2:4], byteorder="big")
+            field_c = payload[4]
+            remainder = payload[5:]
+            fingerprint = payload[:5].hex()
+            result = {
+                "formatted": f"{field_a}/{field_b}/0x{field_c:02X}",
+                "field_a": field_a,
+                "field_b": field_b,
+                "field_c": field_c,
+                "fingerprint": fingerprint,
+                "remainder_hex": remainder.hex() if remainder else "",
+                "raw_hex": raw_hex,
+            }
+            return cls(value=result, raw_payload=payload)
+
+        return cls(
+            value={
+                "formatted": raw_hex,
+                "fingerprint": raw_hex,
+                "raw_hex": raw_hex,
+                "note": "Unexpected length; expected 5-byte install model fingerprint",
+            },
+            raw_payload=payload,
+        )
 
 
 class OutdoorInstalledOutdoorUnitSetupInfo(RawMessage):
@@ -1937,7 +2014,7 @@ class OutdoorInstalledOutdoorUnitSetupInfo(RawMessage):
     MESSAGE_NAME = "Installed Outdoor Unit setup info"
 
     @classmethod
-    def parse_payload(cls, payload: bytes) -> "OutdoorInstalledOutdoorUnitSetupInfo":
+    def parse_payload(cls, payload: bytes) -> OutdoorInstalledOutdoorUnitSetupInfo:
         """Parse the payload into a structured representation."""
         if not payload or len(payload) < 4:
             return cls(value=payload.hex() if payload else None)

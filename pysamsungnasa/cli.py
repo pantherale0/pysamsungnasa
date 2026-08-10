@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+from datetime import UTC, datetime
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
@@ -408,7 +409,9 @@ async def interactive_cli(nasa: SamsungNasa):
                 try:
                     # Inject ourselves into the packet handler
                     async for packet_bytes in nasa.parser.get_raw_packet_stream():
-                        print(f"Packet: {packet_bytes.hex()}")
+                        print(
+                            f"{datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S')} - Packet: {packet_bytes.hex()} - lock: {nasa.client.is_read_locked} (conn: {nasa.client.is_connection_locked})"
+                        )
                 except (KeyboardInterrupt, asyncio.CancelledError):
                     print("Stopped printing packet stream.")
             else:

@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-
-from typing import ClassVar, Optional, Any
 import logging
 import struct
 from abc import ABC
+from dataclasses import dataclass
+from typing import Any, ClassVar
 
 from ..enum import SamsungEnum
 
@@ -25,13 +24,13 @@ class SendMessage:
 class BaseMessage(ABC):
     """Base class for all NASA protocol messages."""
 
-    MESSAGE_ID: ClassVar[Optional[int]] = None
-    MESSAGE_NAME: ClassVar[Optional[str]] = None
-    MESSAGE_ENUM: ClassVar[Optional[type[SamsungEnum]]] = None
-    ENUM_DEFAULT: ClassVar[Optional[Any]] = None
-    UNIT_OF_MEASUREMENT: ClassVar[Optional[str]] = None
+    MESSAGE_ID: ClassVar[int | None] = None
+    MESSAGE_NAME: ClassVar[str | None] = None
+    MESSAGE_ENUM: ClassVar[type[SamsungEnum] | None] = None
+    ENUM_DEFAULT: ClassVar[SamsungEnum | None] = None
+    UNIT_OF_MEASUREMENT: ClassVar[str | None] = None
 
-    def __init__(self, value: Any, raw_payload: bytes = b"", options: Optional[list[str]] = None):
+    def __init__(self, value: Any, raw_payload: bytes = b"", options: list[str] | None = None):
         self.VALUE = value  # pylint: disable=invalid-name
         self.RAW_PAYLOAD = raw_payload  # pylint: disable=invalid-name
         self.OPTIONS = options  # pylint: disable=invalid-name
@@ -41,8 +40,7 @@ class BaseMessage(ABC):
         """Return True if this message is an FSV configuration message."""
         if self.MESSAGE_NAME is None:
             return False
-        assert self.__doc__ is not None
-        return "FSV" in (self.MESSAGE_NAME.upper() or self.__doc__.upper())
+        return "FSV" in (self.MESSAGE_NAME.upper() or self.__doc__.upper() if self.__doc__ else "")
 
     @property
     def as_dict(self) -> dict:
@@ -56,7 +54,7 @@ class BaseMessage(ABC):
         }
 
     @classmethod
-    def parse_payload(cls, payload: bytes) -> "BaseMessage":
+    def parse_payload(cls, payload: bytes) -> BaseMessage:
         """Parse the payload into a message instance."""
         raise NotImplementedError("parse_payload must be implemented in subclasses.")
 
@@ -72,7 +70,7 @@ class RawMessage(BaseMessage):
     MESSAGE_NAME = "UNKNOWN"
 
     @classmethod
-    def parse_payload(cls, payload: bytes) -> "RawMessage":
+    def parse_payload(cls, payload: bytes) -> RawMessage:
         """Parse the payload into a raw hex string."""
         return cls(value=payload.hex() if payload else None, raw_payload=payload)
 
@@ -86,7 +84,7 @@ class BoolMessage(BaseMessage):
     """Parser for boolean messages."""
 
     @classmethod
-    def parse_payload(cls, payload: bytes) -> "BoolMessage":
+    def parse_payload(cls, payload: bytes) -> BoolMessage:
         """Parse the payload into a boolean value."""
         return cls(value=bool(payload[0]), raw_payload=payload)
 
@@ -100,7 +98,7 @@ class StrMessage(BaseMessage):
     """Parser for str messages."""
 
     @classmethod
-    def parse_payload(cls, payload: bytes) -> "StrMessage":
+    def parse_payload(cls, payload: bytes) -> StrMessage:
         """Parse the payload into a string value."""
         return cls(value=payload.decode("utf-8") if payload else None, raw_payload=payload)
 
@@ -116,12 +114,23 @@ class FloatMessage(BaseMessage):
     ARITHMETIC: ClassVar[float] = 0
     SIGNED: ClassVar[bool] = True
     PAYLOAD_SIZE: ClassVar[int | None] = None  # None = auto-detect, 1/2/4 = force size
+    # NASA often uses all-bits-set as "not available" on VAR/LVAR sensors
+    NULL_UINT_MAX: ClassVar[bool] = True
 
     @classmethod
-    def parse_payload(cls, payload: bytes) -> "FloatMessage":
+    def _is_null_payload(cls, payload: bytes) -> bool:
+        """Return True when payload is the protocol unavailable sentinel."""
+        if not cls.NULL_UINT_MAX or not payload:
+            return False
+        return payload == b"\xff" * len(payload) and len(payload) in (2, 4)
+
+    @classmethod
+    def parse_payload(cls, payload: bytes) -> FloatMessage:
         """Parse the payload into a float value."""
         parsed_value: float | None = None
         if payload:
+            if cls._is_null_payload(payload):
+                return cls(value=None, raw_payload=payload)
             raw_int_value: int
             payload_len = len(payload)
             try:
@@ -149,8 +158,14 @@ class FloatMessage(BaseMessage):
         return cls(value=parsed_value, raw_payload=payload)
 
     @classmethod
-    def to_bytes(cls, value: float) -> bytes:
+    def to_bytes(cls, value: float | None) -> bytes:
         """Convert a float value into bytes."""
+        if value is None:
+            if not cls.NULL_UINT_MAX:
+                raise ValueError(f"None is not supported for {cls.__name__} (NULL_UINT_MAX is False).")
+            payload_size = cls.PAYLOAD_SIZE if cls.PAYLOAD_SIZE is not None else 2
+            return b"\xff" * payload_size
+
         if cls.ARITHMETIC == 0:
             raise ValueError(f"ARITHMETIC cannot be zero for {cls.__name__}.")
         int_value = int(value / cls.ARITHMETIC)
@@ -160,13 +175,9 @@ class FloatMessage(BaseMessage):
             payload_size = cls.PAYLOAD_SIZE
         else:
             # Auto-detect based on value range
-            if -128 <= int_value <= 127 and cls.SIGNED:
+            if -128 <= int_value <= 127 and cls.SIGNED or 0 <= int_value <= 255 and not cls.SIGNED:
                 payload_size = 1
-            elif 0 <= int_value <= 255 and not cls.SIGNED:
-                payload_size = 1
-            elif -32768 <= int_value <= 32767 and cls.SIGNED:
-                payload_size = 2
-            elif 0 <= int_value <= 65535 and not cls.SIGNED:
+            elif -32768 <= int_value <= 32767 and cls.SIGNED or 0 <= int_value <= 65535 and not cls.SIGNED:
                 payload_size = 2
             else:
                 payload_size = 4
@@ -188,7 +199,7 @@ class EnumMessage(BaseMessage):
     """Parser for enum messages."""
 
     @classmethod
-    def parse_payload(cls, payload: bytes) -> "EnumMessage":
+    def parse_payload(cls, payload: bytes) -> EnumMessage:
         """Parse the payload into an enum value."""
         if cls.MESSAGE_ENUM is None:
             raise ValueError(f"{cls.__name__} does not have a MESSAGE_ENUM defined.")
@@ -218,18 +229,33 @@ class EnumMessage(BaseMessage):
 class IntegerMessage(BaseMessage):
     """Parser for a basic integer message."""
 
+    # NASA often uses 0xFFFF / 0xFFFFFFFF as "not available" on unused channels
+    NULL_UINT_MAX: ClassVar[bool] = True
+
     @classmethod
-    def parse_payload(cls, payload: bytes) -> "IntegerMessage":
+    def _is_null_payload(cls, payload: bytes) -> bool:
+        """Return True when payload is the protocol unavailable sentinel."""
+        if not cls.NULL_UINT_MAX or not payload:
+            return False
+        return payload == b"\xff" * len(payload) and len(payload) in (2, 4)
+
+    @classmethod
+    def parse_payload(cls, payload: bytes) -> IntegerMessage:
         """Parse the payload into an integer value."""
-        # Basic integer is the hex as an int
-        parsed_value: Optional[int] = None
+        parsed_value: int | None = None
         if payload:
+            if cls._is_null_payload(payload):
+                return cls(value=None, raw_payload=payload)
             parsed_value = int(payload.hex(), 16)
         return cls(value=parsed_value, raw_payload=payload)
 
     @classmethod
-    def to_bytes(cls, value: int | float) -> bytes:
+    def to_bytes(cls, value: float | None) -> bytes:
         """Convert an integer value into bytes."""
+        if value is None:
+            if not cls.NULL_UINT_MAX:
+                raise ValueError(f"None is not supported for {cls.__name__} (NULL_UINT_MAX is False).")
+            return b"\xff\xff"
         # Determine the minimum number of bytes needed to represent the integer
         if isinstance(value, float):
             value = int(value)
@@ -271,7 +297,7 @@ class StructureMessage(BaseMessage):
     """Parser for structure messages containing nested sub-messages."""
 
     @classmethod
-    def parse_payload(cls, payload: bytes) -> "StructureMessage":
+    def parse_payload(cls, payload: bytes) -> StructureMessage:
         """Parse the payload into a structure message with nested sub-messages.
 
         When payload is bytes, parse TLV-encoded sub-messages and attempt to join them
