@@ -39,4 +39,6 @@ ERROR_CODES = {
 
 def get_error_code(code):
     """Retrieve the error description for a given error code."""
+    if code in (0, 0xFFFF):
+        return None
     return ERROR_CODES.get(code, f"E{code!s}")

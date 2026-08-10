@@ -726,20 +726,42 @@ class TestOutdoorMessageEdgeCases:
         )
 
         result = OutdoorInstalledOutdoorUnitModelInfo.parse_payload(b"\x00\x01\x02")
-        assert result.VALUE is not None
+        assert isinstance(result.VALUE, dict)
+        assert result.VALUE["fingerprint"] == "000102"
+        assert "note" in result.VALUE
 
     def test_outdoor_installed_outdoor_unit_model_info_valid(self):
-        """Test OutdoorInstalledOutdoorUnitModelInfo with valid payload."""
+        """Test OutdoorInstalledOutdoorUnitModelInfo with EHS Mono 5kW fingerprint."""
         from pysamsungnasa.protocol.factory.messages.outdoor import (
             OutdoorInstalledOutdoorUnitModelInfo,
         )
 
-        payload = b"\x00\x00\x00\x01\xaa\xbb\xcc"
+        payload = bytes.fromhex("0008000efe")
         result = OutdoorInstalledOutdoorUnitModelInfo.parse_payload(payload)
 
         assert isinstance(result.VALUE, dict)
-        assert "total_length" in result.VALUE
-        assert result.VALUE["total_length"] == 7
+        assert result.VALUE["field_a"] == 8
+        assert result.VALUE["field_b"] == 14
+        assert result.VALUE["field_c"] == 0xFE
+        assert result.VALUE["fingerprint"] == "0008000efe"
+        assert result.VALUE["formatted"] == "8/14/0xFE"
+        assert "5kW" in result.VALUE["hint"]
+
+    def test_outdoor_product_capacity_5kw(self):
+        """Test OutdoorProductCapa decodes 0.1 kW units (5.0 kW Gen6 Mono)."""
+        from pysamsungnasa.protocol.factory.messages.outdoor import OutdoorProductCapa
+
+        result = OutdoorProductCapa.parse_payload(bytes.fromhex("0032"))
+        assert result.VALUE == 5.0
+        assert result.UNIT_OF_MEASUREMENT == "kW"
+
+    def test_outdoor_installed_capacity_hp(self):
+        """Test OutdoorInstalledCapacity reports HP without zeroing via ARITHMETIC."""
+        from pysamsungnasa.protocol.factory.messages.outdoor import OutdoorInstalledCapacity
+
+        assert OutdoorInstalledCapacity.parse_payload(bytes.fromhex("0000")).VALUE == 0.0
+        assert OutdoorInstalledCapacity.parse_payload(bytes.fromhex("0005")).VALUE == 5.0
+        assert OutdoorInstalledCapacity.UNIT_OF_MEASUREMENT == "HP"
 
     def test_outdoor_installed_outdoor_unit_setup_info_short(self):
         """Test OutdoorInstalledOutdoorUnitSetupInfo with short payload."""

@@ -71,6 +71,16 @@ class NasaClient:
         """Return connection status."""
         return self._is_connected and self.writer is not None and not self.writer.is_closing()
 
+    @property
+    def is_read_locked(self) -> bool:
+        """Return read lock status."""
+        return self._receiving.locked()
+
+    @property
+    def is_connection_locked(self) -> bool:
+        """Return connection lock status."""
+        return self._connection_lock.locked()
+
     def set_receive_event_handler(self, handler) -> None:
         """Set the receive event handler."""
         self._rx_event_handler = handler
@@ -200,9 +210,12 @@ class NasaClient:
         except asyncio.IncompleteReadError:
             _LOGGER.debug("SerialX device at URL: %s has closed the connection.", self._config.device_path)
             await self.disconnect()
-        except (OSError, asyncio.CancelledError) as e:
+        except (OSError, asyncio.CancelledError):
+            _LOGGER.info("Listener task for SerialX device at URL %s has been cancelled.", self._config.device_path)
+            await self.disconnect()
+        except Exception:
             _LOGGER.exception(
-                "Listener task for SerialX device at URL: %s encountered an error: %s", self._config.device_path, e
+                "Listener task for SerialX device at URL %s encountered an error.", self._config.device_path
             )
             await self.disconnect()
 

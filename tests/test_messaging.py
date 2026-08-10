@@ -330,3 +330,54 @@ class TestIntegerMessage:
         payload = b"\x64"  # Hex for 100
         msg = IntegerMessage.parse_payload(payload)
         assert msg.VALUE == 100
+
+    def test_integer_message_ffff_is_none(self):
+        """Test that 0xFFFF unavailable sentinel becomes None."""
+        msg = IntegerMessage.parse_payload(b"\xff\xff")
+        assert msg.VALUE is None
+
+    def test_integer_message_ffffffff_is_none(self):
+        """Test that 0xFFFFFFFF unavailable sentinel becomes None."""
+        msg = IntegerMessage.parse_payload(b"\xff\xff\xff\xff")
+        assert msg.VALUE is None
+
+    def test_integer_message_single_ff_is_kept(self):
+        """Test that a single 0xFF byte is not treated as null."""
+        msg = IntegerMessage.parse_payload(b"\xff")
+        assert msg.VALUE == 255
+
+    def test_integer_message_null_opt_out(self):
+        """Test NULL_UINT_MAX can be disabled."""
+
+        class KeepMax(IntegerMessage):
+            NULL_UINT_MAX = False
+
+        msg = KeepMax.parse_payload(b"\xff\xff")
+        assert msg.VALUE == 65535
+
+
+class TestFloatMessageNullSentinel:
+    """Tests for FloatMessage 0xFFFF → None handling."""
+
+    def test_temperature_ffff_is_none(self):
+        """Signed temp 0xFFFF must not become -0.1."""
+        from pysamsungnasa.protocol.factory.types import BasicTemperatureMessage
+
+        msg = BasicTemperatureMessage.parse_payload(b"\xff\xff")
+        assert msg.VALUE is None
+
+    def test_float_ffff_is_none(self):
+        """Unsigned float 0xFFFF becomes None when NULL_UINT_MAX is enabled."""
+
+        class UnsignedFloat(FloatMessage):
+            ARITHMETIC = 0.1
+            SIGNED = False
+
+        msg = UnsignedFloat.parse_payload(b"\xff\xff")
+        assert msg.VALUE is None
+
+    def test_float_to_bytes_none(self):
+        """None encodes back to 0xFFFF for writable null sensors."""
+        from pysamsungnasa.protocol.factory.types import BasicTemperatureMessage
+
+        assert BasicTemperatureMessage.to_bytes(None) == b"\xff\xff"

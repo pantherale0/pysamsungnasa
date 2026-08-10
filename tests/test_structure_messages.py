@@ -102,6 +102,67 @@ class TestStructureMessages:
         assert "2022.05.16" in parsed_packet.VALUE
         assert "090909" in parsed_packet.VALUE
 
+    async def test_parse_inverter1_micom_message(self):
+        """Test parsing Inverter1 Micom / bootloader info (0x8601)."""
+        config = NasaConfig(client_address=1)
+        parser = NasaPacketParser(config=config)
+
+        parsed_packets = []
+
+        def callback(**kwargs):
+            parsed_packets.append(kwargs)
+
+        parser.add_device_handler("100000", callback)
+
+        # Fixture payload from ehs_mono/100000_dump.hex
+        message_id = 0x8601
+        payload = "9102381A00000000100001000000000000000000000000000000000000000000000000"
+
+        packet_hex = "100000" + "B0FFFF" + "C0" + "14" + "6d" + "01"
+        packet_hex += struct.pack(">H", message_id).hex()
+        packet_hex += payload
+
+        await parser.parse_packet(hex2bin(packet_hex))
+
+        assert len(parsed_packets) >= 1
+        parsed_packet = parsed_packets[0]["packet"]
+
+        assert message_id == parsed_packet.MESSAGE_ID
+        assert isinstance(parsed_packet.VALUE, dict)
+        assert parsed_packet.VALUE["series_code"] == "DB91-02"
+        assert parsed_packet.VALUE["model_variant"] == "381A"
+        assert "DB91-02 (381A)" in parsed_packet.VALUE["formatted"]
+        assert parsed_packet.VALUE["bootloader_hex"].startswith("01")
+        # Must not be misparsed as TLV submessage 568
+        assert "_submessages" not in parsed_packet.VALUE
+
+    async def test_parse_outdoor_install_model_info(self):
+        """Test parsing Installed Outdoor Unit model info (0x860D)."""
+        config = NasaConfig(client_address=1)
+        parser = NasaPacketParser(config=config)
+
+        parsed_packets = []
+
+        def callback(**kwargs):
+            parsed_packets.append(kwargs)
+
+        parser.add_device_handler("100000", callback)
+
+        message_id = 0x860D
+        payload = "0008000efe"
+
+        packet_hex = "100000" + "B0FFFF" + "C0" + "14" + "6f" + "01"
+        packet_hex += struct.pack(">H", message_id).hex()
+        packet_hex += payload
+
+        await parser.parse_packet(hex2bin(packet_hex))
+
+        assert len(parsed_packets) >= 1
+        parsed_packet = parsed_packets[0]["packet"]
+        assert message_id == parsed_packet.MESSAGE_ID
+        assert parsed_packet.VALUE["formatted"] == "8/14/0xFE"
+        assert parsed_packet.VALUE["fingerprint"] == "0008000efe"
+
     async def test_parse_serial_number_message(self):
         """Test parsing Serial Number Message (0x0607)."""
         config = NasaConfig(client_address=1)
