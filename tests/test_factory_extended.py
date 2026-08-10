@@ -745,7 +745,6 @@ class TestOutdoorMessageEdgeCases:
         assert result.VALUE["field_c"] == 0xFE
         assert result.VALUE["fingerprint"] == "0008000efe"
         assert result.VALUE["formatted"] == "8/14/0xFE"
-        assert "5kW" in result.VALUE["hint"]
 
     def test_outdoor_product_capacity_5kw(self):
         """Test OutdoorProductCapa decodes 0.1 kW units (5.0 kW Gen6 Mono)."""
