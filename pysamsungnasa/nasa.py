@@ -1,25 +1,22 @@
 """Represent the NASA protocol."""
 
 import logging
-from typing import Any, Callable
-from asyncio import iscoroutinefunction
+from collections.abc import Callable
+from typing import Any
 
 from .config import NasaConfig
 from .device import NasaDevice
-from .helpers import Address
-from .protocol.enum import DataType, AddressClass
-from .protocol.parser import NasaPacketParser
+from .helpers import Address, is_coroutine_function
 from .nasa_client import NasaClient
+from .protocol.enum import AddressClass, DataType
 from .protocol.factory import SendMessage
+from .protocol.parser import NasaPacketParser
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class SamsungNasa:
     """Core Samsung NASA protocol."""
-
-    config: NasaConfig
-    devices: dict[str, NasaDevice] = {}
 
     def __init__(
         self,
@@ -29,9 +26,9 @@ class SamsungNasa:
     ) -> None:
         """Initialize the NASA protocol."""
         self.config = NasaConfig(**config)
+        self.devices: dict[str, NasaDevice] = {}
         self.client = NasaClient(
             config=self.config,
-            recv_event_handler=None,
             disconnect_event_handler=disconnect_event_handler,
         )
         self.parser = NasaPacketParser(_new_device_handler=self._new_device_handler, config=self.config)
@@ -61,32 +58,23 @@ class SamsungNasa:
             self.devices[kwargs["source"]] = self._add_device(kwargs["source"])
             _LOGGER.info("New %s device discovered: %s", kwargs["source_class"], kwargs["source"])
             # Call the user-defined new device event handler
-            if callable(self.new_device_event_handler):
-                try:
-                    if iscoroutinefunction(self.new_device_event_handler):
-                        await self.new_device_event_handler(self.devices[kwargs["source"]])
-                    else:
-                        self.new_device_event_handler(self.devices[kwargs["source"]])
-                except Exception as e:
-                    _LOGGER.exception("Error in new device event handler: %s", e)
+            if self.new_device_event_handler is None:
+                return
+            try:
+                if is_coroutine_function(self.new_device_event_handler):
+                    await self.new_device_event_handler(self.devices[kwargs["source"]])
+                else:
+                    self.new_device_event_handler(self.devices[kwargs["source"]])
+            except Exception:
+                _LOGGER.exception("Error in new device event handler")
 
     async def start(self):
         """Start the NASA protocol."""
         await self.client.connect()
-        # if self.client.is_connected:
-        # Perform a "poke"
-        # await self.client.send_message(
-        #     destination="200000",
-        #     request_type=DataType.REQUEST,
-        #     messages=[SendMessage(0x4242, bytes.fromhex("FFFF"))],
-        # )
 
     async def stop(self):
         """Stop the NASA protocol."""
         await self.client.disconnect()
-
-    async def start_autodiscovery(self):
-        """Start NASA autodiscovery."""
 
     async def send_message(
         self,

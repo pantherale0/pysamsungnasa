@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import asyncio
 import logging
-
-from typing import TYPE_CHECKING, Any, Callable
-from datetime import datetime, timezone
+from collections.abc import Callable
+from datetime import datetime, UTC
+from typing import TYPE_CHECKING, Any
 
 from .config import NasaConfig
 from .protocol.enum import AddressClass, DataType
-from .protocol.parser import NasaPacketParser
 from .protocol.factory.types import BaseMessage, SendMessage
+from .protocol.parser import NasaPacketParser
 
 if TYPE_CHECKING:
     from .nasa_client import NasaClient
@@ -70,9 +70,8 @@ class NasaDevice:
         """
         assert issubclass(message, BaseMessage)
         assert message.MESSAGE_ID is not None
-        if message.MESSAGE_ID in self._packet_callbacks:
-            if callback in self._packet_callbacks[message.MESSAGE_ID]:
-                self._packet_callbacks[message.MESSAGE_ID].remove(callback)
+        if message.MESSAGE_ID in self._packet_callbacks and callback in self._packet_callbacks[message.MESSAGE_ID]:
+            self._packet_callbacks[message.MESSAGE_ID].remove(callback)
 
     def remove_device_callback(self, callback: Callable):
         """Remove a device callback."""
@@ -135,7 +134,7 @@ class NasaDevice:
 
     def handle_packet(self, *_nargs, **kwargs):
         """Handle a packet sent to this device from the parser."""
-        self.last_packet_time = datetime.now(timezone.utc)
+        self.last_packet_time = datetime.now(UTC)
         message_number = kwargs["messageNumber"]
         packet_data: BaseMessage = kwargs["packet"]
         log_message = (

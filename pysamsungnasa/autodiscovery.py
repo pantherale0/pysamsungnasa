@@ -3,7 +3,7 @@
 from .nasa import SamsungNasa
 from .nasa_client import NasaClient
 from .protocol.enum import DataType
-from .protocol.factory import build_message, SendMessage
+from .protocol.factory import SendMessage, build_message
 
 
 async def request_network_address(client: NasaClient):
@@ -13,7 +13,8 @@ async def request_network_address(client: NasaClient):
             build_message(
                 source="500000",
                 destination="B0FFFF",
-                messages=[SendMessage(MESSAGE_ID=hex(0x10000 + 0x210)[-4:], PAYLOAD=bytes.fromhex(hex(0x10000)[-4:]))],
+                data_type=DataType.REQUEST,
+                messages=[SendMessage(MESSAGE_ID=0x0210, PAYLOAD=bytes.fromhex("0000"))],
             )
         ]
     )
@@ -26,5 +27,7 @@ async def autodiscover_devices(client: NasaClient):
 async def nasa_poke(client: SamsungNasa):
     """Send poke packets to the client."""
     await client.send_message(
-        0x4242, payload=bytes.fromhex("FFFF"), destination="200000", request_type=DataType.REQUEST
+        destination="200000",
+        request_type=DataType.REQUEST,
+        messages=[SendMessage(MESSAGE_ID=0x4242, PAYLOAD=bytes.fromhex("FFFF"))],
     )

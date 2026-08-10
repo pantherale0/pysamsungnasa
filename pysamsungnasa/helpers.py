@@ -1,5 +1,6 @@
 import binascii
 import re
+import inspect
 
 
 def bin2hex(bin):
@@ -8,6 +9,11 @@ def bin2hex(bin):
 
 def hex2bin(hex):
     return binascii.unhexlify(re.sub(r"\s", "", hex))
+
+
+def is_coroutine_function(func) -> bool:
+    """Check if a function is a coroutine function."""
+    return inspect.iscoroutinefunction(func)
 
 
 class Address:

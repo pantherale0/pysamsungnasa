@@ -19,7 +19,7 @@ classifiers = [
 requires-python = ">=3.13.0"
 dynamic = ["version"]
 dependencies = [
-    "serialx>=1.4.0"
+    "serialx>=1.8.2"
 ]
 
 [project.optional-dependencies]
