@@ -32,6 +32,7 @@ class NasaConfig:
     write_retry_backoff_factor: float = 1.1  # Multiply retry interval by this factor after each attempt
     client_baudrate: int = 9600  # Baudrate for SerialX client
     device_path: str | None = None  # Path to the device (e.g. /dev/ttyUSB0)
+    device_key: str | None = None  # Key to connect to the device (e.g ESPHome PSK)
 
     @property
     def address(self) -> Address:

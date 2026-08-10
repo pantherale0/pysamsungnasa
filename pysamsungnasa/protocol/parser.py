@@ -1,16 +1,14 @@
 """NASA Packet Parser."""
 
-from typing import Callable
-from asyncio import Event
-from inspect import iscoroutinefunction
-
 import logging
 import struct
+from asyncio import Event
+from collections.abc import Callable
 
 from ..config import NasaConfig
-from ..helpers import bin2hex
-from .enum import PacketType, DataType, AddressClass
-from .factory import parse_message, get_nasa_message_name
+from ..helpers import bin2hex, is_coroutine_function
+from .enum import AddressClass, DataType, PacketType
+from .factory import get_nasa_message_name, parse_message
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -103,13 +101,16 @@ class NasaPacketParser:
             )
             # Notify pending read handler about the NACK
             if self._pending_read_handler:
-                message_numbers = [ds[0] for ds in kwargs.get("dataSets", []) if isinstance(ds, list) and len(ds) > 0]
+                data_sets = kwargs.get("dataSets", [])
+                if not isinstance(data_sets, list):
+                    data_sets = []
+                message_numbers = [ds[0] for ds in data_sets if isinstance(ds, list) and len(ds) > 0]
                 try:
                     result = self._pending_read_handler(source_address, message_numbers)
-                    if iscoroutinefunction(self._pending_read_handler):
+                    if is_coroutine_function(self._pending_read_handler):
                         await result
-                except Exception as e:
-                    _LOGGER.error("Error in pending_read_handler: %s", e)
+                except Exception:
+                    _LOGGER.exception("Error in pending_read_handler")
             # Return early - NACKs don't have valid dataSets to process
             return
         else:
@@ -126,7 +127,10 @@ class NasaPacketParser:
         if payload_type in [DataType.RESPONSE, DataType.ACK] and self._pending_read_handler:
             # For both RESPONSE and ACK packets, extract message numbers from the datasets
             message_numbers = []
-            for ds in kwargs.get("dataSets", []):  # type: ignore
+            data_sets = kwargs.get("dataSets", [])
+            if not isinstance(data_sets, list):
+                data_sets = []
+            for ds in data_sets:
                 if isinstance(ds, list) and len(ds) > 0:
                     message_numbers.append(ds[0])
 
@@ -135,12 +139,15 @@ class NasaPacketParser:
             try:
                 result = self._pending_read_handler(source_address, message_numbers)
                 # Handle async callbacks
-                if iscoroutinefunction(self._pending_read_handler):
+                if is_coroutine_function(self._pending_read_handler):
                     await result
-            except Exception as e:
-                _LOGGER.error("Error in pending_read_handler: %s", e)
+            except Exception:
+                _LOGGER.exception("Error in pending_read_handler")
 
-        for ds in kwargs["dataSets"]:  # type: ignore
+        data_sets = kwargs.get("dataSets", [])
+        if not isinstance(data_sets, list):
+            data_sets = []
+        for ds in data_sets:
             if not isinstance(ds, list):
                 _LOGGER.warning("Invalid data set: %s", ds)
                 continue
@@ -165,8 +172,8 @@ class NasaPacketParser:
                             description,
                             {**parsed_message.as_dict},
                         )
-                except Exception as e:
-                    _LOGGER.error("Failed to parse structure message %s (%s): %s", formatted_msg_number, description, e)
+                except Exception:
+                    _LOGGER.exception("Failed to parse structure message %s (%s)", formatted_msg_number, description)
                     continue
             elif len(ds) >= 4:
                 # Normal message: index 3 contains the value_bytes
@@ -186,8 +193,8 @@ class NasaPacketParser:
                             description,
                             {**parsed_message.as_dict, "raw_payload": payload_bytes.hex()},
                         )
-                except Exception as e:
-                    _LOGGER.error("Failed to parse message %s (%s): %s", formatted_msg_number, description, e)
+                except Exception:
+                    _LOGGER.exception("Failed to parse message %s (%s)", formatted_msg_number, description)
                     continue
             else:
                 _LOGGER.warning("Invalid data set: %s", ds)
@@ -217,17 +224,17 @@ class NasaPacketParser:
                 for handler in self._device_handlers[target_handler_address]:
                     try:
                         handler(**handler_kwargs)
-                    except Exception as e:
-                        _LOGGER.error("Error in device %s handler: %s", target_handler_address, e)
+                    except Exception:
+                        _LOGGER.exception("Error in device %s handler", target_handler_address)
             elif self._new_device_handler is not None:
                 # Only call new device handler for incoming packets from unknown sources
                 try:
-                    if callable(self._new_device_handler) and not iscoroutinefunction(self._new_device_handler):
+                    if callable(self._new_device_handler) and not is_coroutine_function(self._new_device_handler):
                         self._new_device_handler(**handler_kwargs)
-                    elif callable(self._new_device_handler) and iscoroutinefunction(self._new_device_handler):
+                    elif callable(self._new_device_handler) and is_coroutine_function(self._new_device_handler):
                         await self._new_device_handler(**handler_kwargs)
-                except Exception as e:
-                    _LOGGER.exception("Error in new device event handler: %s", e)
+                except Exception:
+                    _LOGGER.exception("Error in new device event handler")
 
             # some devices can mirror the state of another device (indoor units for current action)
             # broadcast this via the packet handlers
@@ -240,7 +247,7 @@ class NasaPacketParser:
         self._latest_packet_data = packet_data
         self._packet_event.set()
 
-        if len(packet_data) < 3 + 3 + 1 + 1 + 1 + 1:
+        if len(packet_data) < 10:
             return  # too short
         source_address = bin2hex(packet_data[0:3])
         try:
@@ -270,7 +277,7 @@ class NasaPacketParser:
         offset = 10
         seen_message_count = 0
         message_number = None
-        for i in range(0, dataset_count):
+        for _ in range(dataset_count):
             seen_message_count += 1
             message_type_kind = (packet_data[offset] & 0x6) >> 1
             if message_type_kind == 0:
@@ -281,7 +288,7 @@ class NasaPacketParser:
                 payload_size = 4
             elif message_type_kind == 3:
                 if dataset_count != 1:
-                    raise BaseException("Invalid encoded packet containing a struct: " + bin2hex(packet_data))
+                    raise ValueError("Invalid encoded packet containing a struct: " + bin2hex(packet_data))
                 # Extract message number from first two bytes
                 message_number = struct.unpack(">H", packet_data[offset : offset + 2])[0]
                 # Pass raw structure data (everything after message number) directly to StructureMessage
@@ -295,7 +302,7 @@ class NasaPacketParser:
                 offset += 2 + len(struct_payload)
                 continue
             else:
-                raise BaseException("Invalid message type kind value")
+                raise ValueError("Invalid message type kind value")
             message_number = struct.unpack(">H", packet_data[offset : offset + 2])[0]
             value = packet_data[offset + 2 : offset + 2 + payload_size]
             value_hex = bin2hex(value)
@@ -307,7 +314,7 @@ class NasaPacketParser:
             offset += 2 + payload_size
 
         if seen_message_count != dataset_count:
-            raise BaseException("Not every message processed")
+            raise ValueError("Not every message processed")
 
         await self._process_packet(
             source=source_address,

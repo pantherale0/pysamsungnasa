@@ -1,38 +1,25 @@
 """TCP Modbus client."""
 
+import asyncio
 import binascii
 import logging
-import asyncio
 import struct
-
 from asyncio import iscoroutinefunction
 
+import serialx
+
+from .config import NasaConfig
 from .device import NasaDevice
+from .helpers import bin2hex, hex2bin, is_coroutine_function
 from .protocol.enum import DataType
 from .protocol.factory import build_message
 from .protocol.factory.types import SendMessage
-from .serial_client import SerialClient
-from .config import NasaConfig
-from .helpers import bin2hex, hex2bin
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class NasaClient:
     """Represent a NASA Client."""
-
-    pnp_auto_discovery_packet_handler = None
-    _queue_processor_task: asyncio.Task | None = None
-    _writer_task: asyncio.Task | None = None
-    _retry_manager_task: asyncio.Task | None = None
-    _tx_queue: asyncio.Queue[bytes] | None = None
-    _rx_queue: asyncio.Queue[bytes] | None = None
-    _rx_buffer = b""
-    _last_rx_time: float = 0.0
-    _packet_number_counter: int = 0
-    _pending_reads: dict = {}  # Track pending read requests for retry logic
-    _queued_reads: dict = {}  # Queue of read requests per destination waiting to be sent
-    _pending_writes: dict = {}  # Track pending write requests for retry logic
 
     def __init__(
         self,
@@ -42,25 +29,47 @@ class NasaClient:
         disconnect_event_handler=None,
     ) -> None:
         """Init a NASA Client."""
-        assert isinstance(config.device_path, str)
-        self._client = SerialClient(
-            url=config.device_path,
-            baudrate=config.client_baudrate,
-            message_handler=self._read_buffer_handler,
-            connect_callback=self._handle_connection,
-            disconnect_callback=self._handle_disconnection,
-        )
+        if config.device_path is None:
+            raise ValueError("Device path must be set")
+        self._config = config
+
+        # Connection handling
+        self.reader: asyncio.StreamReader | None = None
+        self.writer: asyncio.StreamWriter | None = None
+        self.listener_task: asyncio.Task | None = None
+        self._is_connected = False
+        self.timeout = 10
+        self._connection_lock = asyncio.Lock()
+
+        # Packet handling
+        self.pnp_auto_discovery_packet_handler = None
+        self._queue_processor_task: asyncio.Task | None = None
+        self._writer_task: asyncio.Task | None = None
+        self._retry_manager_task: asyncio.Task | None = None
+        self._tx_queue: asyncio.Queue[bytes] | None = None
+        # Half-duplex bus lock: held while RX is being processed or TX is in progress.
+        self._receiving: asyncio.Lock = asyncio.Lock()
+        self._bus_idle_gap = 0.05  # seconds of silence required before TX
+        self._rx_queue: asyncio.Queue[bytes] | None = None
+        self._rx_buffer = b""
+        self._last_rx_time: float | None = None
+        self._packet_number_counter: int = 0
+        self._pending_reads: dict = {}  # Track pending read requests for retry logic
+        self._queued_reads: dict = {}  # Queue of read requests per destination waiting to be sent
+        self._pending_writes: dict = {}  # Track pending write requests for retry logic
+
         self._rx_event_handler = recv_event_handler
         self._tx_event_handler = send_event_handler
         self._disconnect_event_handler = disconnect_event_handler
         self._config = config
         self._address = config.address
-        self._last_rx_time = asyncio.get_running_loop().time()
+
+        _LOGGER.debug("NasaClient initialized with config: %s", config)
 
     @property
     def is_connected(self) -> bool:
         """Return connection status."""
-        return self._client.is_connected
+        return self._is_connected and self.writer is not None and not self.writer.is_closing()
 
     def set_receive_event_handler(self, handler) -> None:
         """Set the receive event handler."""
@@ -85,14 +94,14 @@ class NasaClient:
         if self._disconnect_event_handler:
             try:
                 res = self._disconnect_event_handler()
-                if asyncio.iscoroutine(res):
+                if is_coroutine_function(res):
                     await res
-            except Exception as handler_ex:
-                _LOGGER.error("Error in disconnection_handler: %s", handler_ex)
+            except Exception:
+                _LOGGER.exception("Error in disconnection_handler")
 
     async def _handle_connection(self) -> None:
         """Handle connection."""
-        _LOGGER.debug("Successfully connected to %s", self._client.url)
+        _LOGGER.debug("Successfully connected to %s", self._config.device_path)
         self._last_rx_time = asyncio.get_running_loop().time()
         await self._start_read_queue_session()
         await self._start_writer_session()
@@ -100,7 +109,7 @@ class NasaClient:
 
     async def connect(self) -> bool:
         """Connect to the server and start background tasks."""
-        if not self._client.url:
+        if not self._config.device_path:
             _LOGGER.error("URL must be set before connecting.")
             return False
         if self.is_connected:
@@ -108,9 +117,22 @@ class NasaClient:
             return True
 
         try:
-            await self._client.connect()
+            async with self._connection_lock:
+                self.reader, self.writer = await serialx.open_serial_connection(
+                    url=self._config.device_path,
+                    key=self._config.device_key,
+                    baudrate=self._config.client_baudrate,
+                    timeout=self.timeout,
+                    byte_size=8,
+                    parity=serialx.Parity.EVEN,
+                    stopbits=serialx.StopBits.ONE,
+                )
+                if self.listener_task is None or self.listener_task.done():
+                    self.listener_task = asyncio.create_task(self._listener_task())
+                self._is_connected = True
+                await self._handle_connection()
             return True
-        except ConnectionError as ex:
+        except (OSError, TimeoutError) as ex:
             _LOGGER.error("NASA Connection error: %s", ex)
             await self._handle_disconnection(ex)
             return False
@@ -121,7 +143,68 @@ class NasaClient:
 
     async def disconnect(self) -> None:
         """Disconnect from the server."""
-        await self._client.disconnect()
+        if not self.is_connected:
+            _LOGGER.debug("Already disconnected or not connected.")
+            return
+        async with self._connection_lock:
+            if self.listener_task and not self.listener_task.done():
+                self.listener_task.cancel()
+            self._is_connected = False
+            self.reader = None
+            self.writer = None
+            if is_coroutine_function(self._disconnect_event_handler) and self._disconnect_event_handler is not None:
+                await self._disconnect_event_handler()
+            elif self._disconnect_event_handler is not None:
+                self._disconnect_event_handler()
+
+    async def _wait_for_bus_idle(self) -> None:
+        """Wait until the bus has been quiet for `_bus_idle_gap` seconds."""
+        while self.is_connected:
+            last = self._last_rx_time
+            if last is None:
+                return
+            remaining = self._bus_idle_gap - (asyncio.get_running_loop().time() - last)
+            if remaining <= 0:
+                return
+            await asyncio.sleep(remaining)
+
+    async def _listener_task(self):
+        """Listen for incoming messages from the SerialX device."""
+        _LOGGER.debug("Starting listener task for SerialX device at URL: %s", self._config.device_path)
+        try:
+            while self.is_connected and self.reader:
+                # Timeout if no data has been received in the last 120 seconds
+                if self._last_rx_time is not None and asyncio.get_running_loop().time() - self._last_rx_time > 120:
+                    _LOGGER.warning("No data received in the last 120 seconds, closing connection.")
+                    await self.disconnect()
+                    break
+                try:
+                    async with asyncio.timeout(30):
+                        # Read until ETX (0x34). Timeout means the bus is idle — allow TX.
+                        data = await self.reader.readuntil(0x34.to_bytes())
+                except TimeoutError:
+                    continue
+
+                # Hold the bus lock while RX is active so the writer cannot collide mid-frame.
+                async with self._receiving:
+                    self._last_rx_time = asyncio.get_running_loop().time()
+                    if data:
+                        _LOGGER.debug("Received message from SerialX device at URL: %s", self._config.device_path)
+                        await self._read_buffer_handler(data)
+                    else:
+                        _LOGGER.warning(
+                            "SerialX device at URL: %s has closed the connection.", self._config.device_path
+                        )
+                        await self.disconnect()
+                        break
+        except asyncio.IncompleteReadError:
+            _LOGGER.debug("SerialX device at URL: %s has closed the connection.", self._config.device_path)
+            await self.disconnect()
+        except (OSError, asyncio.CancelledError) as e:
+            _LOGGER.exception(
+                "Listener task for SerialX device at URL: %s encountered an error: %s", self._config.device_path, e
+            )
+            await self.disconnect()
 
     async def _read_buffer_handler(self, message: bytes):
         """Read buffer handler."""
@@ -402,7 +485,7 @@ class NasaClient:
 
     async def _writer(self):
         """Async write task."""
-        if self._tx_queue is None or self._rx_queue is None or self._client.writer is None:
+        if self._tx_queue is None or self._rx_queue is None or self.writer is None:
             _LOGGER.error("Writer: TX queue or socket writer is None at start, exiting.")
             return
         _LOGGER.debug("Writer task started.")
@@ -411,23 +494,30 @@ class NasaClient:
                 # Use timeout to allow periodic check of _connection_status
                 cmd = await asyncio.wait_for(self._tx_queue.get(), timeout=1.0)
                 if cmd is not None:
-                    if self._client.writer is None or self._client.writer.is_closing():
-                        _LOGGER.warning("Writer: Socket writer is None or closing, cannot write.")
-                        self._tx_queue.task_done()  # Still mark as done
-                        # Re-queue or discard? For now, discard and log.
-                        break  # Exit writer as connection is likely lost
+                    # Half-duplex: wait for RX silence, then take the bus exclusively for TX.
+                    await self._wait_for_bus_idle()
+                    async with self._receiving:
+                        # Re-check idle after acquiring — RX may have run while we waited for the lock.
+                        await self._wait_for_bus_idle()
+                        if self.writer is None or self.writer.is_closing():
+                            _LOGGER.warning("Writer: Socket writer is None or closing, cannot write.")
+                            self._tx_queue.task_done()
+                            break
 
-                    _LOGGER.debug("Writer: Writing data: %s", bin2hex(cmd))
-                    self._client.writer.write(cmd)
-                    await self._client.writer.drain()  # Crucial for flow control
-                    await asyncio.sleep(0.05)  # delay 50ms to prevent overloading the protocol.
-                    if self._tx_event_handler:
-                        try:
-                            self._tx_event_handler(cmd)
-                        except Exception as eh_ex:
-                            _LOGGER.error("Error in tx_event_handler: %s", eh_ex)
+                        _LOGGER.debug("Writer: Writing data: %s", bin2hex(cmd))
+                        self.writer.write(cmd)
+                        await self.writer.drain()
+                        # Treat TX as bus activity so the next send also observes the idle gap.
+                        self._last_rx_time = asyncio.get_running_loop().time()
+                        if self._tx_event_handler:
+                            try:
+                                self._tx_event_handler(cmd)
+                            except Exception:
+                                _LOGGER.exception("Error in tx_event_handler")
+                    # Turnaround gap outside the lock so RX can process replies.
+                    await asyncio.sleep(self._bus_idle_gap)
                 self._tx_queue.task_done()
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 continue  # Loop again to check _connection_status or get next item
             except (ConnectionResetError, BrokenPipeError, OSError) as ex:
                 _LOGGER.warning("Writer: Write error, assuming disconnection: %s", ex)

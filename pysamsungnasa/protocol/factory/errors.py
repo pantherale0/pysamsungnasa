@@ -39,4 +39,4 @@ ERROR_CODES = {
 
 def get_error_code(code):
     """Retrieve the error description for a given error code."""
-    return ERROR_CODES.get(code, f"E{str(code)}")
+    return ERROR_CODES.get(code, f"E{code!s}")

@@ -4,14 +4,14 @@ import asyncio
 import logging
 
 from prompt_toolkit import PromptSession
-from prompt_toolkit.patch_stdout import patch_stdout
 from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.patch_stdout import patch_stdout
 from prompt_toolkit.shortcuts import CompleteStyle
 
-from .nasa import SamsungNasa
 from .device import NasaDevice
+from .nasa import SamsungNasa
 from .protocol.enum import DataType
-from .protocol.factory import build_message, SendMessage
+from .protocol.factory import SendMessage, build_message
 from .protocol.factory.messages import MESSAGE_PARSERS
 
 _LOGGER = logging.getLogger(__name__)
@@ -77,7 +77,7 @@ class CLICompleter(Completer):
 
             elif command == "climate" and len(parts) == 2:
                 # After "climate ", suggest device addresses
-                for addr in self.nasa.devices.keys():
+                for addr in self.nasa.devices:
                     yield Completion(addr)
 
             elif command == "climate" and len(parts) == 3:
@@ -98,7 +98,7 @@ class CLICompleter(Completer):
 
             elif command in ("dump", "read", "write", "set", "read-range"):
                 # Suggest device addresses
-                for addr in self.nasa.devices.keys():
+                for addr in self.nasa.devices:
                     yield Completion(addr)
         else:
             # Partial word being typed
@@ -119,7 +119,7 @@ class CLICompleter(Completer):
 
             elif command == "climate" and len(parts) == 2:
                 # Suggest device addresses
-                for addr in self.nasa.devices.keys():
+                for addr in self.nasa.devices:
                     if addr.lower().startswith(word):
                         yield Completion(addr, start_position=-len(word))
 
@@ -137,7 +137,7 @@ class CLICompleter(Completer):
 
             elif command in ("device", "dump", "read", "write", "set", "read-range") and len(parts) == 2:
                 # Suggest device addresses
-                for addr in self.nasa.devices.keys():
+                for addr in self.nasa.devices:
                     if addr.lower().startswith(word):
                         yield Completion(addr, start_position=-len(word))
 
@@ -416,5 +416,5 @@ async def interactive_cli(nasa: SamsungNasa):
 
         except (KeyboardInterrupt, asyncio.CancelledError):
             break
-        except Exception as e:
-            _LOGGER.error("Error in CLI: %s", e)
+        except Exception:
+            _LOGGER.exception("Error in CLI")

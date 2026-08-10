@@ -4,13 +4,14 @@
 # Environment variables can be used to set the host and port of the Samsung NASA device:
 
 import asyncio
-import os
 import logging
+import os
 import sys
+
 from dotenv import load_dotenv
 
-from .nasa import SamsungNasa
 from .cli import interactive_cli
+from .nasa import SamsungNasa
 
 load_dotenv()
 
@@ -39,11 +40,14 @@ async def main():
             ),
             "client_baudrate": int(os.getenv("SAMSUNG_HP_CLIENT_BAUDRATE", "9600")),
             "device_path": os.getenv("SAMSUNG_HP_DEVICE_PATH"),
+            "device_key": os.getenv("SAMSUNG_HP_DEVICE_KEY"),
         },
     )
     await nasa.start()
     try:
         await interactive_cli(nasa)
+    except KeyboardInterrupt:
+        pass  # We don't need to do anything here, the loop will handle the interrupt
     finally:
         await nasa.stop()
 
