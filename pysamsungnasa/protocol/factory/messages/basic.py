@@ -63,9 +63,16 @@ class SerialNumber(StructureMessage):
     @classmethod
     def parse_payload(cls, payload: bytes) -> "SerialNumber":
         """Parse the payload into a string."""
-        # Convert the payload bytes to ASCII string, stripping null bytes
-        ascii_string = payload.decode("ascii").rstrip("\x00")
-        return cls(value=ascii_string, raw_payload=payload)
+        if not payload:
+            return cls(value="", raw_payload=payload)
+        # NASA uses all-0xFF as "not available" on unused/unsupported fields
+        if payload == b"\xff" * len(payload):
+            return cls(value=None, raw_payload=payload)
+        try:
+            ascii_string = payload.decode("ascii").rstrip("\x00")
+            return cls(value=ascii_string, raw_payload=payload)
+        except UnicodeDecodeError:
+            return cls(value=None, raw_payload=payload)
 
 
 def format_db_code(payload: bytes) -> str | None:

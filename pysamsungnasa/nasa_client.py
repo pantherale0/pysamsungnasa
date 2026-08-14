@@ -399,8 +399,8 @@ class NasaClient:
         if self._retry_manager_task and not self._retry_manager_task.done():
             _LOGGER.error("Retry manager task already running.")
             return True
-        if not self._config.enable_read_retries:
-            _LOGGER.debug("Read retries are disabled in config.")
+        if not (self._config.enable_read_retries or self._config.enable_write_retries):
+            _LOGGER.debug("Retries are disabled in config.")
             return False
         self._retry_manager_task = asyncio.create_task(self._retry_manager())
         _LOGGER.debug("Retry manager session started.")
@@ -623,9 +623,11 @@ class NasaClient:
             if packet_number is not None:
                 current_time = asyncio.get_running_loop().time()
                 if request_type in (DataType.WRITE, DataType.REQUEST) and self._config.enable_write_retries:
-                    # Track all messages in the packet together using packet_number as key
+                    # Track all messages in the packet together using a stable
+                    # dest+message_ids key so retries (which allocate a new packet
+                    # number) update the same entry instead of creating duplicates.
                     message_ids = [msg.MESSAGE_ID for msg in messages]
-                    write_key = f"{destination_address}_{packet_number}"
+                    write_key = f"{destination_address}_{tuple(sorted(message_ids))}"
                     existing_write = self._pending_writes.get(write_key)
                     if existing_write is None:
                         self._pending_writes[write_key] = {
@@ -760,14 +762,28 @@ class NasaClient:
             )
 
     def _clear_pending_read(self, destination: str, message_numbers: list[int]) -> bool:
-        """Clear a pending read request when a response is received with matching message numbers."""
-        # Create a key from the sorted message numbers, same as when we track the request
-        read_key = f"{destination}_{tuple(sorted(message_numbers))}"
-        if read_key in self._pending_reads:
-            del self._pending_reads[read_key]
-            _LOGGER.debug("Cleared pending read request for messages %s from %s", message_numbers, destination)
-            return True
-        return False
+        """Clear pending read requests when a response contains the requested messages.
+
+        A response may include extra message IDs beyond those requested. Clear any
+        pending read whose requested IDs are a subset of the response.
+        """
+        if not message_numbers:
+            return False
+
+        keys_to_delete = []
+        response_ids = set(message_numbers)
+        for read_key, read_info in self._pending_reads.items():
+            if read_info["destination"] != destination:
+                continue
+            requested = set(read_info.get("messages", []))
+            if requested and requested.issubset(response_ids):
+                keys_to_delete.append(read_key)
+
+        for key in keys_to_delete:
+            del self._pending_reads[key]
+            _LOGGER.debug("Cleared pending read request for key %s from %s", key, destination)
+
+        return bool(keys_to_delete)
 
     async def _mark_read_received(self, destination: str, message_numbers: list[int]) -> None:
         """Mark a read/write request as received (event callback from parser).
@@ -880,21 +896,32 @@ class NasaClient:
                     writes_to_retry = []
                     writes_to_remove = []
 
-                    # Identify writes that need to be retried
+                    # Identify writes that need to be retried.
+                    # Inspect each entry independently so a single bad record cannot
+                    # abort the loop (which previously left abandoned writes in place
+                    # and re-raised KeyError every second).
                     for write_key, write_info in list(self._pending_writes.items()):
-                        if current_time >= write_info["next_retry_time"]:
+                        try:
+                            if current_time < write_info["next_retry_time"]:
+                                continue
                             if write_info["attempts"] < self._config.write_retry_max_attempts:
                                 writes_to_retry.append((write_key, write_info))
                             else:
                                 # Max retries exceeded
                                 _LOGGER.warning(
-                                    "Abandoning write request %s (message %s) to %s after %d attempts",
-                                    write_info["packet_number"],
-                                    write_info["message_id"],
-                                    write_info["destination"],
-                                    write_info["attempts"],
+                                    "Abandoning write request %s (messages %s) to %s after %d attempts",
+                                    write_info.get("packet_number"),
+                                    write_info.get("message_ids"),
+                                    write_info.get("destination"),
+                                    write_info.get("attempts"),
                                 )
                                 writes_to_remove.append(write_key)
+                        except Exception:
+                            _LOGGER.exception(
+                                "Error inspecting pending write %s; dropping it to avoid retry-manager stall",
+                                write_key,
+                            )
+                            writes_to_remove.append(write_key)
 
                     # Remove writes that have exceeded max attempts
                     for write_key in writes_to_remove:
