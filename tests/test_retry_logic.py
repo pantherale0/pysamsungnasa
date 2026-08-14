@@ -24,8 +24,8 @@ class TestSendMessageRetryTracking:
             )
 
             # Check that the write was tracked
-            # Note: Keys are formatted as destination_packet_number
-            write_key = "200001_1"  # packet_number=1
+            # Keys are destination + sorted message IDs so retries keep the same entry
+            write_key = "200001_(16384,)"  # 0x4000
             assert write_key in client._pending_writes
             write_info = client._pending_writes[write_key]
             assert write_info["destination"] == "200001"
@@ -71,7 +71,7 @@ class TestSendMessageRetryTracking:
             )
 
             # REQUEST type should be tracked as write retry
-            write_key = "100001_3"  # 0x5000 = 20480
+            write_key = "100001_(20480,)"  # 0x5000 = 20480
             assert write_key in client._pending_writes
 
     @pytest.mark.asyncio
@@ -113,8 +113,8 @@ class TestSendMessageRetryTracking:
                 messages=messages,
             )
 
-            # All messages in one packet should have a single entry with packet_number key
-            write_key = "200001_5"  # packet_number=5
+            # All messages in one packet should have a single entry keyed by dest + message IDs
+            write_key = "200001_(16384, 16385, 16386)"  # 0x4000, 0x4001, 0x4002
             assert write_key in client._pending_writes
             write_info = client._pending_writes[write_key]
             assert write_info["message_ids"] == [0x4000, 0x4001, 0x4002]
@@ -162,9 +162,9 @@ class TestSendMessageRetryTracking:
         """Test that re-sending an already tracked write does not reset retry state."""
         client = nasa_client
         messages = [SendMessage(MESSAGE_ID=0x4000, PAYLOAD=b"\x01")]
-        write_key = "200001_7"
+        write_key = "200001_(16384,)"
 
-        # Use same packet number to hit existing write entry
+        # Initial send creates tracked write
         with patch.object(client, "send_command", new_callable=AsyncMock, return_value=7):
             await client.send_message(
                 destination="200001",
@@ -177,19 +177,21 @@ class TestSendMessageRetryTracking:
         client._pending_writes[write_key]["retry_interval"] = 1.1
         old_next_retry_time = client._pending_writes[write_key]["next_retry_time"]
 
-        # Resend should refresh metadata but not reset attempts/backoff
-        with patch.object(client, "send_command", new_callable=AsyncMock, return_value=7):
+        # Resend with a new packet number (as send_command does in production)
+        # must update the same entry rather than creating a duplicate.
+        with patch.object(client, "send_command", new_callable=AsyncMock, return_value=8):
             await client.send_message(
                 destination="200001",
                 request_type=DataType.WRITE,
                 messages=messages,
             )
 
+        assert list(client._pending_writes) == [write_key]
         write_info = client._pending_writes[write_key]
         assert write_info["attempts"] == 1
         assert write_info["retry_interval"] == 1.1
         assert write_info["next_retry_time"] == old_next_retry_time
-        assert write_info["packet_number"] == 7
+        assert write_info["packet_number"] == 8
 
 
 class TestNasaWriteRetry:
@@ -208,7 +210,7 @@ class TestNasaWriteRetry:
             )
 
             # Check that write was tracked with message_ids and messages
-            write_key = "200001_1"  # packet_number=1
+            write_key = "200001_(16384,)"  # 0x4000
             assert write_key in client._pending_writes
             write_info = client._pending_writes[write_key]
             assert write_info["message_ids"] == [0x4000]
@@ -348,8 +350,8 @@ class TestRetryManagerRetryBehavior:
         initial_interval = 0.1
         client._pending_writes[write_key] = {
             "destination": "200001",
-            "message_id": 0x4000,
-            "payload": b"\x01",
+            "message_ids": [0x4000],
+            "messages": [SendMessage(MESSAGE_ID=0x4000, PAYLOAD=b"\x01")],
             "data_type": DataType.WRITE,
             "packet_number": 1,
             "attempts": 0,
@@ -398,8 +400,8 @@ class TestRetryManagerRetryBehavior:
 
         client._pending_writes[write_key] = {
             "destination": "200001",
-            "message_id": 0x4000,
-            "payload": b"\x01",
+            "message_ids": [0x4000],
+            "messages": [SendMessage(MESSAGE_ID=0x4000, PAYLOAD=b"\x01")],
             "data_type": DataType.WRITE,
             "packet_number": 1,
             "attempts": client._config.write_retry_max_attempts,  # Already at max
@@ -432,6 +434,151 @@ class TestRetryManagerRetryBehavior:
                 mock_send.assert_not_called()
                 # And the pending write should be removed
                 assert write_key not in client._pending_writes
+
+    @pytest.mark.asyncio
+    async def test_retry_manager_abandons_legacy_message_id_entry(self, nasa_client_with_full_retry_config):
+        """Abandoned writes must be dropped even if they use the legacy message_id key.
+
+        A KeyError on write_info['message_id'] previously aborted the retry loop
+        every second and left the entry in place, stalling further retries.
+        """
+        client = nasa_client_with_full_retry_config
+        current_time = asyncio.get_running_loop().time()
+        client._pending_writes.clear()
+        client._pending_reads.clear()
+
+        stale_key = "stale_200001_1"
+        healthy_key = "healthy_200002_(16384,)"
+        messages = [SendMessage(MESSAGE_ID=0x4000, PAYLOAD=b"\x01")]
+        client._pending_writes[stale_key] = {
+            "destination": "200001",
+            "message_id": 0x4000,  # legacy schema used by older tracking
+            "payload": b"\x01",
+            "data_type": DataType.WRITE,
+            "packet_number": 1,
+            "attempts": client._config.write_retry_max_attempts,
+            "last_attempt_time": current_time,
+            "next_retry_time": current_time - 1.0,
+            "retry_interval": 0.1,
+        }
+        client._pending_writes[healthy_key] = {
+            "destination": "200002",
+            "message_ids": [0x4000],
+            "messages": messages,
+            "data_type": DataType.WRITE,
+            "packet_number": 2,
+            "attempts": 0,
+            "last_attempt_time": current_time,
+            "next_retry_time": current_time - 1.0,
+            "retry_interval": 0.1,
+        }
+
+        retry_send_call_count = 0
+
+        async def mock_send(*args, **kwargs):
+            nonlocal retry_send_call_count
+            retry_send_call_count += 1
+            return None
+
+        sleep_count = 0
+
+        async def mock_sleep(delay):
+            nonlocal sleep_count
+            sleep_count += 1
+            if sleep_count == 1:
+                return
+            raise asyncio.CancelledError()
+
+        with patch.object(client, "send_message", new_callable=AsyncMock, side_effect=mock_send):
+            with patch("asyncio.sleep", side_effect=mock_sleep):
+                retry_task = asyncio.create_task(client._retry_manager())
+                try:
+                    await retry_task
+                except asyncio.CancelledError:
+                    pass
+
+        assert stale_key not in client._pending_writes
+        assert retry_send_call_count > 0
+        assert healthy_key in client._pending_writes
+        assert client._pending_writes[healthy_key]["attempts"] == 1
+
+    @pytest.mark.asyncio
+    async def test_retry_manager_drops_corrupt_pending_write(self, nasa_client_with_full_retry_config):
+        """Corrupt pending-write records must be dropped without stalling the loop."""
+        client = nasa_client_with_full_retry_config
+        current_time = asyncio.get_running_loop().time()
+        client._pending_writes.clear()
+        client._pending_reads.clear()
+
+        corrupt_key = "corrupt_200001"
+        healthy_key = "healthy_200002_(16384,)"
+        client._pending_writes[corrupt_key] = {"destination": "200001"}  # missing retry fields
+        client._pending_writes[healthy_key] = {
+            "destination": "200002",
+            "message_ids": [0x4000],
+            "messages": [SendMessage(MESSAGE_ID=0x4000, PAYLOAD=b"\x01")],
+            "data_type": DataType.WRITE,
+            "packet_number": 2,
+            "attempts": 0,
+            "last_attempt_time": current_time,
+            "next_retry_time": current_time - 1.0,
+            "retry_interval": 0.1,
+        }
+
+        retry_send_call_count = 0
+
+        async def mock_send(*args, **kwargs):
+            nonlocal retry_send_call_count
+            retry_send_call_count += 1
+            return None
+
+        sleep_count = 0
+
+        async def mock_sleep(delay):
+            nonlocal sleep_count
+            sleep_count += 1
+            if sleep_count == 1:
+                return
+            raise asyncio.CancelledError()
+
+        with patch.object(client, "send_message", new_callable=AsyncMock, side_effect=mock_send):
+            with patch("asyncio.sleep", side_effect=mock_sleep):
+                retry_task = asyncio.create_task(client._retry_manager())
+                try:
+                    await retry_task
+                except asyncio.CancelledError:
+                    pass
+
+        assert corrupt_key not in client._pending_writes
+        assert retry_send_call_count > 0
+
+
+class TestRetryManagerSession:
+    """Tests for starting the retry manager task."""
+
+    @pytest.mark.asyncio
+    async def test_starts_when_only_write_retries_enabled(self, nasa_client_write_only):
+        """Write-only retry config must still start the retry manager."""
+        client = nasa_client_write_only
+        started = await client._start_retry_manager_session()
+        try:
+            assert started is True
+            assert client._retry_manager_task is not None
+            assert not client._retry_manager_task.done()
+            # Starting again should be a no-op success
+            assert await client._start_retry_manager_session() is True
+        finally:
+            await client._end_retry_manager_session()
+
+    @pytest.mark.asyncio
+    async def test_does_not_start_when_retries_disabled(self, nasa_client):
+        """Retry manager should not start when both retry flags are off."""
+        client = nasa_client
+        client._config.enable_read_retries = False
+        client._config.enable_write_retries = False
+        started = await client._start_retry_manager_session()
+        assert started is False
+        assert client._retry_manager_task is None
 
 
 class TestWriteAttributesWithRetry:
@@ -478,14 +625,12 @@ class TestRetryStateManagement:
     """Tests for proper state management of retry logic."""
 
     def test_write_key_format(self):
-        """Test that write keys are properly formatted."""
-        # The write key should be destination_packet_number
+        """Test that write keys are dest + sorted message IDs, matching reads."""
         dest = "200001"
-        packet_number = 1
+        msgs = [0x4001, 0x4000]
 
-        # Write keys now use packet_number to group all messages in a packet
-        write_key = f"{dest}_{packet_number}"
-        assert write_key == "200001_1"
+        write_key = f"{dest}_{tuple(sorted(msgs))}"
+        assert write_key == "200001_(16384, 16385)"
 
     def test_read_key_format(self):
         """Test that read keys use sorted tuple of message IDs."""
@@ -504,8 +649,7 @@ class TestRetryStateManagement:
 
         write_info = {
             "destination": "200001",
-            "message_id": 0x4000,
-            "payload": b"\x01",
+            "message_ids": [0x4000],
             "data_type": DataType.WRITE,
             "packet_number": 1,
             "attempts": 0,
@@ -734,3 +878,109 @@ class TestAckClearing:
 
         # Should still be cleared
         assert "200001_1" not in client._pending_writes
+
+
+class TestReadClearing:
+    """Tests for clearing pending reads when a response is received."""
+
+    async def test_exact_message_ids_clear_pending_read(self, nasa_client):
+        """Test that a response with the exact requested IDs clears the pending read."""
+        client = nasa_client
+        read_key = "200001_(16384, 16385)"
+        client._pending_reads[read_key] = {
+            "destination": "200001",
+            "messages": [0x4000, 0x4001],
+            "packet_number": 1,
+            "attempts": 0,
+            "last_attempt_time": 0,
+            "next_retry_time": 0,
+            "retry_interval": 0.1,
+        }
+
+        assert client._clear_pending_read("200001", [0x4000, 0x4001])
+        assert read_key not in client._pending_reads
+
+    async def test_extra_message_ids_still_clear_pending_read(self, nasa_client):
+        """Test that extra IDs in a response still clear the matching pending read."""
+        client = nasa_client
+        read_key = "200001_(16384,)"
+        client._pending_reads[read_key] = {
+            "destination": "200001",
+            "messages": [0x4000],
+            "packet_number": 1,
+            "attempts": 0,
+            "last_attempt_time": 0,
+            "next_retry_time": 0,
+            "retry_interval": 0.1,
+        }
+
+        assert client._clear_pending_read("200001", [0x4000, 0x4001, 0x9999])
+        assert read_key not in client._pending_reads
+
+    async def test_partial_response_does_not_clear_pending_read(self, nasa_client):
+        """Test that a subset of requested IDs does not clear the pending read."""
+        client = nasa_client
+        read_key = "200001_(16384, 16385)"
+        client._pending_reads[read_key] = {
+            "destination": "200001",
+            "messages": [0x4000, 0x4001],
+            "packet_number": 1,
+            "attempts": 0,
+            "last_attempt_time": 0,
+            "next_retry_time": 0,
+            "retry_interval": 0.1,
+        }
+
+        assert not client._clear_pending_read("200001", [0x4000])
+        assert read_key in client._pending_reads
+
+    async def test_empty_message_numbers_do_not_clear_pending_read(self, nasa_client):
+        """Empty ACK-style message lists should not clear pending reads."""
+        client = nasa_client
+        read_key = "200001_(16384,)"
+        client._pending_reads[read_key] = {
+            "destination": "200001",
+            "messages": [0x4000],
+            "packet_number": 1,
+            "attempts": 0,
+            "last_attempt_time": 0,
+            "next_retry_time": 0,
+            "retry_interval": 0.1,
+        }
+
+        assert not client._clear_pending_read("200001", [])
+        assert read_key in client._pending_reads
+
+    async def test_empty_requested_ids_do_not_clear_pending_read(self, nasa_client):
+        """A tracked read with no message IDs should not be cleared by an unrelated response."""
+        client = nasa_client
+        read_key = "200001_()"
+        client._pending_reads[read_key] = {
+            "destination": "200001",
+            "messages": [],
+            "packet_number": 1,
+            "attempts": 0,
+            "last_attempt_time": 0,
+            "next_retry_time": 0,
+            "retry_interval": 0.1,
+        }
+
+        assert not client._clear_pending_read("200001", [0x4000])
+        assert read_key in client._pending_reads
+
+    async def test_response_for_other_destination_does_not_clear(self, nasa_client):
+        """Responses from a different device must not clear this device's pending read."""
+        client = nasa_client
+        read_key = "200001_(16384,)"
+        client._pending_reads[read_key] = {
+            "destination": "200001",
+            "messages": [0x4000],
+            "packet_number": 1,
+            "attempts": 0,
+            "last_attempt_time": 0,
+            "next_retry_time": 0,
+            "retry_interval": 0.1,
+        }
+
+        assert not client._clear_pending_read("100000", [0x4000])
+        assert read_key in client._pending_reads

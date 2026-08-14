@@ -463,6 +463,22 @@ class TestBasicMessages:
 
         assert result.VALUE == "TEST"
 
+    def test_serial_number_unavailable_ff_payload(self):
+        """All-0xFF payloads are the NASA unavailable sentinel, not ASCII text."""
+        payload = b"\xff" * 16
+        result = SerialNumber.parse_payload(payload)
+
+        assert result.VALUE is None
+        assert result.RAW_PAYLOAD == payload
+
+    def test_serial_number_non_ascii_payload(self):
+        """Non-ASCII payloads should not raise UnicodeDecodeError."""
+        payload = b"\xff\xfe\xfd"
+        result = SerialNumber.parse_payload(payload)
+
+        assert result.VALUE is None
+        assert result.RAW_PAYLOAD == payload
+
     def test_db_code_micom_too_short(self):
         """Test DbCodeMiComMainMessage with too short payload."""
         result = DbCodeMiComMainMessage.parse_payload(b"\x91\x02\x09")
