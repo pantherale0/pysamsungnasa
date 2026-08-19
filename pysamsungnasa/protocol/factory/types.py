@@ -13,6 +13,24 @@ from ..enum import SamsungEnum
 _LOGGER = logging.getLogger(__name__)
 
 
+def nasa_payload_size(message_id: int | None) -> int | None:
+    """Return the payload size encoded in a NASA message number.
+
+    Bits 9-10 of the 16-bit message ID (bits 1-2 of the high byte) select:
+    0 = ENUM (1 byte), 1 = VAR (2 bytes), 2 = LVAR (4 bytes), 3 = STR/struct.
+    """
+    if message_id is None:
+        return None
+    kind = ((message_id >> 8) & 0x06) >> 1
+    if kind == 0:
+        return 1
+    if kind == 1:
+        return 2
+    if kind == 2:
+        return 4
+    return None
+
+
 @dataclass
 class SendMessage:
     """Base class that represents all sent NASA messages."""
@@ -118,6 +136,23 @@ class FloatMessage(BaseMessage):
     NULL_UINT_MAX: ClassVar[bool] = True
 
     @classmethod
+    def _resolve_payload_size(cls, int_value: int | None = None) -> int:
+        """Return the byte length to encode, preferring protocol size over value range."""
+        if cls.PAYLOAD_SIZE is not None:
+            return cls.PAYLOAD_SIZE
+        derived = nasa_payload_size(cls.MESSAGE_ID)
+        if derived is not None:
+            return derived
+        if int_value is None:
+            return 2
+        # Auto-detect based on value range only when the message has no NASA type.
+        if (cls.SIGNED and -128 <= int_value <= 127) or (not cls.SIGNED and 0 <= int_value <= 255):
+            return 1
+        if (cls.SIGNED and -32768 <= int_value <= 32767) or (not cls.SIGNED and 0 <= int_value <= 65535):
+            return 2
+        return 4
+
+    @classmethod
     def _is_null_payload(cls, payload: bytes) -> bool:
         """Return True when payload is the protocol unavailable sentinel."""
         if not cls.NULL_UINT_MAX or not payload:
@@ -163,24 +198,12 @@ class FloatMessage(BaseMessage):
         if value is None:
             if not cls.NULL_UINT_MAX:
                 raise ValueError(f"None is not supported for {cls.__name__} (NULL_UINT_MAX is False).")
-            payload_size = cls.PAYLOAD_SIZE if cls.PAYLOAD_SIZE is not None else 2
-            return b"\xff" * payload_size
+            return b"\xff" * cls._resolve_payload_size()
 
         if cls.ARITHMETIC == 0:
             raise ValueError(f"ARITHMETIC cannot be zero for {cls.__name__}.")
         int_value = int(value / cls.ARITHMETIC)
-
-        # Determine byte length: use PAYLOAD_SIZE if specified, otherwise auto-detect
-        if cls.PAYLOAD_SIZE is not None:
-            payload_size = cls.PAYLOAD_SIZE
-        else:
-            # Auto-detect based on value range
-            if -128 <= int_value <= 127 and cls.SIGNED or 0 <= int_value <= 255 and not cls.SIGNED:
-                payload_size = 1
-            elif -32768 <= int_value <= 32767 and cls.SIGNED or 0 <= int_value <= 65535 and not cls.SIGNED:
-                payload_size = 2
-            else:
-                payload_size = 4
+        payload_size = cls._resolve_payload_size(int_value)
 
         # Pack with determined size
         if payload_size == 1:
@@ -192,7 +215,10 @@ class FloatMessage(BaseMessage):
         else:
             raise ValueError(f"Unsupported PAYLOAD_SIZE {payload_size} for {cls.__name__}.")
 
-        return struct.pack(fmt, int_value)
+        try:
+            return struct.pack(fmt, int_value)
+        except struct.error as e:
+            raise ValueError(f"Value {value} does not fit in a {payload_size}-byte payload for {cls.__name__}.") from e
 
 
 class EnumMessage(BaseMessage):
@@ -255,14 +281,18 @@ class IntegerMessage(BaseMessage):
         if value is None:
             if not cls.NULL_UINT_MAX:
                 raise ValueError(f"None is not supported for {cls.__name__} (NULL_UINT_MAX is False).")
-            return b"\xff\xff"
+            return b"\xff" * (nasa_payload_size(cls.MESSAGE_ID) or 2)
         # Determine the minimum number of bytes needed to represent the integer
         if isinstance(value, float):
             value = int(value)
         if value < 0:
             raise ValueError("IntegerMessage only supports non-negative integers.")
-        byte_length = (value.bit_length() + 7) // 8 or 1
-        return value.to_bytes(byte_length, byteorder="big")
+        protocol_size = nasa_payload_size(cls.MESSAGE_ID)
+        byte_length = protocol_size if protocol_size is not None else ((value.bit_length() + 7) // 8 or 1)
+        try:
+            return value.to_bytes(byte_length, byteorder="big")
+        except OverflowError as e:
+            raise ValueError(f"Value {value} does not fit in a {byte_length}-byte payload for {cls.__name__}.") from e
 
 
 class BasicTemperatureMessage(FloatMessage):
@@ -270,6 +300,8 @@ class BasicTemperatureMessage(FloatMessage):
 
     ARITHMETIC = 0.1
     UNIT_OF_MEASUREMENT = "C"
+    # NASA temperature variables are VAR (2-byte), including values that fit in one byte.
+    PAYLOAD_SIZE = 2
 
 
 class BasicPowerMessage(FloatMessage):
