@@ -33,6 +33,7 @@ class TestSendMessageRetryTracking:
             assert write_info["data_type"] == DataType.WRITE
             assert write_info["attempts"] == 0
             assert write_info["packet_number"] == 1
+            assert write_info["packet_numbers"] == {1}
 
     @pytest.mark.asyncio
     async def test_send_message_tracks_read_retry(self, nasa_client):
@@ -192,6 +193,7 @@ class TestSendMessageRetryTracking:
         assert write_info["retry_interval"] == 1.1
         assert write_info["next_retry_time"] == old_next_retry_time
         assert write_info["packet_number"] == 8
+        assert write_info["packet_numbers"] == {7, 8}
 
 
 class TestNasaWriteRetry:
@@ -743,8 +745,8 @@ class TestAckClearing:
         # Should NOT be cleared - still pending
         assert "200001_1" in client._pending_writes
 
-    async def test_ack_with_empty_message_numbers_clears_all(self, nasa_client):
-        """Test that ACK with empty message_numbers clears all writes for destination."""
+    async def test_ack_with_empty_message_numbers_does_not_clear_all(self, nasa_client):
+        """Empty ACK without a packet number must not complete unrelated writes."""
         client = nasa_client
         # Add multiple pending writes
         client._pending_writes["200001_1"] = {
@@ -753,6 +755,7 @@ class TestAckClearing:
             "messages": [SendMessage(MESSAGE_ID=0x4000, PAYLOAD=b"\x01")],
             "data_type": DataType.WRITE,
             "packet_number": 1,
+            "packet_numbers": {1},
             "attempts": 0,
             "last_attempt_time": 0,
             "next_retry_time": 0,
@@ -767,18 +770,50 @@ class TestAckClearing:
             ],
             "data_type": DataType.WRITE,
             "packet_number": 2,
+            "packet_numbers": {2},
             "attempts": 0,
             "last_attempt_time": 0,
             "next_retry_time": 0,
             "retry_interval": 0.1,
         }
 
-        # ACK with empty message_numbers (ACK all for this destination)
         client._clear_pending_write("200001", [])
 
-        # All writes for 200001 should be cleared
+        assert "200001_1" in client._pending_writes
+        assert "200001_2" in client._pending_writes
+
+    async def test_ack_packet_number_clears_only_matching_write(self, nasa_client):
+        """Empty ACK for packet N must clear only the write that used packet N."""
+        client = nasa_client
+        client._pending_writes["200001_1"] = {
+            "destination": "200001",
+            "message_ids": [0x4000],
+            "messages": [SendMessage(MESSAGE_ID=0x4000, PAYLOAD=b"\x01")],
+            "data_type": DataType.WRITE,
+            "packet_number": 1,
+            "packet_numbers": {1},
+            "attempts": 0,
+            "last_attempt_time": 0,
+            "next_retry_time": 0,
+            "retry_interval": 0.1,
+        }
+        client._pending_writes["200001_2"] = {
+            "destination": "200001",
+            "message_ids": [0x4001],
+            "messages": [SendMessage(MESSAGE_ID=0x4001, PAYLOAD=b"\x02")],
+            "data_type": DataType.WRITE,
+            "packet_number": 2,
+            "packet_numbers": {2},
+            "attempts": 0,
+            "last_attempt_time": 0,
+            "next_retry_time": 0,
+            "retry_interval": 0.1,
+        }
+
+        client._clear_pending_write("200001", [], packet_number=1)
+
         assert "200001_1" not in client._pending_writes
-        assert "200001_2" not in client._pending_writes
+        assert "200001_2" in client._pending_writes
 
     async def test_ack_does_not_clear_different_destination(self, nasa_client):
         """Test that ACK for one destination doesn't affect other destinations."""
@@ -984,3 +1019,123 @@ class TestReadClearing:
 
         assert not client._clear_pending_read("100000", [0x4000])
         assert read_key in client._pending_reads
+
+
+def _pending_write(packet_number: int, message_id: int = 0x4000) -> dict:
+    return {
+        "destination": "200001",
+        "message_ids": [message_id],
+        "messages": [SendMessage(MESSAGE_ID=message_id, PAYLOAD=b"\x01")],
+        "data_type": DataType.WRITE,
+        "packet_number": packet_number,
+        "packet_numbers": {packet_number},
+        "attempts": 0,
+        "last_attempt_time": 0,
+        "next_retry_time": 0,
+        "retry_interval": 0.1,
+    }
+
+
+class TestPendingHandlerPayloadTypes:
+    """ACK/NACK/RESPONSE must not be treated as interchangeable confirmations."""
+
+    async def test_response_does_not_clear_pending_write(self, nasa_client):
+        """A poll RESPONSE that includes a written message ID must not ACK the write."""
+        client = nasa_client
+        write_key = "200001_(16384,)"
+        client._pending_writes[write_key] = _pending_write(1, 0x4000)
+
+        await client._mark_read_received("200001", [0x4000, 0x4001], DataType.RESPONSE, packet_number=99)
+
+        assert write_key in client._pending_writes
+
+    async def test_ack_clears_write_by_packet_number(self, nasa_client):
+        """Write ACK with empty datasets still completes the matching packet."""
+        client = nasa_client
+        write_key = "200001_(16384,)"
+        other_key = "200001_(16385,)"
+        client._pending_writes[write_key] = _pending_write(1, 0x4000)
+        client._pending_writes[other_key] = _pending_write(2, 0x4001)
+
+        await client._mark_read_received("200001", [], DataType.ACK, packet_number=1)
+
+        assert write_key not in client._pending_writes
+        assert other_key in client._pending_writes
+
+    async def test_ack_for_other_packet_does_not_clear_write(self, nasa_client):
+        """ACK for a read (different packet number) must not complete an in-flight write."""
+        client = nasa_client
+        write_key = "200001_(16384,)"
+        client._pending_writes[write_key] = _pending_write(5, 0x4000)
+
+        await client._mark_read_received("200001", [0x4000], DataType.ACK, packet_number=9)
+
+        assert write_key in client._pending_writes
+
+    async def test_nack_clears_matching_write_but_not_read(self, nasa_client):
+        """NACK stops retrying that write without cancelling an in-flight read."""
+        client = nasa_client
+        write_key = "200001_(16384,)"
+        read_key = "200001_(16384,)"
+        client._pending_writes[write_key] = _pending_write(3, 0x4000)
+        client._pending_reads[read_key] = {
+            "destination": "200001",
+            "messages": [0x4000],
+            "packet_number": 4,
+            "attempts": 0,
+            "last_attempt_time": 0,
+            "next_retry_time": 0,
+            "retry_interval": 0.1,
+        }
+
+        await client._mark_read_received("200001", [0x4000], DataType.NACK, packet_number=3)
+
+        assert write_key not in client._pending_writes
+        assert read_key in client._pending_reads
+
+    async def test_response_clears_pending_read(self, nasa_client):
+        """RESPONSE still completes the matching pending read."""
+        client = nasa_client
+        read_key = "200001_(16384,)"
+        client._pending_reads[read_key] = {
+            "destination": "200001",
+            "messages": [0x4000],
+            "packet_number": 1,
+            "attempts": 0,
+            "last_attempt_time": 0,
+            "next_retry_time": 0,
+            "retry_interval": 0.1,
+        }
+
+        await client._mark_read_received("200001", [0x4000], DataType.RESPONSE, packet_number=1)
+
+        assert read_key not in client._pending_reads
+
+    async def test_ack_does_not_clear_pending_read(self, nasa_client):
+        """ACK of a read must not drop the pending read before the RESPONSE arrives."""
+        client = nasa_client
+        read_key = "200001_(16384,)"
+        client._pending_reads[read_key] = {
+            "destination": "200001",
+            "messages": [0x4000],
+            "packet_number": 1,
+            "attempts": 0,
+            "last_attempt_time": 0,
+            "next_retry_time": 0,
+            "retry_interval": 0.1,
+        }
+
+        await client._mark_read_received("200001", [0x4000], DataType.ACK, packet_number=1)
+
+        assert read_key in client._pending_reads
+
+    async def test_late_ack_for_retried_write_still_clears(self, nasa_client):
+        """ACK for an earlier retry attempt must still complete the write."""
+        client = nasa_client
+        write_key = "200001_(16384,)"
+        client._pending_writes[write_key] = _pending_write(8, 0x4000)
+        client._pending_writes[write_key]["packet_numbers"] = {7, 8}
+
+        await client._mark_read_received("200001", [], DataType.ACK, packet_number=7)
+
+        assert write_key not in client._pending_writes

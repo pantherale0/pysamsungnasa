@@ -290,8 +290,13 @@ class TestNasaPacketParser:
 
         await parser.parse_packet(packet_data)
 
-        # Pending read handler should be called for RESPONSE
+        # Pending read handler should be called for RESPONSE with payload type and packet number
         assert pending_handler.called
+        args = pending_handler.call_args[0]
+        assert args[0] == "200001"
+        assert args[1] == [0x4000]
+        assert args[2] == DataType.RESPONSE
+        assert args[3] == 0x01
 
     @pytest.mark.asyncio
     async def test_parse_packet_ack_calls_pending_handler(self):
@@ -309,7 +314,33 @@ class TestNasaPacketParser:
         await parser.parse_packet(packet_data)
 
         # Pending read handler should be called for ACK with empty message list
-        if pending_handler.called:
-            args = pending_handler.call_args[0]
-            assert args[0] == "200001"
-            assert args[1] == []
+        assert pending_handler.called
+        args = pending_handler.call_args[0]
+        assert args[0] == "200001"
+        assert args[1] == []
+        assert args[2] == DataType.ACK
+        assert args[3] == 0x01
+
+    @pytest.mark.asyncio
+    async def test_parse_packet_nack_calls_pending_handler(self):
+        """Test that NACK packets call the pending handler without treating them as data."""
+        config = NasaConfig(client_address=1)
+        parser = NasaPacketParser(config=config)
+
+        packet_hex = "200001" + "80FF01" + "80" + "17" + "05" + "00"
+        packet_data = hex2bin(packet_hex)
+
+        pending_handler = Mock()
+        device_handler = Mock()
+        parser.set_pending_read_handler(pending_handler)
+        parser.add_device_handler("200001", device_handler)
+
+        await parser.parse_packet(packet_data)
+
+        assert pending_handler.called
+        args = pending_handler.call_args[0]
+        assert args[0] == "200001"
+        assert args[1] == []
+        assert args[2] == DataType.NACK
+        assert args[3] == 0x05
+        device_handler.assert_not_called()
