@@ -1,0 +1,183 @@
+"""Tests for NasaClient connection teardown."""
+
+import asyncio
+from unittest.mock import AsyncMock, Mock
+
+import pytest
+
+from pysamsungnasa.protocol.factory.types import SendMessage
+from pysamsungnasa.protocol.enum import DataType
+
+
+class TestDisconnectClosesTransport:
+    """disconnect() must close the SerialX writer so the port can be reused."""
+
+    @pytest.mark.asyncio
+    async def test_disconnect_closes_writer_and_marks_disconnected(self, nasa_client):
+        """stop()/disconnect() previously dropped the writer reference without closing it."""
+        client = nasa_client
+        writer = client.writer
+
+        await client.disconnect()
+
+        writer.close.assert_called_once()
+        writer.wait_closed.assert_awaited()
+        assert client.writer is None
+        assert client.reader is None
+        assert client.is_connected is False
+        assert client._is_connected is False
+
+    @pytest.mark.asyncio
+    async def test_disconnect_is_idempotent(self, nasa_client):
+        """A second disconnect after teardown must be a no-op."""
+        client = nasa_client
+        writer = client.writer
+
+        await client.disconnect()
+        await client.disconnect()
+
+        writer.close.assert_called_once()
+        assert client.is_connected is False
+
+
+class TestHandleDisconnection:
+    """Write/serial errors must actually drop the connection and await handlers."""
+
+    @pytest.mark.asyncio
+    async def test_async_disconnect_handler_is_awaited(self, nasa_client):
+        """Regression: is_coroutine_function() was called on the coroutine result.
+
+        That left async reconnect handlers un-awaited after a writer error, so
+        Home Assistant-style integrations never recovered.
+        """
+        client = nasa_client
+        resumed = asyncio.Event()
+
+        async def handler():
+            await asyncio.sleep(0)
+            resumed.set()
+
+        client._disconnect_event_handler = handler
+        writer = client.writer
+        await client._handle_disconnection(OSError("serial reset"))
+
+        assert resumed.is_set()
+        assert client.is_connected is False
+        writer.close.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_sync_disconnect_handler_is_called(self, nasa_client):
+        """Synchronous disconnect handlers must still run."""
+        client = nasa_client
+        handler = Mock()
+        client._disconnect_event_handler = handler
+
+        await client._handle_disconnection(OSError("serial reset"))
+
+        handler.assert_called_once_with()
+        assert client.is_connected is False
+
+    @pytest.mark.asyncio
+    async def test_write_error_allows_reconnect(self, nasa_client):
+        """After a transport error the client must not report itself as still connected.
+
+        connect() refuses to open a new session while is_connected is True, so a
+        leaked 'connected' flag after writer failure permanently wedges the client.
+        """
+        client = nasa_client
+        await client._handle_disconnection(ConnectionResetError("peer closed"))
+
+        assert client.is_connected is False
+        assert client.writer is None
+        # The early-return 'already connected' path in connect() is skipped.
+        assert not (client._is_connected and client.writer is not None)
+
+    @pytest.mark.asyncio
+    async def test_write_error_stops_send_command(self, nasa_client):
+        """After teardown, queued writes must not look connected-but-unwritable."""
+        client = nasa_client
+        await client._handle_disconnection(BrokenPipeError())
+
+        result = await client.send_command(["80ff0120000180c1{CUR_PACK_NUM}00"])
+        assert result is None
+
+
+class TestDisconnectListenerNoDeadlock:
+    """Cancelling the listener must not re-enter disconnect() while the lock is held."""
+
+    @pytest.mark.asyncio
+    async def test_disconnect_cancels_listener_without_deadlock(self, nasa_client):
+        """Listener CancelledError used to call disconnect() while disconnect held the lock."""
+        client = nasa_client
+        reading = asyncio.Event()
+
+        async def hanging_readuntil(*_args, **_kwargs):
+            reading.set()
+            await asyncio.sleep(3600)
+            return b""
+
+        client.reader.readuntil = hanging_readuntil
+        client.listener_task = asyncio.create_task(client._listener_task())
+        await reading.wait()
+
+        handler_ran = asyncio.Event()
+
+        async def handler():
+            await asyncio.sleep(0.05)
+            handler_ran.set()
+
+        client._disconnect_event_handler = handler
+
+        await asyncio.wait_for(client.disconnect(), timeout=1.0)
+
+        assert handler_ran.is_set()
+        assert client.is_connected is False
+        assert client.listener_task is None or client.listener_task.done()
+
+    @pytest.mark.asyncio
+    async def test_disconnect_handler_can_observe_disconnected_state(self, nasa_client):
+        """Handler runs after the lock is released, with is_connected already False."""
+        client = nasa_client
+        seen_connected = []
+
+        async def handler():
+            seen_connected.append(client.is_connected)
+
+        client._disconnect_event_handler = handler
+        await client.disconnect()
+
+        assert seen_connected == [False]
+
+
+class TestWriterErrorSelfTeardown:
+    """The writer task must be able to disconnect without awaiting itself."""
+
+    @pytest.mark.asyncio
+    async def test_writer_oserror_disconnects_without_hanging(self, nasa_client):
+        """Writer OSError calls _handle_disconnection, which must not deadlock on the writer task."""
+        client = nasa_client
+        client._writer_task = asyncio.current_task()
+        client.writer.write = Mock(side_effect=ConnectionResetError("reset"))
+        client.writer.drain = AsyncMock()
+
+        await asyncio.wait_for(client._handle_disconnection(ConnectionResetError("reset")), timeout=1.0)
+
+        assert client.is_connected is False
+        assert client.writer is None
+        # Current task was not cancelled by teardown.
+        assert not asyncio.current_task().cancelled()
+
+
+class TestSendAfterDisconnect:
+    """send_message must fail closed once the transport is gone."""
+
+    @pytest.mark.asyncio
+    async def test_send_message_rejected_when_disconnected(self, nasa_client):
+        client = nasa_client
+        await client.disconnect()
+        result = await client.send_message(
+            destination="200001",
+            request_type=DataType.WRITE,
+            messages=[SendMessage(MESSAGE_ID=0x4000, PAYLOAD=b"\x01")],
+        )
+        assert result is None
