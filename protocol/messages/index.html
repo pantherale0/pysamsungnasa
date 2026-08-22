@@ -1965,19 +1965,19 @@
 <p><strong>Type:</strong> Enum (1 byte)
 <strong>Values:</strong> 0=Off, 1=On, 2=On (alt)</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Turn on</span>
-<span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4000</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4000</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x01</span><span class="s1">'</span><span class="p">)</span>
 
 <span class="c1"># Turn off</span>
-<span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4000</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4000</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x00</span><span class="s1">'</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="0x4001-operation-mode">0x4001 - Operation Mode<a class="headerlink" href="#0x4001-operation-mode" title="Permanent link">&para;</a></h4>
 <p><strong>Type:</strong> Enum (1 byte)
 <strong>Values:</strong> 0=Auto, 1=Cool, 2=Dry, 3=Fan, 4=Heat, 21=Cool Storage, 24=Hot Water</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Set to cool mode</span>
-<span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4001</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4001</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x01</span><span class="s1">'</span><span class="p">)</span>
 
 <span class="c1"># Set to heat mode</span>
-<span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4001</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x04</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4001</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x04</span><span class="s1">'</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="0x4002-real-operation-mode-read-only">0x4002 - Real Operation Mode (Read-only)<a class="headerlink" href="#0x4002-real-operation-mode-read-only" title="Permanent link">&para;</a></h4>
 <p><strong>Type:</strong> Enum (1 byte)
@@ -1987,7 +1987,7 @@ Returns the actual current mode the unit is operating in.</p>
 <p><strong>Type:</strong> Enum (1 byte)
 <strong>Values:</strong> 0=Off, 1=Low, 2=Mid, 3=High, 4=Very High</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Set fan to high speed</span>
-<span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4006</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x03</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4006</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x03</span><span class="s1">'</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="0x4008-fan-speed-real">0x4008 - Fan Speed Real<a class="headerlink" href="#0x4008-fan-speed-real" title="Permanent link">&para;</a></h4>
 <p><strong>Type:</strong> Enum (1 byte)
@@ -2001,13 +2001,13 @@ Read-only actual fan speed.</p>
 <strong>Encoding:</strong> Integer value * 10, big-endian</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Set target to 22°C</span>
 <span class="n">temp_c</span> <span class="o">=</span> <span class="mi">22</span>
-<span class="n">payload</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">temp_c</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">temp_c</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">'big'</span><span class="p">)</span>
 <span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4201</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
 
 <span class="c1"># Set target to 72°F</span>
 <span class="n">temp_f</span> <span class="o">=</span> <span class="mi">72</span>
 <span class="c1"># First convert F to C or use directly if unit supports F</span>
-<span class="n">payload</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">temp_f</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">temp_f</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">'big'</span><span class="p">)</span>
 <span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4201</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="0x4203-current-temperature">0x4203 - Current Temperature<a class="headerlink" href="#0x4203-current-temperature" title="Permanent link">&para;</a></h4>
@@ -2015,7 +2015,7 @@ Read-only actual fan speed.</p>
 <strong>Encoding:</strong> Integer value * 10, big-endian
 Read-only.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Reading example (automatically parsed)</span>
-<span class="n">current_temp_raw</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+<span class="n">current_temp_raw</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="s1">'big'</span><span class="p">)</span>
 <span class="n">current_temp_c</span> <span class="o">=</span> <span class="n">current_temp_raw</span> <span class="o">/</span> <span class="mi">10</span>
 </code></pre></div>
 <h4 id="0x4238-water-outlet-temperature">0x4238 - Water Outlet Temperature<a class="headerlink" href="#0x4238-water-outlet-temperature" title="Permanent link">&para;</a></h4>
@@ -2075,7 +2075,7 @@ Number of connected MCUs.</p>
 <p><strong>Type:</strong> LongVariable (4 bytes)
 <strong>Encoding:</strong> Watts, big-endian</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Reading example</span>
-<span class="n">power_w</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+<span class="n">power_w</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="s1">'big'</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="0x0407-cumulative-power-consumption">0x0407 - Cumulative Power Consumption<a class="headerlink" href="#0x0407-cumulative-power-consumption" title="Permanent link">&para;</a></h4>
 <p><strong>Type:</strong> LongVariable (4 bytes)
@@ -2108,15 +2108,15 @@ Remote controller address.</p>
 <h2 id="message-discovery">Message Discovery<a class="headerlink" href="#message-discovery" title="Permanent link">&para;</a></h2>
 <p>Find all messages for a specific device:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">list_device_messages</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;List all messages received from a device.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""List all messages received from a device."""</span>
     <span class="k">for</span> <span class="n">msg_id</span><span class="p">,</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;0x</span><span class="si">{</span><span class="n">msg_id</span><span class="si">:</span><span class="s2">04X</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">attribute</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"0x</span><span class="si">{</span><span class="n">msg_id</span><span class="si">:</span><span class="s2">04X</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">attribute</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="n">list_device_messages</span><span class="p">(</span><span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">])</span>
+<span class="n">list_device_messages</span><span class="p">(</span><span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">])</span>
 </code></pre></div>
 <h2 id="decoding-message-payloads">Decoding Message Payloads<a class="headerlink" href="#decoding-message-payloads" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">decode_message</span><span class="p">(</span><span class="n">msg_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decode a message payload based on its type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Decode a message payload based on its type."""</span>
 
     <span class="n">msg_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">msg_number</span> <span class="o">&amp;</span> <span class="mh">0x0600</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">9</span>
 
@@ -2124,10 +2124,10 @@ Remote controller address.</p>
         <span class="k">return</span> <span class="n">payload</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Variable (2 bytes)</span>
-        <span class="k">return</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="s1">'big'</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># LongVariable (4 bytes)</span>
-        <span class="k">return</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="s1">'big'</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">msg_type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># Structure</span>
         <span class="k">return</span> <span class="n">payload</span>  <span class="c1"># Raw bytes</span>

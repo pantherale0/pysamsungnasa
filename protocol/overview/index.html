@@ -1759,20 +1759,20 @@
 <h3 id="enum-1-byte">Enum (1 byte)<a class="headerlink" href="#enum-1-byte" title="Permanent link">&para;</a></h3>
 <p>Represents an enumeration value (0-255). These can also be used to represent an integer such as for the PWM water pump sensor.</p>
 <p>Example: Power state (0=Off, 1=On)</p>
-<div class="highlight"><pre><span></span><code><span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4000</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># Turn on</span>
+<div class="highlight"><pre><span></span><code><span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4000</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x01</span><span class="s1">'</span><span class="p">)</span>  <span class="c1"># Turn on</span>
 </code></pre></div>
 <h3 id="variable-2-bytes">Variable (2 bytes)<a class="headerlink" href="#variable-2-bytes" title="Permanent link">&para;</a></h3>
 <p>Represents a 16-bit value (0-65535).</p>
 <p>Example: Temperature * 10</p>
 <div class="highlight"><pre><span></span><code><span class="n">temp_c</span> <span class="o">=</span> <span class="mi">22</span>
-<span class="n">payload</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">temp_c</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">temp_c</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">'big'</span><span class="p">)</span>
 <span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4201</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>  <span class="c1"># Set temperature</span>
 </code></pre></div>
 <h3 id="longvariable-4-bytes">LongVariable (4 bytes)<a class="headerlink" href="#longvariable-4-bytes" title="Permanent link">&para;</a></h3>
 <p>Represents a 32-bit value.</p>
 <p>Example: Power consumption in watts</p>
 <div class="highlight"><pre><span></span><code><span class="n">power_w</span> <span class="o">=</span> <span class="mi">1500</span>
-<span class="n">payload</span> <span class="o">=</span> <span class="n">power_w</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="n">power_w</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">'big'</span><span class="p">)</span>
 <span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x0406</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="structure">Structure<a class="headerlink" href="#structure" title="Permanent link">&para;</a></h3>
@@ -1822,10 +1822,10 @@
 <h3 id="retry-configuration">Retry Configuration<a class="headerlink" href="#retry-configuration" title="Permanent link">&para;</a></h3>
 <p>The library provides configurable retries:</p>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;enable_read_retries&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;read_retry_max_attempts&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s2">&quot;read_retry_interval&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-    <span class="s2">&quot;read_retry_backoff_factor&quot;</span><span class="p">:</span> <span class="mf">1.1</span><span class="p">,</span>
+    <span class="s2">"enable_read_retries"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"read_retry_max_attempts"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">"read_retry_interval"</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="s2">"read_retry_backoff_factor"</span><span class="p">:</span> <span class="mf">1.1</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
 <h3 id="timeout">Timeout<a class="headerlink" href="#timeout" title="Permanent link">&para;</a></h3>
@@ -1867,12 +1867,12 @@
 <span class="c1"># Create a raw message</span>
 <span class="n">msg</span> <span class="o">=</span> <span class="n">SendMessage</span><span class="p">(</span>
     <span class="n">MESSAGE_ID</span><span class="o">=</span><span class="mh">0x4000</span><span class="p">,</span>      <span class="c1"># Power control</span>
-    <span class="n">PAYLOAD</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span>         <span class="c1"># Turn on</span>
+    <span class="n">PAYLOAD</span><span class="o">=</span><span class="sa">b</span><span class="s1">'</span><span class="se">\x01</span><span class="s1">'</span>         <span class="c1"># Turn on</span>
 <span class="p">)</span>
 
 <span class="c1"># Send it</span>
 <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span>
-    <span class="n">destination</span><span class="o">=</span><span class="s2">&quot;200020&quot;</span><span class="p">,</span>
+    <span class="n">destination</span><span class="o">=</span><span class="s2">"200020"</span><span class="p">,</span>
     <span class="n">messages</span><span class="o">=</span><span class="p">[</span><span class="n">msg</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div>

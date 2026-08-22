@@ -1348,8 +1348,8 @@ python<span class="w"> </span>-m<span class="w"> </span>pysamsungnasa
     <span class="c1"># Create a NASA protocol instance</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>  <span class="c1"># Or local serial port like &quot;/dev/ttyUSB0&quot;</span>
-            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>  <span class="c1"># Or local serial port like "/dev/ttyUSB0"</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
@@ -1368,8 +1368,8 @@ python<span class="w"> </span>-m<span class="w"> </span>pysamsungnasa
 <div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
@@ -1379,9 +1379,9 @@ python<span class="w"> </span>-m<span class="w"> </span>pysamsungnasa
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="c1"># List all discovered devices</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Discovered </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">)</span><span class="si">}</span><span class="s2"> devices:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Discovered </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">)</span><span class="si">}</span><span class="s2"> devices:"</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">address</span><span class="p">,</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 </code></pre></div>
@@ -1389,11 +1389,11 @@ python<span class="w"> </span>-m<span class="w"> </span>pysamsungnasa
 <p>If you know your device addresses, add them to the configuration:</p>
 <div class="highlight"><pre><span></span><code><span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
     <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-        <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="s2">&quot;100000&quot;</span><span class="p">,</span>    <span class="c1"># Outdoor unit</span>
-            <span class="s2">&quot;200000&quot;</span><span class="p">,</span>    <span class="c1"># Indoor unit 1</span>
+        <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+        <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+        <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">"100000"</span><span class="p">,</span>    <span class="c1"># Outdoor unit</span>
+            <span class="s2">"200000"</span><span class="p">,</span>    <span class="c1"># Indoor unit 1</span>
         <span class="p">]</span>
     <span class="p">}</span>
 <span class="p">)</span>
@@ -1411,10 +1411,10 @@ python<span class="w"> </span>-m<span class="w"> </span>pysamsungnasa
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-            <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
@@ -1422,17 +1422,17 @@ python<span class="w"> </span>-m<span class="w"> </span>pysamsungnasa
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Wait for device discovery</span>
 
     <span class="c1"># Get the outdoor unit</span>
-    <span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+    <span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
 
     <span class="c1"># Read attributes using get_attribute()</span>
     <span class="n">temp_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorAirTemperature</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Outdoor temperature: </span><span class="si">{</span><span class="n">temp_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Outdoor temperature: </span><span class="si">{</span><span class="n">temp_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 
     <span class="n">power_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorPowerConsumption</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Power consumption: </span><span class="si">{</span><span class="n">power_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">W&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Power consumption: </span><span class="si">{</span><span class="n">power_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">W"</span><span class="p">)</span>
 
     <span class="n">freq_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorCompressorFrequency</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Compressor frequency: </span><span class="si">{</span><span class="n">freq_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">Hz&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Compressor frequency: </span><span class="si">{</span><span class="n">freq_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">Hz"</span><span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
@@ -1452,17 +1452,17 @@ python<span class="w"> </span>-m<span class="w"> </span>pysamsungnasa
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-            <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">]</span>  <span class="c1"># Indoor unit</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"200000"</span><span class="p">]</span>  <span class="c1"># Indoor unit</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Wait for device discovery</span>
 
-    <span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">]</span>
+    <span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"200000"</span><span class="p">]</span>
 
     <span class="c1"># Write single attributes</span>
     <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span><span class="n">InOperationPowerMessage</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Turn on</span>
@@ -1490,33 +1490,33 @@ python<span class="w"> </span>-m<span class="w"> </span>pysamsungnasa
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-            <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">,</span> <span class="s2">&quot;200000&quot;</span><span class="p">]</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"100000"</span><span class="p">,</span> <span class="s2">"200000"</span><span class="p">]</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="c1"># Callback for any device update</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">device_updated</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2"> updated!&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Time: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">last_packet_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Attributes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Device </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2"> updated!"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Time: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">last_packet_time</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Attributes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># Callback for specific message type</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_outdoor_temp</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;packet&#39;</span><span class="p">]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Outdoor temperature: </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'packet'</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Outdoor temperature: </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_indoor_temp</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;packet&#39;</span><span class="p">]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Indoor temperature: </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'packet'</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Indoor temperature: </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Wait for devices</span>
 
-    <span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
-    <span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">]</span>
+    <span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
+    <span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"200000"</span><span class="p">]</span>
 
     <span class="c1"># Register device callback (called for any update)</span>
     <span class="n">outdoor</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="n">device_updated</span><span class="p">)</span>
@@ -1526,7 +1526,7 @@ python<span class="w"> </span>-m<span class="w"> </span>pysamsungnasa
     <span class="n">indoor</span><span class="o">.</span><span class="n">add_packet_callback</span><span class="p">(</span><span class="n">InCurrentTemperature</span><span class="p">,</span> <span class="n">on_indoor_temp</span><span class="p">)</span>
 
     <span class="c1"># Device callbacks will be triggered whenever data is received</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Listening for updates...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Listening for updates..."</span><span class="p">)</span>
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>  <span class="c1"># Monitor for 1 minute</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
@@ -1545,9 +1545,9 @@ Always wrap your code in proper error handling:
 async def main():
     nasa = SamsungNasa(
         config={
-            &quot;device_path&quot;: &quot;socket://192.168.1.100:8000&quot;,
-            &quot;client_baudrate&quot;: 9600,
-            &quot;client_address&quot;: 1,
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
+            "client_address": 1,
         }
     )
 
@@ -1557,9 +1557,9 @@ async def main():
         # Your code here
 
     except ConnectionError as e:
-        print(f&quot;Failed to connect: {e}&quot;)
+        print(f"Failed to connect: {e}")
     except Exception as e:
-        print(f&quot;Error: {e}&quot;)
+        print(f"Error: {e}")
     finally:
         await nasa.stop()
 
@@ -1576,27 +1576,27 @@ asyncio.run(main())
     <span class="n">OutdoorCompressorFrequency</span>
 <span class="p">)</span>
 
-<span class="c1"># Enable logging to see what&#39;s happening</span>
+<span class="c1"># Enable logging to see what's happening</span>
 <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-            <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">,</span> <span class="s2">&quot;200000&quot;</span><span class="p">]</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"100000"</span><span class="p">,</span> <span class="s2">"200000"</span><span class="p">]</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_device_update</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2"> updated&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"✓ </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2"> updated"</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="c1"># Connect</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Connecting...&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Connecting..."</span><span class="p">)</span>
         <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Connected!&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Connected!"</span><span class="p">)</span>
 
         <span class="c1"># Wait for initial data</span>
         <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -1604,26 +1604,26 @@ asyncio.run(main())
         <span class="c1"># Register callbacks</span>
         <span class="k">for</span> <span class="n">address</span><span class="p">,</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">device</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="n">on_device_update</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Registered callback for </span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Registered callback for </span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="c1"># Monitor for 30 seconds</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Monitoring for 30 seconds...&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Monitoring for 30 seconds..."</span><span class="p">)</span>
         <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
 
-        <span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+        <span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
         <span class="n">temp_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorAirTemperature</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Outdoor temperature: </span><span class="si">{</span><span class="n">temp_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Outdoor temperature: </span><span class="si">{</span><span class="n">temp_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 
         <span class="n">power_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorPowerConsumption</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Power consumption: </span><span class="si">{</span><span class="n">power_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">W&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Power consumption: </span><span class="si">{</span><span class="n">power_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">W"</span><span class="p">)</span>
 
         <span class="n">freq_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorCompressorFrequency</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Compressor frequency: </span><span class="si">{</span><span class="n">freq_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">Hz&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Compressor frequency: </span><span class="si">{</span><span class="n">freq_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">Hz"</span><span class="p">)</span>
 
     <span class="k">finally</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Disconnecting...&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Disconnecting..."</span><span class="p">)</span>
         <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done!&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Done!"</span><span class="p">)</span>
 
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
 </code></pre></div>

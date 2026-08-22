@@ -1647,8 +1647,8 @@
 </code></pre></div>
 <h2 id="field-descriptions">Field Descriptions<a class="headerlink" href="#field-descriptions" title="Permanent link">&para;</a></h2>
 <h3 id="packet-start-end">Packet Start &amp; End<a class="headerlink" href="#packet-start-end" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="n">PACKET_START</span> <span class="o">=</span> <span class="mh">0x32</span>  <span class="c1"># &#39;2&#39; - marks packet beginning</span>
-<span class="n">PACKET_END</span> <span class="o">=</span> <span class="mh">0x34</span>    <span class="c1"># &#39;4&#39; - marks packet end</span>
+<div class="highlight"><pre><span></span><code><span class="n">PACKET_START</span> <span class="o">=</span> <span class="mh">0x32</span>  <span class="c1"># '2' - marks packet beginning</span>
+<span class="n">PACKET_END</span> <span class="o">=</span> <span class="mh">0x34</span>    <span class="c1"># '4' - marks packet end</span>
 </code></pre></div>
 <p>These fixed markers frame every valid NASA protocol packet. Packets without these markers should be discarded.</p>
 <h3 id="packet-size">Packet Size<a class="headerlink" href="#packet-size" title="Permanent link">&para;</a></h3>
@@ -2051,12 +2051,12 @@ Message 2:
 </code></pre></div>
 <h2 id="complete-parsing-example">Complete Parsing Example<a class="headerlink" href="#complete-parsing-example" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_nasa_packet</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a complete NASA packet.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Parse a complete NASA packet."""</span>
 
     <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mh">0x32</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid packet start&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid packet start"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mh">0x34</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid packet end&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid packet end"</span><span class="p">)</span>
 
     <span class="c1"># Header</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">|</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span>
@@ -2096,33 +2096,33 @@ Message 2:
             <span class="n">offset</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">3</span>
 
         <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-            <span class="s1">&#39;number&#39;</span><span class="p">:</span> <span class="n">msg_num</span><span class="p">,</span>
-            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">msg_type</span><span class="p">,</span>
-            <span class="s1">&#39;payload&#39;</span><span class="p">:</span> <span class="n">payload</span>
+            <span class="s1">'number'</span><span class="p">:</span> <span class="n">msg_num</span><span class="p">,</span>
+            <span class="s1">'type'</span><span class="p">:</span> <span class="n">msg_type</span><span class="p">,</span>
+            <span class="s1">'payload'</span><span class="p">:</span> <span class="n">payload</span>
         <span class="p">})</span>
 
     <span class="c1"># CRC</span>
     <span class="n">crc</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="mi">256</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">src_class</span><span class="si">:</span><span class="s1">02X</span><span class="si">}{</span><span class="n">src_chan</span><span class="si">:</span><span class="s1">02X</span><span class="si">}{</span><span class="n">src_addr</span><span class="si">:</span><span class="s1">02X</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;destination&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dst_class</span><span class="si">:</span><span class="s1">02X</span><span class="si">}{</span><span class="n">dst_chan</span><span class="si">:</span><span class="s1">02X</span><span class="si">}{</span><span class="n">dst_addr</span><span class="si">:</span><span class="s1">02X</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;packet_type&#39;</span><span class="p">:</span> <span class="n">packet_type</span><span class="p">,</span>
-        <span class="s1">&#39;data_type&#39;</span><span class="p">:</span> <span class="n">data_type</span><span class="p">,</span>
-        <span class="s1">&#39;messages&#39;</span><span class="p">:</span> <span class="n">messages</span><span class="p">,</span>
-        <span class="s1">&#39;crc&#39;</span><span class="p">:</span> <span class="n">crc</span>
+        <span class="s1">'source'</span><span class="p">:</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">src_class</span><span class="si">:</span><span class="s1">02X</span><span class="si">}{</span><span class="n">src_chan</span><span class="si">:</span><span class="s1">02X</span><span class="si">}{</span><span class="n">src_addr</span><span class="si">:</span><span class="s1">02X</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
+        <span class="s1">'destination'</span><span class="p">:</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">dst_class</span><span class="si">:</span><span class="s1">02X</span><span class="si">}{</span><span class="n">dst_chan</span><span class="si">:</span><span class="s1">02X</span><span class="si">}{</span><span class="n">dst_addr</span><span class="si">:</span><span class="s1">02X</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
+        <span class="s1">'packet_type'</span><span class="p">:</span> <span class="n">packet_type</span><span class="p">,</span>
+        <span class="s1">'data_type'</span><span class="p">:</span> <span class="n">data_type</span><span class="p">,</span>
+        <span class="s1">'messages'</span><span class="p">:</span> <span class="n">messages</span><span class="p">,</span>
+        <span class="s1">'crc'</span><span class="p">:</span> <span class="n">crc</span>
     <span class="p">}</span>
 </code></pre></div>
 <h2 id="building-a-packet">Building a Packet<a class="headerlink" href="#building-a-packet" title="Permanent link">&para;</a></h2>
 <p>To send a packet:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_nasa_packet</span><span class="p">(</span>
-    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>          <span class="c1"># e.g., &quot;800001&quot;</span>
-    <span class="n">destination</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>     <span class="c1"># e.g., &quot;100000&quot;</span>
+    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>          <span class="c1"># e.g., "800001"</span>
+    <span class="n">destination</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>     <span class="c1"># e.g., "100000"</span>
     <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>       <span class="c1"># [(msg_num, payload), ...]</span>
     <span class="n">packet_type</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="c1"># Normal</span>
     <span class="n">data_type</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>   <span class="c1"># Request</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a NASA packet.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Build a NASA packet."""</span>
 
     <span class="c1"># Parse addresses</span>
     <span class="n">src_class</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>

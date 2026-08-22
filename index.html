@@ -1370,10 +1370,10 @@
     <span class="c1"># Initialize the NASA protocol</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>  <span class="c1"># Or a local serial port like &quot;/dev/ttyUSB0&quot;</span>
-            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-            <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>  <span class="c1"># Outdoor unit</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>  <span class="c1"># Or a local serial port like "/dev/ttyUSB0"</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>  <span class="c1"># Outdoor unit</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
@@ -1381,14 +1381,14 @@
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
     <span class="c1"># Get the device</span>
-    <span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
 
     <span class="c1"># Access device attributes</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Outdoor temperature: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">outdoor_temperature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Power consumption: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">power_consumption</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Outdoor temperature: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">outdoor_temperature</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Power consumption: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">power_consumption</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># Control climate (if indoor unit)</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s1">&#39;climate_controller&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s1">'climate_controller'</span><span class="p">):</span>
         <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="o">.</span><span class="n">turn_on</span><span class="p">()</span>
         <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="mi">22</span><span class="p">)</span>
 

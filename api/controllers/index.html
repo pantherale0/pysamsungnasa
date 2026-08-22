@@ -1196,39 +1196,39 @@
 <p>Whether climate control is powered on.</p>
 <div class="highlight"><pre><span></span><code><span class="n">cc</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span>
 <span class="k">if</span> <span class="n">cc</span><span class="o">.</span><span class="n">power</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Climate control is ON&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Climate control is ON"</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Climate control is OFF&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Climate control is OFF"</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="current_mode-str-none"><code>current_mode: str | None</code><a class="headerlink" href="#current_mode-str-none" title="Permanent link">&para;</a></h4>
 <p>Current operation mode.</p>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mode: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="c1"># Output: &quot;cool&quot;, &quot;heat&quot;, &quot;auto&quot;, &quot;dry&quot;, &quot;fan&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mode: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_mode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="c1"># Output: "cool", "heat", "auto", "dry", "fan"</span>
 </code></pre></div>
 <h4 id="real_operation_mode-str-none"><code>real_operation_mode: str | None</code><a class="headerlink" href="#real_operation_mode-str-none" title="Permanent link">&para;</a></h4>
 <p>Actual current operation mode (read-only, reflects what unit is actually doing).</p>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Real mode: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">real_operation_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Real mode: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">real_operation_mode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="c1"># May differ from current_mode during transitions</span>
 </code></pre></div>
 <h4 id="f_current_temperature-float-none"><code>f_current_temperature: float | None</code><a class="headerlink" href="#f_current_temperature-float-none" title="Permanent link">&para;</a></h4>
 <p>Current room temperature in °C.</p>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Room temperature: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">f_current_temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Room temperature: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">f_current_temperature</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="f_target_temperature-float-none"><code>f_target_temperature: float | None</code><a class="headerlink" href="#f_target_temperature-float-none" title="Permanent link">&para;</a></h4>
 <p>Target set temperature in °C.</p>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">f_target_temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Target: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">f_target_temperature</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="current_humidity-int-none"><code>current_humidity: int | None</code><a class="headerlink" href="#current_humidity-int-none" title="Permanent link">&para;</a></h4>
 <p>Current humidity percentage (0-100).</p>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Humidity: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_humidity</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Humidity: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_humidity</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="current_fan_mode-str-none"><code>current_fan_mode: str | None</code><a class="headerlink" href="#current_fan_mode-str-none" title="Permanent link">&para;</a></h4>
 <p>Current fan mode.</p>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fan mode: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_fan_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Fan mode: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_fan_mode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="current_fan_speed-int-none"><code>current_fan_speed: int | None</code><a class="headerlink" href="#current_fan_speed-int-none" title="Permanent link">&para;</a></h4>
 <p>Current fan speed (typically 1-4).</p>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fan speed: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_fan_speed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Fan speed: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_fan_speed</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="water_outlet_current_temperature-float-none"><code>water_outlet_current_temperature: float | None</code><a class="headerlink" href="#water_outlet_current_temperature-float-none" title="Permanent link">&para;</a></h4>
 <p>Water outlet temperature for water-based systems.</p>
@@ -1251,9 +1251,9 @@
 - <code>"heat"</code> - Heating mode
 - <code>"dry"</code> - Dehumidification mode
 - <code>"fan"</code> - Fan only mode</p>
-<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">&quot;cool&quot;</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">&quot;heat&quot;</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">"cool"</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">"heat"</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">"auto"</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="async-set_target_temperaturetemperature-float"><code>async set_target_temperature(temperature: float)</code><a class="headerlink" href="#async-set_target_temperaturetemperature-float" title="Permanent link">&para;</a></h4>
 <p>Set the target temperature in °C.</p>
@@ -1283,8 +1283,8 @@
 - <code>"down"</code> - Swing down
 - <code>"swing"</code> - Continuous swing
 - <code>"off"</code> - No swing</p>
-<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_air_swing</span><span class="p">(</span><span class="s2">&quot;swing&quot;</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_air_swing</span><span class="p">(</span><span class="s2">&quot;down&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_air_swing</span><span class="p">(</span><span class="s2">"swing"</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_air_swing</span><span class="p">(</span><span class="s2">"down"</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="advanced-methods">Advanced Methods<a class="headerlink" href="#advanced-methods" title="Permanent link">&para;</a></h3>
 <h4 id="async-set_target_humidityhumidity-int"><code>async set_target_humidity(humidity: int)</code><a class="headerlink" href="#async-set_target_humidityhumidity-int" title="Permanent link">&para;</a></h4>
@@ -1320,19 +1320,19 @@
 <p>Whether DHW is powered on.</p>
 <div class="highlight"><pre><span></span><code><span class="n">dhw</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">dhw_controller</span>
 <span class="k">if</span> <span class="n">dhw</span><span class="o">.</span><span class="n">power</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hot water heating is ON&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Hot water heating is ON"</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="operation_mode-str-none"><code>operation_mode: str | None</code><a class="headerlink" href="#operation_mode-str-none" title="Permanent link">&para;</a></h4>
 <p>Current DHW operation mode.</p>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mode: </span><span class="si">{</span><span class="n">dhw</span><span class="o">.</span><span class="n">operation_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mode: </span><span class="si">{</span><span class="n">dhw</span><span class="o">.</span><span class="n">operation_mode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="target_temperature-float-none"><code>target_temperature: float | None</code><a class="headerlink" href="#target_temperature-float-none" title="Permanent link">&para;</a></h4>
 <p>Target water temperature in °C.</p>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target: </span><span class="si">{</span><span class="n">dhw</span><span class="o">.</span><span class="n">target_temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Target: </span><span class="si">{</span><span class="n">dhw</span><span class="o">.</span><span class="n">target_temperature</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="current_temperature-float-none"><code>current_temperature: float | None</code><a class="headerlink" href="#current_temperature-float-none" title="Permanent link">&para;</a></h4>
 <p>Current water temperature in °C.</p>
-<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current: </span><span class="si">{</span><span class="n">dhw</span><span class="o">.</span><span class="n">current_temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Current: </span><span class="si">{</span><span class="n">dhw</span><span class="o">.</span><span class="n">current_temperature</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 </code></pre></div>
 <h4 id="reference_temp_source-str-none"><code>reference_temp_source: str | None</code><a class="headerlink" href="#reference_temp_source-str-none" title="Permanent link">&para;</a></h4>
 <p>Source for reference temperature.</p>
@@ -1363,31 +1363,31 @@
 - <code>"normal"</code> - Normal heating
 - <code>"eco"</code> - Energy-saving mode
 - <code>"comfort"</code> - Comfort mode</p>
-<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">&quot;normal&quot;</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">&quot;eco&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">"normal"</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">"eco"</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="usage-examples">Usage Examples<a class="headerlink" href="#usage-examples" title="Permanent link">&para;</a></h2>
 <h3 id="simple-climate-control">Simple Climate Control<a class="headerlink" href="#simple-climate-control" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"200020"</span><span class="p">]</span>
 <span class="n">cc</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span>
 
 <span class="c1"># Turn on and set to 22°C in cool mode</span>
 <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">turn_on</span><span class="p">()</span>
-<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">&quot;cool&quot;</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">"cool"</span><span class="p">)</span>
 <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="mi">22</span><span class="p">)</span>
 <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_fan_speed</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Set to </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">f_target_temperature</span><span class="si">}</span><span class="s2">°C in </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_mode</span><span class="si">}</span><span class="s2"> mode&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Set to </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">f_target_temperature</span><span class="si">}</span><span class="s2">°C in </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_mode</span><span class="si">}</span><span class="s2"> mode"</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="simple-dhw-control">Simple DHW Control<a class="headerlink" href="#simple-dhw-control" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"200020"</span><span class="p">]</span>
 <span class="n">dhw</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">dhw_controller</span>
 
 <span class="c1"># Turn on hot water and set to 45°C</span>
 <span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">turn_on</span><span class="p">()</span>
 <span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hot water set to </span><span class="si">{</span><span class="n">dhw</span><span class="o">.</span><span class="n">target_temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Hot water set to </span><span class="si">{</span><span class="n">dhw</span><span class="o">.</span><span class="n">target_temperature</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="monitoring-with-callbacks">Monitoring with Callbacks<a class="headerlink" href="#monitoring-with-callbacks" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">cc</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span>
@@ -1395,13 +1395,13 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">on_temp_change</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
     <span class="n">current</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">f_current_temperature</span>
     <span class="n">target</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">f_target_temperature</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temp: </span><span class="si">{</span><span class="n">current</span><span class="si">}</span><span class="s2">°C (target </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">°C)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Temp: </span><span class="si">{</span><span class="n">current</span><span class="si">}</span><span class="s2">°C (target </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">°C)"</span><span class="p">)</span>
 
 <span class="n">indoor</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="n">on_temp_change</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="conditional-control">Conditional Control<a class="headerlink" href="#conditional-control" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">smart_cooling</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cool room when temperature exceeds threshold.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Cool room when temperature exceeds threshold."""</span>
 
     <span class="n">cc</span> <span class="o">=</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span>
     <span class="n">target</span> <span class="o">=</span> <span class="mi">22</span>
@@ -1410,9 +1410,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">control_temp</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
         <span class="n">current</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">f_current_temperature</span>
 
-        <span class="k">if</span> <span class="n">current</span> <span class="o">&gt;</span> <span class="n">threshold</span> <span class="ow">and</span> <span class="n">cc</span><span class="o">.</span><span class="n">current_mode</span> <span class="o">!=</span> <span class="s2">&quot;cool&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">current</span> <span class="o">&gt;</span> <span class="n">threshold</span> <span class="ow">and</span> <span class="n">cc</span><span class="o">.</span><span class="n">current_mode</span> <span class="o">!=</span> <span class="s2">"cool"</span><span class="p">:</span>
             <span class="c1"># Too hot, start cooling</span>
-            <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">&quot;cool&quot;</span><span class="p">))</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="s2">"cool"</span><span class="p">))</span>
             <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="n">target</span><span class="p">))</span>
 
         <span class="k">elif</span> <span class="n">current</span> <span class="o">&lt;</span> <span class="n">target</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="ow">and</span> <span class="n">cc</span><span class="o">.</span><span class="n">power</span><span class="p">:</span>
@@ -1423,7 +1423,7 @@
 </code></pre></div>
 <h3 id="temperature-ramping">Temperature Ramping<a class="headerlink" href="#temperature-ramping" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">ramp_temperature</span><span class="p">(</span><span class="n">cc</span><span class="p">,</span> <span class="n">target_temp</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gradually change temperature.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Gradually change temperature."""</span>
 
     <span class="n">current</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">f_target_temperature</span> <span class="ow">or</span> <span class="mi">20</span>
 
@@ -1445,7 +1445,7 @@
 </code></pre></div>
 <h3 id="multi-device-synchronization">Multi-Device Synchronization<a class="headerlink" href="#multi-device-synchronization" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">sync_controllers</span><span class="p">(</span><span class="n">devices</span><span class="p">,</span> <span class="n">property_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set same property on multiple devices.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Set same property on multiple devices."""</span>
 
     <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="p">:</span>
@@ -1453,30 +1453,30 @@
 
         <span class="n">cc</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span>
 
-        <span class="k">if</span> <span class="n">property_name</span> <span class="o">==</span> <span class="s2">&quot;temperature&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">property_name</span> <span class="o">==</span> <span class="s2">"temperature"</span><span class="p">:</span>
             <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">property_name</span> <span class="o">==</span> <span class="s2">&quot;mode&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">property_name</span> <span class="o">==</span> <span class="s2">"mode"</span><span class="p">:</span>
             <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_operation_mode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">property_name</span> <span class="o">==</span> <span class="s2">&quot;fan&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">property_name</span> <span class="o">==</span> <span class="s2">"fan"</span><span class="p">:</span>
             <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_fan_speed</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">property_name</span> <span class="o">==</span> <span class="s2">&quot;power&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">property_name</span> <span class="o">==</span> <span class="s2">"power"</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
                 <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">turn_on</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">turn_off</span><span class="p">()</span>
 
 <span class="c1"># Usage</span>
-<span class="n">indoor_units</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">&#39;climate_controller&#39;</span><span class="p">)]</span>
-<span class="k">await</span> <span class="n">sync_controllers</span><span class="p">(</span><span class="n">indoor_units</span><span class="p">,</span> <span class="s2">&quot;temperature&quot;</span><span class="p">,</span> <span class="mi">22</span><span class="p">)</span>
-<span class="k">await</span> <span class="n">sync_controllers</span><span class="p">(</span><span class="n">indoor_units</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;cool&quot;</span><span class="p">)</span>
+<span class="n">indoor_units</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s1">'climate_controller'</span><span class="p">)]</span>
+<span class="k">await</span> <span class="n">sync_controllers</span><span class="p">(</span><span class="n">indoor_units</span><span class="p">,</span> <span class="s2">"temperature"</span><span class="p">,</span> <span class="mi">22</span><span class="p">)</span>
+<span class="k">await</span> <span class="n">sync_controllers</span><span class="p">(</span><span class="n">indoor_units</span><span class="p">,</span> <span class="s2">"mode"</span><span class="p">,</span> <span class="s2">"cool"</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
     <span class="k">await</span> <span class="n">cc</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="mi">22</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Climate controller not available&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Climate controller not available"</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>

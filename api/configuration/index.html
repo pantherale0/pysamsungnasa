@@ -1849,7 +1849,7 @@
 
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">NasaConfig</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represent a NASA configuration.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Represent a NASA configuration."""</span>
 
     <span class="n">client_address</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">device_dump_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1876,12 +1876,12 @@
 <p>The path to the serial device (e.g. <code>/dev/ttyUSB0</code>) or an RFC2217 network bridge URL (e.g. <code>socket://192.168.1.100:8000</code>).</p>
 <p><strong>Default:</strong> None
 <strong>Note:</strong> Required for the SerialX client to connect.</p>
-<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">}</span>
 </code></pre></div>
 <h4 id="client_baudrate-int-9600"><code>client_baudrate: int = 9600</code><a class="headerlink" href="#client_baudrate-int-9600" title="Permanent link">&para;</a></h4>
 <p>The baud rate for the SerialX serial interface connection.</p>
 <p><strong>Default:</strong> 9600</p>
-<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">}</span>
 </code></pre></div>
 <h3 id="network-configuration">Network Configuration<a class="headerlink" href="#network-configuration" title="Permanent link">&para;</a></h3>
 <h4 id="client_address-int-1"><code>client_address: int = 1</code><a class="headerlink" href="#client_address-int-1" title="Permanent link">&para;</a></h4>
@@ -1889,15 +1889,15 @@
 <p><strong>Default:</strong> 1
 <strong>Valid range:</strong> 1-255
 <strong>Purpose:</strong> Identifies your application on the bus</p>
-<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
 </code></pre></div>
 <h4 id="device_addresses-liststr"><code>device_addresses: list[str] = []</code><a class="headerlink" href="#device_addresses-liststr" title="Permanent link">&para;</a></h4>
 <p>Pre-configured device addresses to monitor.</p>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;100000  # Outdoor unit</span>
-        <span class="s2">&quot;200020&quot;</span><span class="p">,</span>  <span class="c1"># Indoor unit 1</span>
-        <span class="s2">&quot;200021&quot;</span><span class="p">,</span>  <span class="c1"># Indoor unit 2</span>
+    <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"100000  # Outdoor unit</span>
+        <span class="s2">"200020"</span><span class="p">,</span>  <span class="c1"># Indoor unit 1</span>
+        <span class="s2">"200021"</span><span class="p">,</span>  <span class="c1"># Indoor unit 2</span>
     <span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div>
@@ -1906,38 +1906,38 @@
 <p>Enable Plug and Play device auto-discovery.</p>
 <p><strong>Default:</strong> False (disabled)
 <strong>Note:</strong> If enabled, devices are automatically discovered</p>
-<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;device_pnp&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"device_pnp"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div>
 <h4 id="device_dump_only-bool-false"><code>device_dump_only: bool = False</code><a class="headerlink" href="#device_dump_only-bool-false" title="Permanent link">&para;</a></h4>
 <p>Only listen to messages without active device management.</p>
 <p><strong>Default:</strong> False</p>
-<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;device_dump_only&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"device_dump_only"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div>
 <h3 id="buffer-management">Buffer Management<a class="headerlink" href="#buffer-management" title="Permanent link">&para;</a></h3>
 <h4 id="max_buffer_size-int-262144"><code>max_buffer_size: int = 262144</code><a class="headerlink" href="#max_buffer_size-int-262144" title="Permanent link">&para;</a></h4>
 <p>Maximum size of the receive buffer (bytes).</p>
 <p><strong>Default:</strong> 256 KB
 <strong>Note:</strong> Increase if you experience buffer overflows with many devices</p>
-<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max_buffer_size&quot;</span><span class="p">:</span> <span class="mi">524288</span><span class="p">}</span>  <span class="c1"># 512 KB</span>
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"max_buffer_size"</span><span class="p">:</span> <span class="mi">524288</span><span class="p">}</span>  <span class="c1"># 512 KB</span>
 </code></pre></div>
 <h3 id="logging-configuration">Logging Configuration<a class="headerlink" href="#logging-configuration" title="Permanent link">&para;</a></h3>
 <h4 id="log_all_messages-bool-false"><code>log_all_messages: bool = False</code><a class="headerlink" href="#log_all_messages-bool-false" title="Permanent link">&para;</a></h4>
 <p>Log every message received, not just relevant ones.</p>
 <p><strong>Default:</strong> False
 <strong>Warning:</strong> Very verbose, use only for debugging</p>
-<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;log_all_messages&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"log_all_messages"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div>
 <h4 id="devices_to_log-liststr"><code>devices_to_log: list[str] = []</code><a class="headerlink" href="#devices_to_log-liststr" title="Permanent link">&para;</a></h4>
 <p>Specific devices to log messages from (ignored if <code>log_all_messages=True</code>).</p>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;devices_to_log&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">,</span> <span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+    <span class="s2">"devices_to_log"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"200000"</span><span class="p">,</span> <span class="s2">"200020"</span><span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div>
 <h4 id="log_buffer_messages-bool-false"><code>log_buffer_messages: bool = False</code><a class="headerlink" href="#log_buffer_messages-bool-false" title="Permanent link">&para;</a></h4>
 <p>Log buffer-related diagnostic messages.</p>
 <p><strong>Default:</strong> False
 <strong>Purpose:</strong> Debugging connection issues</p>
-<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;log_buffer_messages&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"log_buffer_messages"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 </code></pre></div>
 <h3 id="retry-configuration-read">Retry Configuration - Read<a class="headerlink" href="#retry-configuration-read" title="Permanent link">&para;</a></h3>
 <h4 id="enable_read_retries-bool-true"><code>enable_read_retries: bool = True</code><a class="headerlink" href="#enable_read_retries-bool-true" title="Permanent link">&para;</a></h4>
@@ -1960,10 +1960,10 @@
 - Attempt 3: Wait 1.1s
 - Attempt 4: Wait 1.21s</p>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;enable_read_retries&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;read_retry_max_attempts&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s2">&quot;read_retry_interval&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-    <span class="s2">&quot;read_retry_backoff_factor&quot;</span><span class="p">:</span> <span class="mf">1.1</span><span class="p">,</span>
+    <span class="s2">"enable_read_retries"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"read_retry_max_attempts"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">"read_retry_interval"</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="s2">"read_retry_backoff_factor"</span><span class="p">:</span> <span class="mf">1.1</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
 <h3 id="retry-configuration-write">Retry Configuration - Write<a class="headerlink" href="#retry-configuration-write" title="Permanent link">&para;</a></h3>
@@ -1980,10 +1980,10 @@
 <p>Multiply retry interval by this factor after each attempt.</p>
 <p><strong>Default:</strong> 1.1</p>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;enable_write_retries&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;write_retry_max_attempts&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s2">&quot;write_retry_interval&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-    <span class="s2">&quot;write_retry_backoff_factor&quot;</span><span class="p">:</span> <span class="mf">1.1</span><span class="p">,</span>
+    <span class="s2">"enable_write_retries"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"write_retry_max_attempts"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">"write_retry_interval"</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="s2">"write_retry_backoff_factor"</span><span class="p">:</span> <span class="mf">1.1</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
 <h2 id="properties-read-only">Properties (Read-only)<a class="headerlink" href="#properties-read-only" title="Permanent link">&para;</a></h2>
@@ -1998,11 +1998,11 @@
 <p>The most common way - pass a dictionary to SamsungNasa:</p>
 <div class="highlight"><pre><span></span><code><span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
     <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-        <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">,</span> <span class="s2">&quot;200020&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;enable_read_retries&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+        <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+        <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"200000"</span><span class="p">,</span> <span class="s2">"200020"</span><span class="p">],</span>
+        <span class="s2">"enable_read_retries"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2012,10 +2012,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span>
 
 <span class="n">config</span> <span class="o">=</span> <span class="n">NasaConfig</span><span class="p">(</span>
-    <span class="n">device_path</span><span class="o">=</span><span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
+    <span class="n">device_path</span><span class="o">=</span><span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
     <span class="n">client_baudrate</span><span class="o">=</span><span class="mi">9600</span><span class="p">,</span>
     <span class="n">client_address</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">device_addresses</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">,</span> <span class="s2">&quot;200020&quot;</span><span class="p">],</span>
+    <span class="n">device_addresses</span><span class="o">=</span><span class="p">[</span><span class="s2">"200000"</span><span class="p">,</span> <span class="s2">"200020"</span><span class="p">],</span>
     <span class="n">log_all_messages</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span>
 
@@ -2028,12 +2028,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">NasaConfig</span>
 
 <span class="n">config_dict</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SAMSUNG_HP_DEVICE_PATH&quot;</span><span class="p">,</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">),</span>
-    <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SAMSUNG_HP_CLIENT_BAUDRATE&quot;</span><span class="p">,</span> <span class="s2">&quot;9600&quot;</span><span class="p">)),</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;NASA_CLIENT_ADDR&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)),</span>
-    <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;NASA_DEVICES&quot;</span><span class="p">,</span> <span class="s2">&quot;100000&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">),</span>
-    <span class="s2">&quot;log_all_messages&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;NASA_LOG_ALL&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;enable_read_retries&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;NASA_RETRIES&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+    <span class="s2">"device_path"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"SAMSUNG_HP_DEVICE_PATH"</span><span class="p">,</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">),</span>
+    <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"SAMSUNG_HP_CLIENT_BAUDRATE"</span><span class="p">,</span> <span class="s2">"9600"</span><span class="p">)),</span>
+    <span class="s2">"client_address"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"NASA_CLIENT_ADDR"</span><span class="p">,</span> <span class="s2">"1"</span><span class="p">)),</span>
+    <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"NASA_DEVICES"</span><span class="p">,</span> <span class="s2">"100000"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">),</span>
+    <span class="s2">"log_all_messages"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"NASA_LOG_ALL"</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"true"</span><span class="p">,</span>
+    <span class="s2">"enable_read_retries"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"NASA_RETRIES"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"true"</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config_dict</span><span class="p">)</span>
@@ -2043,145 +2043,145 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamsungNasa</span>
 
 <span class="c1"># Load from JSON file</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;nasa_config.json&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"nasa_config.json"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
 <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
 </code></pre></div>
 <p>Example <code>nasa_config.json</code>:
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;device_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;client_baudrate&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">9600</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;client_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;device_addresses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;200020&quot;</span><span class="p">],</span>
-<span class="w">    </span><span class="nt">&quot;log_all_messages&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;enable_read_retries&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;read_retry_max_attempts&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;enable_write_retries&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;write_retry_max_attempts&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">    </span><span class="nt">"device_path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"client_baudrate"</span><span class="p">:</span><span class="w"> </span><span class="mi">9600</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"client_address"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"device_addresses"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"200000"</span><span class="p">,</span><span class="w"> </span><span class="s2">"200020"</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"log_all_messages"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"enable_read_retries"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"read_retry_max_attempts"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"enable_write_retries"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"write_retry_max_attempts"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span>
 <span class="p">}</span>
 </code></pre></div></p>
 <h2 id="configuration-presets">Configuration Presets<a class="headerlink" href="#configuration-presets" title="Permanent link">&para;</a></h2>
 <h3 id="developmentdebug">Development/Debug<a class="headerlink" href="#developmentdebug" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">debug_config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">,</span> <span class="s2">&quot;200020&quot;</span><span class="p">],</span>
-    <span class="s2">&quot;log_all_messages&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;log_buffer_messages&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;enable_read_retries&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;read_retry_max_attempts&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-    <span class="s2">&quot;enable_write_retries&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;write_retry_max_attempts&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+    <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+    <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"200000"</span><span class="p">,</span> <span class="s2">"200020"</span><span class="p">],</span>
+    <span class="s2">"log_all_messages"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"log_buffer_messages"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"enable_read_retries"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"read_retry_max_attempts"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">"enable_write_retries"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"write_retry_max_attempts"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
 <h3 id="production">Production<a class="headerlink" href="#production" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">prod_config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">,</span> <span class="s2">&quot;200020&quot;</span><span class="p">],</span>
-    <span class="s2">&quot;log_all_messages&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s2">&quot;log_buffer_messages&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s2">&quot;enable_read_retries&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;read_retry_max_attempts&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s2">&quot;enable_write_retries&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;write_retry_max_attempts&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+    <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+    <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"200000"</span><span class="p">,</span> <span class="s2">"200020"</span><span class="p">],</span>
+    <span class="s2">"log_all_messages"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">"log_buffer_messages"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">"enable_read_retries"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"read_retry_max_attempts"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s2">"enable_write_retries"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"write_retry_max_attempts"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
 <h3 id="minimal">Minimal<a class="headerlink" href="#minimal" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">minimal_config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+    <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+    <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
 <h3 id="high-reliability">High-Reliability<a class="headerlink" href="#high-reliability" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">reliable_config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">,</span> <span class="s2">&quot;200020&quot;</span><span class="p">],</span>
-    <span class="s2">&quot;enable_read_retries&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;read_retry_max_attempts&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-    <span class="s2">&quot;read_retry_interval&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="s2">&quot;read_retry_backoff_factor&quot;</span><span class="p">:</span> <span class="mf">1.3</span><span class="p">,</span>
-    <span class="s2">&quot;enable_write_retries&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;write_retry_max_attempts&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-    <span class="s2">&quot;write_retry_interval&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="s2">&quot;write_retry_backoff_factor&quot;</span><span class="p">:</span> <span class="mf">1.3</span><span class="p">,</span>
+    <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+    <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+    <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"200000"</span><span class="p">,</span> <span class="s2">"200020"</span><span class="p">],</span>
+    <span class="s2">"enable_read_retries"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"read_retry_max_attempts"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">"read_retry_interval"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="s2">"read_retry_backoff_factor"</span><span class="p">:</span> <span class="mf">1.3</span><span class="p">,</span>
+    <span class="s2">"enable_write_retries"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"write_retry_max_attempts"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">"write_retry_interval"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="s2">"write_retry_backoff_factor"</span><span class="p">:</span> <span class="mf">1.3</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
 <h2 id="accessing-configuration">Accessing Configuration<a class="headerlink" href="#accessing-configuration" title="Permanent link">&para;</a></h2>
 <p>After creating SamsungNasa, access the config:</p>
 <div class="highlight"><pre><span></span><code><span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
     <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+        <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">)</span>
 
 <span class="c1"># Read configuration</span>
 <span class="n">cfg</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">config</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Client address: </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">client_address</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Max buffer: </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">max_buffer_size</span><span class="si">}</span><span class="s2"> bytes&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retries: </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">enable_read_retries</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Devices: </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">device_addresses</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Client address: </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">client_address</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Max buffer: </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">max_buffer_size</span><span class="si">}</span><span class="s2"> bytes"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Retries: </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">enable_read_retries</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Devices: </span><span class="si">{</span><span class="n">cfg</span><span class="o">.</span><span class="n">device_addresses</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="validation">Validation<a class="headerlink" href="#validation" title="Permanent link">&para;</a></h2>
 <p>Configuration is validated when passed to SamsungNasa:</p>
 <div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;invalid_key&quot;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span>  <span class="c1"># Will raise error</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+            <span class="s2">"invalid_key"</span><span class="p">:</span> <span class="s2">"value"</span><span class="p">,</span>  <span class="c1"># Will raise error</span>
         <span class="p">}</span>
     <span class="p">)</span>
 <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Configuration error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Configuration error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="configuration-for-different-scenarios">Configuration for Different Scenarios<a class="headerlink" href="#configuration-for-different-scenarios" title="Permanent link">&para;</a></h2>
 <h3 id="single-device-monitoring">Single Device Monitoring<a class="headerlink" href="#single-device-monitoring" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">],</span>
-    <span class="s2">&quot;log_all_messages&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"100000"</span><span class="p">],</span>
+    <span class="s2">"log_all_messages"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
 <h3 id="multiple-devices">Multiple Devices<a class="headerlink" href="#multiple-devices" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&quot;100000  # Outdoor</span>
-        <span class="s2">&quot;200020&quot;</span><span class="p">,</span>  <span class="c1"># Indoor 1</span>
-        <span class="s2">&quot;200021&quot;</span><span class="p">,</span>  <span class="c1"># Indoor 2</span>
-        <span class="s2">&quot;200022&quot;</span><span class="p">,</span>  <span class="c1"># Indoor 3</span>
+    <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"100000  # Outdoor</span>
+        <span class="s2">"200020"</span><span class="p">,</span>  <span class="c1"># Indoor 1</span>
+        <span class="s2">"200021"</span><span class="p">,</span>  <span class="c1"># Indoor 2</span>
+        <span class="s2">"200022"</span><span class="p">,</span>  <span class="c1"># Indoor 3</span>
     <span class="p">],</span>
 <span class="p">}</span>
 </code></pre></div>
 <h3 id="auto-discovery">Auto-Discovery<a class="headerlink" href="#auto-discovery" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;device_pnp&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># Enable PnP</span>
+    <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">"device_pnp"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># Enable PnP</span>
 <span class="p">}</span>
 </code></pre></div>
 <h3 id="slow-network">Slow Network<a class="headerlink" href="#slow-network" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;enable_read_retries&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;read_retry_max_attempts&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
-    <span class="s2">&quot;read_retry_interval&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>  <span class="c1"># Longer delays</span>
-    <span class="s2">&quot;read_retry_backoff_factor&quot;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>  <span class="c1"># Steeper backoff</span>
+    <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">"enable_read_retries"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"read_retry_max_attempts"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">"read_retry_interval"</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>  <span class="c1"># Longer delays</span>
+    <span class="s2">"read_retry_backoff_factor"</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>  <span class="c1"># Steeper backoff</span>
 <span class="p">}</span>
 </code></pre></div>
 <h3 id="network-dumpanalysis">Network Dump/Analysis<a class="headerlink" href="#network-dumpanalysis" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;device_dump_only&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># Don&#39;t manage devices</span>
-    <span class="s2">&quot;log_all_messages&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>   <span class="c1"># Log everything</span>
-    <span class="s2">&quot;log_buffer_messages&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">"device_dump_only"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># Don't manage devices</span>
+    <span class="s2">"log_all_messages"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>   <span class="c1"># Log everything</span>
+    <span class="s2">"log_buffer_messages"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>

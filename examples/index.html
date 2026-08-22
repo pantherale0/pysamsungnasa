@@ -1348,9 +1348,9 @@
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-            <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
@@ -1360,9 +1360,9 @@
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="c1"># Display discovered devices</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">)</span><span class="si">}</span><span class="s2"> devices:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">)</span><span class="si">}</span><span class="s2"> devices:"</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">address</span><span class="p">,</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
@@ -1382,26 +1382,26 @@
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-            <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">,</span> <span class="s2">&quot;200020&quot;</span><span class="p">],</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"100000"</span><span class="p">,</span> <span class="s2">"200020"</span><span class="p">],</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Wait for devices</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Temperature Monitoring&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Temperature Monitoring"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">address</span><span class="p">,</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Device (</span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">):&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Device (</span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">):"</span><span class="p">)</span>
 
         <span class="c1"># Try reading outdoor temperature</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">outdoor_temp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorAirTemperature</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Outdoor Temperature: </span><span class="si">{</span><span class="n">outdoor_temp</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Outdoor Temperature: </span><span class="si">{</span><span class="n">outdoor_temp</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">TimeoutError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
             <span class="k">pass</span>
 
@@ -1410,9 +1410,9 @@
             <span class="n">current_temp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">InCurrentTemperature</span><span class="p">)</span>
             <span class="n">target_temp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">InTargetTemperature</span><span class="p">)</span>
             <span class="n">mode</span> <span class="o">=</span> <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">InOperationModeMessage</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Current: </span><span class="si">{</span><span class="n">current_temp</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Target: </span><span class="si">{</span><span class="n">target_temp</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Mode: </span><span class="si">{</span><span class="n">mode</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Current: </span><span class="si">{</span><span class="n">current_temp</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Target: </span><span class="si">{</span><span class="n">target_temp</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Mode: </span><span class="si">{</span><span class="n">mode</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">TimeoutError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
             <span class="k">pass</span>
 
@@ -1431,27 +1431,27 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">InOperationMode</span>
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">smart_thermostat</span><span class="p">(</span><span class="n">target_temp</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">hysteresis</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Simple smart thermostat that maintains temperature.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        target_temp: Target temperature in °C</span>
 <span class="sd">        hysteresis: Temperature deadband</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-            <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">],</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"200020"</span><span class="p">],</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Wait for device</span>
 
-    <span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+    <span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"200020"</span><span class="p">]</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">control_temperature</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
@@ -1470,7 +1470,7 @@
                         <span class="n">InOperationModeMessage</span><span class="p">,</span>
                         <span class="n">InOperationMode</span><span class="o">.</span><span class="n">HEAT</span>
                     <span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Heating: </span><span class="si">{</span><span class="n">current</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">°C → </span><span class="si">{</span><span class="n">target_temp</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Heating: </span><span class="si">{</span><span class="n">current</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">°C → </span><span class="si">{</span><span class="n">target_temp</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 
             <span class="c1"># Cooling needed</span>
             <span class="k">elif</span> <span class="n">current</span> <span class="o">&gt;</span> <span class="n">target_temp</span> <span class="o">+</span> <span class="n">hysteresis</span><span class="p">:</span>
@@ -1479,20 +1479,20 @@
                         <span class="n">InOperationModeMessage</span><span class="p">,</span>
                         <span class="n">InOperationMode</span><span class="o">.</span><span class="n">COOL</span>
                     <span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cooling: </span><span class="si">{</span><span class="n">current</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">°C → </span><span class="si">{</span><span class="n">target_temp</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cooling: </span><span class="si">{</span><span class="n">current</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">°C → </span><span class="si">{</span><span class="n">target_temp</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 
             <span class="c1"># In range</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;OK: </span><span class="si">{</span><span class="n">current</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">°C (target </span><span class="si">{</span><span class="n">target_temp</span><span class="si">}</span><span class="s2">°C)&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"OK: </span><span class="si">{</span><span class="n">current</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">°C (target </span><span class="si">{</span><span class="n">target_temp</span><span class="si">}</span><span class="s2">°C)"</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Timeout reading temperature&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Timeout reading temperature"</span><span class="p">)</span>
 
     <span class="c1"># Register callback</span>
     <span class="n">indoor</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="n">control_temperature</span><span class="p">)</span>
 
     <span class="c1"># Run for 1 hour</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Smart thermostat active (target: </span><span class="si">{</span><span class="n">target_temp</span><span class="si">}</span><span class="s2">°C)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Smart thermostat active (target: </span><span class="si">{</span><span class="n">target_temp</span><span class="si">}</span><span class="s2">°C)"</span><span class="p">)</span>
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3600</span><span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
@@ -1511,25 +1511,25 @@
 <span class="p">)</span>
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">energy_monitoring</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Monitor and log power consumption.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Monitor and log power consumption."""</span>
 
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-            <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">],</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"100000"</span><span class="p">],</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Wait for device</span>
 
-    <span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+    <span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">log_power</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">)</span>
+            <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%H:%M:%S"</span><span class="p">)</span>
 
             <span class="n">power_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorPowerConsumption</span><span class="p">)</span>
             <span class="n">power</span> <span class="o">=</span> <span class="n">power_msg</span><span class="o">.</span><span class="n">VALUE</span>
@@ -1540,19 +1540,19 @@
             <span class="n">cop_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorCopRating</span><span class="p">)</span>
             <span class="n">cop</span> <span class="o">=</span> <span class="n">cop_msg</span><span class="o">.</span><span class="n">VALUE</span>
 
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2"> | &quot;</span>
-                  <span class="sa">f</span><span class="s2">&quot;Power: </span><span class="si">{</span><span class="n">power</span><span class="si">:</span><span class="s2">6.0f</span><span class="si">}</span><span class="s2">W | &quot;</span>
-                  <span class="sa">f</span><span class="s2">&quot;Energy: </span><span class="si">{</span><span class="n">cumulative</span><span class="si">:</span><span class="s2">7.1f</span><span class="si">}</span><span class="s2">kWh | &quot;</span>
-                  <span class="sa">f</span><span class="s2">&quot;COP: </span><span class="si">{</span><span class="n">cop</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2"> | "</span>
+                  <span class="sa">f</span><span class="s2">"Power: </span><span class="si">{</span><span class="n">power</span><span class="si">:</span><span class="s2">6.0f</span><span class="si">}</span><span class="s2">W | "</span>
+                  <span class="sa">f</span><span class="s2">"Energy: </span><span class="si">{</span><span class="n">cumulative</span><span class="si">:</span><span class="s2">7.1f</span><span class="si">}</span><span class="s2">kWh | "</span>
+                  <span class="sa">f</span><span class="s2">"COP: </span><span class="si">{</span><span class="n">cop</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Timeout reading energy data&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Timeout reading energy data"</span><span class="p">)</span>
 
     <span class="n">outdoor</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="n">log_power</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Energy Monitoring&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;Time&#39;</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="s1">&#39;Power&#39;</span><span class="si">:</span><span class="s2">&gt;10</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="s1">&#39;Cumulative&#39;</span><span class="si">:</span><span class="s2">&gt;12</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="s1">&#39;COP&#39;</span><span class="si">:</span><span class="s2">&gt;8</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Energy Monitoring"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'Time'</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="s1">'Power'</span><span class="si">:</span><span class="s2">&gt;10</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="s1">'Cumulative'</span><span class="si">:</span><span class="s2">&gt;12</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="s1">'COP'</span><span class="si">:</span><span class="s2">&gt;8</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
 
     <span class="c1"># Log for 1 hour</span>
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3600</span><span class="p">)</span>
@@ -1574,14 +1574,14 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">InOperationMode</span>
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">multi_zone_control</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Control climate in multiple zones.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Control climate in multiple zones."""</span>
 
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-            <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">,</span> <span class="s2">&quot;200021&quot;</span><span class="p">,</span> <span class="s2">&quot;200022&quot;</span><span class="p">],</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"200020"</span><span class="p">,</span> <span class="s2">"200021"</span><span class="p">,</span> <span class="s2">"200022"</span><span class="p">],</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
@@ -1589,9 +1589,9 @@
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Wait for devices</span>
 
     <span class="n">zones</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;200020&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Living Room&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="mi">22</span><span class="p">},</span>
-        <span class="s2">&quot;200021&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Bedroom&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="mi">19</span><span class="p">},</span>
-        <span class="s2">&quot;200022&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Kitchen&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="mi">21</span><span class="p">}</span>
+        <span class="s2">"200020"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Living Room"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="mi">22</span><span class="p">},</span>
+        <span class="s2">"200021"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Bedroom"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="mi">19</span><span class="p">},</span>
+        <span class="s2">"200022"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Kitchen"</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="mi">21</span><span class="p">}</span>
     <span class="p">}</span>
 
     <span class="c1"># Apply settings to each zone</span>
@@ -1600,18 +1600,18 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">device</span><span class="p">:</span>
             <span class="k">continue</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting </span><span class="si">{</span><span class="n">zone_config</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">zone_config</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Setting </span><span class="si">{</span><span class="n">zone_config</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">zone_config</span><span class="p">[</span><span class="s1">'target'</span><span class="p">]</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 
         <span class="c1"># Set multiple attributes at once</span>
         <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">write_attributes</span><span class="p">({</span>
             <span class="n">InOperationPowerMessage</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># Turn on</span>
             <span class="n">InOperationModeMessage</span><span class="p">:</span> <span class="n">InOperationMode</span><span class="o">.</span><span class="n">AUTO</span><span class="p">,</span>  <span class="c1"># Auto mode</span>
-            <span class="n">InTargetTemperature</span><span class="p">:</span> <span class="n">zone_config</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span>  <span class="c1"># Temperature</span>
+            <span class="n">InTargetTemperature</span><span class="p">:</span> <span class="n">zone_config</span><span class="p">[</span><span class="s1">'target'</span><span class="p">],</span>  <span class="c1"># Temperature</span>
         <span class="p">})</span>
 
     <span class="c1"># Monitor all zones</span>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">monitor</span><span class="p">():</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Zone Status ===&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">=== Zone Status ==="</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">address</span><span class="p">,</span> <span class="n">zone_config</span> <span class="ow">in</span> <span class="n">zones</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">device</span><span class="p">:</span>
@@ -1621,12 +1621,12 @@
                 <span class="n">current</span> <span class="o">=</span> <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">InCurrentTemperature</span><span class="p">)</span>
                 <span class="n">target</span> <span class="o">=</span> <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">InTargetTemperature</span><span class="p">)</span>
                 <span class="n">mode</span> <span class="o">=</span> <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">InOperationModeMessage</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">zone_config</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: &quot;</span>
-                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">current</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C &quot;</span>
-                      <span class="sa">f</span><span class="s2">&quot;(target </span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C) &quot;</span>
-                      <span class="sa">f</span><span class="s2">&quot;mode=</span><span class="si">{</span><span class="n">mode</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">zone_config</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2">: "</span>
+                      <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">current</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C "</span>
+                      <span class="sa">f</span><span class="s2">"(target </span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C) "</span>
+                      <span class="sa">f</span><span class="s2">"mode=</span><span class="si">{</span><span class="n">mode</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">zone_config</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: Timeout&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">zone_config</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2">: Timeout"</span><span class="p">)</span>
 
     <span class="c1"># Monitor for 30 minutes</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">):</span>
@@ -1644,14 +1644,14 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamsungNasa</span>
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">scheduled_dhw</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn DHW on/off on a schedule.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Turn DHW on/off on a schedule."""</span>
 
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-            <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">],</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"200020"</span><span class="p">],</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
@@ -1663,7 +1663,7 @@
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
-    <span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"200020"</span><span class="p">]</span>
     <span class="n">dhw</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">dhw_controller</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">check_schedule</span><span class="p">():</span>
@@ -1674,18 +1674,18 @@
         <span class="n">is_on</span> <span class="o">=</span> <span class="n">dhw</span><span class="o">.</span><span class="n">power</span>
 
         <span class="k">if</span> <span class="n">should_be_on</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_on</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M:%S&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> - Turning DHW ON&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'%H:%M:%S'</span><span class="p">)</span><span class="si">}</span><span class="s2"> - Turning DHW ON"</span><span class="p">)</span>
             <span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">turn_on</span><span class="p">()</span>
             <span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="ow">not</span> <span class="n">should_be_on</span> <span class="ow">and</span> <span class="n">is_on</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M:%S&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> - Turning DHW OFF&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'%H:%M:%S'</span><span class="p">)</span><span class="si">}</span><span class="s2"> - Turning DHW OFF"</span><span class="p">)</span>
             <span class="k">await</span> <span class="n">dhw</span><span class="o">.</span><span class="n">turn_off</span><span class="p">()</span>
 
-        <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;ON&quot;</span> <span class="k">if</span> <span class="n">dhw</span><span class="o">.</span><span class="n">power</span> <span class="k">else</span> <span class="s2">&quot;OFF&quot;</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="s2">"ON"</span> <span class="k">if</span> <span class="n">dhw</span><span class="o">.</span><span class="n">power</span> <span class="k">else</span> <span class="s2">"OFF"</span>
         <span class="n">temp</span> <span class="o">=</span> <span class="n">dhw</span><span class="o">.</span><span class="n">current_temperature</span> <span class="ow">or</span> <span class="mi">0</span>
         <span class="n">target</span> <span class="o">=</span> <span class="n">dhw</span><span class="o">.</span><span class="n">target_temperature</span> <span class="ow">or</span> <span class="mi">0</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Status: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">, Current: </span><span class="si">{</span><span class="n">temp</span><span class="si">}</span><span class="s2">°C, Target: </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Status: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">, Current: </span><span class="si">{</span><span class="n">temp</span><span class="si">}</span><span class="s2">°C, Target: </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 
     <span class="c1"># Check schedule every minute</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1704,21 +1704,21 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamsungNasa</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">SmartHomeIntegration</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Example home automation integration.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Example home automation integration."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_path</span><span class="p">,</span> <span class="n">client_baudrate</span><span class="o">=</span><span class="mi">9600</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
             <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-                <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="n">device_path</span><span class="p">,</span>
-                <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="n">client_baudrate</span><span class="p">,</span>
-                <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">,</span> <span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+                <span class="s2">"device_path"</span><span class="p">:</span> <span class="n">device_path</span><span class="p">,</span>
+                <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="n">client_baudrate</span><span class="p">,</span>
+                <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"200000"</span><span class="p">,</span> <span class="s2">"200020"</span><span class="p">]</span>
             <span class="p">}</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">device_callbacks</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start the integration.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Start the integration."""</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
         <span class="c1"># Register callbacks</span>
@@ -1726,48 +1726,48 @@
             <span class="n">device</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_device_update</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop the integration.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Stop the integration."""</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">nasa</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_on_device_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle device updates.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Handle device updates."""</span>
         <span class="n">callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_callbacks</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">callback</span><span class="p">:</span>
             <span class="n">callback</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_device_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Decorator for device update handlers.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Decorator for device update handlers."""</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">device_callbacks</span><span class="p">[</span><span class="n">address</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
             <span class="k">return</span> <span class="n">func</span>
         <span class="k">return</span> <span class="n">decorator</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">temp</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set temperature for a zone.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Set temperature for a zone."""</span>
         <span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">device</span> <span class="ow">and</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="p">:</span>
             <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
 
 <span class="c1"># Usage</span>
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
-    <span class="n">home</span> <span class="o">=</span> <span class="n">SmartHomeIntegration</span><span class="p">(</span><span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">)</span>
+    <span class="n">home</span> <span class="o">=</span> <span class="n">SmartHomeIntegration</span><span class="p">(</span><span class="s2">"socket://192.168.1.100:8000"</span><span class="p">)</span>
 
-    <span class="nd">@home</span><span class="o">.</span><span class="n">on_device_update</span><span class="p">(</span><span class="s2">&quot;100000&quot;</span><span class="p">)</span>
+    <span class="nd">@home</span><span class="o">.</span><span class="n">on_device_update</span><span class="p">(</span><span class="s2">"100000"</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_outdoor_update</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Outdoor: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">outdoor_temperature</span><span class="si">}</span><span class="s2">°C, &quot;</span>
-              <span class="sa">f</span><span class="s2">&quot;Power: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">power_consumption</span><span class="si">}</span><span class="s2">W&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Outdoor: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">outdoor_temperature</span><span class="si">}</span><span class="s2">°C, "</span>
+              <span class="sa">f</span><span class="s2">"Power: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">power_consumption</span><span class="si">}</span><span class="s2">W"</span><span class="p">)</span>
 
-    <span class="nd">@home</span><span class="o">.</span><span class="n">on_device_update</span><span class="p">(</span><span class="s2">&quot;200020&quot;</span><span class="p">)</span>
+    <span class="nd">@home</span><span class="o">.</span><span class="n">on_device_update</span><span class="p">(</span><span class="s2">"200020"</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">on_indoor_update</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="p">:</span>
             <span class="n">cc</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Indoor: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">f_current_temperature</span><span class="si">}</span><span class="s2">°C, &quot;</span>
-                  <span class="sa">f</span><span class="s2">&quot;Mode: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Indoor: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">f_current_temperature</span><span class="si">}</span><span class="s2">°C, "</span>
+                  <span class="sa">f</span><span class="s2">"Mode: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_mode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">await</span> <span class="n">home</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
     <span class="c1"># Control temperature</span>
-    <span class="k">await</span> <span class="n">home</span><span class="o">.</span><span class="n">set_temperature</span><span class="p">(</span><span class="s2">&quot;200020&quot;</span><span class="p">,</span> <span class="mi">22</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">home</span><span class="o">.</span><span class="n">set_temperature</span><span class="p">(</span><span class="s2">"200020"</span><span class="p">,</span> <span class="mi">22</span><span class="p">)</span>
 
     <span class="c1"># Run for 30 seconds</span>
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
@@ -1785,39 +1785,39 @@
 <span class="c1"># Configure logging</span>
 <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
     <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
-    <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(name)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s1">'</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(name)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">'</span><span class="p">,</span>
     <span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="s1">&#39;hvac.log&#39;</span><span class="p">),</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="s1">'hvac.log'</span><span class="p">),</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
     <span class="p">]</span>
 <span class="p">)</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;HVAC&quot;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"HVAC"</span><span class="p">)</span>
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">continuous_monitoring</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Continuous monitoring with full logging.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Continuous monitoring with full logging."""</span>
 
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-            <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">,</span> <span class="s2">&quot;200020&quot;</span><span class="p">],</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"200000"</span><span class="p">,</span> <span class="s2">"200020"</span><span class="p">],</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">log_device_update</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Log device update.&quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2"> updated&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">"""Log device update."""</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Device </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2"> updated"</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s1">&#39;outdoor_temperature&#39;</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Outdoor temp: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">outdoor_temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Power: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">power_consumption</span><span class="si">}</span><span class="s2">W&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s1">'outdoor_temperature'</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Outdoor temp: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">outdoor_temperature</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Power: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">power_consumption</span><span class="si">}</span><span class="s2">W"</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s1">&#39;climate_controller&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s1">'climate_controller'</span><span class="p">)</span> <span class="ow">and</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="p">:</span>
             <span class="n">cc</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Indoor temp: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">f_current_temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Mode: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Indoor temp: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">f_current_temperature</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Mode: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_mode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
@@ -1825,14 +1825,14 @@
     <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="n">device</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="n">log_device_update</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Monitoring started&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Monitoring started"</span><span class="p">)</span>
 
     <span class="c1"># Run indefinitely</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Monitoring stopped&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Monitoring stopped"</span><span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
@@ -1844,10 +1844,10 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamsungNasa</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;NASA&quot;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"NASA"</span><span class="p">)</span>
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">resilient_connection</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Connection with error handling and reconnection.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Connection with error handling and reconnection."""</span>
 
     <span class="n">max_retries</span> <span class="o">=</span> <span class="mi">5</span>
     <span class="n">retry_delay</span> <span class="o">=</span> <span class="mi">5</span>
@@ -1856,14 +1856,14 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
                 <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-                    <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-                    <span class="s2">&quot;client_address&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+                    <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+                    <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
                 <span class="p">}</span>
             <span class="p">)</span>
 
             <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Connected successfully&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Connected successfully"</span><span class="p">)</span>
 
             <span class="c1"># Operate normally</span>
             <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3600</span><span class="p">)</span>
@@ -1872,17 +1872,17 @@
             <span class="k">break</span>
 
         <span class="k">except</span> <span class="ne">ConnectionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connection error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Connection error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">attempt</span> <span class="o">&lt;</span> <span class="n">max_retries</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retrying in </span><span class="si">{</span><span class="n">retry_delay</span><span class="si">}</span><span class="s2">s... &quot;</span>
-                           <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Retrying in </span><span class="si">{</span><span class="n">retry_delay</span><span class="si">}</span><span class="s2">s... "</span>
+                           <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">attempt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">max_retries</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
                 <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">retry_delay</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Max retries exceeded&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Max retries exceeded"</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unexpected error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">retry_delay</span><span class="p">)</span>
 
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">resilient_connection</span><span class="p">())</span>

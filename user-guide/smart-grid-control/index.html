@@ -1302,7 +1302,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">InSgReadyModeState</span>
 
 <span class="c1"># Get your device from SamsungNasa instance</span>
-<span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;200020&quot;</span><span class="p">)</span>  <span class="c1"># Indoor unit 1</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"200020"</span><span class="p">)</span>  <span class="c1"># Indoor unit 1</span>
 
 <span class="c1"># Enable SG Ready mode (allows terminal inputs to control modes):</span>
 <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span><span class="n">InSgReadyModeStateMessage</span><span class="p">,</span> <span class="n">InSgReadyModeState</span><span class="o">.</span><span class="n">ON</span><span class="p">)</span>
@@ -1429,20 +1429,20 @@ from pysamsungnasa import SamsungNasa</p>
 <div class="highlight"><pre><span></span><code>await nasa.start()
 
 # Get indoor unit
-indoor = nasa.devices.get(&quot;200020&quot;)
+indoor = nasa.devices.get("200020")
 if not indoor:
-    print(&quot;No indoor unit found&quot;)
+    print("No indoor unit found")
     return
 
 # Read smart grid attributes (if available through device)
-print(f&quot;Device: {indoor.device_type}&quot;)
-print(f&quot;Attributes: {indoor.attributes}&quot;)
+print(f"Device: {indoor.device_type}")
+print(f"Attributes: {indoor.attributes}")
 
 # Look for FSV 5091-5094 in attributes
 for attr_name, attr_value in indoor.attributes.items():
-    if &quot;5091&quot; in attr_name or &quot;5092&quot; in attr_name or \
-       &quot;5093&quot; in attr_name or &quot;5094&quot; in attr_name:
-        print(f&quot;  {attr_name}: {attr_value}&quot;)
+    if "5091" in attr_name or "5092" in attr_name or \
+       "5093" in attr_name or "5094" in attr_name:
+        print(f"  {attr_name}: {attr_value}")
 
 await nasa.stop()
 </code></pre></div>
@@ -1460,20 +1460,20 @@ the four Smart Grid operation modes. When disabled, terminal inputs are ignored.
 
 Args:
     nasa: SamsungNasa instance
-    target_address: Device address (e.g., &quot;200020&quot; for indoor unit 1)
-&quot;&quot;&quot;
+    target_address: Device address (e.g., "200020" for indoor unit 1)
+"""
 device = nasa.devices.get(target_address)
 if not device:
-    print(f&quot;Device {target_address} not found&quot;)
+    print(f"Device {target_address} not found")
     return False
 
 try:
     # Enable SG Ready mode
     await device.write_attribute(InSgReadyModeStateMessage, InSgReadyModeState.ON)
-    print(f&quot;Enabled SG Ready mode on {target_address}&quot;)
+    print(f"Enabled SG Ready mode on {target_address}")
     return True
 except Exception as e:
-    print(f&quot;Failed to enable SG Ready: {e}&quot;)
+    print(f"Failed to enable SG Ready: {e}")
     return False
 </code></pre></div>
 <p>async def disable_sg_ready(nasa, target_address):
@@ -1484,20 +1484,20 @@ normally based on user setpoints.
 
 Args:
     nasa: SamsungNasa instance
-    target_address: Device address (e.g., &quot;200020&quot; for indoor unit 1)
-&quot;&quot;&quot;
+    target_address: Device address (e.g., "200020" for indoor unit 1)
+"""
 device = nasa.devices.get(target_address)
 if not device:
-    print(f&quot;Device {target_address} not found&quot;)
+    print(f"Device {target_address} not found")
     return False
 
 try:
     # Disable SG Ready mode
     await device.write_attribute(InSgReadyModeStateMessage, InSgReadyModeState.OFF)
-    print(f&quot;Disabled SG Ready mode on {target_address}&quot;)
+    print(f"Disabled SG Ready mode on {target_address}")
     return True
 except Exception as e:
-    print(f&quot;Failed to disable SG Ready: {e}&quot;)
+    print(f"Failed to disable SG Ready: {e}")
     return False
 </code></pre></div>
 <p>```</p>
@@ -1517,10 +1517,10 @@ from pysamsungnasa.protocol.factory.messages.indoor import (
         return False</p>
 <div class="highlight"><pre><span></span><code>try:
     await device.write_attribute(InFsv5091Message, 1)  # 1 = enabled
-    print(f&quot;Enabled Smart Grid Control on {target_address}&quot;)
+    print(f"Enabled Smart Grid Control on {target_address}")
     return True
 except Exception as e:
-    print(f&quot;Failed to enable smart grid: {e}&quot;)
+    print(f"Failed to enable smart grid: {e}")
     return False
 </code></pre></div>
 <p>async def configure_smart_grid_response(
@@ -1543,7 +1543,7 @@ Args:
     heating_shift: Temperature increase for heating in Mode 3/4 (2-5°C)
     dhw_shift: Temperature increase for DHW in Mode 3 (2-5°C)
     dhw_mode: 0=Comfort (DHW continues in Mode 4), 1=Demand Response (DHW stops)
-&quot;&quot;&quot;
+"""
 
 device = nasa.devices.get(target_address)
 if not device:
@@ -1559,10 +1559,10 @@ try:
     # Configure DHW mode priority
     await device.write_attribute(InFsv5094Message, dhw_mode)
 
-    print(f&quot;Configured smart grid response on {target_address}&quot;)
+    print(f"Configured smart grid response on {target_address}")
     return True
 except Exception as e:
-    print(f&quot;Failed to configure smart grid: {e}&quot;)
+    print(f"Failed to configure smart grid: {e}")
     return False
 </code></pre></div>
 <p>```</p>
@@ -1574,24 +1574,24 @@ from pysamsungnasa import SamsungNasa</p>
 <p>async def monitor_smart_grid_response():
     """Monitor how system responds to grid signals"""</p>
 <div class="highlight"><pre><span></span><code>nasa = SamsungNasa(
-    host=&quot;192.168.1.100&quot;,
+    host="192.168.1.100",
     port=8000,
-    config={&quot;client_address&quot;: 1}
+    config={"client_address": 1}
 )
 
 await nasa.start()
 
 async def on_device_update(device):
-    &quot;&quot;&quot;Called whenever device updates&quot;&quot;&quot;
-    if device.address == &quot;200020&quot;:  # Indoor unit
-        print(f&quot;Smart Grid Status Update:&quot;)
+    """Called whenever device updates"""
+    if device.address == "200020":  # Indoor unit
+        print(f"Smart Grid Status Update:")
         # Check for operation mode, temperature, status
-        print(f&quot;  Power: {device.climate_controller.power if device.climate_controller else &#39;N/A&#39;}&quot;)
-        print(f&quot;  Mode: {device.climate_controller.current_mode if device.climate_controller else &#39;N/A&#39;}&quot;)
-        print(f&quot;  Temp: {device.climate_controller.f_current_temperature if device.climate_controller else &#39;N/A&#39;}°C&quot;)
+        print(f"  Power: {device.climate_controller.power if device.climate_controller else 'N/A'}")
+        print(f"  Mode: {device.climate_controller.current_mode if device.climate_controller else 'N/A'}")
+        print(f"  Temp: {device.climate_controller.f_current_temperature if device.climate_controller else 'N/A'}°C")
 
 # Register update callback
-indoor = nasa.devices.get(&quot;200020&quot;)
+indoor = nasa.devices.get("200020")
 if indoor:
     indoor.add_device_callback(on_device_update)
 

@@ -1683,7 +1683,7 @@
 <h2 id="device-types">Device Types<a class="headerlink" href="#device-types" title="Permanent link">&para;</a></h2>
 <h3 id="nasadevice">NasaDevice<a class="headerlink" href="#nasadevice" title="Permanent link">&para;</a></h3>
 <p>The base class for all devices:</p>
-<div class="highlight"><pre><span></span><code><span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>           <span class="c1"># Device address (string)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="p">)</span>       <span class="c1"># Device type (AddressClass enum)</span>
@@ -1693,9 +1693,9 @@
 </code></pre></div>
 <h3 id="outdoornasadevice">OutdoorNasaDevice<a class="headerlink" href="#outdoornasadevice" title="Permanent link">&para;</a></h3>
 <p>Represents outdoor units (typically address <code>100000</code>):</p>
-<div class="highlight"><pre><span></span><code><span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
 
-<span class="c1"># Check if it&#39;s an outdoor device</span>
+<span class="c1"># Check if it's an outdoor device</span>
 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outdoor</span><span class="p">,</span> <span class="n">OutdoorNasaDevice</span><span class="p">):</span>
     <span class="c1"># Access outdoor-specific attributes</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">outdoor</span><span class="o">.</span><span class="n">outdoor_temperature</span><span class="p">)</span>
@@ -1703,9 +1703,9 @@
 </code></pre></div>
 <h3 id="indoornasadevice">IndoorNasaDevice<a class="headerlink" href="#indoornasadevice" title="Permanent link">&para;</a></h3>
 <p>Represents indoor units (typically addresses <code>200020</code>, <code>200021</code>, etc.):</p>
-<div class="highlight"><pre><span></span><code><span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"200020"</span><span class="p">]</span>
 
-<span class="c1"># Check if it&#39;s an indoor device</span>
+<span class="c1"># Check if it's an indoor device</span>
 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indoor</span><span class="p">,</span> <span class="n">IndoorNasaDevice</span><span class="p">):</span>
     <span class="c1"># Access indoor-specific attributes</span>
     <span class="k">if</span> <span class="n">indoor</span><span class="o">.</span><span class="n">climate_controller</span><span class="p">:</span>
@@ -1718,8 +1718,8 @@
 <p>When you start the connection, devices advertise themselves:</p>
 <div class="highlight"><pre><span></span><code><span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
     <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+        <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+        <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">)</span>
 
@@ -1730,37 +1730,37 @@
 
 <span class="c1"># List discovered devices</span>
 <span class="k">for</span> <span class="n">address</span><span class="p">,</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="known-devices">Known Devices<a class="headerlink" href="#known-devices" title="Permanent link">&para;</a></h3>
 <p>Pre-configure devices you want to monitor:</p>
 <div class="highlight"><pre><span></span><code><span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
     <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
-        <span class="s2">&quot;device_addresses&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;200000&quot;</span><span class="p">,</span> <span class="s2">&quot;200020&quot;</span><span class="p">],</span>
+        <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+        <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+        <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"200000"</span><span class="p">,</span> <span class="s2">"200020"</span><span class="p">],</span>
     <span class="p">}</span>
 <span class="p">)</span>
 
 <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
 <span class="c1"># Devices will be immediately available</span>
-<span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
-<span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+<span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
+<span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"200020"</span><span class="p">]</span>
 </code></pre></div>
 <h3 id="new-device-handler">New Device Handler<a class="headerlink" href="#new-device-handler" title="Permanent link">&para;</a></h3>
 <p>Get notified when new devices appear:</p>
 <div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_new_device</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;New device found: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Type: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"New device found: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Type: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># Request its configuration</span>
     <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">get_configuration</span><span class="p">()</span>
 
 <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
     <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+        <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+        <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="n">new_device_event_handler</span><span class="o">=</span><span class="n">on_new_device</span><span class="p">,</span>
 <span class="p">)</span>
@@ -1770,9 +1770,9 @@
 <h2 id="device-attributes">Device Attributes<a class="headerlink" href="#device-attributes" title="Permanent link">&para;</a></h2>
 <h3 id="universal-attributes">Universal Attributes<a class="headerlink" href="#universal-attributes" title="Permanent link">&para;</a></h3>
 <p>All devices have:</p>
-<div class="highlight"><pre><span></span><code><span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
 
-<span class="n">device</span><span class="o">.</span><span class="n">address</span>           <span class="c1"># Address string (e.g., &quot;100000&quot;)</span>
+<span class="n">device</span><span class="o">.</span><span class="n">address</span>           <span class="c1"># Address string (e.g., "100000")</span>
 <span class="n">device</span><span class="o">.</span><span class="n">device_type</span>      <span class="c1"># AddressClass enum</span>
 <span class="n">device</span><span class="o">.</span><span class="n">last_packet_time</span> <span class="c1"># datetime of last update</span>
 <span class="n">device</span><span class="o">.</span><span class="n">attributes</span>       <span class="c1"># Dict of all attributes</span>
@@ -1793,52 +1793,52 @@
     <span class="n">InOperationPowerMessage</span>
 <span class="p">)</span>
 
-<span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+<span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
 
 <span class="c1"># Read outdoor temperature (will fetch if not cached)</span>
 <span class="n">temp_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorAirTemperature</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Outdoor temperature: </span><span class="si">{</span><span class="n">temp_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Outdoor temperature: </span><span class="si">{</span><span class="n">temp_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 
 <span class="c1"># Read voltage</span>
 <span class="n">voltage_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">HeatPumpVoltage</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Voltage: </span><span class="si">{</span><span class="n">voltage_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">V&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Voltage: </span><span class="si">{</span><span class="n">voltage_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">V"</span><span class="p">)</span>
 
 <span class="c1"># Force a fresh read even if cached</span>
 <span class="n">freq_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">outdoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span>
     <span class="n">OutdoorCompressorFrequency</span><span class="p">,</span>
     <span class="n">requires_read</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Compressor frequency: </span><span class="si">{</span><span class="n">freq_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">Hz&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Compressor frequency: </span><span class="si">{</span><span class="n">freq_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">Hz"</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="reading-indoor-unit-attributes">Reading Indoor Unit Attributes<a class="headerlink" href="#reading-indoor-unit-attributes" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"200020"</span><span class="p">]</span>
 
 <span class="c1"># Get current temperature</span>
 <span class="n">current_temp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">InCurrentTemperature</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current temperature: </span><span class="si">{</span><span class="n">current_temp</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Current temperature: </span><span class="si">{</span><span class="n">current_temp</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 
 <span class="c1"># Get target temperature</span>
 <span class="n">target_temp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">InTargetTemperature</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target temperature: </span><span class="si">{</span><span class="n">target_temp</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Target temperature: </span><span class="si">{</span><span class="n">target_temp</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 
 <span class="c1"># Get power state</span>
 <span class="n">power</span> <span class="o">=</span> <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">InOperationPowerMessage</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Power: </span><span class="si">{</span><span class="n">power</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Power: </span><span class="si">{</span><span class="n">power</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="accessing-cached-attributes">Accessing Cached Attributes<a class="headerlink" href="#accessing-cached-attributes" title="Permanent link">&para;</a></h3>
 <p>Access previously received attributes directly from the cache:</p>
-<div class="highlight"><pre><span></span><code><span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
 
 <span class="c1"># Check if attribute exists in cache</span>
 <span class="k">if</span> <span class="n">OutdoorAirTemperature</span><span class="o">.</span><span class="n">MESSAGE_ID</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
     <span class="n">cached_msg</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">OutdoorAirTemperature</span><span class="o">.</span><span class="n">MESSAGE_ID</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cached temperature: </span><span class="si">{</span><span class="n">cached_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cached temperature: </span><span class="si">{</span><span class="n">cached_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Temperature not yet received&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Temperature not yet received"</span><span class="p">)</span>
 
 <span class="c1"># Or use get_attribute which handles this automatically</span>
 <span class="n">temp_msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">OutdoorAirTemperature</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temperature: </span><span class="si">{</span><span class="n">temp_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Temperature: </span><span class="si">{</span><span class="n">temp_msg</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="writing-device-attributes">Writing Device Attributes<a class="headerlink" href="#writing-device-attributes" title="Permanent link">&para;</a></h2>
 <h3 id="using-write_attribute">Using write_attribute()<a class="headerlink" href="#using-write_attribute" title="Permanent link">&para;</a></h3>
@@ -1850,7 +1850,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataType</span>
 
-<span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+<span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"200020"</span><span class="p">]</span>
 
 <span class="c1"># Set target temperature to 22°C</span>
 <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span><span class="n">InTargetTemperature</span><span class="p">,</span> <span class="mf">22.0</span><span class="p">)</span>
@@ -1871,7 +1871,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">InOperationMode</span>
 
-<span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+<span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"200020"</span><span class="p">]</span>
 
 <span class="c1"># Set multiple attributes at once</span>
 <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attributes</span><span class="p">({</span>
@@ -1896,51 +1896,51 @@
 </code></pre></div>
 <h2 id="accessing-device-configuration">Accessing Device Configuration<a class="headerlink" href="#accessing-device-configuration" title="Permanent link">&para;</a></h2>
 <p>Get the FSV (Feature/Setting/Value) configuration:</p>
-<div class="highlight"><pre><span></span><code><span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"200020"</span><span class="p">]</span>
 
 <span class="c1"># Get all FSV settings</span>
 <span class="n">fsv_config</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">fsv_config</span>
 
 <span class="c1"># FSV is a dictionary of message ID to values</span>
 <span class="k">for</span> <span class="n">msg_id</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">fsv_config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Message 0x</span><span class="si">{</span><span class="n">msg_id</span><span class="si">:</span><span class="s2">04X</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Message 0x</span><span class="si">{</span><span class="n">msg_id</span><span class="si">:</span><span class="s2">04X</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="device-state-management">Device State Management<a class="headerlink" href="#device-state-management" title="Permanent link">&para;</a></h2>
 <h3 id="getting-raw-attributes">Getting Raw Attributes<a class="headerlink" href="#getting-raw-attributes" title="Permanent link">&para;</a></h3>
 <p>Access the raw attribute dictionary:</p>
-<div class="highlight"><pre><span></span><code><span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
 
 <span class="c1"># Get all attributes</span>
 <span class="n">all_attrs</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">attributes</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total attributes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">all_attrs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total attributes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">all_attrs</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="c1"># Access a specific attribute by message ID</span>
 <span class="k">if</span> <span class="mh">0x4203</span> <span class="ow">in</span> <span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
     <span class="n">value</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="mh">0x4203</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Message 0x4203: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Message 0x4203: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="checking-last-update">Checking Last Update<a class="headerlink" href="#checking-last-update" title="Permanent link">&para;</a></h3>
 <p>Monitor device responsiveness:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
 
-<span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
 
 <span class="c1"># Check when last updated</span>
 <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">last_packet_time</span><span class="p">:</span>
     <span class="n">elapsed</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">-</span> <span class="n">device</span><span class="o">.</span><span class="n">last_packet_time</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Last update: </span><span class="si">{</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> seconds ago&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Last update: </span><span class="si">{</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> seconds ago"</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No data yet&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"No data yet"</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="device-callbacks">Device Callbacks<a class="headerlink" href="#device-callbacks" title="Permanent link">&para;</a></h2>
 <h3 id="device-update-callbacks">Device Update Callbacks<a class="headerlink" href="#device-update-callbacks" title="Permanent link">&para;</a></h3>
 <p>Register functions to be called whenever any packet is received for a device:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">on_update</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2"> updated at </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">last_packet_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total attributes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Device </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2"> updated at </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">last_packet_time</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total attributes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
 <span class="n">device</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="n">on_update</span><span class="p">)</span>
 
 <span class="c1"># Later, remove it</span>
@@ -1952,18 +1952,18 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.outdoor</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutdoorAirTemperature</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">on_indoor_temp</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Called when indoor temperature message is received.&quot;&quot;&quot;</span>
-    <span class="n">message</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;packet&#39;</span><span class="p">]</span>
-    <span class="n">msg_number</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;messageNumber&#39;</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Indoor temp update: </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C (msg </span><span class="si">{</span><span class="n">msg_number</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">"""Called when indoor temperature message is received."""</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'packet'</span><span class="p">]</span>
+    <span class="n">msg_number</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'messageNumber'</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Indoor temp update: </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C (msg </span><span class="si">{</span><span class="n">msg_number</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">on_outdoor_temp</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Called when outdoor temperature message is received.&quot;&quot;&quot;</span>
-    <span class="n">message</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;packet&#39;</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Outdoor temp: </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">"""Called when outdoor temperature message is received."""</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'packet'</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Outdoor temp: </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 
-<span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
-<span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;100000&quot;</span><span class="p">]</span>
+<span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"200020"</span><span class="p">]</span>
+<span class="n">outdoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"100000"</span><span class="p">]</span>
 
 <span class="c1"># Add callback for specific message type</span>
 <span class="n">indoor</span><span class="o">.</span><span class="n">add_packet_callback</span><span class="p">(</span><span class="n">InCurrentTemperature</span><span class="p">,</span> <span class="n">on_indoor_temp</span><span class="p">)</span>
@@ -1984,19 +1984,19 @@
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;device_path&quot;</span><span class="p">:</span> <span class="s2">&quot;socket://192.168.1.100:8000&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;client_baudrate&quot;</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">on_temp_change</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;packet&#39;</span><span class="p">]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temperature changed to </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'packet'</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Temperature changed to </span><span class="si">{</span><span class="n">message</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 
     <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
     <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Wait for devices</span>
 
-    <span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">&quot;200020&quot;</span><span class="p">]</span>
+    <span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"200020"</span><span class="p">]</span>
 
     <span class="c1"># Listen for temperature changes</span>
     <span class="n">indoor</span><span class="o">.</span><span class="n">add_packet_callback</span><span class="p">(</span><span class="n">InCurrentTemperature</span><span class="p">,</span> <span class="n">on_temp_change</span><span class="p">)</span>
@@ -2013,12 +2013,12 @@
 <h2 id="multiple-device-management">Multiple Device Management<a class="headerlink" href="#multiple-device-management" title="Permanent link">&para;</a></h2>
 <h3 id="iterate-over-all-devices">Iterate Over All Devices<a class="headerlink" href="#iterate-over-all-devices" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">address</span><span class="p">,</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Device: </span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Type: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Last update: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">last_packet_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Device: </span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Type: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Last update: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">last_packet_time</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># Register callbacks</span>
-    <span class="n">device</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Updated: </span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+    <span class="n">device</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Updated: </span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
 </code></pre></div>
 <h3 id="find-devices-by-type">Find Devices by Type<a class="headerlink" href="#find-devices-by-type" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.device</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutdoorNasaDevice</span><span class="p">,</span> <span class="n">IndoorNasaDevice</span>
@@ -2026,34 +2026,34 @@
 <span class="n">outdoor_units</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">OutdoorNasaDevice</span><span class="p">)]</span>
 <span class="n">indoor_units</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">IndoorNasaDevice</span><span class="p">)]</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Outdoor units: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">outdoor_units</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Indoor units: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">indoor_units</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Outdoor units: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">outdoor_units</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Indoor units: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">indoor_units</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="synchronize-multiple-devices">Synchronize Multiple Devices<a class="headerlink" href="#synchronize-multiple-devices" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">set_all_targets</span><span class="p">(</span><span class="n">nasa</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set target temperature on all indoor units.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Set target temperature on all indoor units."""</span>
     <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="n">IndoorNasaDevice</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="p">:</span>
                 <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="o">.</span><span class="n">set_target_temperature</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Set </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Set </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">temperature</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="device-information-display">Device Information Display<a class="headerlink" href="#device-information-display" title="Permanent link">&para;</a></h2>
 <h3 id="print-device-summary">Print Device Summary<a class="headerlink" href="#print-device-summary" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">print_device_summary</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Type: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Attributes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Last update: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">last_packet_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Device: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Type: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">device_type</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Attributes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Last update: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">last_packet_time</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s1">&#39;outdoor_temperature&#39;</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Outdoor temp: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">outdoor_temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s1">'outdoor_temperature'</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Outdoor temp: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">outdoor_temperature</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s1">&#39;climate_controller&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s1">'climate_controller'</span><span class="p">)</span> <span class="ow">and</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span><span class="p">:</span>
         <span class="n">cc</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">climate_controller</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Climate power: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">power</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Current mode: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Target temp: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">f_target_temperature</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Climate power: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">power</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Current mode: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">current_mode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Target temp: </span><span class="si">{</span><span class="n">cc</span><span class="o">.</span><span class="n">f_target_temperature</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
     <span class="n">print_device_summary</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
@@ -2062,19 +2062,19 @@
 <h2 id="troubleshooting-device-issues">Troubleshooting Device Issues<a class="headerlink" href="#troubleshooting-device-issues" title="Permanent link">&para;</a></h2>
 <h3 id="device-not-responding">Device Not Responding<a class="headerlink" href="#device-not-responding" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">check_device_health</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a device is responding.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Check if a device is responding."""</span>
     <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">last_packet_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">: Never received data&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">: Never received data"</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span><span class="p">,</span> <span class="n">timedelta</span>
     <span class="n">elapsed</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span> <span class="o">-</span> <span class="n">device</span><span class="o">.</span><span class="n">last_packet_time</span>
 
     <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&gt;</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">: No update for </span><span class="si">{</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">: No update for </span><span class="si">{</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">: OK (updated </span><span class="si">{</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">s ago)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">: OK (updated </span><span class="si">{</span><span class="n">elapsed</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">s ago)"</span><span class="p">)</span>
     <span class="k">return</span> <span class="kc">True</span>
 
 <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
@@ -2087,23 +2087,23 @@
 <span class="p">)</span>
 
 <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">check_attributes</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify expected attributes exist and request if missing.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Verify expected attributes exist and request if missing."""</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="c1"># Try to get current temperature (will fetch if not cached)</span>
         <span class="n">current</span> <span class="o">=</span> <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">InCurrentTemperature</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ Current Temperature: </span><span class="si">{</span><span class="n">current</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"✓ Current Temperature: </span><span class="si">{</span><span class="n">current</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✗ Current Temperature: TIMEOUT&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"✗ Current Temperature: TIMEOUT"</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="c1"># Try to get target temperature</span>
         <span class="n">target</span> <span class="o">=</span> <span class="k">await</span> <span class="n">device</span><span class="o">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="n">InTargetTemperature</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ Target Temperature: </span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"✓ Target Temperature: </span><span class="si">{</span><span class="n">target</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">°C"</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✗ Target Temperature: TIMEOUT&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"✗ Target Temperature: TIMEOUT"</span><span class="p">)</span>
 
     <span class="c1"># Check cached attributes</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Total cached attributes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Total cached attributes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="k">await</span> <span class="n">check_attributes</span><span class="p">(</span><span class="n">indoor</span><span class="p">)</span>
 </code></pre></div>

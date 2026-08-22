@@ -2164,9 +2164,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataType</span>
 
 <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span>
-    <span class="n">destination</span><span class="o">=</span><span class="s2">&quot;200020&quot;</span><span class="p">,</span>
+    <span class="n">destination</span><span class="o">=</span><span class="s2">"200020"</span><span class="p">,</span>
     <span class="n">request_type</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">REQUEST</span><span class="p">,</span>
-    <span class="n">messages</span><span class="o">=</span><span class="p">[</span><span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4000</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x01</span><span class="s1">&#39;</span><span class="p">)]</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[</span><span class="n">SendMessage</span><span class="p">(</span><span class="mh">0x4000</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\x01</span><span class="s1">'</span><span class="p">)]</span>
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="nasadevice">NasaDevice<a class="headerlink" href="#nasadevice" title="Permanent link">&para;</a></h2>
@@ -2188,7 +2188,7 @@
 <h4 id="add_device_callbackcallback-callable"><code>add_device_callback(callback: Callable)</code><a class="headerlink" href="#add_device_callbackcallback-callable" title="Permanent link">&para;</a></h4>
 <p>Register a callback for device updates.</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">on_update</span><span class="p">(</span><span class="n">device</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2"> updated&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Device </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2"> updated"</span><span class="p">)</span>
 
 <span class="n">device</span><span class="o">.</span><span class="n">add_device_callback</span><span class="p">(</span><span class="n">on_update</span><span class="p">)</span>
 </code></pre></div>
@@ -2199,7 +2199,7 @@
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.indoor</span><span class="w"> </span><span class="kn">import</span> <span class="n">IndoorCurrentTemperature</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">on_temp</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temperature: </span><span class="si">{</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;packet&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Temperature: </span><span class="si">{</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">'packet'</span><span class="p">]</span><span class="o">.</span><span class="n">VALUE</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="n">device</span><span class="o">.</span><span class="n">add_packet_callback</span><span class="p">(</span><span class="n">IndoorCurrentTemperature</span><span class="p">,</span> <span class="n">on_temp</span><span class="p">)</span>
 </code></pre></div>
