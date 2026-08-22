@@ -11,6 +11,7 @@ from pysamsungnasa.protocol.factory.types import (
     FloatMessage,
     EnumMessage,
     IntegerMessage,
+    nasa_payload_size,
 )
 from pysamsungnasa.protocol.enum import SamsungEnum
 
@@ -264,6 +265,66 @@ class TestFloatMessage:
 
         result = TestFloatMsg.to_bytes(-50.0)
         assert result == b"\xce"  # -50 in signed byte
+
+    def test_float_message_to_bytes_uses_message_id_var_size(self):
+        """VAR message IDs (0x42xx) must encode as 2 bytes even for small values."""
+
+        class VarTemp(FloatMessage):
+            MESSAGE_ID = 0x4201
+            ARITHMETIC = 0.1
+            SIGNED = True
+
+        # 10.0°C → 100, which fits in one signed byte but is a 2-byte NASA VAR
+        assert VarTemp.to_bytes(10.0) == b"\x00\x64"
+        assert VarTemp.to_bytes(0.0) == b"\x00\x00"
+        assert VarTemp.to_bytes(-5.0) == struct.pack(">h", -50)
+
+    def test_float_message_to_bytes_uses_message_id_lvar_size(self):
+        """LVAR message IDs (0x44xx) must encode as 4 bytes."""
+
+        class LvarFloat(FloatMessage):
+            MESSAGE_ID = 0x4401
+            ARITHMETIC = 1.0
+            SIGNED = False
+
+        result = LvarFloat.to_bytes(10.0)
+        assert result == struct.pack(">L", 10)
+        assert len(result) == 4
+
+    def test_nasa_payload_size_from_message_id(self):
+        """Message number bits encode ENUM/VAR/LVAR/STR payload sizes."""
+        assert nasa_payload_size(0x4000) == 1  # ENUM
+        assert nasa_payload_size(0x4201) == 2  # VAR
+        assert nasa_payload_size(0x4401) == 4  # LVAR
+        assert nasa_payload_size(0x4607) is None  # STR/struct
+        assert nasa_payload_size(None) is None
+
+
+class TestIntegerMessageToBytes:
+    """Tests for IntegerMessage.to_bytes() payload sizing."""
+
+    def test_integer_message_to_bytes_min_length_without_message_id(self):
+        """Without a message ID, keep compact encoding."""
+        assert IntegerMessage.to_bytes(5) == b"\x05"
+        assert IntegerMessage.to_bytes(256) == b"\x01\x00"
+
+    def test_integer_message_to_bytes_uses_var_size(self):
+        """VAR integer messages must not shrink below 2 bytes."""
+
+        class EevPosition(IntegerMessage):
+            MESSAGE_ID = 0x8229
+
+        assert EevPosition.to_bytes(50) == b"\x00\x32"
+        assert EevPosition.to_bytes(None) == b"\xff\xff"
+
+    def test_integer_message_to_bytes_uses_lvar_size(self):
+        """LVAR integer messages must encode as 4 bytes."""
+
+        class LongCounter(IntegerMessage):
+            MESSAGE_ID = 0x4400
+
+        assert LongCounter.to_bytes(5) == b"\x00\x00\x00\x05"
+        assert LongCounter.to_bytes(None) == b"\xff\xff\xff\xff"
 
 
 class TestEnumMessage:

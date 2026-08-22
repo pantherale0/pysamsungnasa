@@ -97,17 +97,24 @@ class TestFloatMessageToBytes:
         assert payload == b"\x00\xe1"
 
     def test_temperature_message_to_bytes_zero(self):
-        """Test converting 0°C to bytes."""
+        """Test converting 0°C to bytes.
+
+        NASA VAR temperature messages are always 2 bytes, even when the scaled
+        integer would fit in one byte. A 1-byte encoding corrupts the packet.
+        """
         payload = BasicTemperatureMessage.to_bytes(0.0)
-        # 0 * 10 = 0, which encodes to single byte b'\x00'
-        assert payload == b"\x00"
+        assert payload == b"\x00\x00"
 
     def test_temperature_message_to_bytes_negative(self):
         """Test converting negative temperature to bytes."""
         # -5.0°C * 10 = -50 (as signed 2-byte big-endian)
         payload = BasicTemperatureMessage.to_bytes(-5.0)
-        assert isinstance(payload, bytes)
-        assert len(payload) in [1, 2]
+        assert payload == b"\xff\xce"
+
+    def test_temperature_message_to_bytes_low_positive(self):
+        """Values <= 12.7°C must still encode as 2-byte VAR payloads."""
+        payload = BasicTemperatureMessage.to_bytes(10.0)
+        assert payload == b"\x00\x64"
 
     def test_temperature_message_round_trip(self):
         """Test parsing and rebuilding temperature gives same value."""
@@ -238,6 +245,16 @@ class TestWriteAttributes:
 
         # Should be encoded as 225 (22.5 * 10) in big-endian
         assert payload == b"\x00\xe1"
+
+    @pytest.mark.asyncio
+    async def test_write_low_temperature_uses_two_byte_payload(self, device):
+        """Writing 10°C must emit a 2-byte VAR payload, not a 1-byte ENUM payload."""
+        await device.write_attribute(InTargetTemperature, 10.0)
+
+        call_args = device._client.send_message.call_args
+        messages = call_args.kwargs["messages"]
+        assert messages[0].PAYLOAD == b"\x00\x64"
+        assert len(messages[0].PAYLOAD) == 2
 
     @pytest.mark.asyncio
     async def test_write_attribute_enum_encoding(self, device):
