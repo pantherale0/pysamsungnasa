@@ -42,6 +42,23 @@ class NasaPacketParser:
         """Set the pending read handler callback."""
         self._pending_read_handler = handler
 
+    async def _notify_pending_handler(
+        self,
+        source_address: str,
+        message_numbers: list[int],
+        payload_type: DataType,
+        packet_number: int | None,
+    ) -> None:
+        """Notify the pending read/write handler of ACK, NACK, or RESPONSE packets."""
+        if not self._pending_read_handler:
+            return
+        try:
+            result = self._pending_read_handler(source_address, message_numbers, payload_type, packet_number)
+            if is_coroutine_function(self._pending_read_handler):
+                await result
+        except Exception:
+            _LOGGER.exception("Error in pending_read_handler")
+
     def add_device_handler(self, address: str, callback):
         """Add the device handler."""
         self._device_handlers.setdefault(address, [])
@@ -92,25 +109,21 @@ class NasaPacketParser:
             # Incoming REQUESTs are currently ignored as per original logic's implicit filter
             _LOGGER.debug("Ignoring incoming packet with payload type REQUEST from %s.", source_address)
         elif payload_type == DataType.NACK:
-            # Incoming NACKs are generally errors from devices about writes
-            # They should notify pending_read_handler but not be processed as normal packets
+            # Incoming NACKs are generally errors from devices about writes.
+            # Notify the pending handler so the matching write can be dropped, but do
+            # not treat this as a successful read/write confirmation for other packets.
             _LOGGER.warning(
                 "Received NACK from %s for packet number %s.",
                 source_address,
                 kwargs["packetNumber"],
             )
-            # Notify pending read handler about the NACK
-            if self._pending_read_handler:
-                data_sets = kwargs.get("dataSets", [])
-                if not isinstance(data_sets, list):
-                    data_sets = []
-                message_numbers = [ds[0] for ds in data_sets if isinstance(ds, list) and len(ds) > 0]
-                try:
-                    result = self._pending_read_handler(source_address, message_numbers)
-                    if is_coroutine_function(self._pending_read_handler):
-                        await result
-                except Exception:
-                    _LOGGER.exception("Error in pending_read_handler")
+            data_sets = kwargs.get("dataSets", [])
+            if not isinstance(data_sets, list):
+                data_sets = []
+            message_numbers = [ds[0] for ds in data_sets if isinstance(ds, list) and len(ds) > 0]
+            await self._notify_pending_handler(
+                source_address, message_numbers, payload_type, kwargs.get("packetNumber")
+            )
             # Return early - NACKs don't have valid dataSets to process
             return
         else:
@@ -121,11 +134,10 @@ class NasaPacketParser:
         if not should_process:
             return  # Packet was filtered out by the above logic
 
-        # Notify pending read handler when we receive a response or acknowledgment
-        # ACK packets can also indicate that a read/write request was processed
-        # Note: NACK is handled separately above to avoid processing invalid dataSets
-        if payload_type in [DataType.RESPONSE, DataType.ACK] and self._pending_read_handler:
-            # For both RESPONSE and ACK packets, extract message numbers from the datasets
+        # Notify pending handler for RESPONSE (read completion) and ACK (write/read ack).
+        # The handler uses payload_type + packet number so a read RESPONSE or an ACK
+        # for a different packet cannot mark unrelated writes as complete.
+        if payload_type in [DataType.RESPONSE, DataType.ACK]:
             message_numbers = []
             data_sets = kwargs.get("dataSets", [])
             if not isinstance(data_sets, list):
@@ -134,15 +146,9 @@ class NasaPacketParser:
                 if isinstance(ds, list) and len(ds) > 0:
                     message_numbers.append(ds[0])
 
-            # Call handler with the extracted message numbers
-            # Empty message_numbers is valid for ACK packets that acknowledge without specific message IDs
-            try:
-                result = self._pending_read_handler(source_address, message_numbers)
-                # Handle async callbacks
-                if is_coroutine_function(self._pending_read_handler):
-                    await result
-            except Exception:
-                _LOGGER.exception("Error in pending_read_handler")
+            await self._notify_pending_handler(
+                source_address, message_numbers, payload_type, kwargs.get("packetNumber")
+            )
 
         data_sets = kwargs.get("dataSets", [])
         if not isinstance(data_sets, list):
