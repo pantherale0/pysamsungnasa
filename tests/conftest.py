@@ -17,8 +17,10 @@ def _configure_connected_client(client: NasaClient) -> NasaClient:
     """Mark a NasaClient as connected with a usable writer mock."""
     client.writer = AsyncMock()
     # is_closing() is synchronous on real writers; AsyncMock would make it a coroutine
-    # and break is_connected (coroutines are truthy).
+    # and break is_connected (coroutines are truthy). close() is also synchronous.
     client.writer.is_closing = Mock(return_value=False)
+    client.writer.close = Mock()
+    client.writer.wait_closed = AsyncMock()
     client.reader = AsyncMock()
     client._is_connected = True
     client._tx_queue = asyncio.Queue()

@@ -10,7 +10,7 @@ import serialx
 
 from .config import NasaConfig
 from .device import NasaDevice
-from .helpers import bin2hex, hex2bin, is_coroutine_function
+from .helpers import bin2hex, hex2bin
 from .protocol.enum import DataType
 from .protocol.factory import build_message
 from .protocol.factory.types import SendMessage
@@ -85,8 +85,51 @@ class NasaClient:
         """Set the receive event handler."""
         self._rx_event_handler = handler
 
+    async def _cancel_task(self, task: asyncio.Task | None) -> None:
+        """Cancel a background task, skipping await when called from that task."""
+        if task is None or task.done():
+            return
+        if task is asyncio.current_task():
+            return
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
+        except Exception:
+            _LOGGER.debug("Exception during task cancellation/cleanup", exc_info=True)
+
+    async def _close_transport(self) -> None:
+        """Close the SerialX writer and drop reader/writer references."""
+        writer = self.writer
+        self.writer = None
+        self.reader = None
+        if writer is None:
+            return
+        try:
+            writer.close()
+            await writer.wait_closed()
+        except Exception:
+            _LOGGER.debug("Error closing SerialX writer for %s", self._config.device_path, exc_info=True)
+
+    async def _invoke_disconnect_handler(self) -> None:
+        """Invoke the disconnect callback, awaiting coroutine results."""
+        if not self._disconnect_event_handler:
+            return
+        try:
+            result = self._disconnect_event_handler()
+            if asyncio.iscoroutine(result):
+                await result
+        except Exception:
+            _LOGGER.exception("Error in disconnection_handler")
+
     async def _handle_disconnection(self, ex: Exception | None = None) -> None:
-        """Handle disconnection."""
+        """Handle disconnection.
+
+        Writer/listener errors must actually drop the connection: mark disconnected,
+        close the SerialX transport, stop background tasks, and await async
+        disconnect handlers so callers can reconnect.
+        """
         if not self.is_connected:
             _LOGGER.debug("Already disconnected or not connected.")
             return
@@ -94,20 +137,7 @@ class NasaClient:
             _LOGGER.warning("NasaClient disconnected due to an error: %s", ex)
         else:
             _LOGGER.info("NasaClient disconnecting.")
-
-        # Stop tasks and clear queues
-        # These methods cancel tasks and set them (and their queues) to None
-        await self._end_writer_session()
-        await self._end_read_queue_session()
-        await self._end_retry_manager_session()
-
-        if self._disconnect_event_handler:
-            try:
-                res = self._disconnect_event_handler()
-                if is_coroutine_function(res):
-                    await res
-            except Exception:
-                _LOGGER.exception("Error in disconnection_handler")
+        await self.disconnect()
 
     async def _handle_connection(self) -> None:
         """Handle connection."""
@@ -152,20 +182,31 @@ class NasaClient:
             return False
 
     async def disconnect(self) -> None:
-        """Disconnect from the server."""
-        if not self.is_connected:
-            _LOGGER.debug("Already disconnected or not connected.")
-            return
+        """Disconnect from the server and release the SerialX transport."""
+        invoke_handler = False
         async with self._connection_lock:
-            if self.listener_task and not self.listener_task.done():
-                self.listener_task.cancel()
+            if not self._is_connected and self.writer is None:
+                _LOGGER.debug("Already disconnected or not connected.")
+                return
+            invoke_handler = True
             self._is_connected = False
-            self.reader = None
-            self.writer = None
-            if is_coroutine_function(self._disconnect_event_handler) and self._disconnect_event_handler is not None:
-                await self._disconnect_event_handler()
-            elif self._disconnect_event_handler is not None:
-                self._disconnect_event_handler()
+
+            listener = self.listener_task
+            self.listener_task = None
+            # Skip cancelling ourselves when the listener is the caller; it will exit
+            # after disconnect() returns. Clearing the attribute lets a reconnect
+            # handler start a new listener.
+            if listener is not None and listener is not asyncio.current_task():
+                await self._cancel_task(listener)
+
+            await self._end_writer_session()
+            await self._end_read_queue_session()
+            await self._end_retry_manager_session()
+            await self._close_transport()
+
+        # Invoke outside the connection lock so a handler can call connect().
+        if invoke_handler:
+            await self._invoke_disconnect_handler()
 
     async def _wait_for_bus_idle(self) -> None:
         """Wait until the bus has been quiet for `_bus_idle_gap` seconds."""
@@ -210,8 +251,15 @@ class NasaClient:
         except asyncio.IncompleteReadError:
             _LOGGER.debug("SerialX device at URL: %s has closed the connection.", self._config.device_path)
             await self.disconnect()
-        except (OSError, asyncio.CancelledError):
+        except asyncio.CancelledError:
+            # Cancellation is the disconnect path tearing us down. Do not re-enter
+            # disconnect() while it holds the connection lock — that deadlocks.
             _LOGGER.info("Listener task for SerialX device at URL %s has been cancelled.", self._config.device_path)
+            raise
+        except OSError:
+            _LOGGER.info(
+                "Listener task for SerialX device at URL %s encountered an OS error.", self._config.device_path
+            )
             await self.disconnect()
         except Exception:
             _LOGGER.exception(
@@ -334,14 +382,7 @@ class NasaClient:
         if self._writer_task:
             task = self._writer_task
             self._writer_task = None
-            if not task.done():
-                task.cancel()
-                try:
-                    await task
-                except asyncio.CancelledError:
-                    _LOGGER.debug("Writer task successfully cancelled.")
-                except Exception as e:
-                    _LOGGER.exception("Exception during writer task cancellation/cleanup: %s", e)
+            await self._cancel_task(task)
             _LOGGER.debug("Writer session ended.")
 
         if self._tx_queue:  # Drain and clear queue
@@ -371,17 +412,7 @@ class NasaClient:
         if self._queue_processor_task:
             task = self._queue_processor_task
             self._queue_processor_task = None
-            if not task.done():
-                task.cancel()
-                try:
-                    await task
-                except asyncio.CancelledError:
-                    _LOGGER.debug("Queue processor task successfully cancelled.")
-                except Exception as e:
-                    _LOGGER.debug(
-                        "Exception during queue processor task cancellation/cleanup: %s",
-                        e,
-                    )
+            await self._cancel_task(task)
             _LOGGER.debug("Read queue session ended.")
 
         if self._rx_queue:  # Drain and clear queue
@@ -412,17 +443,7 @@ class NasaClient:
         if self._retry_manager_task:
             task = self._retry_manager_task
             self._retry_manager_task = None
-            if not task.done():
-                task.cancel()
-                try:
-                    await task
-                except asyncio.CancelledError:
-                    _LOGGER.debug("Retry manager task successfully cancelled.")
-                except Exception as e:
-                    _LOGGER.debug(
-                        "Exception during retry manager task cancellation/cleanup: %s",
-                        e,
-                    )
+            await self._cancel_task(task)
             _LOGGER.debug("Retry manager session ended.")
         return task_was_present
 
