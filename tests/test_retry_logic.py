@@ -195,6 +195,48 @@ class TestSendMessageRetryTracking:
         assert write_info["packet_number"] == 8
         assert write_info["packet_numbers"] == {7, 8}
 
+    @pytest.mark.asyncio
+    async def test_send_message_new_payload_does_not_inherit_old_packet_numbers(self, nasa_client):
+        """A new value for the same message IDs must not be completed by the previous write's ACK.
+
+        Home Assistant (and the CLI) often send another setpoint before the first
+        packet is ACKed. write_key is dest+message IDs, so those writes share an
+        entry. Accumulating packet numbers made ACK of 20°C complete a later 22°C
+        write, dropping retries if the 22°C packet was lost.
+        """
+        client = nasa_client
+        write_key = "200001_(16384,)"
+
+        with patch.object(client, "send_command", new_callable=AsyncMock, return_value=1):
+            await client.send_message(
+                destination="200001",
+                request_type=DataType.WRITE,
+                messages=[SendMessage(MESSAGE_ID=0x4000, PAYLOAD=b"\x01")],
+            )
+
+        client._pending_writes[write_key]["attempts"] = 1
+        client._pending_writes[write_key]["retry_interval"] = 1.1
+
+        with patch.object(client, "send_command", new_callable=AsyncMock, return_value=2):
+            await client.send_message(
+                destination="200001",
+                request_type=DataType.WRITE,
+                messages=[SendMessage(MESSAGE_ID=0x4000, PAYLOAD=b"\x02")],
+            )
+
+        write_info = client._pending_writes[write_key]
+        assert write_info["packet_number"] == 2
+        assert write_info["packet_numbers"] == {2}
+        assert write_info["attempts"] == 0
+        assert write_info["retry_interval"] == client._config.write_retry_interval
+        assert write_info["messages"][0].PAYLOAD == b"\x02"
+
+        await client._mark_read_received("200001", [], DataType.ACK, packet_number=1)
+        assert write_key in client._pending_writes
+
+        await client._mark_read_received("200001", [], DataType.ACK, packet_number=2)
+        assert write_key not in client._pending_writes
+
 
 class TestNasaWriteRetry:
     """Tests for nasa_write using centralized retry logic."""
