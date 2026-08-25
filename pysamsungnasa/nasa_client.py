@@ -639,7 +639,7 @@ class NasaClient:
             )
 
             # Track requests for retry logic if enabled.
-            # If an entry already exists (e.g. resend from retry manager),
+            # If an entry already exists for the same payload (retry manager resend),
             # preserve attempt/backoff state instead of resetting to zero.
             if packet_number is not None:
                 current_time = asyncio.get_running_loop().time()
@@ -664,21 +664,33 @@ class NasaClient:
                             "retry_interval": self._config.write_retry_interval,
                         }
                     else:
-                        # Keep retry counters/backoff, only refresh payload metadata and packet number.
+                        # Same message IDs can be a retry of the same payload, or a new
+                        # user write (e.g. 20°C then 22°C before the first ACK). Only
+                        # retries should accept an ACK for an earlier packet number;
+                        # a different payload must not be completed by the old ACK.
+                        same_payload = self._write_payload_fingerprint(
+                            existing_write.get("messages")
+                        ) == self._write_payload_fingerprint(messages)
+                        previous_packet = existing_write.get("packet_number")
                         existing_write["destination"] = destination_address
                         existing_write["message_ids"] = message_ids
                         existing_write["messages"] = messages
                         existing_write["data_type"] = request_type
-                        tracked_packets = existing_write.get("packet_numbers")
-                        if not isinstance(tracked_packets, set):
-                            tracked_packets = set()
-                            previous = existing_write.get("packet_number")
-                            if previous is not None:
-                                tracked_packets.add(previous)
-                            existing_write["packet_numbers"] = tracked_packets
-                        tracked_packets.add(packet_number)
                         existing_write["packet_number"] = packet_number
                         existing_write["last_attempt_time"] = current_time
+                        if same_payload:
+                            tracked_packets = existing_write.get("packet_numbers")
+                            if not isinstance(tracked_packets, set):
+                                tracked_packets = set()
+                                if previous_packet is not None:
+                                    tracked_packets.add(previous_packet)
+                                existing_write["packet_numbers"] = tracked_packets
+                            tracked_packets.add(packet_number)
+                        else:
+                            existing_write["packet_numbers"] = {packet_number}
+                            existing_write["attempts"] = 0
+                            existing_write["retry_interval"] = self._config.write_retry_interval
+                            existing_write["next_retry_time"] = current_time + self._config.write_retry_interval
                 elif request_type == DataType.READ and self._config.enable_read_retries:
                     message_ids = [msg.MESSAGE_ID for msg in messages]
                     read_key = f"{destination_address}_{tuple(sorted(message_ids))}"
@@ -741,6 +753,13 @@ class NasaClient:
             request_type=data_type,
             messages=[message],
         )
+
+    @staticmethod
+    def _write_payload_fingerprint(messages: list[SendMessage] | None) -> tuple[tuple[int, bytes], ...]:
+        """Return a stable fingerprint of message IDs and payloads for a write."""
+        if not messages:
+            return ()
+        return tuple(sorted((msg.MESSAGE_ID, bytes(msg.PAYLOAD)) for msg in messages))
 
     @staticmethod
     def _tracked_write_packet_numbers(write_info: dict) -> set[int]:
