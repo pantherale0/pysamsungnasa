@@ -101,6 +101,31 @@ class TestHandleDisconnection:
         result = await client.send_command(["80ff0120000180c1{CUR_PACK_NUM}00"])
         assert result is None
 
+    @pytest.mark.asyncio
+    async def test_write_error_tears_down_when_transport_already_closing(self, nasa_client):
+        """ConnectionResetError typically leaves writer.is_closing() True.
+
+        is_connected is then False, so gating teardown on that property skipped
+        disconnect() and Home Assistant reconnect handlers never ran.
+        """
+        client = nasa_client
+        client.writer.is_closing = Mock(return_value=True)
+        writer = client.writer
+        handler = Mock()
+        client._disconnect_event_handler = handler
+
+        assert client.is_connected is False
+        assert client._is_connected is True
+
+        await client._handle_disconnection(ConnectionResetError("peer closed"))
+
+        handler.assert_called_once_with()
+        writer.close.assert_called_once()
+        writer.wait_closed.assert_awaited()
+        assert client.writer is None
+        assert client._is_connected is False
+        assert client.is_connected is False
+
 
 class TestDisconnectListenerNoDeadlock:
     """Cancelling the listener must not re-enter disconnect() while the lock is held."""
@@ -135,6 +160,25 @@ class TestDisconnectListenerNoDeadlock:
         assert client.listener_task is None or client.listener_task.done()
 
     @pytest.mark.asyncio
+    async def test_listener_exits_when_transport_closing_still_tears_down(self, nasa_client):
+        """If the transport starts closing, is_connected becomes False and the
+        listener loop ends without an exception. Teardown and the disconnect
+        handler must still run so callers can reconnect.
+        """
+        client = nasa_client
+        client.writer.is_closing = Mock(return_value=True)
+        writer = client.writer
+        handler = Mock()
+        client._disconnect_event_handler = handler
+
+        await asyncio.wait_for(client._listener_task(), timeout=1.0)
+
+        handler.assert_called_once_with()
+        writer.close.assert_called_once()
+        assert client._is_connected is False
+        assert client.writer is None
+
+    @pytest.mark.asyncio
     async def test_disconnect_handler_can_observe_disconnected_state(self, nasa_client):
         """Handler runs after the lock is released, with is_connected already False."""
         client = nasa_client
@@ -166,6 +210,47 @@ class TestWriterErrorSelfTeardown:
         assert client.writer is None
         # Current task was not cancelled by teardown.
         assert not asyncio.current_task().cancelled()
+
+    @pytest.mark.asyncio
+    async def test_writer_sees_closing_transport_and_tears_down(self, nasa_client):
+        """A write attempted after the peer started closing must still disconnect."""
+        client = nasa_client
+        writer = client.writer
+        handler = Mock()
+        client._disconnect_event_handler = handler
+        client._last_rx_time = None
+        await client._tx_queue.put(b"\x32\x00")
+
+        original_idle = client._wait_for_bus_idle
+
+        async def idle_then_close():
+            client.writer.is_closing = Mock(return_value=True)
+            await original_idle()
+
+        client._wait_for_bus_idle = idle_then_close
+
+        await asyncio.wait_for(client._writer(), timeout=1.0)
+
+        handler.assert_called_once_with()
+        writer.close.assert_called_once()
+        assert client._is_connected is False
+        assert client.writer is None
+
+    @pytest.mark.asyncio
+    async def test_writer_loop_exits_when_transport_closing_still_tears_down(self, nasa_client):
+        """Idle writer must still disconnect if is_connected flips False via is_closing()."""
+        client = nasa_client
+        writer = client.writer
+        handler = Mock()
+        client._disconnect_event_handler = handler
+        client.writer.is_closing = Mock(return_value=True)
+
+        await asyncio.wait_for(client._writer(), timeout=1.0)
+
+        handler.assert_called_once_with()
+        writer.close.assert_called_once()
+        assert client._is_connected is False
+        assert client.writer is None
 
 
 class TestSendAfterDisconnect:

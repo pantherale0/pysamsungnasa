@@ -129,8 +129,12 @@ class NasaClient:
         Writer/listener errors must actually drop the connection: mark disconnected,
         close the SerialX transport, stop background tasks, and await async
         disconnect handlers so callers can reconnect.
+
+        Do not use ``is_connected`` here: that property is False once the
+        transport is already closing (typical after ConnectionResetError),
+        which previously skipped teardown and left reconnect handlers uncalled.
         """
-        if not self.is_connected:
+        if not self._is_connected and self.writer is None:
             _LOGGER.debug("Already disconnected or not connected.")
             return
         if ex:
@@ -248,6 +252,13 @@ class NasaClient:
                         )
                         await self.disconnect()
                         break
+            # Transport closed underneath us (is_closing) without an exception.
+            if self._is_connected:
+                _LOGGER.warning(
+                    "Listener loop exited while session still marked connected for %s.",
+                    self._config.device_path,
+                )
+                await self.disconnect()
         except asyncio.IncompleteReadError:
             _LOGGER.debug("SerialX device at URL: %s has closed the connection.", self._config.device_path)
             await self.disconnect()
@@ -536,6 +547,7 @@ class NasaClient:
                         if self.writer is None or self.writer.is_closing():
                             _LOGGER.warning("Writer: Socket writer is None or closing, cannot write.")
                             self._tx_queue.task_done()
+                            await self._handle_disconnection()
                             break
 
                         _LOGGER.debug("Writer: Writing data: %s", bin2hex(cmd))
@@ -564,6 +576,10 @@ class NasaClient:
                 _LOGGER.exception("Writer: Unexpected error: %s", ex)
                 await self._handle_disconnection(ex)  # Treat as critical failure
                 break
+
+        if self._is_connected:
+            _LOGGER.warning("Writer loop exited while session still marked connected.")
+            await self._handle_disconnection()
 
     async def send_command(
         self,
