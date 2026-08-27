@@ -52,7 +52,11 @@ class NasaClient:
         self._bus_idle_gap = 0.05  # seconds of silence required before TX
         self._rx_queue: asyncio.Queue[bytes] | None = None
         self._rx_buffer = b""
+        # Last actual serial RX. Used by the 120s liveness watchdog — must not be
+        # refreshed by TX, or a polling client will never notice a silent bus.
         self._last_rx_time: float | None = None
+        # Last RX or TX. Used only for the half-duplex inter-frame idle gap.
+        self._last_bus_time: float | None = None
         self._packet_number_counter: int = 0
         self._pending_reads: dict = {}  # Track pending read requests for retry logic
         self._queued_reads: dict = {}  # Queue of read requests per destination waiting to be sent
@@ -146,7 +150,9 @@ class NasaClient:
     async def _handle_connection(self) -> None:
         """Handle connection."""
         _LOGGER.debug("Successfully connected to %s", self._config.device_path)
-        self._last_rx_time = asyncio.get_running_loop().time()
+        now = asyncio.get_running_loop().time()
+        self._last_rx_time = now
+        self._last_bus_time = now
         await self._start_read_queue_session()
         await self._start_writer_session()
         await self._start_retry_manager_session()
@@ -215,7 +221,7 @@ class NasaClient:
     async def _wait_for_bus_idle(self) -> None:
         """Wait until the bus has been quiet for `_bus_idle_gap` seconds."""
         while self.is_connected:
-            last = self._last_rx_time
+            last = self._last_bus_time
             if last is None:
                 return
             remaining = self._bus_idle_gap - (asyncio.get_running_loop().time() - last)
@@ -242,7 +248,9 @@ class NasaClient:
 
                 # Hold the bus lock while RX is active so the writer cannot collide mid-frame.
                 async with self._receiving:
-                    self._last_rx_time = asyncio.get_running_loop().time()
+                    now = asyncio.get_running_loop().time()
+                    self._last_rx_time = now
+                    self._last_bus_time = now
                     if data:
                         _LOGGER.debug("Received message from SerialX device at URL: %s", self._config.device_path)
                         await self._read_buffer_handler(data)
@@ -554,7 +562,8 @@ class NasaClient:
                         self.writer.write(cmd)
                         await self.writer.drain()
                         # Treat TX as bus activity so the next send also observes the idle gap.
-                        self._last_rx_time = asyncio.get_running_loop().time()
+                        # Do not refresh _last_rx_time: outgoing polls must not hide a dead RX path.
+                        self._last_bus_time = asyncio.get_running_loop().time()
                         if self._tx_event_handler:
                             try:
                                 self._tx_event_handler(cmd)
