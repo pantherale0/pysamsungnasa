@@ -168,6 +168,92 @@ class TestWriterErrorSelfTeardown:
         assert not asyncio.current_task().cancelled()
 
 
+class TestRxWatchdogIgnoresTransmit:
+    """The 120s liveness check must track actual RX, not TX.
+
+    Home Assistant polls continuously. If TX refreshed the same timestamp the
+    listener uses for 'no data received', a silent bus (heat pump powered off,
+    RS485 unplugged but USB-serial still open) would never trip the watchdog,
+    leaving HA with stale climate state indefinitely.
+    """
+
+    @pytest.mark.asyncio
+    async def test_writer_does_not_refresh_rx_watchdog(self, nasa_client):
+        """A successful TX must update bus-idle time only, not last RX time."""
+        client = nasa_client
+        loop = asyncio.get_running_loop()
+        stale_rx = loop.time() - 50.0
+        client._last_rx_time = stale_rx
+        client._last_bus_time = stale_rx
+        client._bus_idle_gap = 0.0
+        client.writer.write = Mock()
+        client.writer.drain = AsyncMock()
+
+        await client._tx_queue.put(b"\x32\x00\x04test\x00\x00\x34")
+        writer_task = asyncio.create_task(client._writer())
+        try:
+            await asyncio.wait_for(client._tx_queue.join(), timeout=1.0)
+        finally:
+            writer_task.cancel()
+            try:
+                await writer_task
+            except asyncio.CancelledError:
+                pass
+
+        assert client._last_rx_time == stale_rx
+        assert client._last_bus_time is not None
+        assert client._last_bus_time > stale_rx
+        client.writer.write.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_silent_bus_disconnects_despite_recent_transmit(self, nasa_client):
+        """RX idle >120s must drop the connection even if we transmitted recently."""
+        client = nasa_client
+        loop = asyncio.get_running_loop()
+        client._last_rx_time = loop.time() - 121.0
+        client._last_bus_time = loop.time()
+
+        async def hang(*_args, **_kwargs):
+            await asyncio.sleep(3600)
+            return b""
+
+        client.reader.readuntil = hang
+        disconnected = asyncio.Event()
+
+        async def handler():
+            disconnected.set()
+
+        client._disconnect_event_handler = handler
+        client.listener_task = asyncio.create_task(client._listener_task())
+
+        await asyncio.wait_for(disconnected.wait(), timeout=1.0)
+        assert client.is_connected is False
+        assert client.writer is None
+
+    @pytest.mark.asyncio
+    async def test_recent_rx_does_not_trip_watchdog(self, nasa_client):
+        """A client that is still receiving must stay connected."""
+        client = nasa_client
+        loop = asyncio.get_running_loop()
+        client._last_rx_time = loop.time()
+        client._last_bus_time = loop.time()
+
+        async def hang(*_args, **_kwargs):
+            await asyncio.sleep(3600)
+            return b""
+
+        client.reader.readuntil = hang
+        handler = Mock()
+        client._disconnect_event_handler = handler
+        client.listener_task = asyncio.create_task(client._listener_task())
+        try:
+            await asyncio.sleep(0.15)
+            assert client.is_connected is True
+            handler.assert_not_called()
+        finally:
+            await client.disconnect()
+
+
 class TestSendAfterDisconnect:
     """send_message must fail closed once the transport is gone."""
 
