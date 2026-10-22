@@ -2432,7 +2432,7 @@ class InFsv4033(BasicTemperatureMessage):
     SIGNED = True
 
 
-class InFsv5011Message(FloatMessage):
+class InFsv5011Message(BasicTemperatureMessage):
     """Parser for message 0x4273 (FSV 5011 - Water Out Temp for Cooling in Outing Mode).
 
     Target water outlet temperature during outing mode in cooling operation.
@@ -2450,10 +2450,9 @@ class InFsv5011Message(FloatMessage):
     MESSAGE_NAME = "Outing Mode Water Out Temp (Cooling)"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = True
-    ARITHMETIC = 1.0
 
 
-class InFsv5012Message(FloatMessage):
+class InFsv5012Message(BasicTemperatureMessage):
     """Parser for message 0x4274 (FSV 5012 - Room Temperature for Cooling in Outing Mode).
 
     Target room temperature during outing mode in cooling operation.
@@ -2473,10 +2472,9 @@ class InFsv5012Message(FloatMessage):
     MESSAGE_NAME = "Outing Mode Room Temp (Cooling)"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = True
-    ARITHMETIC = 1.0
 
 
-class InFsv5013Message(FloatMessage):
+class InFsv5013Message(BasicTemperatureMessage):
     """Parser for message 0x4275 (FSV 5013 - Water Out Temp for Heating in Outing Mode).
 
     Target water outlet temperature during outing mode in heating operation.
@@ -2496,10 +2494,9 @@ class InFsv5013Message(FloatMessage):
     MESSAGE_NAME = "Outing Mode Water Out Temp (Heating)"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = True
-    ARITHMETIC = 1.0
 
 
-class InFsv5014Message(FloatMessage):
+class InFsv5014Message(BasicTemperatureMessage):
     """Parser for message 0x4276 (FSV 5014 - Room Temperature for Heating in Outing Mode).
 
     Target room temperature during outing mode in heating operation.
@@ -2520,10 +2517,9 @@ class InFsv5014Message(FloatMessage):
     MESSAGE_NAME = "Outing Mode Room Temp (Heating)"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = True
-    ARITHMETIC = 1.0
 
 
-class InFsv5015Message(FloatMessage):
+class InFsv5015Message(BasicTemperatureMessage):
     """Parser for message 0x4277 (FSV 5015 - Auto Cooling WL1 Water Temp in Outing Mode).
 
     Water Law 1 (WL1) target water outlet temperature during auto cooling in outing mode.
@@ -2544,10 +2540,9 @@ class InFsv5015Message(FloatMessage):
     MESSAGE_NAME = "Outing Mode Auto Cool WL1 Water Temp"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = True
-    ARITHMETIC = 1.0
 
 
-class InFsv5016Message(FloatMessage):
+class InFsv5016Message(BasicTemperatureMessage):
     """Parser for message 0x4278 (FSV 5016 - Auto Cooling WL2 Water Temp in Outing Mode).
 
     Water Law 2 (WL2) target water outlet temperature during auto cooling in outing mode.
@@ -2571,10 +2566,9 @@ class InFsv5016Message(FloatMessage):
     MESSAGE_NAME = "Outing Mode Auto Cool WL2 Water Temp"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = True
-    ARITHMETIC = 1.0
 
 
-class InFsv5017Message(FloatMessage):
+class InFsv5017Message(BasicTemperatureMessage):
     """Parser for message 0x4279 (FSV 5017 - Auto Heating WL1 Water Temp in Outing Mode).
 
     Water Law 1 (WL1) target water outlet temperature during auto heating in outing mode.
@@ -2599,10 +2593,9 @@ class InFsv5017Message(FloatMessage):
     MESSAGE_NAME = "Outing Mode Auto Heat WL1 Water Temp"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = True
-    ARITHMETIC = 1.0
 
 
-class InFsv5018Message(FloatMessage):
+class InFsv5018Message(BasicTemperatureMessage):
     """Parser for message 0x427A (FSV 5018 - Auto Heating WL2 Water Temp in Outing Mode).
 
     Water Law 2 (WL2) target water outlet temperature during auto heating in outing mode.
@@ -2628,10 +2621,9 @@ class InFsv5018Message(FloatMessage):
     MESSAGE_NAME = "Outing Mode Auto Heat WL2 Water Temp"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = True
-    ARITHMETIC = 1.0
 
 
-class InFsv5019Message(FloatMessage):
+class InFsv5019Message(BasicTemperatureMessage):
     """Parser for message 0x427B (FSV 5019 - Target Tank Temperature in Outing Mode).
 
     DHW tank temperature setpoint during outing mode.
@@ -2658,10 +2650,9 @@ class InFsv5019Message(FloatMessage):
     MESSAGE_NAME = "Outing Mode Target Tank Temp"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = True
-    ARITHMETIC = 1.0
 
 
-class InFsv5021(FloatMessage):
+class InFsv5021(BasicTemperatureMessage):
     """Parser for message 0x427C (FSV 5021 - DHW Saving Temp).
 
     Temperature reduction offset for DHW energy saving mode.
@@ -2676,7 +2667,6 @@ class InFsv5021(FloatMessage):
     MESSAGE_NAME = "FSV 5021 DHW Saving Temp Offset"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = False
-    ARITHMETIC = 1.0
 
 
 class InTempWaterLawMessage(BasicTemperatureMessage):

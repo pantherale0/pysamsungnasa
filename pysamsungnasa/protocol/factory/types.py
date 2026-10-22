@@ -42,7 +42,7 @@ class SendMessage:
 class BaseMessage(ABC):
     """Base class for all NASA protocol messages."""
 
-    MESSAGE_ID: ClassVar[int | None] = None
+    MESSAGE_ID: ClassVar[int]
     MESSAGE_NAME: ClassVar[str | None] = None
     MESSAGE_ENUM: ClassVar[type[SamsungEnum] | None] = None
     ENUM_DEFAULT: ClassVar[SamsungEnum | None] = None
