@@ -193,6 +193,7 @@ class TestFloatMessage:
         """Test to_bytes auto-detects 1-byte encoding for small values."""
 
         class TestFloatMsg(FloatMessage):
+            MESSAGE_ID = 0x4600
             ARITHMETIC = 1.0
             SIGNED = False
 
@@ -203,6 +204,7 @@ class TestFloatMessage:
         """Test to_bytes auto-detects 2-byte encoding for medium values."""
 
         class TestFloatMsg(FloatMessage):
+            MESSAGE_ID = 0x4600
             ARITHMETIC = 1.0
             SIGNED = False
 
@@ -260,6 +262,7 @@ class TestFloatMessage:
         """Test to_bytes with signed 1-byte values."""
 
         class TestFloatMsg(FloatMessage):
+            MESSAGE_ID = 0x4600
             ARITHMETIC = 1.0
             SIGNED = True
 
@@ -304,9 +307,12 @@ class TestIntegerMessageToBytes:
     """Tests for IntegerMessage.to_bytes() payload sizing."""
 
     def test_integer_message_to_bytes_min_length_without_message_id(self):
-        """Without a message ID, keep compact encoding."""
-        assert IntegerMessage.to_bytes(5) == b"\x05"
-        assert IntegerMessage.to_bytes(256) == b"\x01\x00"
+        """Messages with an unspecified payload size use compact encoding."""
+        class UnspecifiedSizeInteger(IntegerMessage):
+            MESSAGE_ID = 0x4600
+
+        assert UnspecifiedSizeInteger.to_bytes(5) == b"\x05"
+        assert UnspecifiedSizeInteger.to_bytes(256) == b"\x01\x00"
 
     def test_integer_message_to_bytes_uses_var_size(self):
         """VAR integer messages must not shrink below 2 bytes."""

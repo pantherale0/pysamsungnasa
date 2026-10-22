@@ -271,8 +271,9 @@ class TestRxWatchdogIgnoresTransmit:
         client._last_rx_time = stale_rx
         client._last_bus_time = stale_rx
         client._bus_idle_gap = 0.0
-        client.writer.write = Mock()
-        client.writer.drain = AsyncMock()
+        writer = client.writer
+        writer.write = Mock()
+        writer.drain = AsyncMock()
 
         await client._tx_queue.put(b"\x32\x00\x04test\x00\x00\x34")
         writer_task = asyncio.create_task(client._writer())
@@ -288,7 +289,7 @@ class TestRxWatchdogIgnoresTransmit:
         assert client._last_rx_time == stale_rx
         assert client._last_bus_time is not None
         assert client._last_bus_time > stale_rx
-        client.writer.write.assert_called_once()
+        writer.write.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_silent_bus_disconnects_despite_recent_transmit(self, nasa_client):
