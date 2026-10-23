@@ -7,6 +7,7 @@ from pysamsungnasa.protocol.factory import (
     get_nasa_message_id,
     parse_message,
 )
+from pysamsungnasa.protocol.factory.messages import indoor
 from pysamsungnasa.protocol.factory.types import SendMessage, RawMessage
 from pysamsungnasa.protocol.enum import DataType
 
@@ -169,6 +170,21 @@ class TestParseMessage:
         """Test parsing messages with various payload sizes."""
         result = parse_message(message_number, payload)
         assert result is not None
+
+    @pytest.mark.parametrize(
+        "message_number,payload,parser,value",
+        [
+            (0x427F, b"\x01\x6b", indoor.InWaterLawTargetTemperature, 36.3),  # curve target
+            (0x4248, b"\x00\x00", indoor.InWaterLawOffsetTemperature, 0.0),  # no offset
+            (0x4248, b"\xff\xec", indoor.InWaterLawOffsetTemperature, -2.0),  # signed offset
+        ],
+    )
+    def test_parse_water_law_target_and_offset(self, message_number, payload, parser, value):
+        """Test that the water law target (0x427F) and offset (0x4248) parse to their own classes."""
+        result = parse_message(message_number, payload)
+
+        assert isinstance(result, parser)
+        assert result.VALUE == pytest.approx(value)
 
     def test_parse_message_invalid_payload_returns_raw(self):
         """Test that parsing with invalid payload falls back to RawMessage."""

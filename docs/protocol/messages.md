@@ -111,9 +111,13 @@ current_temp_c = current_temp_raw / 10
 **Type:** Variable (2 bytes)
 Water outlet temperature (for water-based systems).
 
-#### 0x4248 - Water Law Target Temperature
-**Type:** Variable (2 bytes)
-Target temperature for water law heating mode.
+#### 0x4248 - Water Law Offset Temperature
+**Type:** Variable (2 bytes, signed)
+Offset (shift) applied to the water law target, -5 to +5 °C. 0.0 when no offset is set.
+
+#### 0x427F - Water Law Target Temperature
+**Type:** Variable (2 bytes, signed)
+Flow temperature target calculated from the water law curve and its offset (0x4248).
 
 ### Humidity Control (0x4030-0x4040)
 
