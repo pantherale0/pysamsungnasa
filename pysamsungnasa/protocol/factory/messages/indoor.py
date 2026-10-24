@@ -1827,11 +1827,16 @@ class InWaterOutletTargetTemperature(BasicTemperatureMessage):
     SIGNED = True
 
 
-class InWaterLawTargetTemperature(BasicTemperatureMessage):
-    """Parser for message 0x4248 (Indoor Water Law Target Temperature)."""
+class InWaterLawOffsetTemperature(BasicTemperatureMessage):
+    """Parser for message 0x4248 (Indoor Water Law Offset Temperature).
+
+    Offset (shift) applied to the water law target, -5 to +5 °C in 0.5 °C steps.
+    NASA.ptc label VAR_IN_TEMP_WATER_LAW_TARGET_F, but the value is the offset:
+    0.0 when no shift is set. The resulting flow target is 0x427F.
+    """
 
     MESSAGE_ID = 0x4248
-    MESSAGE_NAME = "Indoor Water Law Target Temperature"
+    MESSAGE_NAME = "Indoor Water Law Offset Temperature"
     SIGNED = True
 
 
@@ -2669,8 +2674,12 @@ class InFsv5021(BasicTemperatureMessage):
     SIGNED = False
 
 
-class InTempWaterLawMessage(BasicTemperatureMessage):
-    """Parser for message 0x427F (Water Law Target Temperature)."""
+class InWaterLawTargetTemperature(BasicTemperatureMessage):
+    """Parser for message 0x427F (Water Law Target Temperature).
+
+    Flow temperature target calculated from the water law (weather compensation)
+    curve and its offset (0x4248). NASA.ptc label VAR_IN_TEMP_WATER_LAW_F.
+    """
 
     MESSAGE_ID = 0x427F
     MESSAGE_NAME = "Water Law Target Temperature"
