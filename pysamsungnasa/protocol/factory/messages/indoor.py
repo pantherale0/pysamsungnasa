@@ -2971,7 +2971,7 @@ class InFsv5083(FloatMessage):
     ARITHMETIC = 0.5
 
 
-class InFsv5092(FloatMessage):
+class InFsv5092(BasicTemperatureMessage):
     """Parser for message 0x42DD (FSV 5092 - Smart Grid Heating Temperature Shift).
 
     Temperature increase offset applied to heating setpoints during Smart Grid Mode 3.
@@ -3027,10 +3027,9 @@ class InFsv5092(FloatMessage):
     MESSAGE_NAME = "FSV 5092 Smart Grid Heat Temp Shift"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = False
-    ARITHMETIC = 0.5
 
 
-class InFsv5093(FloatMessage):
+class InFsv5093(BasicTemperatureMessage):
     """Parser for message 0x42DE (FSV 5093 - Smart Grid DHW Temperature Shift).
 
     Temperature increase offset applied to domestic hot water (DHW) setpoint during
@@ -3095,7 +3094,6 @@ class InFsv5093(FloatMessage):
     MESSAGE_NAME = "FSV 5093 Smart Grid DHW Temp Shift"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = False
-    ARITHMETIC = 0.5
 
 
 class InFlowSensorVoltageMessage(FloatMessage):
@@ -3172,7 +3170,7 @@ class InFsv3083(FloatMessage):
     ARITHMETIC = 1.0
 
 
-class InFsv5023(FloatMessage):
+class InFsv5023(BasicTemperatureMessage):
     """Parser for message 0x42F0 (FSV 5023 - DHW Saving Thermo on Temp).
 
     Temperature threshold for heating activation in DHW saving mode.
@@ -3187,7 +3185,6 @@ class InFsv5023(FloatMessage):
     MESSAGE_NAME = "FSV 5023 DHW Saving Thermo On Temp"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = False
-    ARITHMETIC = 1.0
 
 
 class InOutdoorCompressorFrequencyRateControlMessage(StructureMessage):
