@@ -255,10 +255,15 @@ await indoor.write_attributes({
 
 ### Using Different Write Modes
 
-Some operations may require `DataType.REQUEST` instead of the default `DataType.WRITE`:
+Some operations may require `DataType.REQUEST` or `DataType.NOTIFICATION` instead of the default `DataType.WRITE`. You can also optionally override the `source` and `destination` addresses when sending packets (for example, when emulating a wired remote controller at `500000` / `510000` broadcasting to `B0FF20`):
 
 ```python
 from pysamsungnasa.protocol.enum import DataType
+from pysamsungnasa.protocol.factory.messages.indoor import (
+    InRoomTempSensorMessage,
+    InRoomTempZone1Message,
+    InTargetTemperature,
+)
 
 # Use REQUEST mode
 await indoor.write_attribute(
@@ -269,6 +274,17 @@ await indoor.write_attribute(
 
 # Default is WRITE mode
 await indoor.write_attribute(InTargetTemperature, 22.0)
+
+# Send a composite NOTIFICATION packet with custom source/destination addresses
+await indoor.write_attributes(
+    {
+        InRoomTempZone1Message: 24.6,
+        InRoomTempSensorMessage: True,
+    },
+    mode=DataType.NOTIFICATION,
+    source="510000",
+    destination="B0FF20",
+)
 ```
 
 ## Error Handling

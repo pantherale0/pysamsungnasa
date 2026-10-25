@@ -3,8 +3,10 @@
 import pytest
 from unittest.mock import Mock, AsyncMock, patch
 from pysamsungnasa.nasa import SamsungNasa
+from pysamsungnasa.nasa_client import NasaClient
 from pysamsungnasa.config import NasaConfig
 from pysamsungnasa.protocol.enum import DataType, AddressClass
+from pysamsungnasa.protocol.factory.types import SendMessage
 from pysamsungnasa.helpers import hex2bin
 
 
@@ -123,3 +125,26 @@ class TestSamsungNasa:
 
             await nasa.stop()
             mock_client_instance.disconnect.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_client_send_message_notification_with_custom_source(self):
+        """Test NasaClient.send_message builds NOTIFICATION packet with custom source and skips pending_writes."""
+        config = NasaConfig(device_path="socket://localhost:8000", enable_write_retries=True)
+        client = NasaClient(config=config)
+        client._is_connected = True
+        client.writer = Mock()
+        client.writer.is_closing.return_value = False
+        client.send_command = AsyncMock(return_value=0x89)
+
+        await client.send_message(
+            destination="B0FF20",
+            request_type=DataType.NOTIFICATION,
+            messages=[
+                SendMessage(MESSAGE_ID=0x423A, PAYLOAD=b"\x00\xf6"),
+                SendMessage(MESSAGE_ID=0x4076, PAYLOAD=b"\x01"),
+            ],
+            source="510000",
+        )
+
+        client.send_command.assert_called_once_with(["510000B0FF20C014{CUR_PACK_NUM}02423A00F6407601"])
+        assert client._pending_writes == {}

@@ -637,6 +637,7 @@ class NasaClient:
         destination: NasaDevice | str,
         request_type: DataType = DataType.REQUEST,
         messages: list[SendMessage] | None = None,
+        source: str | None = None,
     ) -> int | bytes | None:
         """Send a message to the device using the client."""
         if not self.is_connected:
@@ -651,11 +652,12 @@ class NasaClient:
             return
         if messages is None:
             raise ValueError("At least one message is required.")
+        source_address = source if source is not None else str(self._config.address)
         try:
             packet_number = await self.send_command(
                 [
                     build_message(
-                        source=str(self._config.address),
+                        source=source_address,
                         destination=destination_address,
                         data_type=request_type,
                         messages=messages,

@@ -14,6 +14,10 @@ from pysamsungnasa.protocol.factory.types import (
 from pysamsungnasa.protocol.factory.messages.indoor import (
     InOperationPowerMessage,
     InOperationModeMessage,
+    InRoomTempSensorMessage,
+    InRoomTempSensorZone2Message,
+    InRoomTempZone1Message,
+    InRoomTempZone2Message,
     InTargetTemperature,
 )
 
@@ -283,6 +287,56 @@ class TestWriteAttributes:
 
         call_args = device._client.send_message.call_args
         assert call_args.kwargs["request_type"] == DataType.WRITE
+
+    @pytest.mark.asyncio
+    async def test_write_attributes_room_temperature_notification_zone1(self, device):
+        """Test building Zone 1 external room temperature NOTIFICATION packet (esphome_samsung_hvac_bus#130)."""
+        await device.write_attributes(
+            {
+                InRoomTempZone1Message: 24.6,
+                InRoomTempSensorMessage: True,
+            },
+            mode=DataType.NOTIFICATION,
+            source="510000",
+            destination="B0FF20",
+        )
+
+        device._client.send_message.assert_called_once()
+        call_args = device._client.send_message.call_args
+        assert call_args.kwargs["source"] == "510000"
+        assert call_args.kwargs["destination"] == "B0FF20"
+        assert call_args.kwargs["request_type"] == DataType.NOTIFICATION
+        messages = call_args.kwargs["messages"]
+        assert len(messages) == 2
+        assert messages[0].MESSAGE_ID == 0x423A
+        assert messages[0].PAYLOAD == b"\x00\xf6"
+        assert messages[1].MESSAGE_ID == 0x4076
+        assert messages[1].PAYLOAD == b"\x01"
+
+    @pytest.mark.asyncio
+    async def test_write_attributes_room_temperature_notification_zone2(self, device):
+        """Test building Zone 2 external room temperature NOTIFICATION packet (esphome_samsung_hvac_bus#130)."""
+        await device.write_attributes(
+            {
+                InRoomTempSensorZone2Message: True,
+                InRoomTempZone2Message: 25.1,
+            },
+            mode=DataType.NOTIFICATION,
+            source="510000",
+            destination="B0FF20",
+        )
+
+        device._client.send_message.assert_called_once()
+        call_args = device._client.send_message.call_args
+        assert call_args.kwargs["source"] == "510000"
+        assert call_args.kwargs["destination"] == "B0FF20"
+        assert call_args.kwargs["request_type"] == DataType.NOTIFICATION
+        messages = call_args.kwargs["messages"]
+        assert len(messages) == 2
+        assert messages[0].MESSAGE_ID == 0x4118
+        assert messages[0].PAYLOAD == b"\x01"
+        assert messages[1].MESSAGE_ID == 0x42DA
+        assert messages[1].PAYLOAD == b"\x00\xfb"
 
 
 class TestMessageRoundTrip:
