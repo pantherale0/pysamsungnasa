@@ -81,10 +81,12 @@ class SamsungNasa:
         destination: NasaDevice | str,
         request_type: DataType = DataType.REQUEST,
         messages: list[SendMessage] | None = None,
+        source: str | None = None,
     ) -> None:
         """Send a message to the device using the client."""
         await self.client.send_message(
             destination=destination,
             request_type=request_type,
             messages=messages,
+            source=source,
         )

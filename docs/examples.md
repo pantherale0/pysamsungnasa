@@ -585,6 +585,75 @@ async def resilient_connection():
 asyncio.run(resilient_connection())
 ```
 
+## External Room Temperature Sensor Override
+
+Supply external ambient room temperature readings (e.g. from Home Assistant sensors) for Zone 1 and Zone 2:
+
+> [!NOTE]
+> Updating `0x4203` (`InRoomTemperature`, Zone 1 current ambient temp) or `0x42D4` (`InZone2RoomTemperatureFahrenheitMessage`, Zone 2 current ambient temp) directly does not work because they are read-only status outputs from the indoor unit.
+> Instead, send a `DataType.NOTIFICATION` packet from a wired remote controller source address (`500000` / `510000`) to `B0FF20` (or the indoor unit address) combining the remote sensor enable flag (`0x4076` / `0x4118`) and the zone room temperature (`0x423A` / `0x42DA`). The indoor unit will process this notification and reflect the updated reading in `0x4203` / `0x42D4`.
+
+```python
+import asyncio
+from pysamsungnasa import SamsungNasa
+from pysamsungnasa.protocol.enum import DataType
+from pysamsungnasa.protocol.factory.messages.indoor import (
+    InRoomTempSensorMessage,
+    InRoomTempSensorZone2Message,
+    InRoomTempZone1Message,
+    InRoomTempZone2Message,
+)
+
+
+async def publish_external_room_temperatures():
+    """Periodically send external room temperatures for Zone 1 and Zone 2."""
+
+    nasa = SamsungNasa(
+        config={
+            "device_path": "socket://192.168.1.100:8000",
+            "client_baudrate": 9600,
+            "client_address": 1,
+            "device_addresses": ["200000"],
+        }
+    )
+
+    await nasa.start()
+    indoor = nasa.devices["200000"]
+
+    try:
+        while True:
+            # Zone 1: Enable remote room sensor (0x4076 = 1) and send Zone 1 temp (0x423A = 24.6°C)
+            await indoor.write_attributes(
+                {
+                    InRoomTempZone1Message: 24.6,
+                    InRoomTempSensorMessage: True,
+                },
+                mode=DataType.NOTIFICATION,
+                source="510000",
+                destination="B0FF20",
+            )
+
+            # Zone 2: Enable Zone 2 remote room sensor (0x4118 = 1) and send Zone 2 temp (0x42DA = 25.1°C)
+            await indoor.write_attributes(
+                {
+                    InRoomTempSensorZone2Message: True,
+                    InRoomTempZone2Message: 25.1,
+                },
+                mode=DataType.NOTIFICATION,
+                source="510000",
+                destination="B0FF20",
+            )
+
+            # Send periodically (e.g. every 30s) as a keep-alive so the indoor unit
+            # continues using the external temperature readings
+            await asyncio.sleep(30)
+    finally:
+        await nasa.stop()
+
+
+asyncio.run(publish_external_room_temperatures())
+```
+
 ## More Examples
 
 For more complete examples, check the test files in the project repository.

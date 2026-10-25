@@ -526,7 +526,11 @@ class InLouverHlAutoUpDownMessage(EnumMessage):
 
 
 class InRoomTempSensorMessage(BoolMessage):
-    """Parser for message 0x4076 (Indoor Room Temperature Sensor)."""
+    """Parser for message 0x4076 (ENUM_IN_ROOM_TEMP_SENSOR - Zone 1 Room Temperature Sensor Source).
+
+    0 (False) = Indoor unit internal sensor (Idiom_IndoorUnit)
+    1 (True) = Wired remote / external sensor (Idiom_WiredRemocon)
+    """
 
     MESSAGE_ID = 0x4076
     MESSAGE_NAME = "Indoor Room Temperature Sensor"
@@ -1334,6 +1338,17 @@ class InEnumUnknown4117Message(RawMessage):
     MESSAGE_NAME = "InEnumUnknown4117Message"
 
 
+class InRoomTempSensorZone2Message(BoolMessage):
+    """Parser for message 0x4118 (ENUM_IN_ROOM_TEMP_SENSOR_ZONE2 - Zone 2 Room Temperature Sensor Source).
+
+    0 (False) = Indoor unit internal sensor
+    1 (True) = Wired remote / external sensor
+    """
+
+    MESSAGE_ID = 0x4118
+    MESSAGE_NAME = "Indoor Zone 2 Room Temperature Sensor"
+
+
 class InZone1PowerMessage(BoolMessage):
     """Parser for message 0x4119 (Zone 1 operating power)."""
 
@@ -1806,6 +1821,18 @@ class InTempWaterOut2Message(BasicTemperatureMessage):
 
     MESSAGE_ID = 0x4239
     MESSAGE_NAME = "Heater Out Temperature"
+
+
+class InRoomTempZone1Message(BasicTemperatureMessage):
+    """Parser for message 0x423A (VAR_IN_TEMP_ROOM_ZONE1 - Zone 1 Remote Room Temperature).
+
+    Used in NOTIFICATION packets together with 0x4076=1 to supply external ambient
+    temperature for Zone 1. Processed by the indoor unit and reflected in 0x4203.
+    """
+
+    MESSAGE_ID = 0x423A
+    MESSAGE_NAME = "Zone 1 Remote Room Temperature"
+    SIGNED = True
 
 
 class InUnknown423eMessage(RawMessage):
@@ -2924,6 +2951,18 @@ class InZone2WaterOutletTemperatureFahrenheitMessage(BasicTemperatureMessage):
 
     MESSAGE_ID = 0x42D9
     MESSAGE_NAME = "Zone 2 Water Outlet Temperature Fahrenheit"
+
+
+class InRoomTempZone2Message(BasicTemperatureMessage):
+    """Parser for message 0x42DA (VAR_IN_TEMP_ROOM_ZONE2 - Zone 2 Remote Room Temperature).
+
+    Used in NOTIFICATION packets together with 0x4118=1 to supply external ambient
+    temperature for Zone 2. Processed by the indoor unit and reflected in 0x42D4.
+    """
+
+    MESSAGE_ID = 0x42DA
+    MESSAGE_NAME = "Zone 2 Remote Room Temperature"
+    SIGNED = True
 
 
 class InFsv5082(FloatMessage):

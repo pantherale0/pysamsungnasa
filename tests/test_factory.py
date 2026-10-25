@@ -108,12 +108,13 @@ class TestGetNasaMessageName:
         assert name is not None
         assert "0xffff" in name.lower()
 
-    @pytest.mark.parametrize("msg_id", [0x4000, 0x4001, 0x8000, 0x8001])
+    @pytest.mark.parametrize("msg_id", [0x4000, 0x4001, 0x4076, 0x4118, 0x423A, 0x42DA, 0x8000, 0x8001])
     def test_get_message_name_various_messages(self, msg_id):
         """Test getting names of various messages."""
         name = get_nasa_message_name(msg_id)
         assert name is not None
         assert isinstance(name, str)
+        assert not name.startswith("Message 0x")
 
 
 class TestGetNasaMessageId:
