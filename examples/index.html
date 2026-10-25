@@ -1289,6 +1289,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#external-room-temperature-sensor-override" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        External Room Temperature Sensor Override
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#more-examples" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1886,6 +1897,72 @@
             <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">retry_delay</span><span class="p">)</span>
 
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">resilient_connection</span><span class="p">())</span>
+</code></pre></div>
+<h2 id="external-room-temperature-sensor-override">External Room Temperature Sensor Override<a class="headerlink" href="#external-room-temperature-sensor-override" title="Permanent link">&para;</a></h2>
+<p>Supply external ambient room temperature readings (e.g. from Home Assistant sensors) for Zone 1 and Zone 2:</p>
+<blockquote>
+<p>[!NOTE]
+Updating <code>0x4203</code> (<code>InRoomTemperature</code>, Zone 1 current ambient temp) or <code>0x42D4</code> (<code>InZone2RoomTemperatureFahrenheitMessage</code>, Zone 2 current ambient temp) directly does not work because they are read-only status outputs from the indoor unit.
+Instead, send a <code>DataType.NOTIFICATION</code> packet from a wired remote controller source address (<code>500000</code> / <code>510000</code>) to <code>B0FF20</code> (or the indoor unit address) combining the remote sensor enable flag (<code>0x4076</code> / <code>0x4118</code>) and the zone room temperature (<code>0x423A</code> / <code>0x42DA</code>). The indoor unit will process this notification and reflect the updated reading in <code>0x4203</code> / <code>0x42D4</code>.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamsungNasa</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.indoor</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InRoomTempSensorMessage</span><span class="p">,</span>
+    <span class="n">InRoomTempSensorZone2Message</span><span class="p">,</span>
+    <span class="n">InRoomTempZone1Message</span><span class="p">,</span>
+    <span class="n">InRoomTempZone2Message</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">publish_external_room_temperatures</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Periodically send external room temperatures for Zone 1 and Zone 2."""</span>
+
+    <span class="n">nasa</span> <span class="o">=</span> <span class="n">SamsungNasa</span><span class="p">(</span>
+        <span class="n">config</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">"device_path"</span><span class="p">:</span> <span class="s2">"socket://192.168.1.100:8000"</span><span class="p">,</span>
+            <span class="s2">"client_baudrate"</span><span class="p">:</span> <span class="mi">9600</span><span class="p">,</span>
+            <span class="s2">"client_address"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">"device_addresses"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"200000"</span><span class="p">],</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">indoor</span> <span class="o">=</span> <span class="n">nasa</span><span class="o">.</span><span class="n">devices</span><span class="p">[</span><span class="s2">"200000"</span><span class="p">]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="c1"># Zone 1: Enable remote room sensor (0x4076 = 1) and send Zone 1 temp (0x423A = 24.6°C)</span>
+            <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attributes</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="n">InRoomTempZone1Message</span><span class="p">:</span> <span class="mf">24.6</span><span class="p">,</span>
+                    <span class="n">InRoomTempSensorMessage</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="n">mode</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">NOTIFICATION</span><span class="p">,</span>
+                <span class="n">source</span><span class="o">=</span><span class="s2">"510000"</span><span class="p">,</span>
+                <span class="n">destination</span><span class="o">=</span><span class="s2">"B0FF20"</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Zone 2: Enable Zone 2 remote room sensor (0x4118 = 1) and send Zone 2 temp (0x42DA = 25.1°C)</span>
+            <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attributes</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="n">InRoomTempSensorZone2Message</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="n">InRoomTempZone2Message</span><span class="p">:</span> <span class="mf">25.1</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="n">mode</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">NOTIFICATION</span><span class="p">,</span>
+                <span class="n">source</span><span class="o">=</span><span class="s2">"510000"</span><span class="p">,</span>
+                <span class="n">destination</span><span class="o">=</span><span class="s2">"B0FF20"</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Send periodically (e.g. every 30s) as a keep-alive so the indoor unit</span>
+            <span class="c1"># continues using the external temperature readings</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">nasa</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">publish_external_room_temperatures</span><span class="p">())</span>
 </code></pre></div>
 <h2 id="more-examples">More Examples<a class="headerlink" href="#more-examples" title="Permanent link">&para;</a></h2>
 <p>For more complete examples, check the test files in the project repository.</p>

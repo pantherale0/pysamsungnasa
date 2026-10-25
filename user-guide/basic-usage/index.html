@@ -1750,8 +1750,13 @@
 <span class="p">})</span>
 </code></pre></div>
 <h3 id="using-different-write-modes">Using Different Write Modes<a class="headerlink" href="#using-different-write-modes" title="Permanent link">&para;</a></h3>
-<p>Some operations may require <code>DataType.REQUEST</code> instead of the default <code>DataType.WRITE</code>:</p>
+<p>Some operations may require <code>DataType.REQUEST</code> or <code>DataType.NOTIFICATION</code> instead of the default <code>DataType.WRITE</code>. You can also optionally override the <code>source</code> and <code>destination</code> addresses when sending packets (for example, when emulating a wired remote controller at <code>500000</code> / <code>510000</code> broadcasting to <code>B0FF20</code>):</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pysamsungnasa.protocol.factory.messages.indoor</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InRoomTempSensorMessage</span><span class="p">,</span>
+    <span class="n">InRoomTempZone1Message</span><span class="p">,</span>
+    <span class="n">InTargetTemperature</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="c1"># Use REQUEST mode</span>
 <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span>
@@ -1762,6 +1767,17 @@
 
 <span class="c1"># Default is WRITE mode</span>
 <span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attribute</span><span class="p">(</span><span class="n">InTargetTemperature</span><span class="p">,</span> <span class="mf">22.0</span><span class="p">)</span>
+
+<span class="c1"># Send a composite NOTIFICATION packet with custom source/destination addresses</span>
+<span class="k">await</span> <span class="n">indoor</span><span class="o">.</span><span class="n">write_attributes</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="n">InRoomTempZone1Message</span><span class="p">:</span> <span class="mf">24.6</span><span class="p">,</span>
+        <span class="n">InRoomTempSensorMessage</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">mode</span><span class="o">=</span><span class="n">DataType</span><span class="o">.</span><span class="n">NOTIFICATION</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="s2">"510000"</span><span class="p">,</span>
+    <span class="n">destination</span><span class="o">=</span><span class="s2">"B0FF20"</span><span class="p">,</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
 <p>Always handle potential errors:</p>
