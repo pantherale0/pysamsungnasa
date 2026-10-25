@@ -14,6 +14,7 @@ from pysamsungnasa.protocol.factory.types import (
     nasa_payload_size,
 )
 from pysamsungnasa.protocol.enum import SamsungEnum
+from pysamsungnasa.protocol.factory.messages import indoor
 
 
 class TestSendMessage:
@@ -448,3 +449,24 @@ class TestFloatMessageNullSentinel:
         from pysamsungnasa.protocol.factory.types import BasicTemperatureMessage
 
         assert BasicTemperatureMessage.to_bytes(None) == b"\xff\xff"
+
+
+class TestFsvTemperatureScale:
+    """FSV temperatures sent in tenths of a degree, like FSV 5011-5021 (#184)."""
+
+    @pytest.mark.parametrize(
+        ("message", "payload", "expected"),
+        [
+            (indoor.InFsv5023, b"\x00\xfa", 25.0),  # DHW saving thermo on, default 25 C
+            (indoor.InFsv5092, b"\x00\x14", 2.0),  # smart grid heat shift, default 2 C
+            (indoor.InFsv5093, b"\x00\x32", 5.0),  # smart grid DHW shift, default 5 C
+        ],
+    )
+    def test_parses_tenths(self, message, payload, expected):
+        """Raw values read on a live unit decode to the documented defaults."""
+        assert message.parse_payload(payload).VALUE == expected
+
+    @pytest.mark.parametrize("message", [indoor.InFsv5023, indoor.InFsv5092, indoor.InFsv5093])
+    def test_round_trips(self, message):
+        """Writes use the same scale as reads."""
+        assert message.parse_payload(message.to_bytes(4.5)).VALUE == 4.5
