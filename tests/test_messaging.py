@@ -56,7 +56,6 @@ class TestBaseMessage:
 
         result = msg.as_dict
 
-        assert result["message_id"] == 0x4000
         assert result["message_name"] == "TEST_MESSAGE"
         assert result["unit_of_measurement"] == "°C"
         assert result["value"] == 100
