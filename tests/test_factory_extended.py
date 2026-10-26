@@ -587,7 +587,6 @@ class TestBaseMessageProperties:
         msg = TestMessage(value=25.5)
         result = msg.as_dict
 
-        assert result["message_id"] == 0x1234
         assert result["message_name"] == "Test Message"
         assert result["unit_of_measurement"] == "°C"
         assert result["value"] == 25.5

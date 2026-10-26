@@ -64,7 +64,6 @@ class BaseMessage(ABC):
     def as_dict(self) -> dict:
         """Return the message as a dictionary."""
         return {
-            "message_id": self.MESSAGE_ID,
             "message_name": self.MESSAGE_NAME,
             "unit_of_measurement": self.UNIT_OF_MEASUREMENT,
             "value": self.VALUE,
