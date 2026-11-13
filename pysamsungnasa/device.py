@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime, UTC
@@ -74,6 +75,10 @@ class NasaDevice:
         self._packet_callbacks: dict[int, list[Callable]] = {}
         self._client = client
         self._attribute_events: dict[int, asyncio.Event] = {}
+        # Monotonic arrival time of the latest packet per message ID, used by
+        # get_attribute(requires_read=True) to wait for a response that arrived
+        # after the read request rather than trusting the cached attribute.
+        self._attribute_times: dict[int, float] = {}
         packet_parser.add_device_handler(address, self.handle_packet)
 
     def add_device_callback(self, callback: Callable):
@@ -113,9 +118,20 @@ class NasaDevice:
             self._device_callbacks.remove(callback)
 
     async def get_attribute(self, attribute: type[BaseMessage], requires_read: bool = False) -> BaseMessage:
-        """Get a specific attribute from the device, if it is not already known a request will be sent to the device."""
+        """Get a specific attribute from the device, if it is not already known a request will be sent to the device.
+
+        With ``requires_read=True`` the returned message is guaranteed to have
+        arrived from the device *after* the read request was issued: a packet
+        received for the same message ID before the request (or the previously
+        cached attribute) never satisfies the wait. If the device does not
+        respond within the timeout, TimeoutError is raised rather than
+        returning a stale cached value.
+        """
         assert issubclass(attribute, BaseMessage)
         assert attribute.MESSAGE_ID is not None
+        # Capture the freshness baseline before issuing the read request: only
+        # packets handled after this instant count as a response to it.
+        requested_at = time.monotonic()
         if attribute.MESSAGE_ID not in self.attributes or requires_read:
             await self._client.nasa_read(
                 msgs=[attribute.MESSAGE_ID],
@@ -125,10 +141,11 @@ class NasaDevice:
         event = self._attribute_events.setdefault(attribute.MESSAGE_ID, asyncio.Event())
 
         async with asyncio.timeout(10):
-            while attribute.MESSAGE_ID not in self.attributes or requires_read:
+            while attribute.MESSAGE_ID not in self.attributes or (
+                requires_read and self._attribute_times.get(attribute.MESSAGE_ID, 0.0) <= requested_at
+            ):
                 event.clear()
                 await event.wait()  # Waits until handle_packet sets it
-                requires_read = False  # Only require read once
 
         if attribute.MESSAGE_ID not in self.attributes:
             raise TimeoutError(f"Timeout waiting for attribute {attribute.MESSAGE_ID} from device {self.address}")
@@ -288,6 +305,7 @@ class NasaDevice:
         if log_message:
             _LOGGER.debug("Handling packet for device %s: %s", self.address, kwargs)
         self.attributes[message_number] = packet_data
+        self._attribute_times[message_number] = time.monotonic()
         if message_number in self._attribute_events:
             self._attribute_events[message_number].set()
         if log_message:

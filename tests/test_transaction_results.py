@@ -10,6 +10,8 @@ confirmation and the retry manager just logs).
 import asyncio
 import binascii
 
+import pytest
+
 
 from pysamsungnasa.config import NasaConfig
 from pysamsungnasa.device import NasaDevice, TransactionResult
@@ -302,6 +304,72 @@ class TestConfirmedDeviceState:
         assert result.verified is True  # applied despite the lost ACK
         assert result.device_value == 33.0
         assert result.success is False  # never transport-acknowledged
+
+    async def test_verify_does_not_accept_cached_attribute(self):
+        """verify=True must wait for a fresh device response, not the cache.
+
+        A stale cached 0x4247 exists before the write; only a response that
+        arrives after the read request satisfies the verification. With no
+        fresh response the result is verified=None, never a stale comparison.
+        """
+        client, parser, device = self._wired_device()
+        # Pre-populate the cache with a stale value and an old arrival time.
+        stale = InWaterOutletTargetTemperature.parse_payload(b"\x01\x4a")  # 33.0°C, matches request
+        device.attributes[0x4247] = stale
+        device._attribute_times[0x4247] = 0.0
+
+        task = asyncio.create_task(
+            device.write_attribute_confirmed(
+                InWaterOutletTargetTemperature,
+                33.0,
+                mode=DataType.REQUEST,
+                timeout=5,
+                verify=True,
+                verify_timeout=0.2,  # short: no fresh response will arrive
+            )
+        )
+        await asyncio.sleep(0)
+        packet_number = _pending_packet_number(client)
+        await client._mark_read_received(WRITE_DEST, [], DataType.ACK, packet_number=packet_number)
+
+        result = await task
+        assert result.outcome == "ack"
+        assert result.verified is None  # no fresh response: unverified, not stale-compared
+        assert result.device_value is None
+
+    async def test_verify_ignores_packet_that_arrived_before_the_read_request(self):
+        """A same-value packet handled before the read-back request must not satisfy verify."""
+        client, parser, device = self._wired_device()
+        task = asyncio.create_task(
+            device.write_attribute_confirmed(
+                InWaterOutletTargetTemperature,
+                33.0,
+                mode=DataType.REQUEST,
+                timeout=5,
+                verify=True,
+                verify_timeout=0.2,
+            )
+        )
+        await asyncio.sleep(0)
+        packet_number = _pending_packet_number(client)
+        await client._mark_read_received(WRITE_DEST, [], DataType.ACK, packet_number=packet_number)
+
+        # Deliver a matching value BEFORE the read-back is satisfied... it would
+        # normally satisfy it (it arrived after the request). Instead, verify
+        # the freshness mechanism directly: handle the packet, then a second
+        # confirm with requires_read must wait for another one.
+        await asyncio.sleep(0)
+        response = self._response_packet("200000" + "80ff01" + "20" + "15" + "02" + "01" + "4247" + "014a")
+        await parser.parse_packet(response[3:-3])
+        result = await task
+        assert result.verified is True
+        assert result.device_value == 33.0
+
+        # Now a fresh-request must not be satisfied by the just-stored value:
+        # it arrived before this new request instant.
+        with pytest.raises(TimeoutError):
+            async with asyncio.timeout(0.2):
+                await device.get_attribute(InWaterOutletTargetTemperature, requires_read=True)
 
     async def test_nack_propagates_through_write_attribute_confirmed(self):
         client, parser, device = self._wired_device()

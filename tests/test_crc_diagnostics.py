@@ -41,7 +41,7 @@ class TestCrcFailureLogging:
         assert any(binascii.hexlify(packet).decode() in m for m in debug_messages)
 
     async def test_summary_warning_rate_limited(self, caplog):
-        client = _build_client()
+        client = _build_client(crc_log_interval=60.0)
         packet = _valid_packet()
         with caplog.at_level(logging.DEBUG, logger="pysamsungnasa.nasa_client"):
             with caplog.at_level(logging.WARNING, logger="pysamsungnasa.nasa_client"):
@@ -54,7 +54,7 @@ class TestCrcFailureLogging:
         assert client._crc_failure_count == 5
 
     async def test_summary_repeats_after_interval(self, caplog):
-        client = _build_client()
+        client = _build_client(crc_log_interval=60.0)
         packet = _valid_packet()
         with caplog.at_level(logging.WARNING, logger="pysamsungnasa.nasa_client"):
             client._record_crc_failure(packet, 0x1234, 0x5678)
@@ -65,8 +65,10 @@ class TestCrcFailureLogging:
         assert len(warnings) == 2
         assert "0x89ab" in warnings[-1].message or "0x89ab" in warnings[-1].getMessage()
 
-    async def test_crc_log_interval_zero_disables_summary(self, caplog):
-        client = _build_client(crc_log_interval=0.0)
+    async def test_summary_disabled_by_default(self, caplog):
+        """crc_log_interval defaults to 0: no WARNING summaries unless configured."""
+        client = _build_client()
+        assert client._config.crc_log_interval == 0.0
         packet = _valid_packet()
         with caplog.at_level(logging.WARNING, logger="pysamsungnasa.nasa_client"):
             for _ in range(5):

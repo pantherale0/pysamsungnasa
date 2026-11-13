@@ -40,8 +40,10 @@ class NasaConfig:
     # number of bytes to arrive.
     max_packet_size: int = 1502
     # Interval in seconds between rate-limited CRC failure summary warnings.
-    # 0 disables the periodic summary (packet-level detail is logged at DEBUG).
-    crc_log_interval: float = 60.0
+    # Disabled by default (0) so sustained bus corruption stays silent at the
+    # WARNING level; set to e.g. 60.0 to receive periodic one-line summaries.
+    # Packet-level detail is always available at DEBUG level.
+    crc_log_interval: float = 0.0
     # Optional bounded ring buffer of recent RX frames for diagnostics.
     # When enabled, client.rx_capture holds up to packet_capture_size recent
     # entries (raw chunks, parsed packets, CRC failures) for introspection.

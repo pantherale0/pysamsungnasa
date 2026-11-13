@@ -387,10 +387,12 @@ class NasaClient:
                 _, packet_len_val = struct.unpack_from(">BH", self._rx_buffer)
 
                 if packet_len_val < 14:
-                    # A NASA payload is at least 10 bytes (source + destination
-                    # addresses, info, type, packet number, capacity), so any
-                    # declared size below 14 (10 payload + 4 CRC/size) cannot be
-                    # a real frame. Treat this STX as garbage and resync.
+                    # A NASA payload is at least 10 bytes: 3-byte source address,
+                    # 3-byte destination address, packet info, packet type,
+                    # packet number and message capacity. The declared size
+                    # field counts payload + CRC (2) + the size field itself
+                    # (2), so any declared size below 14 cannot be a real
+                    # frame. Treat this STX as garbage and resync.
                     _LOGGER.debug(
                         "Parsed packet length %d is below the NASA minimum. Resyncing.",
                         packet_len_val,
