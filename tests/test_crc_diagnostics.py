@@ -45,8 +45,11 @@ class TestCrcFailureLogging:
         packet = _valid_packet()
         with caplog.at_level(logging.DEBUG, logger="pysamsungnasa.nasa_client"):
             with caplog.at_level(logging.WARNING, logger="pysamsungnasa.nasa_client"):
-                # First failure emits the summary; subsequent failures within
-                # the interval must not emit more warnings.
+                # Backdate the summary clock so the first failure emits a
+                # summary regardless of how _last_crc_summary_time was
+                # initialised; the 4 subsequent failures (microseconds later,
+                # well inside the interval) must be suppressed.
+                client._last_crc_summary_time = time.monotonic() - client._config.crc_log_interval - 1
                 for _ in range(5):
                     client._record_crc_failure(packet, 0x1234, 0x5678)
         warnings = [r for r in caplog.records if r.levelno == logging.WARNING and "CRC validation failure" in r.message]
@@ -57,8 +60,10 @@ class TestCrcFailureLogging:
         client = _build_client(crc_log_interval=60.0)
         packet = _valid_packet()
         with caplog.at_level(logging.WARNING, logger="pysamsungnasa.nasa_client"):
+            # Backdate before each call so both summaries emit deterministically
+            # regardless of how _last_crc_summary_time was initialised.
+            client._last_crc_summary_time = time.monotonic() - client._config.crc_log_interval - 1
             client._record_crc_failure(packet, 0x1234, 0x5678)
-            # Simulate the interval elapsing.
             client._last_crc_summary_time = time.monotonic() - client._config.crc_log_interval - 1
             client._record_crc_failure(packet, 0x89AB, 0xCDEF)
         warnings = [r for r in caplog.records if r.levelno == logging.WARNING and "CRC validation failure" in r.message]
