@@ -167,6 +167,32 @@ class TestTransportAcknowledgement:
         )
         assert future.result() == "failed"
 
+    async def test_invalid_destination_type_resolves_failed(self, nasa_client):
+        future = asyncio.get_running_loop().create_future()
+        await nasa_client.send_message(
+            destination=12345,  # neither str nor NasaDevice
+            request_type=DataType.WRITE,
+            messages=[SendMessage(0x4247, b"\x01\x4a")],
+            completion_future=future,
+        )
+        assert future.result() == "failed"
+
+    async def test_send_command_exception_resolves_failed(self, nasa_client, monkeypatch):
+        from pysamsungnasa import nasa_client as nasa_client_module
+
+        def broken_build_message(*_args, **_kwargs):
+            raise ValueError("encoding exploded")
+
+        monkeypatch.setattr(nasa_client_module, "build_message", broken_build_message)
+        future = asyncio.get_running_loop().create_future()
+        await nasa_client.send_message(
+            destination=WRITE_DEST,
+            request_type=DataType.WRITE,
+            messages=[SendMessage(0x4247, b"\x01\x4a")],
+            completion_future=future,
+        )
+        assert future.result() == "failed"
+
     async def test_fire_and_forget_api_unchanged(self, nasa_client):
         """Existing callers that do not pass a future keep fire-and-forget semantics."""
         result = await nasa_client.send_message(
@@ -371,6 +397,30 @@ class TestConfirmedDeviceState:
             async with asyncio.timeout(0.2):
                 await device.get_attribute(InWaterOutletTargetTemperature, requires_read=True)
 
+    async def test_verify_with_non_numeric_value_compares_directly(self):
+        """Non-numeric messages take the direct-equality comparison path."""
+        from pysamsungnasa.protocol.factory.messages.indoor import InDhwWaterHeaterPower
+
+        client, parser, device = self._wired_device()
+        task = asyncio.create_task(
+            device.write_attribute_confirmed(
+                InDhwWaterHeaterPower, True, mode=DataType.WRITE, timeout=5, verify=True, verify_timeout=5
+            )
+        )
+        await asyncio.sleep(0)
+        packet_number = _pending_packet_number(client)
+        await client._mark_read_received(WRITE_DEST, [], DataType.ACK, packet_number=packet_number)
+        await asyncio.sleep(0)
+
+        # Device reports the bool back: 0x4065 enum payload 0x01 = True.
+        response = self._response_packet("200000" + "80ff01" + "20" + "15" + "02" + "01" + "4065" + "01")
+        await parser.parse_packet(response[3:-3])
+
+        result = await task
+        assert result.outcome == "ack"
+        assert result.verified is True
+        assert result.device_value is True
+
     async def test_nack_propagates_through_write_attribute_confirmed(self):
         client, parser, device = self._wired_device()
         task = asyncio.create_task(device.write_attribute_confirmed(InWaterOutletTargetTemperature, 33.0, timeout=5))
@@ -434,3 +484,28 @@ class TestReadWriteConcurrency:
         await nasa_client._mark_read_received(WRITE_DEST, [], DataType.ACK, packet_number=packet_number)
         # The read to 100000 must still be pending.
         assert any(info["destination"] == "100000" for info in nasa_client._pending_reads.values())
+
+    async def test_unknown_payload_type_falls_through_without_queues(self, nasa_client):
+        """_mark_read_received with neither ACK/NACK/RESPONSE must be a no-op."""
+        await nasa_client.nasa_read([0x8204], destination="100000")
+        await nasa_client.send_message(
+            destination=WRITE_DEST,
+            request_type=DataType.WRITE,
+            messages=[SendMessage(0x4247, b"\x01\x4a")],
+        )
+        # DataType.UNDEFINED is neither ACK/NACK nor RESPONSE: nothing completes.
+        await nasa_client._mark_read_received("100000", [], DataType.UNDEFINED, packet_number=1)
+        assert nasa_client._pending_reads
+        assert nasa_client._pending_writes
+
+    async def test_send_message_without_messages_raises_and_resolves_future(self, nasa_client):
+        """messages=None raises ValueError and resolves the future as failed."""
+        future = asyncio.get_running_loop().create_future()
+        with pytest.raises(ValueError):
+            await nasa_client.send_message(
+                destination=WRITE_DEST,
+                request_type=DataType.WRITE,
+                messages=None,
+                completion_future=future,
+            )
+        assert future.result() == "failed"

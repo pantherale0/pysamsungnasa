@@ -104,6 +104,49 @@ class TestCrcFailureLogging:
         assert received == []
         assert client._crc_failure_count == 1
 
+    async def test_valid_packet_reaches_async_rx_handler(self):
+        """A CRC-valid packet is dispatched to an async receive handler."""
+        client = _build_client()
+        received = []
+
+        async def rx_handler(data):
+            received.append(data)
+
+        client._rx_event_handler = rx_handler
+        await client._rx_queue.put(_valid_packet())
+        task = asyncio.create_task(client._read_queue_processor())
+        await asyncio.sleep(0.05)
+        await client._cancel_task(task)
+
+        assert len(received) == 1
+        assert received[0] == _valid_packet()[3:-3]
+
+    async def test_valid_packet_reaches_sync_rx_handler(self):
+        """A CRC-valid packet is dispatched to a synchronous receive handler."""
+        client = _build_client()
+        received = []
+
+        def rx_handler(data):
+            received.append(data)
+
+        client._rx_event_handler = rx_handler
+        await client._rx_queue.put(_valid_packet())
+        task = asyncio.create_task(client._read_queue_processor())
+        await asyncio.sleep(0.05)
+        await client._cancel_task(task)
+
+        assert len(received) == 1
+
+    async def test_valid_packet_without_rx_handler_is_dropped(self):
+        """A valid packet with no receive handler configured is consumed silently."""
+        client = _build_client()
+        client._rx_event_handler = None
+        await client._rx_queue.put(_valid_packet())
+        task = asyncio.create_task(client._read_queue_processor())
+        await asyncio.sleep(0.05)
+        await client._cancel_task(task)
+        assert client._rx_queue.empty()
+
 
 class TestPacketCapture:
     async def test_capture_disabled_by_default(self):

@@ -5,8 +5,8 @@ import binascii
 import logging
 import struct
 import time
-from asyncio import iscoroutinefunction
 from collections import deque
+from inspect import iscoroutinefunction
 
 import serialx
 
@@ -117,17 +117,14 @@ class NasaClient:
         interval = self._config.crc_log_interval
         now = time.monotonic()
         if interval and (now - self._last_crc_summary_time) >= interval:
-            total = self._crc_failure_count
-            since = self._crc_failures_since_summary
-            detail = ""
-            if self._last_crc_error is not None:
-                detail = f" (last: expected {hex(self._last_crc_error[0])} got {hex(self._last_crc_error[1])})"
+            expected, got = self._last_crc_error
             _LOGGER.warning(
-                "QueueProcessor: %d CRC validation failure(s) since start, %d since last summary%s. "
-                "Enable DEBUG logging for raw packet hex.",
-                total,
-                since,
-                detail,
+                "QueueProcessor: %d CRC validation failure(s) since start, %d since last summary "
+                "(last: expected %s got %s). Enable DEBUG logging for raw packet hex.",
+                self._crc_failure_count,
+                self._crc_failures_since_summary,
+                hex(expected),
+                hex(got),
             )
             self._crc_failures_since_summary = 0
             self._last_crc_summary_time = now
@@ -744,6 +741,8 @@ class NasaClient:
                 completion_future.set_result("failed")
             return
         if messages is None:
+            if completion_future is not None and not completion_future.done():
+                completion_future.set_result("failed")
             raise ValueError("At least one message is required.")
         source_address = source if source is not None else str(self._config.address)
         future_tracked = False
@@ -1152,7 +1151,9 @@ class NasaClient:
                             if write_info["attempts"] < self._config.write_retry_max_attempts:
                                 writes_to_retry.append((write_key, write_info))
                             else:
-                                # Max retries exceeded
+                                # Max retries exceeded. Resolve any completion
+                                # future here, where write_info is in hand and
+                                # no await can intervene before removal.
                                 _LOGGER.warning(
                                     "Abandoning write request %s (messages %s) to %s after %d attempts",
                                     write_info.get("packet_number"),
@@ -1160,6 +1161,7 @@ class NasaClient:
                                     write_info.get("destination"),
                                     write_info.get("attempts"),
                                 )
+                                self._complete_transaction_future(write_info.get("completion_future"), "abandoned")
                                 writes_to_remove.append(write_key)
                         except Exception:
                             _LOGGER.exception(
@@ -1169,11 +1171,8 @@ class NasaClient:
                             writes_to_remove.append(write_key)
 
                     # Remove writes that have exceeded max attempts
-                    for _write_key in writes_to_remove:
-                        write_info = self._pending_writes.pop(_write_key, None)
-                        if write_info is not None:
-                            self._complete_transaction_future(write_info.get("completion_future"), "abandoned")
-                            _LOGGER.debug("Completed abandoned write request for key %s", _write_key)
+                    for write_key in writes_to_remove:
+                        del self._pending_writes[write_key]
 
                     # Retry the writes
                     for write_key, write_info in writes_to_retry:

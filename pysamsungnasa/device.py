@@ -283,7 +283,10 @@ class NasaDevice:
                 result.verified = None
                 return result
             result.device_value = read_back.VALUE
-            if isinstance(expected_value, (int, float)) and isinstance(read_back.VALUE, (int, float)):
+            # bool is a subclass of int but compares by equality, not tolerance.
+            expected_numeric = isinstance(expected_value, (int, float)) and not isinstance(expected_value, bool)
+            read_numeric = isinstance(read_back.VALUE, (int, float)) and not isinstance(read_back.VALUE, bool)
+            if expected_numeric and read_numeric:
                 result.verified = abs(float(read_back.VALUE) - float(expected_value)) <= verify_tolerance
             else:
                 result.verified = read_back.VALUE == expected_value
