@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import datetime, UTC
 from typing import TYPE_CHECKING, Any
 
@@ -17,6 +18,39 @@ if TYPE_CHECKING:
     from .nasa_client import NasaClient
 
 _LOGGER = logging.getLogger(__name__)
+
+
+@dataclass
+class TransactionResult:
+    """Outcome of a confirmed NASA write transaction.
+
+    ``outcome`` is one of:
+      - ``"ack"``: the destination device acknowledged the write (transport ACK).
+      - ``"nack"``: the destination device rejected the write (transport NACK).
+      - ``"abandoned"``: no acknowledgement arrived within the retry budget.
+      - ``"timeout"``: the caller's timeout expired before any terminal state.
+      - ``"superseded"``: a newer write to the same message IDs took over.
+      - ``"unconfirmed"``: the packet was sent but write-retry tracking is not
+        available (e.g. write retries disabled), so no ACK correlation occurs.
+      - ``"failed"``: the packet could not be encoded or queued.
+
+    ``verified`` and ``device_value`` are only populated when the write was
+    confirmed with ``verify=True``: ``verified`` is True when the device
+    subsequently reported the written value back, False when it reported a
+    different value, and None when the read-back could not be completed (e.g.
+    the device does not support reading the message). A transport ACK is *not*
+    proof the device applied the value — ``verified`` provides that stronger
+    guarantee when available.
+    """
+
+    outcome: str
+    verified: bool | None = None
+    device_value: Any = None
+
+    @property
+    def success(self) -> bool:
+        """Return True when the write was transport-acknowledged."""
+        return self.outcome == "ack"
 
 
 class NasaDevice:
@@ -107,6 +141,7 @@ class NasaDevice:
         mode: DataType = DataType.WRITE,
         source: str | None = None,
         destination: str | None = None,
+        completion_future: asyncio.Future | None = None,
     ):
         """Write specific attributes to the device.
 
@@ -118,6 +153,10 @@ class NasaDevice:
                 or DataType.NOTIFICATION may be needed
             source: Optional source address override (defaults to configured client address)
             destination: Optional destination address override (defaults to this device's address)
+            completion_future: Optional future resolved when the write reaches a
+                terminal state (``"ack"``, ``"nack"``, ``"abandoned"``,
+                ``"superseded"``, ``"unconfirmed"`` or ``"failed"``). See
+                `write_attribute_confirmed`.
 
         Raises:
             ValueError: If more than 10 messages or message class lacks MESSAGE_ID
@@ -136,6 +175,7 @@ class NasaDevice:
             request_type=mode,
             messages=messages,
             source=source,
+            completion_future=completion_future,
         )
 
     async def write_attribute(
@@ -145,6 +185,7 @@ class NasaDevice:
         mode: DataType = DataType.WRITE,
         source: str | None = None,
         destination: str | None = None,
+        completion_future: asyncio.Future | None = None,
     ):
         """Write a single attribute to the device, this is a convenience method of write_attributes."""
         await self.write_attributes(
@@ -152,7 +193,85 @@ class NasaDevice:
             mode=mode,
             source=source,
             destination=destination,
+            completion_future=completion_future,
         )
+
+    async def write_attribute_confirmed(
+        self,
+        message_class: type[BaseMessage],
+        value: Any,
+        mode: DataType = DataType.WRITE,
+        timeout: float = 10.0,
+        verify: bool = False,
+        verify_timeout: float = 10.0,
+        verify_tolerance: float = 0.05,
+        source: str | None = None,
+        destination: str | None = None,
+    ) -> TransactionResult:
+        """Write an attribute and report the transaction outcome.
+
+        The existing ``write_attribute`` keeps fire-and-forget semantics for
+        backward compatibility; this method returns a `TransactionResult`
+        describing what happened to the write instead of silently dropping
+        failed transactions.
+
+        Note that a transport ACK means the device received and accepted the
+        packet — it does not guarantee the value was applied. Pass
+        ``verify=True`` to additionally read the message back from the device
+        and compare it against the requested value. The read-back also runs
+        after an ``"abandoned"`` outcome, recovering the true device state
+        when the ACK was lost on the bus but the write was applied.
+
+        Args:
+            message_class: Message class to write.
+            value: Value to write.
+            mode: DataType for the write (default ``DataType.WRITE``; setpoint
+                writes commonly use ``DataType.REQUEST``).
+            timeout: Seconds to wait for ACK/NACK/abandonment.
+            verify: Read the value back from the device after an ACK.
+            verify_timeout: Seconds to wait for the read-back.
+            verify_tolerance: Absolute tolerance when comparing numeric values.
+            source: Optional source address override.
+            destination: Optional destination address override.
+        """
+        loop = asyncio.get_running_loop()
+        completion: asyncio.Future = loop.create_future()
+        await self.write_attribute(
+            message_class,
+            value,
+            mode=mode,
+            source=source,
+            destination=destination,
+            completion_future=completion,
+        )
+        try:
+            outcome = await asyncio.wait_for(completion, timeout=timeout)
+        except TimeoutError:
+            return TransactionResult(outcome="timeout")
+
+        result = TransactionResult(outcome=outcome)
+
+        # Verify after an ACK, and also after an abandoned write: a lost ACK
+        # does not prove the device failed to apply the value, and a read-back
+        # recovers the true state. A NACK means the device rejected the write,
+        # so there is nothing to verify.
+        if verify and outcome in ("ack", "abandoned"):
+            expected_value = message_class.parse_payload(message_class.to_bytes(value)).VALUE
+            try:
+                read_back = await asyncio.wait_for(
+                    self.get_attribute(message_class, requires_read=True),
+                    timeout=verify_timeout,
+                )
+            except TimeoutError, asyncio.TimeoutError:
+                result.verified = None
+                return result
+            result.device_value = read_back.VALUE
+            if isinstance(expected_value, (int, float)) and isinstance(read_back.VALUE, (int, float)):
+                result.verified = abs(float(read_back.VALUE) - float(expected_value)) <= verify_tolerance
+            else:
+                result.verified = read_back.VALUE == expected_value
+
+        return result
 
     def handle_packet(self, *_nargs, **kwargs):
         """Handle a packet sent to this device from the parser."""
