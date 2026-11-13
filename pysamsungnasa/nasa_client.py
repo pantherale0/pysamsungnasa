@@ -4,7 +4,9 @@ import asyncio
 import binascii
 import logging
 import struct
-from asyncio import iscoroutinefunction
+import time
+from collections import deque
+from inspect import iscoroutinefunction
 
 import serialx
 
@@ -68,7 +70,64 @@ class NasaClient:
         self._config = config
         self._address = config.address
 
+        # CRC failure diagnostics: packet detail goes to DEBUG; a rate-limited
+        # WARNING summary keeps failures visible without flooding the log.
+        self._crc_failure_count = 0
+        self._crc_failures_since_summary = 0
+        self._last_crc_summary_time = 0.0
+        self._last_crc_error: tuple[int, int] | None = None
+        # Optional bounded ring buffer of recent RX frames for diagnostics.
+        self._rx_capture: deque[str] | None = (
+            deque(maxlen=config.packet_capture_size) if config.enable_packet_capture else None
+        )
+
         _LOGGER.debug("NasaClient initialized with config: %s", config)
+
+    @property
+    def rx_capture(self) -> tuple[str, ...]:
+        """Return recent captured RX frames (oldest first) when capture is enabled."""
+        if self._rx_capture is None:
+            return ()
+        return tuple(self._rx_capture)
+
+    def _capture(self, kind: str, data: bytes) -> None:
+        """Append a bounded diagnostic entry for an RX frame, if capture is enabled."""
+        if self._rx_capture is None:
+            return
+        self._rx_capture.append(f"{time.time():.3f} {kind} {bin2hex(data)}")
+
+    def _record_crc_failure(self, packet: bytes, expected: int, got: int) -> None:
+        """Record and log a CRC validation failure.
+
+        The full packet hex is logged at DEBUG so it can be enabled temporarily
+        for diagnosis, while a rate-limited WARNING summary keeps a concise
+        failure signal visible during sustained operation.
+        """
+        self._crc_failure_count += 1
+        self._crc_failures_since_summary += 1
+        self._last_crc_error = (expected, got)
+        self._capture("crc_error", packet)
+        if _LOGGER.isEnabledFor(logging.DEBUG):
+            _LOGGER.debug(
+                "QueueProcessor: Invalid CRC expected %s got %s. Packet: %s.",
+                hex(expected),
+                hex(got),
+                bin2hex(packet),
+            )
+        interval = self._config.crc_log_interval
+        now = time.monotonic()
+        if interval and (now - self._last_crc_summary_time) >= interval:
+            expected, got = self._last_crc_error
+            _LOGGER.warning(
+                "QueueProcessor: %d CRC validation failure(s) since start, %d since last summary "
+                "(last: expected %s got %s). Enable DEBUG logging for raw packet hex.",
+                self._crc_failure_count,
+                self._crc_failures_since_summary,
+                hex(expected),
+                hex(got),
+            )
+            self._crc_failures_since_summary = 0
+            self._last_crc_summary_time = now
 
     @property
     def is_connected(self) -> bool:
@@ -288,6 +347,7 @@ class NasaClient:
 
     async def _read_buffer_handler(self, message: bytes):
         """Read buffer handler."""
+        self._capture("raw", message)
         self._rx_buffer += message
         if len(self._rx_buffer) > self._config.max_buffer_size:
             _LOGGER.error(
@@ -323,11 +383,29 @@ class NasaClient:
             try:
                 _, packet_len_val = struct.unpack_from(">BH", self._rx_buffer)
 
-                if packet_len_val > self._config.max_buffer_size:
+                if packet_len_val < 14:
+                    # A NASA payload is at least 10 bytes: 3-byte source address,
+                    # 3-byte destination address, packet info, packet type,
+                    # packet number and message capacity. The declared size
+                    # field counts payload + CRC (2) + the size field itself
+                    # (2), so any declared size below 14 cannot be a real
+                    # frame. Treat this STX as garbage and resync.
                     _LOGGER.debug(
-                        "Parsed packet length %d exceeds max size %d. Assuming parse error.",
+                        "Parsed packet length %d is below the NASA minimum. Resyncing.",
                         packet_len_val,
-                        self._config.max_buffer_size,
+                    )
+                    self._rx_buffer = self._rx_buffer[1:]
+                    continue
+
+                if packet_len_val + 2 > self._config.max_packet_size:
+                    # Declared size exceeds the maximum plausible NASA frame.
+                    # Resync immediately instead of waiting for the declared
+                    # number of bytes, which would stall parsing of subsequent
+                    # valid frames for seconds at 9600 baud.
+                    _LOGGER.debug(
+                        "Parsed packet length %d exceeds plausible maximum %d. Resyncing.",
+                        packet_len_val,
+                        self._config.max_packet_size - 2,
                     )
                     self._rx_buffer = self._rx_buffer[1:]
                     continue
@@ -363,6 +441,7 @@ class NasaClient:
 
                 if self._rx_queue:
                     await self._rx_queue.put(packet)
+                    self._capture("pkt", packet)
                     if self._config.log_buffer_messages:
                         _LOGGER.debug(
                             "Received complete packet and queued for processing (pending=%s): %s",
@@ -501,11 +580,7 @@ class NasaClient:
                         packet_crc = binascii.crc_hqx(packet_data, 0)
 
                         if packet_crc != packet_crc_from_msg:
-                            _LOGGER.error(
-                                "QueueProcessor: Invalid CRC expected %s got %s",
-                                hex(packet_crc),
-                                hex(packet_crc_from_msg),
-                            )
+                            self._record_crc_failure(packet, packet_crc, packet_crc_from_msg)
                             continue
 
                         if self._rx_event_handler and callable(self._rx_event_handler):
@@ -638,10 +713,23 @@ class NasaClient:
         request_type: DataType = DataType.REQUEST,
         messages: list[SendMessage] | None = None,
         source: str | None = None,
+        completion_future: asyncio.Future | None = None,
     ) -> int | bytes | None:
-        """Send a message to the device using the client."""
+        """Send a message to the device using the client.
+
+        When ``completion_future`` is provided and the message is a write
+        (``DataType.WRITE`` or ``DataType.REQUEST`` with write retries enabled),
+        the future resolves when the transaction reaches a terminal state:
+        ``"ack"`` (device acknowledged), ``"nack"`` (device rejected),
+        ``"abandoned"`` (retry budget exhausted), ``"superseded"`` (a newer
+        write to the same message IDs took over), ``"unconfirmed"`` (sent
+        without retry tracking) or ``"failed"`` (send error). It never resolves
+        for fire-and-forget sends, keeping the existing API untouched.
+        """
         if not self.is_connected:
             _LOGGER.error("Cannot send message, client is not connected.")
+            if completion_future is not None and not completion_future.done():
+                completion_future.set_result("failed")
             return
         if isinstance(destination, str):
             destination_address = destination
@@ -649,10 +737,15 @@ class NasaClient:
             destination_address = destination.address
         else:
             _LOGGER.error("Invalid destination type: %s", type(destination))
+            if completion_future is not None and not completion_future.done():
+                completion_future.set_result("failed")
             return
         if messages is None:
+            if completion_future is not None and not completion_future.done():
+                completion_future.set_result("failed")
             raise ValueError("At least one message is required.")
         source_address = source if source is not None else str(self._config.address)
+        future_tracked = False
         try:
             packet_number = await self.send_command(
                 [
@@ -678,6 +771,7 @@ class NasaClient:
                     write_key = f"{destination_address}_{tuple(sorted(message_ids))}"
                     existing_write = self._pending_writes.get(write_key)
                     if existing_write is None:
+                        future_tracked = True
                         self._pending_writes[write_key] = {
                             "destination": destination_address,
                             "message_ids": message_ids,
@@ -689,6 +783,7 @@ class NasaClient:
                             "last_attempt_time": current_time,
                             "next_retry_time": current_time + self._config.write_retry_interval,
                             "retry_interval": self._config.write_retry_interval,
+                            "completion_future": completion_future,
                         }
                     else:
                         # Same message IDs can be a retry of the same payload, or a new
@@ -718,6 +813,16 @@ class NasaClient:
                             existing_write["attempts"] = 0
                             existing_write["retry_interval"] = self._config.write_retry_interval
                             existing_write["next_retry_time"] = current_time + self._config.write_retry_interval
+                        # Attach the caller's completion future, superseding any
+                        # future a previous caller attached to this entry.
+                        if completion_future is not None and existing_write.get("completion_future") not in (
+                            None,
+                            completion_future,
+                        ):
+                            self._complete_transaction_future(existing_write["completion_future"], "superseded")
+                        if completion_future is not None:
+                            future_tracked = True
+                            existing_write["completion_future"] = completion_future
                 elif request_type == DataType.READ and self._config.enable_read_retries:
                     message_ids = [msg.MESSAGE_ID for msg in messages]
                     read_key = f"{destination_address}_{tuple(sorted(message_ids))}"
@@ -739,9 +844,23 @@ class NasaClient:
                         existing_read["packet_number"] = packet_number
                         existing_read["last_attempt_time"] = current_time
 
+            if completion_future is not None and not future_tracked and not completion_future.done():
+                # The packet was not tracked for retries (send failed, retries
+                # disabled, or a non-write type): resolve so awaiting callers
+                # do not hang until their own timeout.
+                _LOGGER.debug(
+                    "Write completion future not tracked for %s (packet %s, type %s); completing as unconfirmed.",
+                    destination_address,
+                    packet_number,
+                    request_type,
+                )
+                completion_future.set_result("unconfirmed")
+
             return packet_number
         except Exception as e:
             _LOGGER.exception("Error sending message to device %s: %s", destination_address, e)
+            if completion_future is not None and not completion_future.done():
+                completion_future.set_result("failed")
 
     async def nasa_read(self, msgs: list[int], destination: NasaDevice | str = "B0FF20") -> int | bytes | None:
         """Send read requests to a device to read data."""
@@ -797,11 +916,22 @@ class NasaClient:
         packet_number = write_info.get("packet_number")
         return {packet_number} if packet_number is not None else set()
 
+    @staticmethod
+    def _complete_transaction_future(future: asyncio.Future | None, outcome: str) -> None:
+        """Resolve a transaction completion future with the given outcome."""
+        if future is None or future.done():
+            return
+        try:
+            future.set_result(outcome)
+        except asyncio.InvalidStateError:
+            pass
+
     def _clear_pending_write(
         self,
         destination: str,
         message_numbers: list[int],
         packet_number: int | None = None,
+        outcome: str = "ack",
     ) -> list[str]:
         """Clear pending write requests when an ACK or NACK is received.
 
@@ -813,9 +943,14 @@ class NasaClient:
         back to requiring every tracked message ID to be present. An empty
         message list without a packet number does not clear anything.
 
+        ``outcome`` distinguishes an acknowledged write (``"ack"``) from one the
+        device rejected (``"nack"``) so awaiting callers can tell success from
+        rejection.
+
         Returns the list of write keys that were cleared.
         """
         cleared_keys = []
+        cleared_entries = []
         keys_to_delete = []
 
         for write_key, write_info in self._pending_writes.items():
@@ -825,16 +960,21 @@ class NasaClient:
                 if packet_number in self._tracked_write_packet_numbers(write_info):
                     keys_to_delete.append(write_key)
                     cleared_keys.append(write_key)
+                    cleared_entries.append(write_info)
                 continue
             if message_numbers:
                 packet_message_ids = write_info.get("message_ids", [])
                 if packet_message_ids and all(msg_id in message_numbers for msg_id in packet_message_ids):
                     keys_to_delete.append(write_key)
                     cleared_keys.append(write_key)
+                    cleared_entries.append(write_info)
 
         for key in keys_to_delete:
             del self._pending_writes[key]
             _LOGGER.debug("Cleared pending write request for key %s", key)
+
+        for write_info in cleared_entries:
+            self._complete_transaction_future(write_info.get("completion_future"), outcome)
 
         return cleared_keys
 
@@ -843,12 +983,14 @@ class NasaClient:
         destination: str,
         message_numbers: list[int],
         packet_number: int | None = None,
+        outcome: str = "ack",
     ) -> None:
         """Mark write requests as received when an ACK or NACK is received."""
-        cleared = self._clear_pending_write(destination, message_numbers, packet_number=packet_number)
+        cleared = self._clear_pending_write(destination, message_numbers, packet_number=packet_number, outcome=outcome)
         if cleared:
             _LOGGER.debug(
-                "Write ACK/NACK received from %s (packet %s, messages %s), cleared %d pending write(s)",
+                "Write %s received from %s (packet %s, messages %s), cleared %d pending write(s)",
+                outcome.upper(),
                 destination,
                 packet_number,
                 message_numbers if message_numbers else "unspecified",
@@ -893,7 +1035,12 @@ class NasaClient:
         for a different packet drop in-flight writes without an actual write ACK.
         """
         if payload_type in (DataType.ACK, DataType.NACK):
-            await self._mark_write_received(destination, message_numbers, packet_number=packet_number)
+            await self._mark_write_received(
+                destination,
+                message_numbers,
+                packet_number=packet_number,
+                outcome="ack" if payload_type == DataType.ACK else "nack",
+            )
             return
 
         if payload_type == DataType.RESPONSE or (payload_type is None and message_numbers):
@@ -1004,7 +1151,9 @@ class NasaClient:
                             if write_info["attempts"] < self._config.write_retry_max_attempts:
                                 writes_to_retry.append((write_key, write_info))
                             else:
-                                # Max retries exceeded
+                                # Max retries exceeded. Resolve any completion
+                                # future here, where write_info is in hand and
+                                # no await can intervene before removal.
                                 _LOGGER.warning(
                                     "Abandoning write request %s (messages %s) to %s after %d attempts",
                                     write_info.get("packet_number"),
@@ -1012,6 +1161,7 @@ class NasaClient:
                                     write_info.get("destination"),
                                     write_info.get("attempts"),
                                 )
+                                self._complete_transaction_future(write_info.get("completion_future"), "abandoned")
                                 writes_to_remove.append(write_key)
                         except Exception:
                             _LOGGER.exception(
