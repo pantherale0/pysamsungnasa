@@ -1,7 +1,5 @@
 """Messages from the indoor unit."""
 
-import struct
-
 from ..types import (
     BoolMessage,
     EnumMessage,
@@ -2699,6 +2697,8 @@ class InFsv5021(BasicTemperatureMessage):
     MESSAGE_NAME = "FSV 5021 DHW Saving Temp Offset"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = False
+    # Unsigned positive-only setpoint (0-40°C): 0xFFFF can only mean "unavailable".
+    NULL_UINT_MAX = True
 
 
 class InWaterLawTargetTemperature(BasicTemperatureMessage):
@@ -3066,6 +3066,8 @@ class InFsv5092(BasicTemperatureMessage):
     MESSAGE_NAME = "FSV 5092 Smart Grid Heat Temp Shift"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = False
+    # Unsigned positive-only setpoint (2-5°C): 0xFFFF can only mean "unavailable".
+    NULL_UINT_MAX = True
 
 
 class InFsv5093(BasicTemperatureMessage):
@@ -3133,6 +3135,8 @@ class InFsv5093(BasicTemperatureMessage):
     MESSAGE_NAME = "FSV 5093 Smart Grid DHW Temp Shift"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = False
+    # Unsigned positive-only setpoint (2-5°C): 0xFFFF can only mean "unavailable".
+    NULL_UINT_MAX = True
 
 
 class InFlowSensorVoltageMessage(FloatMessage):
@@ -3224,6 +3228,8 @@ class InFsv5023(BasicTemperatureMessage):
     MESSAGE_NAME = "FSV 5023 DHW Saving Thermo On Temp"
     UNIT_OF_MEASUREMENT = "°C"
     SIGNED = False
+    # Unsigned positive-only setpoint (0-40°C): 0xFFFF can only mean "unavailable".
+    NULL_UINT_MAX = True
 
 
 class InOutdoorCompressorFrequencyRateControlMessage(StructureMessage):

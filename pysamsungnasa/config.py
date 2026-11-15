@@ -33,6 +33,22 @@ class NasaConfig:
     client_baudrate: int = 9600  # Baudrate for SerialX client
     device_path: str | None = None  # Path to the device (e.g. /dev/ttyUSB0)
     device_key: str | None = None  # Key to connect to the device (e.g ESPHome PSK)
+    # Maximum plausible total NASA frame length in bytes (declared size field + 2).
+    # Peer implementations of this protocol use a ~1500-byte declared-size sanity
+    # bound; frames declaring more than this are treated as misframed and the
+    # parser resynchronises immediately instead of waiting for the declared
+    # number of bytes to arrive.
+    max_packet_size: int = 1502
+    # Interval in seconds between rate-limited CRC failure summary warnings.
+    # Disabled by default (0) so sustained bus corruption stays silent at the
+    # WARNING level; set to e.g. 60.0 to receive periodic one-line summaries.
+    # Packet-level detail is always available at DEBUG level.
+    crc_log_interval: float = 0.0
+    # Optional bounded ring buffer of recent RX frames for diagnostics.
+    # When enabled, client.rx_capture holds up to packet_capture_size recent
+    # entries (raw chunks, parsed packets, CRC failures) for introspection.
+    enable_packet_capture: bool = False
+    packet_capture_size: int = 100
 
     @property
     def address(self) -> Address:

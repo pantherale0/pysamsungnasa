@@ -308,6 +308,7 @@ class TestIntegerMessageToBytes:
 
     def test_integer_message_to_bytes_min_length_without_message_id(self):
         """Messages with an unspecified payload size use compact encoding."""
+
         class UnspecifiedSizeInteger(IntegerMessage):
             MESSAGE_ID = 0x4600
 
@@ -426,12 +427,17 @@ class TestIntegerMessage:
 class TestFloatMessageNullSentinel:
     """Tests for FloatMessage 0xFFFF → None handling."""
 
-    def test_temperature_ffff_is_none(self):
-        """Signed temp 0xFFFF must not become -0.1."""
+    def test_temperature_ffff_is_minus_point_one(self):
+        """Signed temp 0xFFFF is a legitimate reading of -0.1°C, not null.
+
+        Regression test: treating 0xFFFF as an "unavailable" sentinel made
+        temperature sensors report `unknown` whenever the real measurement was
+        -0.1°C (the outdoor sensor hovering at 0°C in the referenced bug).
+        """
         from pysamsungnasa.protocol.factory.types import BasicTemperatureMessage
 
         msg = BasicTemperatureMessage.parse_payload(b"\xff\xff")
-        assert msg.VALUE is None
+        assert msg.VALUE == -0.1
 
     def test_float_ffff_is_none(self):
         """Unsigned float 0xFFFF becomes None when NULL_UINT_MAX is enabled."""
@@ -444,10 +450,15 @@ class TestFloatMessageNullSentinel:
         assert msg.VALUE is None
 
     def test_float_to_bytes_none(self):
-        """None encodes back to 0xFFFF for writable null sensors."""
+        """Temperatures do not support null writes: None must fail explicitly.
+
+        All-bits-set is a real reading (-0.1°C) on signed temperature messages,
+        so encoding None as 0xFFFF would silently write -0.1°C.
+        """
         from pysamsungnasa.protocol.factory.types import BasicTemperatureMessage
 
-        assert BasicTemperatureMessage.to_bytes(None) == b"\xff\xff"
+        with pytest.raises(ValueError, match="None is not supported"):
+            BasicTemperatureMessage.to_bytes(None)
 
 
 class TestFsvTemperatureScale:

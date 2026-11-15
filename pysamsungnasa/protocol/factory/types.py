@@ -201,7 +201,10 @@ class FloatMessage(BaseMessage):
 
         if cls.ARITHMETIC == 0:
             raise ValueError(f"ARITHMETIC cannot be zero for {cls.__name__}.")
-        int_value = int(value / cls.ARITHMETIC)
+        # Round, not truncate: binary float division can land a hair below the
+        # true step (e.g. 45.9 / 0.1 = 458.999…), which previously encoded
+        # 45.8°C for a requested 45.9°C.
+        int_value = int(round(value / cls.ARITHMETIC))
         payload_size = cls._resolve_payload_size(int_value)
 
         # Pack with determined size
@@ -301,6 +304,12 @@ class BasicTemperatureMessage(FloatMessage):
     UNIT_OF_MEASUREMENT = "C"
     # NASA temperature variables are VAR (2-byte), including values that fit in one byte.
     PAYLOAD_SIZE = 2
+    # Temperatures are signed int16 values in tenths of a degree, so a payload of
+    # 0xFFFF is a legitimate reading of -0.1°C, not an "unavailable" sentinel.
+    # Treating it as null made sensors report `unknown` whenever the measured
+    # temperature sat exactly one tenth of a degree below zero (e.g. an outdoor
+    # sensor hovering around 0°C). See tests/test_temperature_null_sentinel.py.
+    NULL_UINT_MAX = False
 
 
 class BasicPowerMessage(FloatMessage):
